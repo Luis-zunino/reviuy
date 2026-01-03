@@ -86,8 +86,8 @@ export const RealEstateReviewForm = <RR extends RealEstateReviewUpdate>(
                   variant="outline"
                   onClick={() => router.back()}
                   className="flex-1"
+                  icon={ArrowLeft}
                 >
-                  <ArrowLeft className="h-4 w-4 mr-2" />
                   {isReadOnly ? 'Volver' : 'Cancelar'}
                 </Button>
                 {review && isReadOnly ? (
@@ -103,8 +103,7 @@ export const RealEstateReviewForm = <RR extends RealEstateReviewUpdate>(
                   />
                 ) : null}
                 {!isReadOnly ? (
-                  <Button type="submit" disabled={isSubmitting} className="flex-1">
-                    <Save className="h-4 w-4 mr-2" />
+                  <Button type="submit" disabled={isSubmitting} className="flex-1" icon={Save}>
                     {isSubmitting ? 'Guardando...' : 'Publicar reseña'}
                   </Button>
                 ) : null}

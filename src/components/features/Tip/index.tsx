@@ -96,10 +96,8 @@ const renderContentSection = (section: ContentSection, sectionIndex: number) => 
   );
 };
 
-import type { TipComponentProps } from './types';
-
-export const TipComponent = (props: TipComponentProps) => {
-  const { tip } = useTip(props);
+export const TipComponent = () => {
+  const { tip } = useTip();
 
   return (
     <div className="max-w-5xl mx-auto my-20 rounded-2xl p-8 bg-white">

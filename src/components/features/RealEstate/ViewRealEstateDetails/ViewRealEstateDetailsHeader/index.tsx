@@ -45,7 +45,7 @@ export const ViewRealEstateDetailsHeader = (props: ViewRealEstateDetailsHeaderPr
         <div className="flex justify-between gap-6">
           <div className="space-y-4 w-1/2">
             <h3 className="font-semibold text-gray-900 mb-3">
-              Reseñas y Calificaciones sobre {realEstate?.name}
+              Reseñas y calificaciones sobre: {realEstate?.name}
             </h3>
             <div className="flex items-center gap-3">
               <div className="text-3xl font-bold text-gray-900">{averageRating.toFixed(1)}</div>
@@ -70,7 +70,7 @@ export const ViewRealEstateDetailsHeader = (props: ViewRealEstateDetailsHeaderPr
             />
           </div>
           <div className="content-center mx-auto flex flex-col">
-            <div className="mt-4">
+            <div className="mt-4 flex sm:flex-col gap-2">
               <FavoriteRealEstateButton realEstateId={realEstateId} showText />
               {realEstate ? <ReportRealEstateButton realEstate={realEstate} showText /> : null}
             </div>

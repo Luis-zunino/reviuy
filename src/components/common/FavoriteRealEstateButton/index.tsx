@@ -46,7 +46,7 @@ export const FavoriteRealEstateButton: React.FC<FavoriteRealEstateButtonProps> =
       data-active={isActive}
       icon={Heart}
     >
-      {showText && <span>{isActive ? 'Favorito' : 'Guardar'}</span>}
+      {showText && <span className="hidden sm:inline">{isActive ? 'Favorito' : 'Guardar'}</span>}
     </Button>
   );
 };

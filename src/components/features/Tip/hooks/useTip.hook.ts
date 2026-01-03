@@ -1,10 +1,10 @@
 import { articles } from '@/services/mocks/articles.mock';
-import type { UseTipProps } from './types';
+import { useParams } from 'next/navigation';
 
-export const useTip = (props: UseTipProps) => {
-  const { id } = props;
+export const useTip = () => {
+  const { id } = useParams<{ id: string }>();
 
   return {
-    tip: articles[id - 1],
+    tip: articles[Number(id) - 1],
   };
 };
