@@ -1,3 +1,5 @@
+"use client";
+
 import { articles } from '@/services/mocks/articles.mock';
 import { useParams } from 'next/navigation';
 
