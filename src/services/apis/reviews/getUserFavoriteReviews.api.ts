@@ -47,7 +47,6 @@ export const getUserFavoriteReviews = async (): Promise<Review[]> => {
       )
       .filter(Boolean) || []) as Review[];
   } catch (error) {
-    console.error('Error fetching favorite reviews:', error);
     throw error;
   }
 };

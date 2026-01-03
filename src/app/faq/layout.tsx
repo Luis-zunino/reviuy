@@ -3,7 +3,7 @@ import '../globals.css';
 import { MainLayout } from '@/components/common/MainLayout';
 
 export const metadata: Metadata = {
-  title: 'Preguntas Frecuentes | Reviuy',
+  title: 'Preguntas frecuentes | Reviuy',
   description: 'Encuentra respuestas a las preguntas más comunes sobre Reviuy.',
 };
 

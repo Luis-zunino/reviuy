@@ -5,7 +5,7 @@ import { FirstForm } from '../FirstForm';
 import { SecondForm } from '../SecondForm';
 import { ThirdForm } from '../ThirdForm';
 import type { ReviewFormProps } from './types';
-
+ 
 export const ReviewForm = (props: ReviewFormProps) => {
   const {
     isAuthenticated,

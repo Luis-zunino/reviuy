@@ -52,10 +52,8 @@ export const MultiForm = <T extends FieldValues = FieldValues>(props: MultiFormP
           </span>
         </div>
 
-        {/* Barra de progreso visual */}
         {showProgressBar && <Progress value={progressPercentage} className="h-2" />}
 
-        {/* Indicadores de pasos (círculos) */}
         <div className="flex items-center justify-center">
           {Array.from({ length: totalSteps }).map((_, index) => (
             <div key={index} className="flex items-center">

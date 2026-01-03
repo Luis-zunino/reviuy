@@ -70,7 +70,7 @@ export const FirstForm = (props: FirstFormProps) => {
         />
         {errors.title && <p className="text-red-500 text-sm">{errors.title.message}</p>}
       </div>
-      <div className="flex gap-2 justify-between">
+      <div className="flex flex-col sm:flex-row gap-2 justify-between">
         <div className="space-y-2">
           <FormLabel htmlFor="propertyType" label="Tipo de propiedad" isRequired />
           <Controller

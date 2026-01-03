@@ -18,7 +18,7 @@ export const FAQComponent = () => {
 
   return (
     <PageWithSidebar
-      title="Preguntas Frecuentes"
+      title="Preguntas precuentes"
       description="Encuentra respuestas a las preguntas más comunes"
       sidebar={
         <FAQSidebar

@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { useTip } from './hooks';
 import { Button } from '@/components/ui/button';
@@ -102,7 +104,7 @@ export const TipComponent = () => {
   return (
     <div className="max-w-5xl mx-auto my-20 rounded-2xl p-8 bg-white">
       <div className="bg-white">
-        <div className="flex justify-between items-center mb-8 p-4 md:p-10">
+        <div className="flex flex-col sm:flex-row justify-between items-center mb-8 p-4 md:p-10">
           <Header title={tip.title} />
           <Button variant="share" size="sm" icon={Share}>
             Compartir
