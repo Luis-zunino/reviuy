@@ -1,46 +1,125 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  /* Base System Colors */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* REVIUY BRAND COLORS - Primarios */
+  --color-reviuy-primary-50: var(--reviuy-primary-50);
+  --color-reviuy-primary-100: var(--reviuy-primary-100);
+  --color-reviuy-primary-200: var(--reviuy-primary-200);
+  --color-reviuy-primary-300: var(--reviuy-primary-300);
+  --color-reviuy-primary-400: var(--reviuy-primary-400);
+  --color-reviuy-primary-500: var(--reviuy-primary-500);
+  --color-reviuy-primary-600: var(--reviuy-primary-600);
+  --color-reviuy-primary-700: var(--reviuy-primary-700);
+  --color-reviuy-primary-800: var(--reviuy-primary-800);
+  --color-reviuy-primary-900: var(--reviuy-primary-900);
+  --color-reviuy-primary-950: var(--reviuy-primary-950);
+
+  /* REVIUY BRAND COLORS - Secundarios */
+  --color-reviuy-secondary-50: var(--reviuy-secondary-50);
+  --color-reviuy-secondary-100: var(--reviuy-secondary-100);
+  --color-reviuy-secondary-200: var(--reviuy-secondary-200);
+  --color-reviuy-secondary-300: var(--reviuy-secondary-300);
+  --color-reviuy-secondary-400: var(--reviuy-secondary-400);
+  --color-reviuy-secondary-500: var(--reviuy-secondary-500);
+  --color-reviuy-secondary-600: var(--reviuy-secondary-600);
+  --color-reviuy-secondary-700: var(--reviuy-secondary-700);
+  --color-reviuy-secondary-800: var(--reviuy-secondary-800);
+  --color-reviuy-secondary-900: var(--reviuy-secondary-900);
+
+  /* REVIUY SEMANTIC COLORS */
+  --color-reviuy-success-50: var(--reviuy-success-50);
+  --color-reviuy-success-500: var(--reviuy-success-500);
+  --color-reviuy-success-600: var(--reviuy-success-600);
+  --color-reviuy-success-700: var(--reviuy-success-700);
+
+  --color-reviuy-warning-50: var(--reviuy-warning-50);
+  --color-reviuy-warning-500: var(--reviuy-warning-500);
+  --color-reviuy-warning-600: var(--reviuy-warning-600);
+  --color-reviuy-warning-700: var(--reviuy-warning-700);
+
+  --color-reviuy-error-50: var(--reviuy-error-50);
+  --color-reviuy-error-500: var(--reviuy-error-500);
+  --color-reviuy-error-600: var(--reviuy-error-600);
+  --color-reviuy-error-700: var(--reviuy-error-700);
+
+  /* REVIUY NEUTRAL GRAYS */
+  --color-reviuy-gray-50: var(--reviuy-gray-50);
+  --color-reviuy-gray-100: var(--reviuy-gray-100);
+  --color-reviuy-gray-200: var(--reviuy-gray-200);
+  --color-reviuy-gray-300: var(--reviuy-gray-300);
+  --color-reviuy-gray-400: var(--reviuy-gray-400);
+  --color-reviuy-gray-500: var(--reviuy-gray-500);
+  --color-reviuy-gray-600: var(--reviuy-gray-600);
+  --color-reviuy-gray-700: var(--reviuy-gray-700);
+  --color-reviuy-gray-800: var(--reviuy-gray-800);
+  --color-reviuy-gray-900: var(--reviuy-gray-900);
+  --color-reviuy-gray-950: var(--reviuy-gray-950);
+
+  /* Legacy compatibility */
+  --color-primary: var(--reviuy-primary-600);
+  --color-primary-foreground: white;
+  --color-secondary: var(--reviuy-gray-100);
+  --color-secondary-foreground: var(--reviuy-gray-900);
+  --color-accent: var(--reviuy-gray-100);
+  --color-accent-foreground: var(--reviuy-gray-900);
+  --color-destructive: var(--reviuy-error-500);
+
+  /* Typography */
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
+
+  /* REVIUY RADIUS SYSTEM */
+  --radius-xs: 0.25rem; /* 4px */
+  --radius-sm: 0.375rem; /* 6px */
+  --radius-md: 0.5rem; /* 8px */
+  --radius-lg: 0.75rem; /* 12px */
+  --radius-xl: 1rem; /* 16px */
+  --radius-2xl: 1.5rem; /* 24px */
+  --radius-full: 9999px;
+
+  /* Legacy radius compatibility */
+  --radius: var(--radius-lg);
+
+  /* REVIUY SHADOWS */
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+
+  /* Sidebar (mantener para compatibilidad) */
   --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Charts (mantener para compatibilidad) */
   --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
-  --color-card: var(--card);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
 }
 
 /* Leaflet styles */
@@ -90,7 +169,7 @@
 .line-clamp-3 {
   display: -webkit-box;
   -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;  
+  -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
@@ -130,25 +209,89 @@
 }
 
 :root {
-  --radius: 0.625rem;
+  /* ====================================
+   * REVIUY COLOR PALETTE
+   * Definición de colores base del sistema
+   * ==================================== */
+
+  /* Base system variables */
+  --radius: 0.75rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
   --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
+
+  /* REVIUY PRIMARY COLORS - Azul confianza */
+  --reviuy-primary-50: #eff6ff;
+  --reviuy-primary-100: #dbeafe;
+  --reviuy-primary-200: #bfdbfe;
+  --reviuy-primary-300: #93c5fd;
+  --reviuy-primary-400: #60a5fa;
+  --reviuy-primary-500: #3b82f6;
+  --reviuy-primary-600: #2563eb;
+  --reviuy-primary-700: #1d4ed8;
+  --reviuy-primary-800: #1e40af;
+  --reviuy-primary-900: #1e3a8a;
+  --reviuy-primary-950: #172554;
+
+  /* REVIUY SECONDARY COLORS - Naranja calidez */
+  --reviuy-secondary-50: #fef7ee;
+  --reviuy-secondary-100: #fdead3;
+  --reviuy-secondary-200: #fbd1a5;
+  --reviuy-secondary-300: #f9b06d;
+  --reviuy-secondary-400: #f68732;
+  --reviuy-secondary-500: #f97316;
+  --reviuy-secondary-600: #ea580c;
+  --reviuy-secondary-700: #c2410c;
+  --reviuy-secondary-800: #9a3412;
+  --reviuy-secondary-900: #7c2d12;
+
+  /* REVIUY SEMANTIC COLORS */
+  --reviuy-success-50: #ecfdf5;
+  --reviuy-success-500: #10b981;
+  --reviuy-success-600: #059669;
+  --reviuy-success-700: #047857;
+
+  --reviuy-warning-50: #fffbeb;
+  --reviuy-warning-500: #f59e0b;
+  --reviuy-warning-600: #d97706;
+  --reviuy-warning-700: #b45309;
+
+  --reviuy-error-50: #fef2f2;
+  --reviuy-error-500: #ef4444;
+  --reviuy-error-600: #dc2626;
+  --reviuy-error-700: #b91c1c;
+
+  /* REVIUY NEUTRAL GRAYS - Sistema de grises balanceado */
+  --reviuy-gray-50: #f9fafb;
+  --reviuy-gray-100: #f3f4f6;
+  --reviuy-gray-200: #e5e7eb;
+  --reviuy-gray-300: #d1d5db;
+  --reviuy-gray-400: #9ca3af;
+  --reviuy-gray-500: #6b7280;
+  --reviuy-gray-600: #4b5563;
+  --reviuy-gray-700: #374151;
+  --reviuy-gray-800: #1f2937;
+  --reviuy-gray-900: #111827;
+  --reviuy-gray-950: #030712;
+
+  /* Legacy compatibility - mapear a los nuevos colores */
+  --primary: var(--reviuy-primary-600);
+  --primary-foreground: white;
+  --secondary: var(--reviuy-gray-100);
+  --secondary-foreground: var(--reviuy-gray-900);
+  --accent: var(--reviuy-gray-100);
+  --accent-foreground: var(--reviuy-gray-900);
+  --destructive: var(--reviuy-error-500);
+
+  /* Charts y sidebar (mantener para compatibilidad) */
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -156,7 +299,7 @@
   --chart-5: oklch(0.769 0.188 70.08);
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary: var(--reviuy-primary-600);
   --sidebar-primary-foreground: oklch(0.985 0 0);
   --sidebar-accent: oklch(0.97 0 0);
   --sidebar-accent-foreground: oklch(0.205 0 0);
@@ -165,24 +308,88 @@
 }
 
 .dark {
+  /* ====================================
+   * REVIUY DARK MODE COLORS
+   * Paleta optimizada para modo oscuro
+   * ==================================== */
+
+  /* Base system dark colors */
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);
   --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.556 0 0);
+
+  /* REVIUY PRIMARY COLORS - Azul adaptado para dark mode */
+  --reviuy-primary-50: #1e293b; /* Invertido para dark */
+  --reviuy-primary-100: #334155;
+  --reviuy-primary-200: #475569;
+  --reviuy-primary-300: #64748b;
+  --reviuy-primary-400: #94a3b8;
+  --reviuy-primary-500: #60a5fa; /* Más brillante en dark */
+  --reviuy-primary-600: #3b82f6; /* Color principal mantenido */
+  --reviuy-primary-700: #2563eb;
+  --reviuy-primary-800: #1d4ed8;
+  --reviuy-primary-900: #dbeafe;
+  --reviuy-primary-950: #eff6ff; /* Invertido para dark */
+
+  /* REVIUY SECONDARY COLORS - Naranja suavizado para dark */
+  --reviuy-secondary-50: #292524; /* Invertido */
+  --reviuy-secondary-100: #44403c;
+  --reviuy-secondary-200: #57534e;
+  --reviuy-secondary-300: #78716c;
+  --reviuy-secondary-400: #a8a29e;
+  --reviuy-secondary-500: #fb923c; /* Más suave en dark */
+  --reviuy-secondary-600: #f97316;
+  --reviuy-secondary-700: #ea580c;
+  --reviuy-secondary-800: #fdead3;
+  --reviuy-secondary-900: #fef7ee; /* Invertido */
+
+  /* REVIUY SEMANTIC COLORS - Ajustados para dark mode */
+  --reviuy-success-50: #14532d;
+  --reviuy-success-500: #22c55e; /* Más brillante */
+  --reviuy-success-600: #16a34a;
+  --reviuy-success-700: #15803d;
+
+  --reviuy-warning-50: #451a03;
+  --reviuy-warning-500: #fbbf24; /* Más brillante */
+  --reviuy-warning-600: #f59e0b;
+  --reviuy-warning-700: #d97706;
+
+  --reviuy-error-50: #450a0a;
+  --reviuy-error-500: #f87171; /* Más suave en dark */
+  --reviuy-error-600: #ef4444;
+  --reviuy-error-700: #dc2626;
+
+  /* REVIUY NEUTRAL GRAYS - Invertidos para dark mode */
+  --reviuy-gray-50: #030712; /* Casi negro */
+  --reviuy-gray-100: #111827;
+  --reviuy-gray-200: #1f2937;
+  --reviuy-gray-300: #374151;
+  --reviuy-gray-400: #4b5563;
+  --reviuy-gray-500: #6b7280; /* Centro - sin cambio */
+  --reviuy-gray-600: #9ca3af;
+  --reviuy-gray-700: #d1d5db;
+  --reviuy-gray-800: #e5e7eb;
+  --reviuy-gray-900: #f3f4f6;
+  --reviuy-gray-950: #f9fafb; /* Casi blanco */
+
+  /* Legacy compatibility - mapear a los nuevos colores dark */
+  --primary: var(--reviuy-primary-500); /* Más brillante en dark */
+  --primary-foreground: var(--reviuy-gray-950);
+  --secondary: var(--reviuy-gray-200);
+  --secondary-foreground: var(--reviuy-gray-900);
+  --accent: var(--reviuy-gray-200);
+  --accent-foreground: var(--reviuy-gray-900);
+  --destructive: var(--reviuy-error-500);
+
+  /* Charts y sidebar para dark mode */
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
@@ -190,7 +397,7 @@
   --chart-5: oklch(0.645 0.246 16.439);
   --sidebar: oklch(0.205 0 0);
   --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary: var(--reviuy-primary-500);
   --sidebar-primary-foreground: oklch(0.985 0 0);
   --sidebar-accent: oklch(0.269 0 0);
   --sidebar-accent-foreground: oklch(0.985 0 0);
@@ -205,4 +412,19 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+@keyframes slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-down {
+  animation: slide-down 0.15s ease-out;
 }

@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { ViewAddressReviews } from "@/components/features/ViewAddressReviews";
-import { useParams } from "next/navigation";
-import React from "react";
+import { ViewAddressReviews } from '@/components/features/Review/ViewAddressReviews';
+import { useParams } from 'next/navigation';
+import React from 'react';
 
 const Address = () => {
   const { osmId } = useParams<{ osmId: string }>();

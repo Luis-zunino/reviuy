@@ -1,0 +1,187 @@
+'use client';
+
+import { Eye, ThumbsDown, ThumbsUp } from 'lucide-react';
+import Image from 'next/image';
+import { StarRatingDisplay } from '@/components/common/StarRating';
+import {
+  DeleteReviewButton,
+  EditReviewButton,
+  ReportReviewButton,
+  FavoriteReviewButton,
+  ReviewLikesButtons,
+} from '@/components/common';
+import type { ReviewSummaryProps } from './types';
+import { PagesUrls } from '@/enums';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import Link from 'next/link';
+
+export const ReviewSummary = ({ review }: ReviewSummaryProps) => {
+  const recommended = review.rating >= 3.5;
+
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <Badge
+          variant={recommended ? 'default' : 'destructive'}
+          className={`hidden lg:flex items-center gap-2 font-semibold uppercase text-xs px-4 py-2.5 ${
+            recommended ? 'bg-success hover:bg-success/90 text-success-foreground' : ''
+          }`}
+        >
+          {recommended ? (
+            <>
+              <ThumbsUp className="h-4 w-4" />
+              Lo recomiendo
+            </>
+          ) : (
+            <>
+              <ThumbsDown className="h-4 w-4" />
+              No lo recomiendo
+            </>
+          )}
+        </Badge>
+        <div className="flex gap-2 ml-auto">
+          <FavoriteReviewButton reviewId={review.id} showText />
+          <EditReviewButton review={review} showText />
+          <ReportReviewButton review={review} showText />
+          <DeleteReviewButton review={review} showText />
+        </div>
+      </div>
+
+      <Card className="shadow-sm border-border/50">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-xl font-bold text-foreground">Opinión</CardTitle>
+        </CardHeader>
+        <Separator />
+        <CardContent className="pt-6 space-y-6">
+          <div>
+            <h3 className="font-bold text-lg mb-3 text-foreground text-balance">{review?.title}</h3>
+            <p className="text-base text-muted-foreground leading-relaxed text-pretty">
+              {review?.description}
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+
+      {review?.image_url && (
+        <Card className="shadow-sm border-border/50">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-xl font-bold text-foreground">Imágenes</CardTitle>
+          </CardHeader>
+          <Separator />
+          <CardContent className="pt-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+              <Button variant="ghost" className="p-0 h-auto group hover:bg-transparent">
+                <div className="relative w-full overflow-hidden rounded-lg border border-border">
+                  <Image
+                    alt="Imagen de la propiedad"
+                    width={300}
+                    height={400}
+                    className="object-cover w-full h-64 transition-transform duration-300 group-hover:scale-105"
+                    src={review.image_url || '/placeholder.svg'}
+                    unoptimized
+                  />
+                </div>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      <Card className="shadow-sm border-border/50">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-xl font-bold text-foreground">Valoración</CardTitle>
+        </CardHeader>
+        <Separator />
+        <CardContent className="pt-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <span className="text-sm font-semibold text-foreground">Temperatura en verano</span>
+              <p className="text-base capitalize text-muted-foreground">{review?.summer_comfort}</p>
+            </div>
+            <div className="space-y-2">
+              <span className="text-sm font-semibold text-foreground">Temperatura en invierno</span>
+              <p className="text-base capitalize text-muted-foreground">{review?.winter_comfort}</p>
+            </div>
+            <div className="space-y-2">
+              <span className="text-sm font-semibold text-foreground">Humedad</span>
+              <p className="text-base capitalize text-muted-foreground">{review?.humidity}</p>
+            </div>
+            <div className="space-y-2">
+              <span className="text-sm font-semibold text-foreground">Rating de la zona</span>
+              {review?.zone_rating ? <StarRatingDisplay rating={review.zone_rating || 0} /> : null}
+            </div>
+            <div className="space-y-2">
+              <span className="text-sm font-semibold text-foreground">Tipo de propiedad</span>
+              <p className="text-base capitalize text-muted-foreground">{review?.property_type}</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {review.review_rooms?.length > 0 && (
+        <Card className="shadow-sm border-border/50">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-xl font-bold text-foreground">Habitaciones</CardTitle>
+          </CardHeader>
+          <Separator />
+          <CardContent className="pt-6">
+            <div className="space-y-4">
+              {review.review_rooms.map((room) => (
+                <div
+                  key={room.id}
+                  className="flex items-center justify-between py-3 px-4 rounded-lg bg-accent/50 hover:bg-accent transition-colors"
+                >
+                  <span className="text-base text-foreground capitalize">{room.room_type}</span>
+                  <span className="text-base font-semibold text-foreground">{room.area_m2} m²</span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {review.real_estate_experience || review?.real_estates?.name ? (
+        <Card className="shadow-sm border-border/50">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-xl font-bold text-foreground">Inmobiliaria</CardTitle>
+          </CardHeader>
+          <Separator />
+          <CardContent className="pt-6">
+            <div className="grid grid-cols-1 gap-6">
+              {review?.real_estates?.name ? (
+                <div className="space-y-2">
+                  <span className="text-sm font-semibold text-foreground">Nombre</span>
+                  <div className="flex items-center gap-3">
+                    <p className="text-base capitalize text-muted-foreground">
+                      {review?.real_estates.name}
+                    </p>
+                    <Link href={`${PagesUrls.REAL_ESTATE}/${review?.real_estates?.id}`}>
+                      <Eye className="h-5 w-5" />
+                    </Link>
+                  </div>
+                </div>
+              ) : null}
+              {review.real_estate_experience ? (
+                <div className="space-y-2">
+                  <span className="text-sm font-semibold text-foreground">Comentario</span>
+                  <p className="text-base capitalize text-muted-foreground">
+                    {review.real_estate_experience}
+                  </p>
+                </div>
+              ) : null}
+            </div>
+          </CardContent>
+        </Card>
+      ) : null}
+
+      <Card className="shadow-sm border-border/50">
+        <CardContent className="p-6">
+          <ReviewLikesButtons id={review.id} likes={review?.likes} dislikes={review?.dislikes} />
+        </CardContent>
+      </Card>
+    </div>
+  );
+};

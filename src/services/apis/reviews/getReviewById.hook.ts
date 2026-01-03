@@ -1,15 +1,30 @@
 'use client';
 
 import { REVIEW_KEYS } from '@/services/constants';
-import { reviewMock } from '@/services/mocks/review.mock';
-import { reviewData } from '@/services/mocks/reviewData.mock';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
+import { supabase } from '@/lib/supabase';
+import type { ReviewWithRelations } from '@/types';
+import type { GetReviewByIdParams } from './types';
 
-export const useGetReviewById = ({ id }: { id: string }) => {
+const getReviewById = async ({ id }: GetReviewByIdParams): Promise<ReviewWithRelations | null> => {
+  const { data, error } = await supabase
+    .from('reviews')
+    .select('*,review_rooms:review_rooms(*),real_estates:real_estates(*)')
+    .eq('id', id)
+    .single();
+
+  if (error) {
+    throw error;
+  }
+  return data;
+};
+
+export const useGetReviewById = ({
+  id,
+}: GetReviewByIdParams): UseQueryResult<ReviewWithRelations | null> => {
   return useQuery({
     queryKey: [REVIEW_KEYS.getReviewById, id],
-    enabled: true,
-    queryFn: () => reviewData.find((review) => review.id === id) ?? reviewMock,
-    structuralSharing: false,
+    queryFn: () => getReviewById({ id }),
+    enabled: !!id,
   });
 };

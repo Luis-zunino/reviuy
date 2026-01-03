@@ -1,4 +1,4 @@
-import { type IErrorPageProps } from "./types";
+import { type IErrorPageProps } from './types';
 
 /**
  * ErrorPage component

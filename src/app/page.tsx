@@ -1,7 +1,8 @@
-import { redirect } from "next/navigation";
+import { PagesUrls } from '@/enums';
+import { redirect } from 'next/navigation';
 
 const RootPage = () => {
-  redirect("/home");
+  redirect(PagesUrls.LOGIN);
   return null;
 };
 

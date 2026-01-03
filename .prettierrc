@@ -5,5 +5,7 @@
   "trailingComma": "es5",
   "printWidth": 100,
   "jsxSingleQuote": false,
-  "arrowParens": "always"
+  "arrowParens": "always",
+  "useTabs": false,
+  "endOfLine": "lf"
 }

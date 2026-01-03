@@ -1,8 +1,8 @@
-import { TipsComponent } from "@/components/features/Tips";
-import React from "react";
+import { TipsPageComponent } from '@/components/features/Tips';
+import React from 'react';
 
 const TipsPage = () => {
-  return <TipsComponent />;
+  return <TipsPageComponent />;
 };
 
 export default TipsPage;

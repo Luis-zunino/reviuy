@@ -1,54 +1,67 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
 import { PagesUrls } from '@/enums';
-import { tips } from '@/services/mocks/tips.mock';
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import React from 'react';
+import { Calendar, User, ArrowRight } from 'lucide-react';
+import Link from 'next/link';
+import { useTipsComponent } from './hooks';
+import { PageWithSidebar } from '@/components/common';
+import { TipsSidebar } from './components/TipsSidebar';
 
-export const TipsComponent = () => {
-  const router = useRouter();
+export const TipsPageComponent = () => {
+  const { categories, filteredArticles, selectedCategory, setSelectedCategory } =
+    useTipsComponent();
+
   return (
-    <div className="lg:px-16 px-4 pt-10 pb-20 ">
-      <h3>Consejos a la hora de alquilar</h3>
-      <div className="relative grid lg:grid-cols-[1fr_auto] lg:gap-8 md:gap-4 grid-cols-1 lg:pt-10 pt-4">
-        <div className="w-full">
-          <div className="space-y-6 sm:max-w-3xl lg:max-w-4xl">
-            {tips.map((tip) => (
-              <div
-                key={tip.id}
-                className="grid grid-cols-1 sm:grid-cols-12 bg-white rounded-2xl shadow-sm overflow-hidden md:max-h-64  opacity-100"
-              >
-                <div className="sm:col-span-3 lg:col-span-4 bg-blue-200 max-h-52 sm:max-h-none">
-                  <Image
-                    alt="Imagen"
-                    loading="lazy"
-                    width="600"
-                    height="600"
-                    decoding="async"
-                    className="object-cover h-full"
-                    src={tip.img}
-                  />
+    <PageWithSidebar
+      title="Consejos y guías para alquilar"
+      description="Aprende todo lo que necesitas saber para alquilar de forma segura"
+      sidebar={
+        <TipsSidebar
+          categories={categories}
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
+        />
+      }
+    >
+      <div className="flex flex-col gap-2">
+        {filteredArticles.map((article) => (
+          <Link
+            key={article.id}
+            href={PagesUrls.TIPS_DETAILS?.replace(':id', article?.id.toString())}
+            className="hover:shadow-lg transition-shadow"
+          >
+            <article className="bg-white rounded-lg border border-border overflow-hidden hover:shadow-lg transition-shadow grid grid-cols-1 md:grid-cols-2">
+              <div className="p-6 md:col-span-2 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center gap-3 mb-3">
+                    <span className="inline-block px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full">
+                      {article.category}
+                    </span>
+                    <span className="text-xs text-muted-foreground">{article.readTime}</span>
+                  </div>
+                  <h2 className="text-xl font-bold text-foreground mb-2 group-hover:text-blue-600">
+                    {article.title}
+                  </h2>
+                  <p className="text-muted-foreground text-sm mb-4">{article.excerpt}</p>
                 </div>
-                <div className="sm:col-span-9 lg:col-span-8 p-6 ">
-                  <h2 className="text-2xl font-bold text-gray-900 sm:pr-12">{tip.title}</h2>
-                  <section aria-labelledby="information-heading" className="mt-3 ">
-                    <h3 id="information-heading" className="sr-only">
-                      {tip.content}
-                    </h3>
-                  </section>
-                  <section aria-labelledby="options-heading" className="mt-6 text-start">
-                    <Button onClick={() => router.push(`${PagesUrls.TIPS}/${tip.id}`)}>
-                      Ver más
-                    </Button>
-                  </section>
+                <div className="flex items-center justify-between text-sm text-muted-foreground">
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-1">
+                      <Calendar className="w-4 h-4" />
+                      {article.date}
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <User className="w-4 h-4" />
+                      {article.category}
+                    </div>
+                  </div>
+                  <ArrowRight className="w-4 h-4 text-blue-600 group-hover:translate-x-1 transition-transform" />
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
+            </article>
+          </Link>
+        ))}
       </div>
-    </div>
+    </PageWithSidebar>
   );
 };

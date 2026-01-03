@@ -1,2 +1,2 @@
-export * from './pagesUrls';
+export * from './pagesUrls.enum';
 export { OsmType } from './osmType.enum';

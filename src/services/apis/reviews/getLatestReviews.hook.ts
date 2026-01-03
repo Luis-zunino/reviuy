@@ -1,15 +1,24 @@
 'use client';
 
 import { REVIEW_KEYS } from '@/services/constants';
-import { reviewData } from '@/services/mocks/reviewData.mock';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
+import { supabase } from '@/lib/supabase';
+import type { Review } from '@/types';
 
-export const useGetLatestReviews = () => {
+const getLatestReviews = async (): Promise<Review[] | null> => {
+  const { data } = await supabase
+    .from('reviews')
+    .select('*')
+    .order('updated_at', { ascending: false })
+    .limit(10);
+
+  return data;
+};
+
+export const useGetLatestReviews = (): UseQueryResult<Review[] | null> => {
   return useQuery({
     queryKey: [REVIEW_KEYS.getLatestReviews],
     enabled: true,
-    queryFn: () => {
-      return reviewData;
-    },
+    queryFn: getLatestReviews,
   });
 };

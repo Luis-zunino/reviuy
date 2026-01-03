@@ -1,59 +1,118 @@
-import * as React from "react"
-import { Slot } from "@radix-ui/react-slot"
-import { cva, type VariantProps } from "class-variance-authority"
+import * as React from 'react';
+import { Slot } from '@radix-ui/react-slot';
+import { cva, type VariantProps } from 'class-variance-authority';
+import type { LucideIcon } from 'lucide-react';
 
-import { cn } from "@/lib/utils"
+import { cn } from '@/lib/utils';
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+  'inline-flex items-center justify-center whitespace-nowrap font-semibold transition-all duration-200 disabled:pointer-events-none disabled:opacity-50 focus:outline-none focus:ring-4 [&_svg]:pointer-events-none [&_svg]:shrink-0',
   {
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground shadow-xs hover:bg-primary/90",
+          'bg-reviuy-primary-600 text-white hover:bg-reviuy-primary-700 focus:ring-reviuy-primary-500/20 shadow-sm hover:shadow-md transform hover:-translate-y-0.5',
         destructive:
-          "bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
+          'bg-reviuy-error-500 text-white hover:bg-reviuy-error-600 focus:ring-reviuy-error-500/20 shadow-sm hover:shadow-md transform hover:-translate-y-0.5',
         outline:
-          "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
+          'bg-white text-reviuy-gray-700 border-2 border-reviuy-gray-200 hover:border-reviuy-primary-300 hover:bg-reviuy-primary-50 focus:ring-reviuy-primary-500/20 shadow-sm hover:shadow-md transform hover:-translate-y-0.5',
         secondary:
-          "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80",
+          'bg-reviuy-secondary-200 text-white hover:bg-reviuy-secondary-500 focus:ring-reviuy-secondary-500/20 shadow-sm hover:shadow-md transform hover:-translate-y-0.5',
+        success:
+          'bg-reviuy-success-500 text-white hover:bg-reviuy-success-600 focus:ring-reviuy-success-500/20 shadow-sm hover:shadow-md transform hover:-translate-y-0.5',
+        warning:
+          'bg-reviuy-warning-500 text-white hover:bg-reviuy-warning-600 focus:ring-reviuy-warning-500/20 shadow-sm hover:shadow-md transform hover:-translate-y-0.5',
         ghost:
-          "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
-        link: "text-primary underline-offset-4 hover:underline",
+          'bg-transparent text-reviuy-gray-700 hover:bg-reviuy-gray-100 focus:ring-reviuy-gray-500/20',
+        link: 'text-reviuy-primary-600 underline-offset-4 hover:underline hover:text-reviuy-primary-700',
+        // Variantes específicas de la plataforma
+        like: 'bg-white text-reviuy-gray-700 border-2 border-reviuy-gray-200 hover:border-red-400 hover:bg-red-50 hover:text-red-600 focus:ring-red-500/20 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 data-[active=true]:bg-red-50 data-[active=true]:border-red-500 data-[active=true]:text-red-600 data-[active=true]:[&_svg]:fill-current',
+        favorite:
+          'bg-white text-reviuy-gray-700 border-2 border-reviuy-gray-200 hover:border-yellow-400 hover:bg-yellow-50 hover:text-yellow-600 focus:ring-yellow-500/20 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 data-[active=true]:bg-yellow-50 data-[active=true]:border-yellow-500 data-[active=true]:text-yellow-600 data-[active=true]:[&_svg]:fill-current',
+        share:
+          'bg-white text-reviuy-gray-700 border-2 border-reviuy-gray-200 hover:border-reviuy-primary-400 hover:bg-reviuy-primary-50 hover:text-reviuy-primary-600 focus:ring-reviuy-primary-500/20 shadow-sm hover:shadow-md transform hover:-translate-y-0.5',
+        report:
+          'bg-white text-reviuy-gray-700 border-2 border-reviuy-gray-200 hover:border-reviuy-error-400 hover:bg-reviuy-error-50 hover:text-reviuy-error-600 focus:ring-reviuy-error-500/20 shadow-sm hover:shadow-md transform hover:-translate-y-0.5',
+        seeMore:
+          'bg-reviuy-primary-50 text-reviuy-primary-700 border-2 border-reviuy-primary-200 hover:bg-reviuy-primary-100 hover:border-reviuy-primary-400 focus:ring-reviuy-primary-500/20 shadow-sm hover:shadow-md transform hover:-translate-y-0.5',
       },
       size: {
-        default: "h-9 px-4 py-2 has-[>svg]:px-3",
-        sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
-        lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
-        icon: "size-9",
+        xs: 'h-8 px-3 py-1.5 text-xs rounded-lg gap-1.5',
+        sm: 'h-9 px-4 py-2 text-sm rounded-lg gap-2',
+        default: 'h-11 px-6 py-3 text-sm rounded-xl gap-2 min-h-[44px]',
+        lg: 'h-12 px-8 py-4 text-base rounded-xl gap-3',
+        xl: 'h-14 px-10 py-5 text-lg rounded-2xl gap-3',
+        icon: 'size-11 rounded-xl',
       },
     },
     defaultVariants: {
-      variant: "default",
-      size: "default",
+      variant: 'default',
+      size: 'default',
     },
   }
-)
+);
 
-function Button({
-  className,
-  variant,
-  size,
-  asChild = false,
-  ...props
-}: React.ComponentProps<"button"> &
-  VariantProps<typeof buttonVariants> & {
-    asChild?: boolean
-  }) {
-  const Comp = asChild ? Slot : "button"
-
-  return (
-    <Comp
-      data-slot="button"
-      className={cn(buttonVariants({ variant, size, className }))}
-      {...props}
-    />
-  )
+interface ButtonProps extends React.ComponentProps<'button'>, VariantProps<typeof buttonVariants> {
+  asChild?: boolean;
+  /** Icono a mostrar en el botón */
+  icon?: LucideIcon;
+  /** Posición del icono - izquierda o derecha */
+  iconPosition?: 'left' | 'right';
+  /** Texto del botón cuando se usa con icono */
+  children?: React.ReactNode;
 }
 
-export { Button, buttonVariants }
+// Mapeo de tamaños de botón a tamaños de icono que coinciden con el texto
+const iconSizeMap = {
+  xs: 12, // text-xs (12px)
+  sm: 14, // text-sm (14px)
+  default: 14, // text-sm (14px)
+  lg: 16, // text-base (16px)
+  xl: 18, // text-lg (18px)
+  icon: 18, // Para botones de solo icono, un poco más grande
+} as const;
+
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  (
+    {
+      className,
+      variant,
+      size,
+      asChild = false,
+      icon: Icon,
+      iconPosition = 'left',
+      children,
+      ...props
+    },
+    ref
+  ) => {
+    const Comp = asChild ? Slot : 'button';
+
+    // Si no hay children y hay icono, es un botón de solo icono
+    const isIconOnly = !children && Icon;
+    const effectiveSize = isIconOnly ? 'icon' : size;
+
+    // Obtener el tamaño del icono basado en el tamaño del botón
+    const iconSize = iconSizeMap[effectiveSize || 'default'];
+
+    return (
+      <Comp
+        ref={ref}
+        data-slot="button"
+        className={cn(
+          'flex items-center gap-2',
+          buttonVariants({ variant, size: effectiveSize, className })
+        )}
+        {...props}
+      >
+        {Icon && iconPosition === 'left' && <Icon size={iconSize} />}
+        {children}
+        {Icon && iconPosition === 'right' && <Icon size={iconSize} />}
+      </Comp>
+    );
+  }
+);
+
+Button.displayName = 'Button';
+
+export { Button, buttonVariants, type ButtonProps };

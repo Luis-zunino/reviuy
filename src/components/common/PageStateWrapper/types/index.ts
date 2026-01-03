@@ -12,15 +12,21 @@ import { type ReactNode } from 'react';
  */
 export interface IPageStateWrapperProps {
   /** Whether the component is in a loading state */
-  isLoading: boolean;
+  isLoading?: boolean;
   /** Whether there was an error loading the data */
-  isError: boolean;
+  isError?: boolean;
   /** The component to render during loading state */
-  LoadingComponent: ReactNode;
+  LoadingComponent?: ReactNode;
   /** Translation key for error title */
   errorTitle?: string;
   /** Optional translation key for error subtitle */
   errorSubTitle?: string;
   /** The content to render when not loading and no error */
   children: ReactNode;
+  /** Whether the user is authenticated */
+  isAuthenticated?: boolean;
+  /** Title to display in the header */
+  title?: string;
+  /** Subtitle to display in the header */
+  subtitle?: ReactNode;
 }

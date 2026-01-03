@@ -1,7 +1,9 @@
-import { type ReactNode } from "react";
-import { ErrorPage } from "../ErrorPage";
-import { type IPageStateWrapperProps } from "./types";
-import { Loading } from "../Loading";
+import { type ReactNode } from 'react';
+import { ErrorPage } from '../ErrorPage';
+import { type IPageStateWrapperProps } from './types';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Header } from '../Header';
+import { Loading } from '../Loading';
 
 /**
  * PageStateWrapper Component
@@ -36,23 +38,57 @@ import { Loading } from "../Loading";
 export const PageStateWrapper = ({
   isLoading,
   isError,
-  LoadingComponent = <Loading />,
   errorTitle,
   errorSubTitle,
+  isAuthenticated = false,
   children,
+  title,
+  subtitle,
 }: IPageStateWrapperProps): ReactNode => {
   if (isLoading) {
-    return LoadingComponent;
+    return (
+      <div className="container mx-auto py-10 flex flex-1 flex-col items-center justify-center">
+        <Card className="w-full">
+          <CardContent className="text-center py-8">
+            <Loading />
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
+  if (isAuthenticated) {
+    return (
+      <div className="container mx-auto py-10">
+        <Card>
+          <CardHeader>
+            <CardTitle>Acceso requerido</CardTitle>
+            <CardDescription>Debes iniciar sesión</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              <p className="text-sm text-gray-600">
+                Estado de autenticación: {isAuthenticated ? 'Autenticado' : 'No autenticado'}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
   if (isError) {
     return (
       <ErrorPage
-        title={errorTitle ?? "Ha ocurrido un error."}
-        subTitle={errorSubTitle ?? "Por favor, inténtalo de nuevo."}
+        title={errorTitle ?? 'Ha ocurrido un error.'}
+        subTitle={errorSubTitle ?? 'Por favor, inténtalo de nuevo.'}
       />
     );
   }
 
-  return children;
+  return (
+    <div className="container mx-auto py-10">
+      <Header title={title} subtitle={subtitle} />
+      {children}
+    </div>
+  );
 };

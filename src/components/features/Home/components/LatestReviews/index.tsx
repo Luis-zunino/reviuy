@@ -1,16 +1,12 @@
 'use client';
 
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { ThumbsUp, ThumbsDown } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { redirect } from 'next/navigation';
 import { useLatestReviews } from './hooks';
-import { Loading } from '@/components/common/Loading';
-import { StarRating } from '@/components/common';
-import { PagesUrls } from '@/enums';
+import { ReviewCard } from '@/components/common';
+import { Building2, HouseIcon } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
 
 export const LatestReviews = () => {
-  const { reviewsData, loading, error, addVote } = useLatestReviews();
+  const { reviewsData, loading, error } = useLatestReviews();
 
   if (reviewsData?.length === 0) {
     return (
@@ -20,63 +16,43 @@ export const LatestReviews = () => {
     );
   }
 
+  if (loading) {
+    return (
+      <div className="space-y-4 mt-6">
+        <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+          <Building2 className="h-5 w-5 text-blue-600" />
+          Últimas resenas
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <Card key={index} className="animate-pulse">
+              <CardContent className="p-4">
+                <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                <div className="h-3 bg-gray-200 rounded w-1/2 mb-2"></div>
+                <div className="h-3 bg-gray-200 rounded w-full"></div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    );
+  }
   return (
-    <>
-      <h2 className="text-center">Listado de ultimas reseñas</h2>
-      {loading ? <Loading message="Cargando reseñas..." /> : null}
+    <div className="space-y-6">
+      <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+        <HouseIcon className="h-5 w-5 text-blue-600" />
+        Últimas resenas
+      </h3>
       {error && (
         <div className="p-6 text-center text-red-500">Error al cargar: {error.message}</div>
       )}
       {!loading && !error && (
-        <div className="flex gap-5 overflow-y-auto">
+        <div className="flex gap-5 overflow-y-auto max-w-screen">
           {reviewsData?.map((review) => (
-            <Card key={review.id} className="min-w-96">
-              <CardHeader>
-                <CardTitle className="text-lg">{review.title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className=" text-sm mb-2">
-                  <div className="flex justify-between gap-1">
-                    Lugar: <StarRating rating={review.rating} />
-                  </div>
-                  <div className="flex justify-between items-center gap-1">
-                    Zona: <StarRating rating={review.zone_rating} />
-                  </div>
-                </div>
-                <p className="text-sm text-gray-700 line-clamp-3">{review.description}</p>
-              </CardContent>
-              <CardFooter className="p-4 flex justify-around bg-gray-50">
-                <Button
-                  onClick={() => {
-                    redirect(PagesUrls.REVIEW_DETAILS);
-                  }}
-                >
-                  Ver detalles
-                </Button>
-                <div className="text-center">
-                  <span className="text-xs text-gray-500">¿Te fue útil?</span>
-                  <div className="flex gap-1">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => addVote({ id: Number(review.id), voteType: 'like' })}
-                    >
-                      <ThumbsUp className="h-4 w-4 mr-2" /> {review.likes}
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => addVote({ id: Number(review.id), voteType: 'dislike' })}
-                    >
-                      <ThumbsDown className="h-4 w-4 mr-2" /> {review.dislikes}
-                    </Button>
-                  </div>
-                </div>
-              </CardFooter>
-            </Card>
+            <ReviewCard review={review} key={review.id} />
           ))}
         </div>
       )}
-    </>
+    </div>
   );
 };

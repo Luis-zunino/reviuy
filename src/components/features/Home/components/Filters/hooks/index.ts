@@ -1,1 +1,1 @@
-export * from "./usePropertyFilters.hook"
+export * from './usePropertyFilters.hook';

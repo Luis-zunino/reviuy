@@ -1,0 +1,732 @@
+-- =============================================================================
+-- MIGRACIÓN 2: SISTEMA COMPLETO DE REVIEWS
+-- Fecha: 09 de octubre de 2025
+-- Descripción: Votos, reportes, auditoría y funciones para reviews
+-- =============================================================================
+
+-- =============================================================================
+-- TABLAS PARA SISTEMA DE REVIEWS
+-- =============================================================================
+
+-- Tabla de votos para reviews
+CREATE TABLE IF NOT EXISTS public.review_votes (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    review_id UUID NOT NULL REFERENCES public.reviews(id) ON DELETE CASCADE,
+    user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+    vote_type TEXT NOT NULL CHECK (vote_type IN ('like', 'dislike')),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    UNIQUE(review_id, user_id)
+);
+
+-- Tabla para reportes de reviews
+CREATE TABLE IF NOT EXISTS public.review_reports (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    review_id UUID NOT NULL REFERENCES public.reviews(id) ON DELETE CASCADE,
+    reported_by_user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    reason TEXT NOT NULL,
+    description TEXT,
+    status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'reviewed', 'resolved', 'dismissed')),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    UNIQUE(review_id, reported_by_user_id)
+);
+
+-- Tabla de auditoría para eliminaciones
+CREATE TABLE IF NOT EXISTS public.review_deletions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    review_id UUID NOT NULL,
+    deleted_by UUID NOT NULL REFERENCES auth.users(id),
+    review_title TEXT,
+    review_rating INTEGER,
+    review_created_at TIMESTAMPTZ,
+    deletion_reason TEXT,
+    deleted_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+-- Tabla de auditoría completa
+CREATE TABLE IF NOT EXISTS public.review_audit (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    review_id UUID NOT NULL,
+    old_data JSONB,
+    new_data JSONB,
+    changed_by UUID REFERENCES auth.users(id),
+    change_type TEXT NOT NULL CHECK (change_type IN ('create', 'update', 'delete')),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+-- =============================================================================
+-- ÍNDICES PARA SISTEMA DE REVIEWS
+-- =============================================================================
+
+-- Índices para review_votes
+CREATE INDEX IF NOT EXISTS idx_review_votes_review_id ON public.review_votes(review_id);
+CREATE INDEX IF NOT EXISTS idx_review_votes_user_id ON public.review_votes(user_id);
+
+-- Índices para review_reports
+CREATE INDEX IF NOT EXISTS idx_review_reports_review_id ON public.review_reports(review_id);
+CREATE INDEX IF NOT EXISTS idx_review_reports_status ON public.review_reports(status);
+CREATE INDEX IF NOT EXISTS idx_review_reports_created_at ON public.review_reports(created_at);
+
+-- Índices para auditoría
+CREATE INDEX IF NOT EXISTS idx_review_deletions_deleted_by ON public.review_deletions(deleted_by);
+CREATE INDEX IF NOT EXISTS idx_review_deletions_deleted_at ON public.review_deletions(deleted_at);
+CREATE INDEX IF NOT EXISTS idx_review_audit_review_id ON public.review_audit(review_id);
+CREATE INDEX IF NOT EXISTS idx_review_audit_change_type ON public.review_audit(change_type);
+CREATE INDEX IF NOT EXISTS idx_review_audit_created_at ON public.review_audit(created_at DESC);
+
+-- =============================================================================
+-- FUNCIONES PARA SISTEMA DE REVIEWS
+-- =============================================================================
+
+-- Función para actualizar contadores de votos de reviews
+DROP TRIGGER IF EXISTS review_votes_trigger ON public.review_votes;
+
+-- Recrear función de actualización de votos
+CREATE OR REPLACE FUNCTION update_review_votes()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF (TG_OP = 'INSERT') THEN
+        UPDATE public.reviews 
+        SET likes = likes + 1 
+        WHERE id = NEW.review_id AND NEW.vote_type = 'like';
+        
+        UPDATE public.reviews 
+        SET dislikes = dislikes + 1 
+        WHERE id = NEW.review_id AND NEW.vote_type = 'dislike';
+        
+    ELSIF (TG_OP = 'DELETE') THEN
+        UPDATE public.reviews 
+        SET likes = likes - 1 
+        WHERE id = OLD.review_id AND OLD.vote_type = 'like';
+        
+        UPDATE public.reviews 
+        SET dislikes = dislikes - 1 
+        WHERE id = OLD.review_id AND OLD.vote_type = 'dislike';
+        
+    ELSIF (TG_OP = 'UPDATE') THEN
+        -- Restar el voto antiguo
+        UPDATE public.reviews 
+        SET likes = likes - 1 
+        WHERE id = OLD.review_id AND OLD.vote_type = 'like';
+        
+        UPDATE public.reviews 
+        SET dislikes = dislikes - 1 
+        WHERE id = OLD.review_id AND OLD.vote_type = 'dislike';
+        
+        -- Sumar el nuevo voto
+        UPDATE public.reviews 
+        SET likes = likes + 1 
+        WHERE id = NEW.review_id AND NEW.vote_type = 'like';
+        
+        UPDATE public.reviews 
+        SET dislikes = dislikes + 1 
+        WHERE id = NEW.review_id AND NEW.vote_type = 'dislike';
+    END IF;
+    
+    RETURN COALESCE(NEW, OLD);
+END;
+$$ LANGUAGE plpgsql;
+
+-- Recrear trigger
+CREATE TRIGGER review_votes_trigger
+    AFTER INSERT OR DELETE OR UPDATE ON public.review_votes
+    FOR EACH ROW
+    EXECUTE FUNCTION update_review_votes();
+
+-- Función para actualizar contadores de inmobiliarias
+CREATE OR REPLACE FUNCTION update_real_estate_counters()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF (TG_OP = 'INSERT') THEN
+        UPDATE public.real_estates 
+        SET 
+            review_count = review_count + 1
+        WHERE id = NEW.real_estate_id;
+        
+    ELSIF (TG_OP = 'UPDATE' AND OLD.real_estate_id IS DISTINCT FROM NEW.real_estate_id) THEN
+        IF OLD.real_estate_id IS NOT NULL THEN
+            UPDATE public.real_estates 
+            SET 
+                review_count = review_count - 1
+            WHERE id = OLD.real_estate_id;
+        END IF;
+        
+        IF NEW.real_estate_id IS NOT NULL THEN
+            UPDATE public.real_estates 
+            SET 
+                review_count = review_count + 1
+            WHERE id = NEW.real_estate_id;
+        END IF;
+        
+    ELSIF (TG_OP = 'DELETE') THEN
+        IF OLD.real_estate_id IS NOT NULL THEN
+            UPDATE public.real_estates 
+            SET 
+                review_count = review_count - 1
+            WHERE id = OLD.real_estate_id;
+        END IF;
+    END IF;
+    
+    RETURN COALESCE(NEW, OLD);
+END;
+$$ LANGUAGE plpgsql;
+
+-- Función para auditoría completa de cambios
+CREATE OR REPLACE FUNCTION log_review_changes()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF (TG_OP = 'UPDATE' AND OLD.* IS DISTINCT FROM NEW.*) THEN
+        INSERT INTO public.review_audit (
+            review_id, 
+            old_data, 
+            new_data, 
+            changed_by,
+            change_type
+        ) VALUES (
+            OLD.id,
+            row_to_json(OLD),
+            row_to_json(NEW), 
+            auth.uid(),
+            'update'
+        );
+    ELSIF (TG_OP = 'INSERT') THEN
+        INSERT INTO public.review_audit (
+            review_id,
+            new_data,
+            changed_by, 
+            change_type
+        ) VALUES (
+            NEW.id,
+            row_to_json(NEW),
+            NEW.user_id,
+            'create'
+        );
+    END IF;
+    RETURN COALESCE(NEW, OLD);
+END;
+$$ LANGUAGE plpgsql;
+
+-- Función para registrar eliminaciones
+CREATE OR REPLACE FUNCTION log_review_deletion()
+RETURNS TRIGGER 
+SECURITY DEFINER
+AS $$
+BEGIN
+    INSERT INTO public.review_deletions (
+        review_id,
+        deleted_by,
+        review_title,
+        review_rating,
+        review_created_at
+    ) VALUES (
+        OLD.id,
+        COALESCE(auth.uid(), OLD.user_id),
+        OLD.title,
+        OLD.rating,
+        OLD.created_at
+    );
+    
+    RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
+
+-- =============================================================================
+-- FUNCIONES DE APLICACIÓN PARA REVIEWS
+-- =============================================================================
+
+-- Función para crear reseñas
+CREATE OR REPLACE FUNCTION create_review(
+    p_title TEXT,
+    p_description TEXT,
+    p_rating INTEGER,
+    p_real_estate_id UUID DEFAULT NULL,
+    p_property_type TEXT DEFAULT NULL,
+    p_address_text TEXT DEFAULT NULL,
+    p_address_osm_id TEXT DEFAULT NULL,
+    p_latitude DECIMAL DEFAULT NULL,
+    p_longitude DECIMAL DEFAULT NULL,
+    p_zone_rating INTEGER DEFAULT NULL,
+    p_winter_comfort_rating INTEGER DEFAULT NULL,
+    p_summer_comfort_rating INTEGER DEFAULT NULL,
+    p_winter_comfort TEXT DEFAULT NULL,
+    p_summer_comfort TEXT DEFAULT NULL,
+    p_humidity TEXT DEFAULT NULL,
+    p_humidity_level TEXT DEFAULT NULL
+)
+RETURNS JSON
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_review_id UUID;
+    v_user_id UUID;
+BEGIN
+    -- Obtener el ID del usuario autenticado
+    v_user_id := auth.uid();
+    
+    IF v_user_id IS NULL THEN
+        RETURN json_build_object(
+            'success', false,
+            'error', 'Usuario no autenticado. Debes iniciar sesión para crear una reseña.'
+        );
+    END IF;
+
+    -- Validar campos obligatorios
+    IF p_title IS NULL OR p_title = '' THEN
+        RETURN json_build_object('success', false, 'error', 'El título es obligatorio');
+    END IF;
+
+    IF p_description IS NULL OR p_description = '' THEN
+        RETURN json_build_object('success', false, 'error', 'La descripción es obligatoria');
+    END IF;
+
+    -- Validar rating
+    IF p_rating IS NULL OR p_rating < 1 OR p_rating > 5 THEN
+        RETURN json_build_object('success', false, 'error', 'El rating debe estar entre 1 y 5');
+    END IF;
+
+    -- Limpiar campos opcionales que vengan vacíos
+    IF p_property_type IS NOT NULL AND p_property_type = '' THEN
+        p_property_type := NULL;
+    END IF;
+    IF p_address_text IS NOT NULL AND p_address_text = '' THEN
+        p_address_text := NULL;
+    END IF;
+    IF p_address_osm_id IS NOT NULL AND p_address_osm_id = '' THEN
+        p_address_osm_id := NULL;
+    END IF;
+    IF p_winter_comfort IS NOT NULL AND p_winter_comfort = '' THEN
+        p_winter_comfort := NULL;
+    END IF;
+    IF p_summer_comfort IS NOT NULL AND p_summer_comfort = '' THEN
+        p_summer_comfort := NULL;
+    END IF;
+    IF p_humidity IS NOT NULL AND p_humidity = '' THEN
+        p_humidity := NULL;
+    END IF;
+    IF p_humidity_level IS NOT NULL AND p_humidity_level = '' THEN
+        p_humidity_level := NULL;
+    END IF;
+
+    -- Insertar la nueva reseña
+    INSERT INTO public.reviews (
+        user_id,
+        title,
+        description,
+        rating,
+        real_estate_id,
+        property_type,
+        address_text,
+        address_osm_id,
+        latitude,
+        longitude,
+        zone_rating,
+        winter_comfort_rating,
+        summer_comfort_rating,
+        winter_comfort,
+        summer_comfort,
+        humidity,
+        humidity_level
+    ) VALUES (
+        v_user_id,
+        p_title,
+        p_description,
+        p_rating,
+        p_real_estate_id,
+        p_property_type,
+        p_address_text,
+        p_address_osm_id,
+        p_latitude,
+        p_longitude,
+        p_zone_rating,
+        p_winter_comfort_rating,
+        p_summer_comfort_rating,
+        p_winter_comfort,
+        p_summer_comfort,
+        p_humidity,
+        p_humidity_level
+    )
+    RETURNING id INTO v_review_id;
+
+    RETURN json_build_object(
+        'success', true,
+        'review_id', v_review_id,
+        'message', 'Reseña creada exitosamente'
+    );
+
+EXCEPTION
+    WHEN OTHERS THEN
+        RETURN json_build_object(
+            'success', false,
+            'error', 'Error al crear la reseña: ' || SQLERRM
+        );
+END;
+$$;
+
+-- Función para eliminar una reseña de forma segura
+CREATE OR REPLACE FUNCTION delete_review_safe(review_id_param UUID)
+RETURNS BOOLEAN AS $$
+DECLARE
+    review_owner UUID;
+    current_user_id UUID;
+BEGIN
+    current_user_id := auth.uid();
+    
+    IF current_user_id IS NULL THEN
+        RAISE EXCEPTION 'Usuario no autenticado';
+    END IF;
+    
+    SELECT user_id INTO review_owner 
+    FROM public.reviews 
+    WHERE id = review_id_param;
+    
+    IF review_owner IS NULL THEN
+        RAISE EXCEPTION 'Reseña no encontrada';
+    END IF;
+    
+    IF review_owner != current_user_id THEN
+        RAISE EXCEPTION 'No tienes permisos para eliminar esta reseña';
+    END IF;
+    
+    DELETE FROM public.reviews WHERE id = review_id_param;
+    
+    RETURN TRUE;
+    
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE EXCEPTION 'Error al eliminar reseña: %', SQLERRM;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Función para obtener estadísticas antes de eliminar
+CREATE OR REPLACE FUNCTION get_review_delete_info(review_id_param UUID)
+RETURNS JSON AS $$
+DECLARE
+    review_info JSON;
+    current_user_id UUID;
+BEGIN
+    current_user_id := auth.uid();
+    
+    IF current_user_id IS NULL THEN
+        RETURN json_build_object('error', 'Usuario no autenticado');
+    END IF;
+    
+    SELECT json_build_object(
+        'id', r.id,
+        'title', r.title,
+        'created_at', r.created_at,
+        'rating', r.rating,
+        'likes', r.likes,
+        'dislikes', r.dislikes,
+        'can_delete', (r.user_id = current_user_id),
+        'vote_count', (
+            SELECT COUNT(*) 
+            FROM public.review_votes rv 
+            WHERE rv.review_id = r.id
+        )
+    ) INTO review_info
+    FROM public.reviews r
+    WHERE r.id = review_id_param;
+    
+    RETURN COALESCE(review_info, json_build_object('error', 'Reseña no encontrada'));
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Función para actualizar una reseña
+CREATE OR REPLACE FUNCTION update_review(
+  p_review_id UUID,
+  p_title TEXT,
+  p_description TEXT,
+  p_rating INTEGER,
+  p_property_type TEXT DEFAULT NULL,
+  p_zone_rating INTEGER DEFAULT NULL,
+  p_winter_comfort_rating INTEGER DEFAULT NULL,
+  p_summer_comfort_rating INTEGER DEFAULT NULL,
+  p_winter_comfort TEXT DEFAULT NULL,
+  p_summer_comfort TEXT DEFAULT NULL,
+  p_humidity TEXT DEFAULT NULL,
+  p_humidity_level TEXT DEFAULT NULL
+)
+RETURNS JSON
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+  v_user_id UUID;
+  v_review_owner UUID;
+BEGIN
+  v_user_id := auth.uid();
+  
+  IF v_user_id IS NULL THEN
+    RETURN json_build_object('success', false, 'error', 'Usuario no autenticado');
+  END IF;
+
+  SELECT user_id INTO v_review_owner
+  FROM public.reviews
+  WHERE id = p_review_id;
+
+  IF v_review_owner IS NULL THEN
+    RETURN json_build_object('success', false, 'error', 'La reseña no existe');
+  END IF;
+
+  IF v_review_owner != v_user_id THEN
+    RETURN json_build_object('success', false, 'error', 'No tienes permisos para editar esta reseña');
+  END IF;
+
+  UPDATE public.reviews
+  SET 
+    title = p_title,
+    description = p_description,
+    rating = p_rating,
+    property_type = COALESCE(p_property_type, property_type),
+    zone_rating = COALESCE(p_zone_rating, zone_rating),
+    winter_comfort_rating = COALESCE(p_winter_comfort_rating, winter_comfort_rating),
+    summer_comfort_rating = COALESCE(p_summer_comfort_rating, summer_comfort_rating),
+    winter_comfort = COALESCE(p_winter_comfort, winter_comfort),
+    summer_comfort = COALESCE(p_summer_comfort, summer_comfort),
+    humidity = COALESCE(p_humidity, humidity),
+    humidity_level = COALESCE(p_humidity_level, humidity_level),
+    updated_at = NOW()
+  WHERE id = p_review_id;
+
+  RETURN json_build_object('success', true, 'message', 'Reseña actualizada exitosamente');
+
+EXCEPTION
+  WHEN OTHERS THEN
+    RETURN json_build_object('success', false, 'error', 'Error interno del servidor');
+END;
+$$;
+
+-- Función para votar reviews (con toggle)
+CREATE OR REPLACE FUNCTION vote_review(
+  p_review_id UUID,
+  p_vote_type TEXT
+)
+RETURNS JSON
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+  v_user_id UUID;
+  v_existing_vote TEXT;
+BEGIN
+  v_user_id := auth.uid();
+  
+  IF v_user_id IS NULL THEN
+    RETURN json_build_object('success', false, 'error', 'Usuario no autenticado');
+  END IF;
+
+  IF p_vote_type NOT IN ('like', 'dislike') THEN
+    RETURN json_build_object('success', false, 'error', 'Tipo de voto inválido. Use like o dislike');
+  END IF;
+
+  -- Verificar si existe un voto previo
+  SELECT vote_type INTO v_existing_vote
+  FROM public.review_votes
+  WHERE review_id = p_review_id AND user_id = v_user_id;
+
+  -- Si existe y es del mismo tipo, eliminar (toggle off)
+  IF v_existing_vote = p_vote_type THEN
+    DELETE FROM public.review_votes
+    WHERE review_id = p_review_id AND user_id = v_user_id;
+    RETURN json_build_object(
+      'success', true, 
+      'message', 'Voto eliminado exitosamente', 
+      'action', 'deleted'
+    );
+  ELSE
+    -- Insertar o actualizar voto (si es diferente tipo o no existe)
+    INSERT INTO public.review_votes (review_id, user_id, vote_type)
+    VALUES (p_review_id, v_user_id, p_vote_type)
+    ON CONFLICT (review_id, user_id) 
+    DO UPDATE SET vote_type = p_vote_type;
+    
+    RETURN json_build_object(
+      'success', true, 
+      'message', 'Voto registrado exitosamente', 
+      'action', CASE WHEN v_existing_vote IS NULL THEN 'inserted' ELSE 'updated' END
+    );
+  END IF;
+
+EXCEPTION
+  WHEN OTHERS THEN
+    RETURN json_build_object('success', false, 'error', 'Error al registrar el voto: ' || SQLERRM);
+END;
+$$;
+
+-- Función para reportar reviews
+CREATE OR REPLACE FUNCTION report_review(
+  p_review_id UUID,
+  p_reason TEXT,
+  p_description TEXT DEFAULT NULL
+)
+RETURNS JSON
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+  v_user_id UUID;
+  v_report_id UUID;
+  v_existing_report UUID;
+BEGIN
+  v_user_id := auth.uid();
+  
+  IF v_user_id IS NULL THEN
+    RETURN json_build_object('success', false, 'error', 'Usuario no autenticado');
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM public.reviews WHERE id = p_review_id) THEN
+    RETURN json_build_object('success', false, 'error', 'La reseña no existe');
+  END IF;
+
+  SELECT id INTO v_existing_report
+  FROM public.review_reports
+  WHERE review_id = p_review_id AND reported_by_user_id = v_user_id;
+
+  IF v_existing_report IS NOT NULL THEN
+    RETURN json_build_object('success', false, 'error', 'Ya has reportado esta reseña anteriormente');
+  END IF;
+
+  INSERT INTO public.review_reports (review_id, reported_by_user_id, reason, description)
+  VALUES (p_review_id, v_user_id, p_reason, p_description)
+  RETURNING id INTO v_report_id;
+
+  RETURN json_build_object('success', true, 'report_id', v_report_id, 'message', 'Reporte enviado exitosamente');
+
+EXCEPTION
+  WHEN unique_violation THEN
+    RETURN json_build_object('success', false, 'error', 'Ya has reportado esta reseña anteriormente');
+  WHEN OTHERS THEN
+    RETURN json_build_object('success', false, 'error', 'Error interno del servidor');
+END;
+$$;
+
+-- Función para verificar si usuario ya reportó una review
+CREATE OR REPLACE FUNCTION has_user_reported_review(p_review_id UUID)
+RETURNS BOOLEAN
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+  v_user_id UUID;
+BEGIN
+  v_user_id := auth.uid();
+  IF v_user_id IS NULL THEN RETURN false; END IF;
+
+  RETURN EXISTS (
+    SELECT 1 
+    FROM public.review_reports 
+    WHERE review_id = p_review_id 
+    AND reported_by_user_id = v_user_id
+  );
+END;
+$$;
+
+-- =============================================================================
+-- TRIGGERS PARA SISTEMA DE REVIEWS
+-- =============================================================================
+
+-- Triggers para votos
+DROP TRIGGER IF EXISTS review_votes_trigger ON public.review_votes;
+CREATE TRIGGER review_votes_trigger
+    AFTER INSERT OR DELETE OR UPDATE ON public.review_votes
+    FOR EACH ROW
+    EXECUTE FUNCTION update_review_votes();
+
+-- Triggers para contadores de inmobiliarias
+DROP TRIGGER IF EXISTS update_real_estate_counters_trigger ON public.reviews;
+CREATE TRIGGER update_real_estate_counters_trigger
+    AFTER INSERT OR UPDATE OR DELETE ON public.reviews
+    FOR EACH ROW
+    EXECUTE FUNCTION update_real_estate_counters();
+
+-- Triggers para auditoría
+DROP TRIGGER IF EXISTS review_changes_audit ON public.reviews;
+CREATE TRIGGER review_changes_audit
+    AFTER INSERT OR UPDATE ON public.reviews
+    FOR EACH ROW
+    EXECUTE FUNCTION log_review_changes();
+
+DROP TRIGGER IF EXISTS review_deletion_audit ON public.reviews;
+CREATE TRIGGER review_deletion_audit
+    BEFORE DELETE ON public.reviews
+    FOR EACH ROW
+    EXECUTE FUNCTION log_review_deletion();
+
+-- =============================================================================
+-- RLS PARA SISTEMA DE REVIEWS
+-- =============================================================================
+
+-- Habilitar RLS en nuevas tablas
+ALTER TABLE public.review_votes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.review_reports ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.review_deletions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.review_audit ENABLE ROW LEVEL SECURITY;
+
+-- Políticas para REVIEW_VOTES
+-- Política para SELECT (todos pueden ver)
+CREATE POLICY "Anyone can view review_votes" ON public.review_votes 
+FOR SELECT USING (true);
+
+-- Política unificada para INSERT, UPDATE, DELETE
+CREATE POLICY "Users can manage own review_votes" ON public.review_votes 
+FOR ALL USING (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "enable_insert_review_votes" ON public.review_votes;
+
+-- CREAR política de INSERT CORRECTA
+CREATE POLICY "enable_insert_review_votes" ON public.review_votes
+FOR INSERT WITH CHECK (
+  auth.uid() IS NOT NULL 
+  AND user_id = auth.uid()
+);
+
+CREATE POLICY "enable_delete_review_votes" ON public.review_votes
+FOR DELETE USING (auth.uid() = user_id);
+
+-- Políticas para REVIEW_REPORTS
+DROP POLICY IF EXISTS "Users can create reports" ON public.review_reports;
+CREATE POLICY "Users can create reports" ON public.review_reports FOR INSERT WITH CHECK (reported_by_user_id = auth.uid());
+
+DROP POLICY IF EXISTS "Users can view their own reports" ON public.review_reports;
+CREATE POLICY "Users can view their own reports" ON public.review_reports FOR SELECT USING (reported_by_user_id = auth.uid());
+
+-- Políticas para REVIEW_DELETIONS
+DROP POLICY IF EXISTS "Users can view their own deletions" ON public.review_deletions;
+CREATE POLICY "Users can view their own deletions" ON public.review_deletions 
+FOR SELECT USING (auth.uid() = deleted_by);
+
+-- Política para INSERT: permitir que el sistema registre eliminaciones
+-- (el trigger se ejecuta cuando el usuario tiene permisos para eliminar la review)
+CREATE POLICY "System can log review deletions" ON public.review_deletions 
+FOR INSERT WITH CHECK (true);
+
+-- Políticas para REVIEW_AUDIT
+DROP POLICY IF EXISTS "System can insert audit records" ON public.review_audit;
+CREATE POLICY "System can insert audit records" ON public.review_audit FOR INSERT WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Users can view audit of their reviews" ON public.review_audit;
+CREATE POLICY "Users can view audit of their reviews" ON public.review_audit FOR SELECT USING (
+    EXISTS (SELECT 1 FROM public.reviews WHERE reviews.id = review_audit.review_id AND reviews.user_id = auth.uid())
+);
+
+-- =============================================================================
+-- PERMISOS PARA FUNCIONES DE REVIEWS
+-- =============================================================================
+
+GRANT EXECUTE ON FUNCTION create_review(TEXT, TEXT, INTEGER, UUID, TEXT, TEXT, TEXT, DECIMAL, DECIMAL, INTEGER, INTEGER, INTEGER, TEXT, TEXT, TEXT, TEXT) TO authenticated;
+GRANT EXECUTE ON FUNCTION delete_review_safe(UUID) TO authenticated;
+GRANT EXECUTE ON FUNCTION vote_review(UUID, TEXT) TO authenticated;
+GRANT EXECUTE ON FUNCTION get_review_delete_info(UUID) TO authenticated;
+GRANT EXECUTE ON FUNCTION update_review(UUID, TEXT, TEXT, INTEGER, TEXT, INTEGER, INTEGER, INTEGER, TEXT, TEXT, TEXT, TEXT) TO authenticated;
+GRANT EXECUTE ON FUNCTION report_review(UUID, TEXT, TEXT) TO authenticated;
+GRANT EXECUTE ON FUNCTION has_user_reported_review(UUID) TO authenticated;
+
+-- =============================================================================
+-- MIGRACIÓN 2 COMPLETADA
+-- =============================================================================
+
+DO $$ 
+BEGIN
+    RAISE NOTICE 'Migración 2 completada: Sistema completo de reviews (votos, reportes, auditoría, funciones)';
+END $$;

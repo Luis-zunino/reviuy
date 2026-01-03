@@ -1,7 +1,8 @@
-import { ThumbsDown, ThumbsUp } from "lucide-react";
-import React from "react";
+import { ThumbsDown, ThumbsUp } from 'lucide-react';
+import React from 'react';
+import type { FeedBackBadgeProps } from './types';
 
-export const FeedBackBadge = (props: { recommended: boolean }) => {
+export const FeedBackBadge = (props: FeedBackBadgeProps) => {
   const { recommended } = props;
   return (
     <div className="lg:flex items-center lg:py-4 lg:px-6 w-full lg:justify-between grid grid-rows">

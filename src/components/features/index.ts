@@ -1,0 +1,11 @@
+export { CreateReview } from './Review/CreateReview';
+export * from './RealEstate';
+export { Home } from './Home';
+export { Login } from './Login';
+export { ViewAddressReviews } from './Review/ViewAddressReviews';
+export { ViewReview } from './Review/ViewReview';
+export { GoodPracticesComponent } from './GoodPractices';
+export { TipsPageComponent } from './Tips';
+export { UpdateReview } from './Review/UpdateReview';
+export { PrivacyPolicyComponent } from './PrivacyPolicy';
+export { TermsAndConditionsComponent } from './TermsAndConditions';

@@ -1,9 +1,10 @@
-import { tips } from "@/services/mocks/tips.mock";
+import { articles } from '@/services/mocks/articles.mock';
+import type { UseTipProps } from './types';
 
-export const useTip = (props: { id: number }) => {
-    const { id } = props;
+export const useTip = (props: UseTipProps) => {
+  const { id } = props;
 
-    return {
-        tip: tips[id - 1],
-    };
+  return {
+    tip: articles[id - 1],
+  };
 };

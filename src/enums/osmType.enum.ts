@@ -1,5 +1,5 @@
 export const enum OsmType {
-    NODE = 'node',
-    WAY = 'way',
-    RELATION = 'relation',
+  NODE = 'node',
+  WAY = 'way',
+  RELATION = 'relation',
 }

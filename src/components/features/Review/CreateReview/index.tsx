@@ -1,0 +1,42 @@
+'use client';
+
+import { useCreateReviewForm } from './hooks';
+import { ReviewForm } from '../components/ReviewForm';
+
+export const CreateReview = () => {
+  const {
+    handleSubmit,
+    onSubmit,
+    control,
+    errors,
+    selectedAddress,
+    user,
+    isAuthenticated,
+    loading,
+    form,
+    handleAddressSelect,
+    fields,
+    replace,
+    append,
+    remove,
+  } = useCreateReviewForm();
+
+  return (
+    <ReviewForm
+      isAuthenticated={isAuthenticated}
+      user={user}
+      loading={loading}
+      errors={errors}
+      selectedAddress={selectedAddress}
+      handleAddressSelect={handleAddressSelect}
+      fields={fields}
+      replace={replace}
+      control={control}
+      form={form}
+      handleSubmit={handleSubmit}
+      onSubmit={onSubmit}
+      append={append}
+      remove={remove}
+    />
+  );
+};

@@ -1,6 +1,6 @@
-import { Review } from "@/types/review";
+import { Review } from '@/types/review';
 
 export interface ReviewListProps {
-    reviews: Review[];
-    onReviewClick: (review: Review) => void;
+  reviews: Review[];
+  onReviewClick: (review: Review) => void;
 }
