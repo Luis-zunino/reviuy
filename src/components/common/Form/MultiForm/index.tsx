@@ -46,10 +46,8 @@ export const MultiForm = <T extends FieldValues = FieldValues>(props: MultiFormP
   };
 
   return (
-    <Card className="shadow-sm space-y-4">
-      {/* Progress indicator mejorado */}
+    <Card className="shadow-sm sm:space-y-4">
       <div className="px-6 pt-6 space-y-3">
-        {/* Indicador de paso actual */}
         <div className="flex items-center justify-between text-sm">
           <span className="font-medium text-muted-foreground">
             {stepLabels && stepLabels[step] ? stepLabels[step] : `Paso ${step + 1}`}
@@ -111,13 +109,9 @@ export const MultiForm = <T extends FieldValues = FieldValues>(props: MultiFormP
       <CardContent>
         <Form {...form}>
           <form onSubmit={onSubmit} className="grid gap-y-4">
-            <Card>
-              <CardContent className="space-y-6">
-                {formsChildren?.map((_, index) => {
-                  return step === index ? formsChildren[index] : null;
-                })}
-              </CardContent>
-            </Card>
+            {formsChildren?.map((_, index) => {
+              return step === index ? formsChildren[index] : null;
+            })}
             <div className="flex justify-between">
               <Button
                 type="button"
