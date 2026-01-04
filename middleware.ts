@@ -1,3 +1,4 @@
+import { PagesUrls } from '@/enums';
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
@@ -27,8 +28,32 @@ export async function middleware(request: NextRequest) {
         }
     );
 
-    // Esto refrescará la sesión si ha expirado - requerido para el servidor
-    await supabase.auth.getUser();
+    const {
+        data: { user },
+    } = await supabase.auth.getUser();
+
+    const protectedRoutes = [PagesUrls.PROFILE, PagesUrls.REVIEW_CREATE, PagesUrls.REAL_ESTATE_CREATE];
+
+    const protectedDynamicRoutes = [
+        PagesUrls.EDIT_REVIEW,
+        PagesUrls.REAL_ESTATE_CREATE_REVIEW.replace(':id', '[^/]+'),
+        PagesUrls.REAL_ESTATE_UPDATE_REVIEW.replace(':id', '[^/]+').replace(':reviewId', '[^/]+'),
+        PagesUrls.REAL_ESTATE_UPDATE.replace('[id]', '[^/]+'),
+    ];
+
+    const isProtectedRoute =
+        protectedRoutes.some(route => request.nextUrl.pathname.startsWith(route)) ||
+        protectedDynamicRoutes.some(route => new RegExp(route).test(request.nextUrl.pathname));
+
+    if (isProtectedRoute && !user) {
+        const redirectUrl = new URL(PagesUrls.LOGIN, request.url);
+        redirectUrl.searchParams.set('redirectTo', request.nextUrl.pathname);
+        return NextResponse.redirect(redirectUrl);
+    }
+    const authRoutes = [PagesUrls.LOGIN];
+    if (user && authRoutes.some(route => request.nextUrl.pathname.startsWith(route))) {
+        return NextResponse.redirect(new URL(PagesUrls.HOME, request.url));
+    }
 
     return supabaseResponse;
 }
