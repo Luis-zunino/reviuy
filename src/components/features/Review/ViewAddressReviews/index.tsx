@@ -51,9 +51,8 @@ export const ViewAddressReviews = ({ osmId }: ViewAddressReviewsProps) => {
             <h2 className="h-plain text-base lg:text-xl">
               {hasReviews ? 'Últimas opiniones' : 'Sin opiniones'}
             </h2>
-            <Button onClick={handleCreateReview}>
-              <Plus className="h-4 w-4" />
-              <span className="text-sm font-medium">Crear Reseña</span>
+            <Button onClick={handleCreateReview} icon={Plus}>
+              <span className="text-sm font-medium">Crear reseña</span>
             </Button>
           </div>
 

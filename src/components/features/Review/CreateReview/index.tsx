@@ -19,6 +19,7 @@ export const CreateReview = () => {
     replace,
     append,
     remove,
+    hasExistingReview,
   } = useCreateReviewForm();
 
   return (
@@ -37,6 +38,7 @@ export const CreateReview = () => {
       onSubmit={onSubmit}
       append={append}
       remove={remove}
+      hasExistingReview={hasExistingReview}
     />
   );
 };

@@ -92,9 +92,9 @@ export const ProfileComponent = () => {
             <Button
               onClick={() => router.push(PagesUrls.REVIEW_CREATE)}
               className="flex items-center gap-2"
+              icon={Plus}
             >
-              <Plus className="h-4 w-4" />
-              Crear Reseña
+              Crear reseña
             </Button>
             <Button
               onClick={() => {
@@ -102,8 +102,8 @@ export const ProfileComponent = () => {
               }}
               variant="outline"
               className="flex items-center gap-2 text-red-600 border-red-200 hover:bg-red-50"
+              icon={LogOut}
             >
-              <LogOut className="h-4 w-4" />
               Cerrar sesión
             </Button>
           </CardTitle>

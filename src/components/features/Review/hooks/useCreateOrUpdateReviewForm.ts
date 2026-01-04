@@ -5,7 +5,7 @@ import { useFieldArray, useForm } from 'react-hook-form';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import { useCreateReview, useUpdateReview } from '@/services';
+import { useCreateReview, useUpdateReview, useCheckUserReviewForAddress } from '@/services';
 import type { SelectedAddress, ReviewFormData } from '@/types';
 import { PagesUrls } from '@/enums';
 import { useQueryClient } from '@tanstack/react-query';
@@ -18,7 +18,10 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
   const router = useRouter();
   const [selectedAddress, setSelectedAddress] = useState<SelectedAddress | null>(null);
   const queryClient = useQueryClient();
-
+  const { data: existingReview } = useCheckUserReviewForAddress({
+    userId: user?.id,
+    osmId: selectedAddress?.osmId ?? undefined,
+  });
   const getDefaultValues = useCallback((): ReviewFormData => {
     if (isUpdate && defaultValues) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -165,7 +168,14 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
     }
   };
 
-  const handleAddressSelect = (addressData: SelectedAddress) => {
+  const handleAddressSelect = async (addressData: SelectedAddress) => {
+    if (!isUpdate && isAuthenticated && user && addressData.osmId && existingReview) {
+      toast.error('Ya has reseñado esta propiedad', {
+        description:
+          'Solo puedes escribir una reseña por propiedad. Puedes editar tu reseña existente desde tu perfil.',
+      });
+    }
+
     const addressDataFormatted: SelectedAddress = {
       osmId: addressData?.osmId?.toString(),
       display_name: addressData.display_name,
@@ -176,9 +186,11 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
     };
     setSelectedAddress(addressDataFormatted);
 
-    toast.success('Dirección seleccionada', {
-      description: 'La dirección se ha cargado correctamente',
-    });
+    if (!existingReview) {
+      toast.success('Dirección seleccionada', {
+        description: 'La dirección se ha cargado correctamente',
+      });
+    }
   };
 
   useEffect(() => {
@@ -205,5 +217,6 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
     replace,
     isOwner,
     watch,
+    hasExistingReview: Boolean(!isUpdate && isAuthenticated && user && existingReview),
   };
 };

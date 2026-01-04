@@ -8,7 +8,7 @@ import type { UseViewAddressReviewsProps } from './types';
 export const useViewAddressReviews = (props: UseViewAddressReviewsProps) => {
   const { osmId } = props;
   const router = useRouter();
-  const { isAuthenticated } = useUser();
+  const { isAuthenticated, user } = useUser();
   const {
     data: addressData,
     isLoading: isLoadingAddress,
@@ -35,6 +35,16 @@ export const useViewAddressReviews = (props: UseViewAddressReviewsProps) => {
   const handleCreateReview = () => {
     if (!isAuthenticated) {
       router.push(PagesUrls.LOGIN);
+      return;
+    }
+
+    const hasExistingReview = reviewsData?.some((review) => review.user_id === user?.id);
+
+    if (hasExistingReview) {
+      toast.warning('Ya has reseñado esta propiedad', {
+        description:
+          'Solo puedes escribir una reseña por propiedad. Puedes editar tu reseña existente desde tu perfil.',
+      });
       return;
     }
 

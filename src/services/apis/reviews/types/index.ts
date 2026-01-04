@@ -9,3 +9,4 @@ export * from './getReviewsByAddress.types';
 export * from './createReview.hook.types';
 export * from './getUserReviewVote.types';
 export * from './voteReview.hook.types';
+export * from './checkUserReviewForAddress.types';

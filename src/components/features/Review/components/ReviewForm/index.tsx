@@ -23,6 +23,7 @@ export const ReviewForm = (props: ReviewFormProps) => {
     append,
     remove,
     defaultRealEstateId,
+    hasExistingReview,
   } = props;
 
   return (
@@ -59,6 +60,7 @@ export const ReviewForm = (props: ReviewFormProps) => {
           />,
         ]}
         form={form}
+        isSubmitDisabled={hasExistingReview}
       />
     </PageStateWrapper>
   );

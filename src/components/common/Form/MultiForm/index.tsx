@@ -11,7 +11,14 @@ import { Progress } from '@/components/ui/progress';
 import type { MultiFormProps } from './types';
 
 export const MultiForm = <T extends FieldValues = FieldValues>(props: MultiFormProps<T>) => {
-  const { formsChildren, onSubmit, form, stepLabels, showProgressBar = true } = props;
+  const {
+    formsChildren,
+    onSubmit,
+    form,
+    stepLabels,
+    showProgressBar = true,
+    isSubmitDisabled,
+  } = props;
   const [step, setStep] = useState(0);
   const totalSteps = formsChildren.length;
   const progressPercentage = ((step + 1) / totalSteps) * 100;
@@ -124,7 +131,7 @@ export const MultiForm = <T extends FieldValues = FieldValues>(props: MultiFormP
               </Button>
               <div className="flex items-center gap-2">
                 <Button
-                  disabled={!form.formState.isValid}
+                  disabled={!form.formState.isValid || isSubmitDisabled}
                   type="submit"
                   size="sm"
                   className="font-medium"

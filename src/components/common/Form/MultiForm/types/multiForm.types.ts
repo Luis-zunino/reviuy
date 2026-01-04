@@ -8,4 +8,5 @@ export interface MultiFormProps<T extends FieldValues = FieldValues> {
   form: UseFormReturn<T, any, T>;
   stepLabels?: string[];
   showProgressBar?: boolean;
+  isSubmitDisabled?: boolean;
 }

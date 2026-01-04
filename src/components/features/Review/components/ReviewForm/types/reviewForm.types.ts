@@ -29,4 +29,5 @@ export interface ReviewFormProps {
   append: UseFieldArrayAppend<ReviewFormData, 'review_rooms'>;
   remove: UseFieldArrayRemove;
   defaultRealEstateId?: string | null;
+  hasExistingReview?: boolean;
 }

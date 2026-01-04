@@ -16,6 +16,7 @@ export const useCreateReviewForm = () => {
     router,
     append,
     remove,
+    hasExistingReview,
   } = useCreateOrUpdateReviewForm({
     defaultValues: null,
     isUpdate: false,
@@ -38,5 +39,6 @@ export const useCreateReviewForm = () => {
     replace,
     append,
     remove,
+    hasExistingReview,
   };
 };
