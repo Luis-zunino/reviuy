@@ -20,7 +20,7 @@ export const GoodPracticesComponent = () => {
               Volver al inicio
             </Button>
           </Link>
-          <h1 className="text-3xl font-bold text-gray-900">Buenas Prácticas</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Buenas prácticas</h1>
           <p className="text-gray-600 mt-2">Guía para mantener una comunidad respetuosa y útil</p>
         </div>
 
@@ -36,7 +36,7 @@ export const GoodPracticesComponent = () => {
           </section>
 
           <section className="bg-blue-50 border-2 border-blue-200 rounded-lg p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Breve Resumen</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">Breve resumen</h2>
 
             <h3 className="text-lg font-medium text-gray-800 mb-3">Comentarios prohibidos:</h3>
             <ul className="text-gray-700 leading-relaxed space-y-2 list-disc ml-6 mb-4">
@@ -91,7 +91,7 @@ export const GoodPracticesComponent = () => {
 
           <section>
             <h2 className="text-xl font-semibold text-gray-900 mb-3">
-              ¿Qué Comentarios Están Prohibidos?
+              ¿Qué comentarios están prohibidos?
             </h2>
             <p className="text-gray-700 leading-relaxed mb-4">
               El objetivo de Reviuy es que todos los usuarios puedan compartir sus experiencias
@@ -103,7 +103,7 @@ export const GoodPracticesComponent = () => {
 
           <section>
             <h3 className="text-lg font-medium text-gray-900 mb-3">
-              1. Datos Personales e Identificación de Terceros
+              1. Datos personales e identificación de terceros
             </h3>
             <p className="text-gray-700 leading-relaxed mb-3">
               No puedes publicar datos personales de terceros sin su consentimiento, ya que esto
@@ -121,7 +121,7 @@ export const GoodPracticesComponent = () => {
 
           <section>
             <h3 className="text-lg font-medium text-gray-900 mb-3">
-              2. Respeto al Honor, Intimidad e Imagen
+              2. Respeto al honor, intimidad e imagen
             </h3>
             <p className="text-gray-700 leading-relaxed mb-3">
               Está prohibido realizar comentarios que atenten contra:
@@ -136,7 +136,7 @@ export const GoodPracticesComponent = () => {
           </section>
 
           <section>
-            <h3 className="text-lg font-medium text-gray-900 mb-3">3. No Discriminación</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-3">3. No discriminación</h3>
             <p className="text-gray-700 leading-relaxed mb-3">
               Se prohíbe estrictamente cualquier tipo de comentario que:
             </p>
@@ -152,7 +152,7 @@ export const GoodPracticesComponent = () => {
 
           <section>
             <h3 className="text-lg font-medium text-gray-900 mb-3">
-              4. Spam y Derechos de Propiedad Intelectual
+              4. Spam y derechos de propiedad intelectual
             </h3>
             <p className="text-gray-700 leading-relaxed mb-3">No está permitido:</p>
             <ul className="text-gray-700 leading-relaxed space-y-2 list-disc ml-6">
@@ -167,7 +167,7 @@ export const GoodPracticesComponent = () => {
 
           <section>
             <h2 className="text-xl font-semibold text-gray-900 mb-3">
-              Consejos para Escribir Buenas Reseñas
+              Consejos para escribir buenas reseñas
             </h2>
             <ul className="text-gray-700 leading-relaxed space-y-2 list-disc ml-6">
               <li>Sé honesto y objetivo en tus comentarios</li>
@@ -180,7 +180,7 @@ export const GoodPracticesComponent = () => {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold text-gray-900 mb-3">Moderación de Contenido</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-3">Moderación de contenido</h2>
             <p className="text-gray-700 leading-relaxed">
               El equipo de Reviuy se reserva el derecho de moderar, editar o eliminar cualquier
               contenido que viole estas buenas prácticas. En casos graves o reiterados, podremos
@@ -190,7 +190,7 @@ export const GoodPracticesComponent = () => {
           </section>
 
           <section className="bg-gray-50 rounded-lg p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-3">¿Tienes Dudas?</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-3">¿Tienes dudas?</h2>
             <p className="text-gray-700 leading-relaxed">
               Si tienes preguntas sobre estas buenas prácticas o necesitas reportar contenido
               inapropiado, no dudes en contactarnos. Estamos comprometidos en mantener Reviuy como

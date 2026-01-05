@@ -16,10 +16,9 @@ export const Footer = () => {
             <li className="text-purple-300 font-bold">Empresa</li>
             <li className="cursor-pointer">
               <Link href={PagesUrls.ABOUT} title="Información sobre Reviu">
-                Sobre Nosotros
+                Sobre nosotros
               </Link>
             </li>
-            <li>info@reviUy.com</li>
           </ul>
         </div>
         <div className="lg:text-left">

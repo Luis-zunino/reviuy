@@ -29,17 +29,17 @@ export const PrivacyPolicyComponent = () => {
         <div className="bg-white rounded-lg shadow-sm p-8 space-y-6">
           <section>
             <h2 className="text-xl font-semibold text-gray-900 mb-3">
-              1. Información que Recopilamos
+              1. Información que recopilamos
             </h2>
             <div className="space-y-3">
-              <h3 className="text-lg font-medium text-gray-800">Información de Cuenta</h3>
+              <h3 className="text-lg font-medium text-gray-800">Información de cuenta</h3>
               <ul className="text-gray-700 leading-relaxed space-y-1 list-disc ml-6">
                 <li>Dirección de correo electrónico</li>
                 <li>Información de perfil que elijas compartir</li>
                 <li>Historial de actividad en la plataforma</li>
               </ul>
 
-              <h3 className="text-lg font-medium text-gray-800">Información de Uso</h3>
+              <h3 className="text-lg font-medium text-gray-800">Información de uso</h3>
               <ul className="text-gray-700 leading-relaxed space-y-1 list-disc ml-6">
                 <li>Reseñas y comentarios que publiques</li>
                 <li>Interacciones con otros usuarios</li>
@@ -50,7 +50,7 @@ export const PrivacyPolicyComponent = () => {
 
           <section>
             <h2 className="text-xl font-semibold text-gray-900 mb-3">
-              2. Cómo Usamos tu Información
+              2. Cómo usamos tu información
             </h2>
             <ul className="text-gray-700 leading-relaxed space-y-2 list-disc ml-6">
               <li>Proporcionar y mejorar nuestros servicios</li>
@@ -62,7 +62,7 @@ export const PrivacyPolicyComponent = () => {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold text-gray-900 mb-3">3. Compartir Información</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-3">3. Compartir información</h2>
             <p className="text-gray-700 leading-relaxed mb-3">
               No vendemos tu información personal. Podemos compartir información en las siguientes
               circunstancias:
@@ -76,7 +76,7 @@ export const PrivacyPolicyComponent = () => {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold text-gray-900 mb-3">4. Seguridad de Datos</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-3">4. Seguridad de datos</h2>
             <p className="text-gray-700 leading-relaxed">
               Implementamos medidas de seguridad técnicas y organizativas para proteger tu
               información personal contra acceso no autorizado, alteración, divulgación o
@@ -86,7 +86,7 @@ export const PrivacyPolicyComponent = () => {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold text-gray-900 mb-3">5. Retención de Datos</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-3">5. Retención de datos</h2>
             <p className="text-gray-700 leading-relaxed">
               Conservamos tu información personal mientras tu cuenta esté activa o según sea
               necesario para proporcionarte servicios. También podemos retener información para
@@ -95,7 +95,7 @@ export const PrivacyPolicyComponent = () => {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold text-gray-900 mb-3">6. Tus Derechos</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-3">6. Tus derechos</h2>
             <p className="text-gray-700 leading-relaxed mb-3">Tienes derecho a:</p>
             <ul className="text-gray-700 leading-relaxed space-y-2 list-disc ml-6">
               <li>Acceder a tu información personal</li>
@@ -109,7 +109,7 @@ export const PrivacyPolicyComponent = () => {
 
           <section>
             <h2 className="text-xl font-semibold text-gray-900 mb-3">
-              7. Cookies y Tecnologías Similares
+              7. Cookies y tecnologías similares
             </h2>
             <p className="text-gray-700 leading-relaxed">
               Utilizamos cookies y tecnologías similares para mejorar tu experiencia, analizar el
@@ -119,17 +119,17 @@ export const PrivacyPolicyComponent = () => {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold text-gray-900 mb-3">8. Menores de Edad</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-3">8. Menores de edad</h2>
             <p className="text-gray-700 leading-relaxed">
-              Nuestro servicio no está dirigido a menores de 13 años. No recopilamos conscientemente
-              información personal de menores de 13 años. Si descubrimos que hemos recopilado
+              Nuestro servicio no está dirigido a menores de 18 años. No recopilamos conscientemente
+              información personal de menores de 18 años. Si descubrimos que hemos recopilado
               información de un menor, la eliminaremos inmediatamente.
             </p>
           </section>
 
           <section>
             <h2 className="text-xl font-semibold text-gray-900 mb-3">
-              9. Cambios en esta Política
+              9. Cambios en esta política
             </h2>
             <p className="text-gray-700 leading-relaxed">
               Podemos actualizar esta política de privacidad ocasionalmente. Te notificaremos sobre

@@ -3,7 +3,7 @@ import '../globals.css';
 import { MainLayout } from '@/components/common/MainLayout';
 
 export const metadata: Metadata = {
-  title: 'Buenas Prácticas | Reviuy',
+  title: 'Buenas prácticas | Reviuy',
   description: 'Guía de buenas prácticas para la comunidad de Reviuy.',
 };
 

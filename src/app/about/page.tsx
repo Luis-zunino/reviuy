@@ -42,7 +42,7 @@ export default function AboutPage() {
               <div className="p-3 bg-blue-100 rounded-full mr-4">
                 <Target className="w-6 h-6 text-blue-600" />
               </div>
-              <h3 className="text-2xl font-semibold text-gray-900">Nuestra Misión</h3>
+              <h3 className="text-2xl font-semibold text-gray-900">Nuestra misión</h3>
             </div>
             <p className="text-gray-700 leading-relaxed">
               Democratizar el acceso a información confiable sobre alquileres en Uruguay, creando
@@ -56,7 +56,7 @@ export default function AboutPage() {
               <div className="p-3 bg-green-100 rounded-full mr-4">
                 <Eye className="w-6 h-6 text-green-600" />
               </div>
-              <h3 className="text-2xl font-semibold text-gray-900">Nuestra Visión</h3>
+              <h3 className="text-2xl font-semibold text-gray-900">Nuestra visión</h3>
             </div>
             <p className="text-gray-700 leading-relaxed">
               Ser la plataforma de referencia en Uruguay para reseñas de alquileres, expandiendo
@@ -68,7 +68,7 @@ export default function AboutPage() {
 
         {/* Valores */}
         <div className="bg-white rounded-lg shadow-sm p-8 mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">Nuestros Valores</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">Nuestros valores</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <div className="text-center">
               <div className="inline-flex p-4 bg-blue-100 rounded-full mb-3">
@@ -134,7 +134,7 @@ export default function AboutPage() {
 
         {/* Historia */}
         <div className="bg-white rounded-lg shadow-sm p-8 mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Nuestra Historia</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Nuestra historia</h2>
           <div className="space-y-4 text-gray-700 leading-relaxed">
             <p>
               Reviuy nació de la necesidad de crear un espacio donde inquilinos y propietarios
@@ -162,17 +162,13 @@ export default function AboutPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href={PagesUrls.REVIEW_CREATE}>
-              <Button size="lg" variant="secondary" className="w-full sm:w-auto">
-                Crear una Reseña
+              <Button size="lg" variant="outline">
+                Crear una reseña
               </Button>
             </Link>
             <Link href={PagesUrls.HOME}>
-              <Button
-                size="lg"
-                variant="outline"
-                className="w-full sm:w-auto bg-white text-blue-600 hover:bg-blue-50"
-              >
-                Explorar Reseñas
+              <Button size="lg" variant="outline">
+                Explorar reseñas
               </Button>
             </Link>
           </div>

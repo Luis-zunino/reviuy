@@ -28,7 +28,7 @@ export const TermsAndConditionsComponent = () => {
 
         <div className="bg-white rounded-lg shadow-sm p-8 space-y-6">
           <section>
-            <h2 className="text-xl font-semibold text-gray-900 mb-3">1. Aceptación de Términos</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-3">1. Aceptación de términos</h2>
             <p className="text-gray-700 leading-relaxed">
               Al acceder y utilizar Reviuy, aceptas estar sujeto a estos términos y condiciones. Si
               no estás de acuerdo con alguna parte de estos términos, no debes usar nuestro
@@ -38,7 +38,7 @@ export const TermsAndConditionsComponent = () => {
 
           <section>
             <h2 className="text-xl font-semibold text-gray-900 mb-3">
-              2. Descripción del Servicio
+              2. Descripción del servicio
             </h2>
             <p className="text-gray-700 leading-relaxed">
               Reviuy es una plataforma que permite a los usuarios crear y compartir reseñas sobre
@@ -49,7 +49,7 @@ export const TermsAndConditionsComponent = () => {
 
           <section>
             <h2 className="text-xl font-semibold text-gray-900 mb-3">
-              3. Registro y Cuenta de Usuario
+              3. Registro y cuenta de usuario
             </h2>
             <ul className="text-gray-700 leading-relaxed space-y-2 list-disc ml-6">
               <li>Debes proporcionar información veraz y actualizada</li>
@@ -60,7 +60,7 @@ export const TermsAndConditionsComponent = () => {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold text-gray-900 mb-3">4. Contenido del Usuario</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-3">4. Contenido del usuario</h2>
             <p className="text-gray-700 leading-relaxed">
               Las reseñas y contenido que publiques deben ser honestos, precisos y estar basados en
               tu experiencia real. Nos reservamos el derecho de moderar, editar o eliminar contenido
@@ -69,7 +69,7 @@ export const TermsAndConditionsComponent = () => {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold text-gray-900 mb-3">5. Conducta Prohibida</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-3">5. Conducta prohibida</h2>
             <ul className="text-gray-700 leading-relaxed space-y-2 list-disc ml-6">
               <li>Publicar contenido falso, difamatorio o engañoso</li>
               <li>Crear múltiples cuentas para manipular reseñas</li>
@@ -80,7 +80,7 @@ export const TermsAndConditionsComponent = () => {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold text-gray-900 mb-3">6. Propiedad Intelectual</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-3">6. Propiedad intelectual</h2>
             <p className="text-gray-700 leading-relaxed">
               El contenido original de Reviuy está protegido por derechos de autor. Al publicar
               contenido, nos otorgas una licencia para usar, mostrar y distribuir ese contenido en
@@ -90,7 +90,7 @@ export const TermsAndConditionsComponent = () => {
 
           <section>
             <h2 className="text-xl font-semibold text-gray-900 mb-3">
-              7. Limitación de Responsabilidad
+              7. Limitación de responsabilidad
             </h2>
             <p className="text-gray-700 leading-relaxed">
               Reviuy se proporciona &ldquo;tal como está&rdquo;. No garantizamos la exactitud del

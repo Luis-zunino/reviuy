@@ -47,9 +47,9 @@ export const useAuth = () => {
   const signInWithEmail = async (email: string) => {
     setLoading(true);
     const emailRedirectTo =
-      process.env.NODE_ENV === 'development'
-        ? 'http://localhost:3000/auth/callback'
-        : 'https://reviuy.vercel.app/auth/callback';
+      process.env.NODE_ENV === 'production'
+        ? 'https://reviuy.vercel.app/auth/callback'
+        : 'http://localhost:3000/auth/callback';
     const { error } = await supabaseClient.auth.signInWithOtp({
       email,
       options: {

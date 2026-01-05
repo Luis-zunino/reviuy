@@ -3,6 +3,7 @@ import { Filter } from 'lucide-react';
 import { RealEstateSearchInput, StarRatingInput } from '@/components/common';
 import { Button } from '@/components/ui/button';
 import type { RealEstateSidebarProps } from './types';
+import { Label } from '@/components/ui/label';
 
 export const RealEstateSidebar: React.FC<RealEstateSidebarProps> = ({
   searchValue,
@@ -29,7 +30,7 @@ export const RealEstateSidebar: React.FC<RealEstateSidebarProps> = ({
         />
       </div>
       <div className="mb-6">
-        <label className="block text-gray-700 mb-3">Calificación mínima</label>
+        <Label className="block text-gray-700 mb-3">Calificación mínima</Label>
         <StarRatingInput value={selectedRating} onChange={setSelectedRating} size="sm" />
       </div>
 
