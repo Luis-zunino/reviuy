@@ -4,4 +4,5 @@ export const REAL_ESTATE_REVIEWS = {
   getRealEstateReviewById: ['getRealEstateReviewById'],
   getRealEstateReviewByUserId: ['getRealEstateReviewByUserId'],
   getUserRealEstateVote: ['getUserRealEstateVote'],
+  searchRealEstates: ['searchRealEstates'],
 };

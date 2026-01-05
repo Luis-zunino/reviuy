@@ -1,6 +1,5 @@
 export * from './getAllRealEstates.hook';
 export * from './createRealEstate.api';
-export * from './searchRealEstates';
 export * from './getRealEstateById.hook';
 export * from './createRealEstateReview.hook';
 export * from './getAllRealEstateReviews.hook';
@@ -17,3 +16,4 @@ export * from './toggleFavoriteRealEstate.hook';
 export * from './isRealEstateFavorite.hook';
 export * from './getUserFavoriteRealEstates.hook';
 export * from './createRealEstate.hook';
+export * from './searchRealEstates.hook';

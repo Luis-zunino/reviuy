@@ -15,7 +15,7 @@ import { validateText } from '@/utils';
 import type { CreateRealEstateModalProps } from './types';
 
 export const CreateRealEstateModal = (props: CreateRealEstateModalProps) => {
-  const { isOpen, onOpenChange } = props;
+  const { isOpen, onOpenChange, defaultValue } = props;
   const { control, handleFormSubmit, isSubmitting, errors } = useCreateRealEstateModal({
     onOpenChange,
   });
@@ -37,6 +37,7 @@ export const CreateRealEstateModal = (props: CreateRealEstateModalProps) => {
               <Controller
                 name="name"
                 control={control}
+                defaultValue={defaultValue}
                 rules={{
                   required: 'El nombre es obligatorio',
                   validate: (value) => {

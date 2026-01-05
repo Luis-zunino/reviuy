@@ -9,6 +9,7 @@ import { PagesUrls } from '@/enums';
 import { redirect } from 'next/navigation';
 import { useViewRealEstateDetails } from './hooks';
 import { ViewRealEstateDetailsHeader } from './ViewRealEstateDetailsHeader';
+import { cn } from '@/lib/utils';
 
 export const ViewRealEstateDetails = () => {
   const {
@@ -92,60 +93,66 @@ export const ViewRealEstateDetails = () => {
               </div>
             ) : (
               <div className="space-y-4">
-                {realEstateReview?.map((rer) => (
-                  <div
-                    key={rer.id}
-                    className="border-b border-gray-100 last:border-b-0 pb-4 last:pb-0"
-                  >
-                    <div className="flex items-start justify-between mb-2">
-                      <StarRatingDisplay rating={rer.rating} />
+                {realEstateReview?.map((rer) => {
+                  const isOwner = userId === rer.user_id;
+                  return (
+                    <div
+                      key={rer.id}
+                      className={cn(
+                        'border-b border-gray-100 last:border-b-0 pb-4 last:pb-0',
+                        `${isOwner ? 'bg-gray-100 rounded-lg p-1' : ''}`
+                      )}
+                    >
+                      <div className="flex items-start justify-between mb-2">
+                        <StarRatingDisplay rating={rer.rating} />
 
-                      <div className="flex items-center gap-1 text-sm text-gray-500">
-                        <Calendar className="h-3 w-3" />
-                        {new Date(rer.created_at).toLocaleDateString()}
-                      </div>
-                      <div className="flex gap-2">
-                        <Button
-                          variant="outline"
-                          onClick={() =>
-                            router.push(
-                              PagesUrls.REAL_ESTATE_VIEW_REVIEW.replace(
-                                ':id',
-                                realEstateId
-                              ).replace(':reviewId', rer.id)
-                            )
-                          }
-                        >
-                          Ver
-                        </Button>
-                        <ReportRealEstateReviewButton review={rer} showText />
-                        {userId === rer.user_id ? (
+                        <div className="flex items-center gap-1 text-sm text-gray-500">
+                          <Calendar className="h-3 w-3" />
+                          {new Date(rer.created_at).toLocaleDateString()}
+                        </div>
+                        <div className="flex gap-2">
                           <Button
                             variant="outline"
                             onClick={() =>
                               router.push(
-                                PagesUrls.REAL_ESTATE_UPDATE_REVIEW.replace(
+                                PagesUrls.REAL_ESTATE_VIEW_REVIEW.replace(
                                   ':id',
                                   realEstateId
                                 ).replace(':reviewId', rer.id)
                               )
                             }
                           >
-                            Editar
+                            Ver
                           </Button>
-                        ) : null}
+                          <ReportRealEstateReviewButton review={rer} showText />
+                          {isOwner ? (
+                            <Button
+                              variant="outline"
+                              onClick={() =>
+                                router.push(
+                                  PagesUrls.REAL_ESTATE_UPDATE_REVIEW.replace(
+                                    ':id',
+                                    realEstateId
+                                  ).replace(':reviewId', rer.id)
+                                )
+                              }
+                            >
+                              Editar
+                            </Button>
+                          ) : null}
+                        </div>
+                      </div>
+
+                      <h4 className="font-medium text-gray-900 mb-1">{rer.title}</h4>
+                      <p className="text-gray-600 mb-2">{rer.description}</p>
+
+                      <div className="flex items-center gap-2">
+                        <span>👍 {rer.likes}</span>
+                        <span>👎 {rer.dislikes}</span>
                       </div>
                     </div>
-
-                    <h4 className="font-medium text-gray-900 mb-1">{rer.title}</h4>
-                    <p className="text-gray-600 mb-2">{rer.description}</p>
-
-                    <div className="flex items-center gap-2">
-                      <span>👍 {rer.likes}</span>
-                      <span>👎 {rer.dislikes}</span>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </CardContent>

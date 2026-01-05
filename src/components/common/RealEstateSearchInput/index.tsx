@@ -85,7 +85,7 @@ export const RealEstateSearchInput = ({
           )}
 
           {!isLoading &&
-            results.map((result) => (
+            results?.map((result) => (
               <li key={result.id}>
                 <Button
                   variant="ghost"
@@ -126,7 +126,11 @@ export const RealEstateSearchInput = ({
           </div>
         </div>
       )}
-      <CreateRealEstateModal isOpen={isModalOpen} onOpenChange={onOpenChange} />
+      <CreateRealEstateModal
+        isOpen={isModalOpen}
+        onOpenChange={onOpenChange}
+        defaultValue={debouncedSearchTerm}
+      />
     </div>
   );
 };

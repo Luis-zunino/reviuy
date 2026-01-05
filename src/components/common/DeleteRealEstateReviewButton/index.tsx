@@ -1,71 +1,51 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Trash2 } from 'lucide-react';
 import { DeleteReviewDialog } from '@/components/common';
-import { useDeleteRealEstateReview } from '@/services';
-import { useUser } from '@/hooks';
-import { useRouter } from 'next/navigation';
-import { PagesUrls } from '@/enums';
 import type { DeleteRealEstateReviewButtonProps } from './types';
+import { useDeleteRealEstateReviewButton } from './hooks';
 
 export const DeleteRealEstateReviewButton: React.FC<DeleteRealEstateReviewButtonProps> = ({
   review,
   onDeleteSuccess,
   showText = false,
-  variant = 'ghost',
   size = 'sm',
   className = '',
 }) => {
-  const router = useRouter();
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const { user, isAuthenticated } = useUser();
-
-  const deleteReviewMutation = useDeleteRealEstateReview({
-    onSuccess: () => {
-      setShowDeleteDialog(false);
-      if (onDeleteSuccess) {
-        onDeleteSuccess();
-      }
-      router.push(PagesUrls.HOME);
-    },
-  });
-
-  const isOwner = isAuthenticated && user?.id && review.user_id && user.id === review.user_id;
+  const {
+    handleDeleteClick,
+    handleConfirmDelete,
+    showDeleteDialog,
+    setShowDeleteDialog,
+    isPending,
+    isOwner,
+  } = useDeleteRealEstateReviewButton({ review, onDeleteSuccess });
 
   if (!isOwner || !review.user_id) {
     return null;
   }
 
-  const handleDeleteClick = () => {
-    setShowDeleteDialog(true);
-  };
-
-  const handleConfirmDelete = () => {
-    deleteReviewMutation.mutate({ reviewId: review.id });
-  };
-
   return (
     <>
       <Button
-        variant={variant}
+        variant="destructive"
         size={size}
         onClick={handleDeleteClick}
-        className={`text-red-600 hover:text-red-700 hover:bg-red-50 ${className}`}
-        disabled={deleteReviewMutation.isPending}
+        className={className}
+        disabled={isPending}
         icon={Trash2}
         iconPosition="left"
       >
-        {showText && <span className="ml-2">Eliminar</span>}
+        {showText && <span className="ml-2 hidden md:inline">Eliminar</span>}
       </Button>
-
       <DeleteReviewDialog
         isOpen={showDeleteDialog}
         onClose={() => setShowDeleteDialog(false)}
         onConfirm={handleConfirmDelete}
         reviewTitle={review.title}
-        isDeleting={deleteReviewMutation.isPending}
+        isDeleting={isPending}
       />
     </>
   );

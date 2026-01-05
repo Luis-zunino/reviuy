@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import RealEstateReviewForm from '../RealEstateReviewForm';
+import { RealEstateReviewForm } from '../RealEstateReviewForm';
 import { useUpdateRealEstateReview } from './hooks';
 import { useParams } from 'next/navigation';
 import { useGetRealEstateById } from '@/services';

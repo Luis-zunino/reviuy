@@ -1,7 +1,7 @@
 'use client';
 
 import { useCreateRealEstateReview } from './hooks';
-import RealEstateReviewForm from '../RealEstateReviewForm';
+import { RealEstateReviewForm } from '../RealEstateReviewForm';
 import { useParams } from 'next/navigation';
 import { useGetRealEstateById } from '@/services';
 

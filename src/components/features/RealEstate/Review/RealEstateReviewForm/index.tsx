@@ -80,30 +80,18 @@ export const RealEstateReviewForm = <RR extends RealEstateReviewUpdate>(
           <CardContent>
             <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
               <RealEstateReviewFormContent form={form} isReadOnly={isReadOnly} />
-              <div className="flex gap-4 pt-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => router.back()}
-                  className="flex-1"
-                  icon={ArrowLeft}
-                >
-                  {isReadOnly ? 'Volver' : 'Cancelar'}
-                </Button>
-                {review && isReadOnly ? (
-                  <DeleteRealEstateReviewButton review={review} showText variant="destructive" />
-                ) : null}
-
+              <div className="flex gap-4 pt-4 justify-end">
                 {review && isReadOnly ? (
                   <RealEstateReviewVoteButtons
-                    reviewId={review?.id ?? ''}
-                    likes={review?.likes ?? 0}
-                    dislikes={review?.dislikes ?? 0}
+                    reviewId={review.id}
+                    likes={review.likes}
+                    dislikes={review.dislikes}
                     refetchRealEstateReview={refetchRealEstateReview}
                   />
                 ) : null}
+                {review ? <DeleteRealEstateReviewButton review={review} showText /> : null}
                 {!isReadOnly ? (
-                  <Button type="submit" disabled={isSubmitting} className="flex-1" icon={Save}>
+                  <Button type="submit" disabled={isSubmitting} icon={Save}>
                     {isSubmitting ? 'Guardando...' : 'Publicar reseña'}
                   </Button>
                 ) : null}
@@ -115,5 +103,3 @@ export const RealEstateReviewForm = <RR extends RealEstateReviewUpdate>(
     </div>
   );
 };
-
-export default RealEstateReviewForm;

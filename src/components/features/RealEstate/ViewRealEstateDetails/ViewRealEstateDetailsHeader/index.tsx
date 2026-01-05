@@ -73,18 +73,18 @@ export const ViewRealEstateDetailsHeader = (props: ViewRealEstateDetailsHeaderPr
             <div className="mt-4 flex sm:flex-col gap-2">
               <FavoriteRealEstateButton realEstateId={realEstateId} showText />
               {realEstate ? <ReportRealEstateButton realEstate={realEstate} showText /> : null}
+              {!hasRealEstateReview ? (
+                <Button
+                  onClick={() =>
+                    redirect(PagesUrls.REAL_ESTATE_CREATE_REVIEW.replace(':id', realEstateId))
+                  }
+                  className="max-w-min"
+                  size="sm"
+                >
+                  Crea tu reseña
+                </Button>
+              ) : null}
             </div>
-            {hasRealEstateReview ? (
-              <Button
-                onClick={() =>
-                  redirect(PagesUrls.REAL_ESTATE_CREATE_REVIEW.replace(':id', realEstateId))
-                }
-                className="max-w-min"
-                size="sm"
-              >
-                Crea tu reseña
-              </Button>
-            ) : null}
           </div>
         </div>
       </CardContent>

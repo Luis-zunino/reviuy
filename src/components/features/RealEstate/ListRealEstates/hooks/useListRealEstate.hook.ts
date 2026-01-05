@@ -18,6 +18,9 @@ export const useListRealEstate = () => {
       filtered = filtered.filter((re) => re.id === selectedRealEstate.id);
     }
 
+    if (searchValue && searchValue?.length > 0) {
+      filtered = filtered.filter((re) => re.name.toLowerCase().includes(searchValue.toLowerCase()));
+    }
     if (selectedRating > 0) {
       const minRating = selectedRating;
       filtered = filtered.filter((re) => {
@@ -27,7 +30,7 @@ export const useListRealEstate = () => {
     }
 
     return filtered;
-  }, [realEstates, selectedRealEstate, selectedRating]);
+  }, [realEstates, selectedRealEstate, selectedRating, searchValue]);
 
   const handleRealEstateSelect = (realEstate: RealEstate | null) => {
     setSelectedRealEstate(realEstate);
@@ -38,6 +41,7 @@ export const useListRealEstate = () => {
     setSelectedRealEstate(null);
     setSearchValue(null);
   };
+
   return {
     filteredRealEstates,
     selectedRating,

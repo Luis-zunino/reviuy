@@ -9,13 +9,17 @@ export const useGetAddressListByName = (props: GetAddressListByNameParams) => {
     queryKey: [REVIEW_KEYS.getAddressListByName, query],
     enabled: query.length > 7,
     queryFn: async (): Promise<NominatimEntity[]> => {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-          query
-        )}&countrycodes=${countrycodes}&limit=${limit}`
-      );
-      if (!response.ok) throw new Error('Network response was not ok');
-      return await response.json();
+      try {
+        const response = await fetch(
+          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+            query
+          )}&countrycodes=${countrycodes}&limit=${limit}`
+        );
+        if (!response.ok) throw new Error('Network response was not ok');
+        return await response.json();
+      } catch (error) {
+        return [];
+      }
     },
   });
 };
