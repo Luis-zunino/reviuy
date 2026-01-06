@@ -10,7 +10,7 @@ export const searchRealEstates = async ({
     const { data, error } = await supabaseClient
       .from('real_estates')
       .select('*')
-      .like('name', `%${query}%`)
+      .ilike('name', `%${query}%`)
       .limit(limit)
       .order('name');
 

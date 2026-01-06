@@ -18,9 +18,6 @@ export const useListRealEstate = () => {
       filtered = filtered.filter((re) => re.id === selectedRealEstate.id);
     }
 
-    if (searchValue && searchValue?.length > 0) {
-      filtered = filtered.filter((re) => re.name.toLowerCase().includes(searchValue.toLowerCase()));
-    }
     if (selectedRating > 0) {
       const minRating = selectedRating;
       filtered = filtered.filter((re) => {

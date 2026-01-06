@@ -13,7 +13,7 @@ export const CreateRealEstate = () => {
   return (
     <PageStateWrapper
       title="Agregar una nueva Inmobiliaria"
-      subtitle="Completa la información de la inmobiliaria. Los campos marcados con * son obligatorios."
+      subtitle="Agregar una nueva inmobiliaria para que pueda ser calificada por los usuarios."
     >
       <Card>
         <CardContent>
@@ -42,22 +42,8 @@ export const CreateRealEstate = () => {
               {errors.name && <p className="text-sm text-red-600">{errors.name.message}</p>}
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-3 pt-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => router.back()}
-                className="w-full sm:w-auto"
-                disabled={isSubmitting}
-              >
-                Cancelar
-              </Button>
-              <Button
-                type="button"
-                onClick={() => handleSubmit(onSubmit)}
-                className="w-full sm:flex-1"
-                disabled={isSubmitting}
-              >
+            <div className="flex justify-end">
+              <Button type="button" onClick={() => handleSubmit(onSubmit)} disabled={isSubmitting}>
                 {isSubmitting ? 'Creando...' : 'Crear Inmobiliaria'}
               </Button>
             </div>
