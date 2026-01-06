@@ -20,9 +20,9 @@ export const DeleteReviewButton: React.FC<DeleteReviewButtonProps> = ({
 }) => {
   const route = useRouter();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const { user, isAuthenticated } = useUser();
+  const { isOwner } = useUser();
 
-  const deleteReviewMutation = useDeleteReview({
+  const { mutateAsync, isPending } = useDeleteReview({
     onSuccess: () => {
       setShowDeleteDialog(false);
       if (onDeleteSuccess) {
@@ -32,11 +32,8 @@ export const DeleteReviewButton: React.FC<DeleteReviewButtonProps> = ({
     },
   });
 
-  // Verificar si el usuario actual es el propietario de la reseña
-  const isOwner = isAuthenticated && user?.id && review.user_id && user.id === review.user_id;
-
   // Si no es el propietario o no hay user_id, no mostrar el componente
-  if (!isOwner || !review.user_id) {
+  if (!isOwner(review.user_id) || !review.user_id) {
     return null;
   }
 
@@ -45,7 +42,7 @@ export const DeleteReviewButton: React.FC<DeleteReviewButtonProps> = ({
   };
 
   const handleConfirmDelete = () => {
-    deleteReviewMutation.mutate(review.id);
+    mutateAsync(review.id);
   };
 
   return (
@@ -55,7 +52,7 @@ export const DeleteReviewButton: React.FC<DeleteReviewButtonProps> = ({
         size={size}
         onClick={handleDeleteClick}
         className={`text-red-600 hover:text-red-700 hover:bg-red-50 ${className}`}
-        disabled={deleteReviewMutation.isPending}
+        disabled={isPending}
         icon={Trash2}
         iconPosition="left"
       >
@@ -67,7 +64,7 @@ export const DeleteReviewButton: React.FC<DeleteReviewButtonProps> = ({
         onClose={() => setShowDeleteDialog(false)}
         onConfirm={handleConfirmDelete}
         reviewTitle={review.title}
-        isDeleting={deleteReviewMutation.isPending}
+        isDeleting={isPending}
       />
     </>
   );

@@ -58,7 +58,7 @@ export const ReportRealEstateReviewButton = ({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-red-500" />
-            Reportar Reseña
+            Reportar reseña
           </DialogTitle>
           <DialogDescription>
             Si consideras que esta reseña viola nuestras políticas, por favor selecciona el motivo y

@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Building2, MessageSquare, Calendar } from 'lucide-react';
-import { PageStateWrapper, ReportRealEstateReviewButton } from '@/components/common';
+import { PageStateWrapper } from '@/components/common';
 import { StarRatingDisplay } from '@/components/common/StarRating';
 import { PagesUrls } from '@/enums';
 import { redirect } from 'next/navigation';
@@ -124,7 +124,6 @@ export const ViewRealEstateDetails = () => {
                           >
                             Ver
                           </Button>
-                          <ReportRealEstateReviewButton review={rer} showText />
                           {isOwner ? (
                             <Button
                               variant="outline"

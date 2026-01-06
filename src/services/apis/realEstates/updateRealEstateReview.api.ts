@@ -1,21 +1,17 @@
 import { supabaseClient } from '@/lib/supabase-client';
 import type { RealEstateReviewUpdate } from '@/types';
-import { verifyAuthentication } from '../user';
 import type { UpdateRealEstateReviewResponse } from './types';
+import type { User } from '@supabase/supabase-js';
 
 export const updateRealEstateReview = async (
-  updateRealEstateReviewData: RealEstateReviewUpdate
+  updateRealEstateReviewData: RealEstateReviewUpdate,
+  user?: User | null
 ): Promise<UpdateRealEstateReviewResponse> => {
   try {
-    const {
-      data: { user },
-      error: authError,
-    } = await verifyAuthentication();
-
-    if (authError || !user) {
+    if (!user) {
       return {
         success: false,
-        message: 'Debes iniciar sesión para crear una reseña',
+        message: 'Debes iniciar sesión para actualizar una reseña de una inmobiliaria',
         error: 'Usuario no autenticado',
       };
     }

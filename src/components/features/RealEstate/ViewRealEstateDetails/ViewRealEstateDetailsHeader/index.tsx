@@ -16,6 +16,7 @@ import {
 import { redirect, useParams } from 'next/navigation';
 import React from 'react';
 import type { ViewRealEstateDetailsHeaderProps } from './types';
+import { NotebookPen } from 'lucide-react';
 
 export const ViewRealEstateDetailsHeader = (props: ViewRealEstateDetailsHeaderProps) => {
   const { averageRating, amountReviews } = props;
@@ -80,8 +81,9 @@ export const ViewRealEstateDetailsHeader = (props: ViewRealEstateDetailsHeaderPr
                   }
                   className="max-w-min"
                   size="sm"
+                  icon={NotebookPen}
                 >
-                  Crea tu reseña
+                  <span className="hidden sm:inline">Crea tu reseña</span>
                 </Button>
               ) : null}
             </div>

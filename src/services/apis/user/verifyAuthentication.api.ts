@@ -1,6 +1,12 @@
 import { supabaseClient } from '@/lib/supabase-client';
-import { UserResponse } from '@supabase/supabase-js';
+import { User } from '@supabase/supabase-js';
 
-export const verifyAuthentication = async (): Promise<UserResponse> => {
-  return await supabaseClient.auth.getUser();
+export interface VerifyAuthenticationResponse {
+  user: User | null;
+  error: Error | null;
+}
+export const verifyAuthentication = async (): Promise<VerifyAuthenticationResponse> => {
+  const { data, error } = await supabaseClient.auth.getUser();
+
+  return { user: data.user, error };
 };

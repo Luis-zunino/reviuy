@@ -38,8 +38,8 @@ export const ViewRealEstateReview = () => {
       form={form}
       handleSubmit={handleSubmit}
       isSubmitting={false}
-      title={`Reseña de ${realEstate?.name || 'inmobiliaria'}`}
-      subtitle="Detalles de la reseña"
+      title={`Reseña de: ${realEstate?.name || 'inmobiliaria'}`}
+      subtitle="Detalles de la reseña sobre la inmobiliaria"
       isLoading={isLoadingRealEstate || isLoadingReview}
       error={!realEstate || !review}
       isReadOnly={true}

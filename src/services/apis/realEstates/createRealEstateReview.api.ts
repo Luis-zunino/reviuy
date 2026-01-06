@@ -1,18 +1,18 @@
 import { supabaseClient } from '@/lib/supabase-client';
 import type { RealEstateReviewInsert } from '@/types';
-import { verifyAuthentication } from '../user';
 import type { CreateRealEstateReviewResponse } from './types';
+import { User } from '@supabase/supabase-js';
 
-export const createRealEstateReview = async (
-  createRealEstateReviewData: RealEstateReviewInsert
-): Promise<CreateRealEstateReviewResponse> => {
+export interface CreateRealEstateReviewRequest {
+  createRealEstateReviewData: RealEstateReviewInsert;
+  user?: User | null;
+}
+export const createRealEstateReview = async ({
+  createRealEstateReviewData,
+  user,
+}: CreateRealEstateReviewRequest): Promise<CreateRealEstateReviewResponse> => {
   try {
-    const {
-      data: { user },
-      error: authError,
-    } = await verifyAuthentication();
-
-    if (authError || !user) {
+    if (!user) {
       return {
         success: false,
         message: 'Debes iniciar sesión para crear una reseña',

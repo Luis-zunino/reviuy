@@ -6,13 +6,14 @@ import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { PagesUrls } from '@/enums';
 import type { UseDeleteReviewOptions } from './types';
+import { useVerifyAuthentication } from '../user';
 
 export const useDeleteReview = (options?: UseDeleteReviewOptions) => {
   const queryClient = useQueryClient();
   const router = useRouter();
-
+  const { data } = useVerifyAuthentication();
   return useMutation({
-    mutationFn: deleteReview,
+    mutationFn: (reviewId: string) => deleteReview({ reviewId, user: data?.user }),
 
     onMutate: async (reviewId: string) => {
       toast.loading('Eliminando reseña...', {

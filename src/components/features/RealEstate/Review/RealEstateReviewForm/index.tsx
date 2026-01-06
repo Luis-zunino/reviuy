@@ -5,11 +5,12 @@ import {
   DeleteRealEstateReviewButton,
   Header,
   RealEstateReviewVoteButtons,
+  ReportRealEstateReviewButton,
 } from '@/components/common';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import type { RealEstateReviewUpdate } from '@/types';
-import { ArrowLeft, Building2, Save } from 'lucide-react';
+import { Building2, Save } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 import { RealEstateReviewFormContent } from './components/RealEstateReviewFormContent';
@@ -55,7 +56,7 @@ export const RealEstateReviewForm = <RR extends RealEstateReviewUpdate>(
     );
   }
 
-  if (error) {
+  if (error || !review) {
     return (
       <div className="container mx-auto p-6 ">
         <BackButton />
@@ -89,6 +90,7 @@ export const RealEstateReviewForm = <RR extends RealEstateReviewUpdate>(
                     refetchRealEstateReview={refetchRealEstateReview}
                   />
                 ) : null}
+                <ReportRealEstateReviewButton review={review} showText />
                 {review ? <DeleteRealEstateReviewButton review={review} showText /> : null}
                 {!isReadOnly ? (
                   <Button type="submit" disabled={isSubmitting} icon={Save}>

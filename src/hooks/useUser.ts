@@ -6,38 +6,18 @@ import { supabaseClient } from '@/lib/supabase-client';
 import { PagesUrls } from '@/enums';
 import { toast } from 'sonner';
 import { redirect } from 'next/navigation';
-import { verifyAuthentication } from '@/services';
+import { useVerifyAuthentication } from '@/services';
 
 export const useUser = () => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const { data } = useVerifyAuthentication();
 
-  useEffect(() => {
-    const getUser = async () => {
-      try {
-        const {
-          data: { user },
-        } = await verifyAuthentication();
-        setUser(user);
-      } catch (error: unknown) {
-        toast.error('Error al obtener usuario:', { description: (error as Error)?.message });
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    getUser();
-
-    const {
-      data: { subscription },
-    } = supabaseClient.auth.onAuthStateChange(async (event, session) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
+  const isOwner = (userId?: string): boolean => {
+    if (!user?.id) return false;
+    if (!userId) return false;
+    return user.id === userId;
+  };
 
   const logout = async () => {
     try {
@@ -50,11 +30,24 @@ export const useUser = () => {
       });
     }
   };
+  // TODO: revisar aca por lass dudas
+  useEffect(() => {
+    setUser(data?.user ?? null);
+    const {
+      data: { subscription },
+    } = supabaseClient.auth.onAuthStateChange(async (event, session) => {
+      setUser(session?.user ?? null);
+      setLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [data]);
 
   return {
     user,
     isAuthenticated: !!user,
     loading,
     logout,
+    isOwner,
   };
 };

@@ -1,13 +1,12 @@
 import { supabaseClient } from '@/lib/supabase-client';
-import { verifyAuthentication } from '../user';
 import type { DeleteRealEstateReviewParams, DeleteRealEstateReviewResponse } from './types';
 
 export const deleteRealEstateReview = async (
-  params: DeleteRealEstateReviewParams | string
+  params: DeleteRealEstateReviewParams
 ): Promise<DeleteRealEstateReviewResponse> => {
   try {
     // Extraer reviewId del parámetro (puede ser string o objeto)
-    const reviewId = typeof params === 'string' ? params : params.reviewId;
+    const { reviewId, user } = params;
 
     if (!reviewId) {
       return {
@@ -17,12 +16,7 @@ export const deleteRealEstateReview = async (
       };
     }
 
-    const {
-      data: { user },
-      error: authError,
-    } = await verifyAuthentication();
-
-    if (authError || !user) {
+    if (!user) {
       return {
         success: false,
         message: 'Debes iniciar sesión para eliminar una reseña',

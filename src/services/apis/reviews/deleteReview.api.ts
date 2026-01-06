@@ -1,15 +1,18 @@
 import { supabaseClient } from '@/lib/supabase-client';
-import { verifyAuthentication } from '../user';
-import type { DeleteReviewResponse } from './types';
+import type { User } from '@supabase/supabase-js';
+import { DeleteReviewResponse } from './types';
 
-export const deleteReview = async (reviewId: string): Promise<DeleteReviewResponse> => {
+export interface DeleteReviewRequest {
+  reviewId: string;
+  user?: User | null;
+}
+
+export const deleteReview = async ({
+  reviewId,
+  user,
+}: DeleteReviewRequest): Promise<DeleteReviewResponse> => {
   try {
-    const {
-      data: { user },
-      error: authError,
-    } = await verifyAuthentication();
-
-    if (authError || !user) {
+    if (!user) {
       return {
         success: false,
         message: 'Debes iniciar sesión para eliminar una reseña',

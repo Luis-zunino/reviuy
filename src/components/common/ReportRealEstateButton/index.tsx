@@ -45,8 +45,8 @@ export const ReportRealEstateButton = ({
           size="sm"
           className="flex items-center gap-2 text-red-600 hover:text-red-800 hover:bg-red-50 border-red-200"
           disabled={hasReported}
+          icon={Flag}
         >
-          <Flag className="h-4 w-4" />
           {showText && <span className="hidden sm:inline">Reportar</span>}
         </Button>
       </DialogTrigger>

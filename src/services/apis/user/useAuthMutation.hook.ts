@@ -1,6 +1,6 @@
 import { useMutation, UseMutationResult } from '@tanstack/react-query';
-import { verifyAuthentication } from './verifyAuthentication.api';
 import type { UseAuthMutationConfig } from './types';
+import { useVerifyAuthentication } from './verifyAuthentication.hook';
 
 export const useAuthMutation = <TData, TError = Error, TVariables = unknown>(
   config: UseAuthMutationConfig<TData, TError, TVariables>
@@ -10,17 +10,15 @@ export const useAuthMutation = <TData, TError = Error, TVariables = unknown>(
     authErrorMessage = 'Debes iniciar sesión para realizar esta acción',
     ...mutationOptions
   } = config;
-
+  const { data, error } = useVerifyAuthentication();
   const authenticatedMutationFn = async (variables: TVariables): Promise<TData> => {
-    const authCheck = await verifyAuthentication();
-
-    if (authCheck.error) {
+    if (error || !data?.user) {
       throw new Error(authErrorMessage) as TError;
     }
 
     return mutationFn({
       ...variables,
-      user_id: authCheck?.data.user.id,
+      user_id: data?.user.id,
     });
   };
 

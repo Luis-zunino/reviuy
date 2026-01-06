@@ -6,6 +6,7 @@ import React from 'react';
 import { Controller, Path } from 'react-hook-form';
 import { validateText } from '@/utils';
 import type { RealEstateReviewFormContentProps } from './types';
+import { Textarea } from '@/components/ui/textarea';
 
 export const RealEstateReviewFormContent = <RR extends RealEstateReviewUpdate>(
   props: RealEstateReviewFormContentProps<RR>
@@ -14,7 +15,7 @@ export const RealEstateReviewFormContent = <RR extends RealEstateReviewUpdate>(
   return (
     <>
       <div>
-        <FormLabel htmlFor="title" label="Título de la reseña" isRequired />
+        <FormLabel htmlFor="title" label="Título de la reseña" isRequired={!isReadOnly} />
         <Controller
           name={'title' as Path<RR>}
           control={form.control}
@@ -40,7 +41,11 @@ export const RealEstateReviewFormContent = <RR extends RealEstateReviewUpdate>(
       </div>
 
       <div>
-        <FormLabel htmlFor="description" label="Descripcion de la reseña" isRequired />
+        <FormLabel
+          htmlFor="description"
+          label="Descripcion de la reseña"
+          isRequired={!isReadOnly}
+        />
         <Controller
           name={'description' as Path<RR>}
           control={form.control}
@@ -52,7 +57,7 @@ export const RealEstateReviewFormContent = <RR extends RealEstateReviewUpdate>(
             },
           }}
           render={({ field }) => (
-            <Input
+            <Textarea
               {...field}
               id="description"
               name="description"
@@ -65,7 +70,7 @@ export const RealEstateReviewFormContent = <RR extends RealEstateReviewUpdate>(
         />
       </div>
       <div className="space-y-2">
-        <FormLabel label="Calificación general" isRequired />
+        <FormLabel label="Calificación general" isRequired={!isReadOnly} />
 
         <Controller
           name={'rating' as Path<RR>}

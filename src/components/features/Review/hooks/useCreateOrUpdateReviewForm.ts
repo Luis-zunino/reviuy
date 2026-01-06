@@ -141,9 +141,7 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
     } else {
       mutationCreate(
         {
-          ...commonData,
-          likes: 0,
-          dislikes: 0,
+          createReviewData: { ...commonData, likes: 0, dislikes: 0 },
         },
         {
           onSuccess: ({ data }) => {

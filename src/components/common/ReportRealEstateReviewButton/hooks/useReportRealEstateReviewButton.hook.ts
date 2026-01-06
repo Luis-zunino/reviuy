@@ -7,7 +7,7 @@ import type { UseReportRealEstateReviewButtonProps } from './types';
 
 export const useReportRealEstateReviewButton = (props: UseReportRealEstateReviewButtonProps) => {
   const { review } = props;
-  const { user } = useUser();
+  const { isOwner } = useUser();
   const [isOpen, setIsOpen] = useState(false);
   const [selectedReason, setSelectedReason] = useState('');
   const [description, setDescription] = useState('');
@@ -24,8 +24,6 @@ export const useReportRealEstateReviewButton = (props: UseReportRealEstateReview
     { value: 'fake_review', label: 'Reseña falsa o fraudulenta' },
     { value: 'other', label: 'Otro motivo' },
   ];
-
-  const isOwner = user?.id && review?.user_id && user.id === review.user_id;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,7 +71,7 @@ export const useReportRealEstateReviewButton = (props: UseReportRealEstateReview
     setDescription,
     handleCancel,
     isPending,
-    showReportedButton: !isOwner,
+    showReportedButton: !isOwner(review.user_id),
     hasReported,
     reportReasons,
   };
