@@ -12,7 +12,7 @@ export const CreateReviewHomeSection = () => {
 
   return (
     <div className="min-h-[640px] relative">
-      <Decoration className="min-h-[640px] max-w-screen opacity-70" />
+      <Decoration className="min-h-[640px] w-screen opacity-70" />
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="text-center p-4 lg:py-10 lg:px-16 bg-primary-100/90 backdrop-blur-xs rounded-2xl shadow-lg mx-4">
           <h2 className="text-3xl font-bold mb-4 text-gray-900">
