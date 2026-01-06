@@ -59,12 +59,7 @@ export const AddressReviewCard = ({ review }: AddressReviewCardProps) => {
         <StarRatingDisplay rating={review.rating} />
         <Separator className="flex-shrink-0" />
         <div className="flex justify-end w-full flex-shrink-0">
-          <Button
-            onClick={handleViewMore}
-            variant="seeMore"
-            size="sm"
-            className="text-xs bg-transparent"
-          >
+          <Button onClick={handleViewMore} variant="seeMore" size="sm">
             Ver más
           </Button>
         </div>

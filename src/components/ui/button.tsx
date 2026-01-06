@@ -26,15 +26,15 @@ const buttonVariants = cva(
           'bg-transparent text-reviuy-gray-700 hover:bg-reviuy-gray-100 focus:ring-reviuy-gray-500/20',
         link: 'text-reviuy-primary-600 underline-offset-4 hover:underline hover:text-reviuy-primary-700',
         // Variantes específicas de la plataforma
-        like: 'bg-white text-reviuy-gray-700 border-2 border-reviuy-gray-200 hover:border-red-400 hover:bg-red-50 hover:text-red-600 focus:ring-red-500/20 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 data-[active=true]:bg-red-50 data-[active=true]:border-red-500 data-[active=true]:text-red-600 data-[active=true]:[&_svg]:fill-current',
+        like: 'bg-blue-50 text-blue-700 border-1 border-blue-50 hover:border-blue-400 hover:bg-blue-100 hover:text-blue-600 focus:ring-blue-500/20 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 data-[active=true]:bg-blue-100 data-[active=true]:border-blue-500 data-[active=true]:text-blue-600 data-[active=true]:[&_svg]:fill-current',
         favorite:
-          'bg-white text-reviuy-gray-700 border-2 border-reviuy-gray-200 hover:border-yellow-400 hover:bg-yellow-50 hover:text-yellow-600 focus:ring-yellow-500/20 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 data-[active=true]:bg-yellow-50 data-[active=true]:border-yellow-500 data-[active=true]:text-yellow-600 data-[active=true]:[&_svg]:fill-current',
+          'bg-red-50 text-red-700 border-1 border-red-50 hover:border-red-400 hover:bg-red-100 hover:text-red-600 focus:ring-red-500/20 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 data-[active=true]:bg-red-100 data-[active=true]:border-red-500 data-[active=true]:text-red-600 data-[active=true]:[&_svg]:fill-current',
         share:
-          'bg-white text-reviuy-gray-700 border-2 border-reviuy-gray-200 hover:border-reviuy-primary-400 hover:bg-reviuy-primary-50 hover:text-reviuy-primary-600 focus:ring-reviuy-primary-500/20 shadow-sm hover:shadow-md transform hover:-translate-y-0.5',
+          'bg-violet-50 text-violet-700 border-1 border-violet-50 hover:border-violet-400 hover:bg-violet-100 hover:text-violet-600 focus:ring-violet-500/20 shadow-sm hover:shadow-md transform hover:-translate-y-0.5',
         report:
-          'bg-white text-reviuy-gray-700 border-2 border-reviuy-gray-200 hover:border-reviuy-error-400 hover:bg-reviuy-error-50 hover:text-reviuy-error-600 focus:ring-reviuy-error-500/20 shadow-sm hover:shadow-md transform hover:-translate-y-0.5',
+          'bg-yellow-50 text-yellow-700 border-1 border-yellow-50 hover:border-yellow-400 hover:bg-yellow-100 hover:text-yellow-600 focus:ring-yellow-500/20 shadow-sm hover:shadow-md transform hover:-translate-y-0.5',
         seeMore:
-          'bg-reviuy-primary-50 text-reviuy-primary-700 border-2 border-reviuy-primary-200 hover:bg-reviuy-primary-100 hover:border-reviuy-primary-400 focus:ring-reviuy-primary-500/20 shadow-sm hover:shadow-md transform hover:-translate-y-0.5',
+          'bg-green-50 text-green-700 border-2 border-green-50 hover:bg-green-100 hover:border-green-400 focus:ring-green-500/20 shadow-sm hover:shadow-md transform hover:-translate-y-0.5',
       },
       size: {
         xs: 'h-8 px-3 py-1.5 text-xs rounded-lg gap-1.5',

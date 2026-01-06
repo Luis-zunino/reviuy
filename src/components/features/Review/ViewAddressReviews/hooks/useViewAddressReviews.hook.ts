@@ -3,10 +3,10 @@ import { useUser } from '@/hooks';
 import { useGetAddressInfo, useGetReviewsByAddress } from '@/services';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import type { UseViewAddressReviewsProps } from './types';
+import { useParams } from 'next/navigation';
 
-export const useViewAddressReviews = (props: UseViewAddressReviewsProps) => {
-  const { osmId } = props;
+export const useViewAddressReviews = () => {
+  const { osmId } = useParams<{ osmId: string }>();
   const router = useRouter();
   const { isAuthenticated, user } = useUser();
   const {

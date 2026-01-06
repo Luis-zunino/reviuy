@@ -42,13 +42,7 @@ export const ReportRealEstateReviewButton = ({
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       {showReportedButton ? (
         <DialogTrigger asChild>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="flex items-center gap-2 text-red-600 hover:text-red-800 hover:bg-red-50 border-red-200"
-            disabled={hasReported}
-          >
-            <Flag className="h-4 w-4" />
+          <Button variant="report" size="sm" disabled={hasReported} icon={Flag}>
             {showText && <span className="hidden sm:inline">Reportar</span>}
           </Button>
         </DialogTrigger>

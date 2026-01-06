@@ -6,11 +6,10 @@ import { useViewAddressReviews } from './hooks';
 import { AddressReviewCard } from './components/AddressReviewCard';
 import { Button } from '@/components/ui/button';
 import { LazyMapComponent } from '@/components/common';
-import type { ViewAddressReviewsProps } from './types';
 
-export const ViewAddressReviews = ({ osmId }: ViewAddressReviewsProps) => {
+export const ViewAddressReviews = () => {
   const { data, reviews, isLoading, hasReviews, isError, handleCreateReview, averageRating } =
-    useViewAddressReviews({ osmId });
+    useViewAddressReviews();
   const address = data?.address;
   return (
     <PageStateWrapper isLoading={isLoading || !data} isError={isError}>
@@ -44,8 +43,6 @@ export const ViewAddressReviews = ({ osmId }: ViewAddressReviewsProps) => {
               {data?.address?.road}, {data?.address?.house_number}
             </LazyMapComponent>
           </div>
-
-          {/* <h2 className="">Reseñas ({reviews.length})</h2> */}
 
           <div className="flex justify-between items-center my-4 py-4">
             <h2 className="h-plain text-base lg:text-xl">

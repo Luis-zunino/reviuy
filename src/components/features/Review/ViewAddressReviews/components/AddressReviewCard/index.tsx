@@ -72,9 +72,7 @@ export const AddressReviewCard = ({ review }: ReviewCardProps) => {
         </div>
       </div>
       <div className="relative flex justify-between mx-6">
-        <Button variant="seeMore" className="py-2 text-primary-500 text-sm md:text-base h-auto">
-          Ver más
-        </Button>
+        <Button variant="seeMore">Ver más</Button>
       </div>
     </div>
   );

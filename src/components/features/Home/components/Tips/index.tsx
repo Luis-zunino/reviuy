@@ -9,7 +9,7 @@ export const Tips = () => {
   const router = useRouter();
 
   return (
-    <section className="py-16 px-4 lg:mx-40 flex flex-col">
+    <section className="py-16 px-4 lg:mx-40 flex flex-col gap-6">
       <div className="flex flex-col align-center text-center justify-center mt-6 mb-14 ">
         <h2 className="xs:text-2xl">Te ayudamos a tomar la mejor decisión</h2>
         <h2 className="text-3xl font-bold text-foreground">Para una mejor experiencia</h2>
@@ -50,10 +50,10 @@ export const Tips = () => {
         </div>
       </div>
       <Button
-        className="btn btn-primary-500 mt-2"
         title="Publicaciones del blog de Reviu"
         onClick={() => router.push(PagesUrls.TIPS)}
-        variant="ghost"
+        variant="seeMore"
+        className="max-w-fit mx-auto"
       >
         Ver todos
       </Button>

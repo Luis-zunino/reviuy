@@ -7,44 +7,30 @@ import {
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { PagesUrls } from '@/enums';
-import { useAuth } from '@/hooks';
-import {
-  useGetRealEstateById,
-  useGetRealEstateReviewByUserId,
-  useGetUserRealEstateVote,
-} from '@/services';
-import { redirect, useParams } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import React from 'react';
 import type { ViewRealEstateDetailsHeaderProps } from './types';
 import { NotebookPen } from 'lucide-react';
+import { useViewRealEstateDetailsHeader } from './hooks';
 
 export const ViewRealEstateDetailsHeader = (props: ViewRealEstateDetailsHeaderProps) => {
   const { averageRating, amountReviews } = props;
-  const { user } = useAuth();
-  const { realEstateId } = useParams<{ realEstateId: string }>();
   const {
-    data: realEstate,
-    refetch: refetchRealEstate,
+    realEstateId,
+    realEstate,
+    hasRealEstateReview,
+    userRealEstateVote,
+    refetchRealEstate,
+    refetchRealEstateVote,
     isLoading,
-  } = useGetRealEstateById(realEstateId);
-  const { data: hasRealEstateReview } = useGetRealEstateReviewByUserId({
-    userId: user?.id ?? '',
-    realEstateId,
-  });
-  const {
-    data: userRealEstateVote,
-    refetch: refetchRealEstateVote,
-    isLoading: isLoadingVote,
-  } = useGetUserRealEstateVote({
-    realEstateId,
-    userId: user?.id,
-  });
+    isLoadingVote,
+  } = useViewRealEstateDetailsHeader();
 
   return (
     <Card>
       <CardContent>
         <div className="flex justify-between gap-6">
-          <div className="space-y-4 w-1/2">
+          <div className="space-y-4 sm:w-1/2">
             <h3 className="font-semibold text-gray-900 mb-3">
               Reseñas y calificaciones sobre: {realEstate?.name}
             </h3>
@@ -70,8 +56,8 @@ export const ViewRealEstateDetailsHeader = (props: ViewRealEstateDetailsHeaderPr
               isLoading={isLoading || isLoadingVote}
             />
           </div>
-          <div className="content-center mx-auto flex flex-col">
-            <div className="mt-4 flex sm:flex-col gap-2">
+          <div className="content-center sm:mx-auto flex flex-col">
+            <div className="mt-4 flex flex-col gap-2">
               <FavoriteRealEstateButton realEstateId={realEstateId} showText />
               {realEstate ? <ReportRealEstateButton realEstate={realEstate} showText /> : null}
               {!hasRealEstateReview ? (

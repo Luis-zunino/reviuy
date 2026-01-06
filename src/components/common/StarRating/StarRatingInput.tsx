@@ -4,6 +4,7 @@ import { Star } from 'lucide-react';
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import type { StarRatingInputProps } from './types';
+import { Button } from '@/components/ui/button';
 
 const sizeConfig = {
   sm: {
@@ -73,10 +74,11 @@ export const StarRatingInput: React.FC<StarRatingInputProps> = ({
       >
         <div className="flex items-center">
           {[1, 2, 3, 4, 5].map((rating) => (
-            <button
+            <Button
               key={rating}
               type="button"
               role="radio"
+              variant="ghost"
               aria-checked={value === rating}
               aria-label={`${rating} estrella${rating > 1 ? 's' : ''}`}
               disabled={disabled}
@@ -85,7 +87,7 @@ export const StarRatingInput: React.FC<StarRatingInputProps> = ({
               onMouseEnter={() => !disabled && setHover(rating)}
               onMouseLeave={() => !disabled && setHover(0)}
               className={cn(
-                'transition-transform focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded',
+                'transition-transform focus:outline-none focus:ring-0 rounded p-0 hover:bg-transparent',
                 !disabled && 'hover:scale-110 cursor-pointer',
                 disabled && 'cursor-not-allowed opacity-50'
               )}
@@ -100,7 +102,7 @@ export const StarRatingInput: React.FC<StarRatingInputProps> = ({
                 color={rating <= displayValue ? '#ffc107' : '#e4e5e9'}
                 aria-hidden="true"
               />
-            </button>
+            </Button>
           ))}
         </div>
 

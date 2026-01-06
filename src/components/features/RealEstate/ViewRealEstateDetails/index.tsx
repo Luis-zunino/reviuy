@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Building2, MessageSquare, Calendar } from 'lucide-react';
+import { Building2, MessageSquare, Calendar, ThumbsUp, ThumbsDown } from 'lucide-react';
 import { PageStateWrapper } from '@/components/common';
 import { StarRatingDisplay } from '@/components/common/StarRating';
 import { PagesUrls } from '@/enums';
@@ -65,7 +65,6 @@ export const ViewRealEstateDetails = () => {
   return (
     <PageStateWrapper>
       <div className="mt-6 space-y-6">
-        {/* Información principal de la inmobiliaria */}
         <ViewRealEstateDetailsHeader
           averageRating={averageRating}
           amountReviews={realEstateReview?.length ?? 0}
@@ -146,8 +145,12 @@ export const ViewRealEstateDetails = () => {
                       <p className="text-gray-600 mb-2">{rer.description}</p>
 
                       <div className="flex items-center gap-2">
-                        <span>👍 {rer.likes}</span>
-                        <span>👎 {rer.dislikes}</span>
+                        <span className="flex items-center gap-1">
+                          <ThumbsUp className="h-4 w-4" /> {rer.likes}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <ThumbsDown className="h-4 w-4" /> {rer.dislikes}
+                        </span>
                       </div>
                     </div>
                   );
