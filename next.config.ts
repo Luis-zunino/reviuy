@@ -67,6 +67,24 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+       {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'Permissions-Policy',
+            value: `
+              geolocation=(),
+              microphone=(),
+              camera=(),
+              gyroscope=(),
+              magnetometer=(),
+              accelerometer=(),
+              payment=(),
+              usb=()
+            `.replace(/\s+/g, ''),
+          },
+        ],
+      },
     ];
   },
 

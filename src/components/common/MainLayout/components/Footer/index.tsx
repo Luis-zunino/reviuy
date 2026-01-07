@@ -8,12 +8,12 @@ export const Footer = () => {
       <div className="flex lg:flex-row gap-8 lg:justify-between flex-col lg:text-left text-center lg:mt-0 mt-8">
         <div className="lg:w-[280px]">
           <h4 className="font-extrabold text-base lg:text-2xl lg:block mb-4">
-            Ayudémonos para tomar la mejor decisión a la hora de alquilar
+            Encontrá tu lugar ideal con reseñas reales
           </h4>
         </div>
         <div className="lg:text-left">
           <ul className="flex flex-col gap-4">
-            <li className="text-purple-300 font-bold">Empresa</li>
+            <li className="text-violet-300 font-bold">Empresa</li>
             <li className="cursor-pointer">
               <Link href={PagesUrls.ABOUT} title="Información sobre Reviu">
                 Sobre nosotros
@@ -23,7 +23,7 @@ export const Footer = () => {
         </div>
         <div className="lg:text-left">
           <ul className="flex flex-col gap-4">
-            <li className="text-purple-300 font-bold">Legal</li>
+            <li className="text-violet-300 font-bold">Legal</li>
             <li className="cursor-pointer">
               <Link href={PagesUrls.PRIVACY_POLICY} title="Política de privacidad">
                 Política de privacidad
