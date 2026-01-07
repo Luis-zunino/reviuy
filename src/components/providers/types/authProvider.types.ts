@@ -1,8 +1,8 @@
-import type { User, Session } from '@supabase/supabase-js';
+import { AppSession } from '@/services/apis/user/types';
 
 export interface AuthContextType {
-  user: User | null;
-  session: Session | null;
+  userId: string | null;
+  session: AppSession | null;
   loading: boolean;
   isAuthenticated: boolean;
   signOut: () => Promise<void>;

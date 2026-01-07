@@ -9,7 +9,7 @@ import { PageStateWrapper } from '@/components/common';
 import { useCreateRealEstate } from './hook';
 
 export const CreateRealEstate = () => {
-  const { handleSubmit, onSubmit, register, errors, router, isSubmitting } = useCreateRealEstate();
+  const { handleSubmit, onSubmit, register, errors, isSubmitting } = useCreateRealEstate();
   return (
     <PageStateWrapper
       title="Agregar una nueva Inmobiliaria"

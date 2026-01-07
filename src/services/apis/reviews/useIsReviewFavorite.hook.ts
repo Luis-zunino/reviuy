@@ -1,16 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
 import { isReviewFavorite } from './isReviewFavorite.api';
-import { User } from '@supabase/supabase-js';
 
 export interface UseIsReviewFavoriteProps {
   reviewId: string;
-  user: User | null;
+  userId: string | null;
 }
-export const useIsReviewFavorite = ({ reviewId, user }: UseIsReviewFavoriteProps) => {
+export const useIsReviewFavorite = ({ reviewId, userId }: UseIsReviewFavoriteProps) => {
   return useQuery({
-    queryKey: ['isFavoriteReview', reviewId, user?.id],
+    queryKey: ['isFavoriteReview', reviewId, userId],
     queryFn: () => isReviewFavorite({ reviewId }),
-    enabled: !!user && !!reviewId,
+    enabled: !!userId && !!reviewId,
     staleTime: 0,
   });
 };

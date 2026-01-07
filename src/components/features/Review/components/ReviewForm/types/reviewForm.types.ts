@@ -9,11 +9,10 @@ import type {
   UseFormReturn,
 } from 'react-hook-form';
 import type { ReviewFormData, SelectedAddress } from '@/types';
-import type { User } from '@supabase/supabase-js';
 
 export interface ReviewFormProps {
   isAuthenticated: boolean;
-  user: User | null;
+  userId?: string | null;
   loading: boolean;
   errors: FieldErrors<ReviewFormData>;
   selectedAddress: SelectedAddress | null;

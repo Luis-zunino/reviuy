@@ -83,7 +83,7 @@ export const metadata: Metadata = {
 
   verification: {
     // Agregar cuando tengas los códigos de verificación
-    // google: 'tu-codigo-de-verificacion-google',
+    google: "vub9ZtcDwq7nAcxmvNbPLGKme8kXlkRdZIckkGRVtg0",
     // yandex: 'tu-codigo-yandex',
   },
 

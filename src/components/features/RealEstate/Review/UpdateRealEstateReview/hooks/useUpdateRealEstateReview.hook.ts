@@ -12,7 +12,7 @@ import { toast } from 'sonner';
 export const useUpdateRealEstateReview = () => {
   const { reviewId } = useParams<{ realEstateId: string; reviewId: string }>();
   const router = useRouter();
-  const { user } = useUser();
+  const { userId } = useUser();
 
   const { data } = useGetRealEstateReviewById({ reviewId });
   const form = useForm<RealEstateReviewUpdate>();
@@ -24,7 +24,7 @@ export const useUpdateRealEstateReview = () => {
       return;
     }
 
-    if (!user) {
+    if (!userId) {
       toast.error('Debes estar logueado para crear una reseña');
       router.push(PagesUrls.LOGIN);
       return;

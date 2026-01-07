@@ -10,7 +10,7 @@ export const useCreateRealEstateReviewHook = () => {
   return useAuthMutation({
     authErrorMessage: 'Debes iniciar sesión para crear una reseña de una inmobiliaria',
     mutationFn: (createRealEstateReviewData: RealEstateReviewInsert) =>
-      createRealEstateReview({ createRealEstateReviewData, user: data?.user }),
+      createRealEstateReview({ createRealEstateReviewData, userId: data?.userId }),
     mutationOptions: { mutationKey: ['create-real-estate-review'] },
   });
 };

@@ -11,7 +11,7 @@ export const useDeleteRealEstateReviewButton = ({
 }: UseDeleteRealEstateReviewButtonProps) => {
   const router = useRouter();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const { user, isAuthenticated } = useUser();
+  const { userId, isAuthenticated } = useUser();
 
   const { mutateAsync, isPending } = useDeleteRealEstateReview({
     onSuccess: () => {
@@ -23,7 +23,7 @@ export const useDeleteRealEstateReviewButton = ({
     },
   });
 
-  const isOwner = isAuthenticated && user?.id && review.user_id && user.id === review.user_id;
+  const isOwner = isAuthenticated && userId && review.user_id && userId === review.user_id;
 
   const handleDeleteClick = () => {
     setShowDeleteDialog(true);

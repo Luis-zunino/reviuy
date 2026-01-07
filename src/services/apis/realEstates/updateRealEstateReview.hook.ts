@@ -9,7 +9,7 @@ export const useUpdateRealEstateReviewHook = () => {
   return useAuthMutation({
     authErrorMessage: 'Debes iniciar sesión para actualizar una reseña de una inmobiliaria',
     mutationFn: (updateRealEstateReviewData: RealEstateReviewUpdate) =>
-      updateRealEstateReview(updateRealEstateReviewData, data?.user),
+      updateRealEstateReview(updateRealEstateReviewData, data?.userId),
     mutationOptions: { mutationKey: ['update-real-estate-review'] },
   });
 };

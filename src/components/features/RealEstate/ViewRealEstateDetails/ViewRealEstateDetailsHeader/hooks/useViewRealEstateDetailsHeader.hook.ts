@@ -7,7 +7,7 @@ import {
 import { useParams } from 'next/navigation';
 
 export const useViewRealEstateDetailsHeader = () => {
-  const { user } = useAuthContext();
+  const { userId } = useAuthContext();
   const { realEstateId } = useParams<{ realEstateId: string }>();
   const {
     data: realEstate,
@@ -15,7 +15,7 @@ export const useViewRealEstateDetailsHeader = () => {
     isLoading,
   } = useGetRealEstateById(realEstateId);
   const { data: hasRealEstateReview } = useGetRealEstateReviewByUserId({
-    userId: user?.id ?? '',
+    userId: userId ?? '',
     realEstateId,
   });
 
@@ -25,7 +25,7 @@ export const useViewRealEstateDetailsHeader = () => {
     isLoading: isLoadingVote,
   } = useGetUserRealEstateVote({
     realEstateId,
-    userId: user?.id,
+    userId: userId ?? '',
   });
 
   return {

@@ -8,7 +8,7 @@ import type { CreateRealEstateFormData } from './types';
 
 export const useCreateRealEstate = () => {
   const router = useRouter();
-  const { user } = useUser();
+  const { userId } = useUser();
 
   const {
     register,
@@ -20,7 +20,7 @@ export const useCreateRealEstate = () => {
   const { mutateAsync, isPending } = useCreateRealEstateHook();
 
   const onSubmit = async (data: CreateRealEstateFormData) => {
-    if (!user) {
+    if (!userId) {
       toast.error('Debes estar autenticado para crear una inmobiliaria');
       return;
     }
@@ -28,7 +28,7 @@ export const useCreateRealEstate = () => {
     try {
       const realEstateData: RealEstateInsert = {
         name: data.name.trim(),
-        created_by: user.id,
+        created_by: userId,
       };
 
       const newRealEstate = await mutateAsync(realEstateData);
@@ -42,5 +42,5 @@ export const useCreateRealEstate = () => {
     }
   };
 
-  return { handleSubmit, onSubmit, register, errors, router, isSubmitting: isPending };
+  return { handleSubmit, onSubmit, register, errors, isSubmitting: isPending };
 };

@@ -8,7 +8,7 @@ export const useGetUserRealEstateVote = ({
   userId,
 }: {
   realEstateId: string;
-  userId?: string;
+  userId?: string | null;
 }): UseQueryResult<VoteType | null> => {
   return useQuery({
     queryKey: [REAL_ESTATE_REVIEWS.getUserRealEstateVote, realEstateId, userId],

@@ -1,14 +1,13 @@
 import { supabaseClient } from '@/lib/supabase-client';
 import type { RealEstateReviewUpdate } from '@/types';
 import type { UpdateRealEstateReviewResponse } from './types';
-import type { User } from '@supabase/supabase-js';
 
 export const updateRealEstateReview = async (
   updateRealEstateReviewData: RealEstateReviewUpdate,
-  user?: User | null
+  userId?: string | null
 ): Promise<UpdateRealEstateReviewResponse> => {
   try {
-    if (!user) {
+    if (!userId) {
       return {
         success: false,
         message: 'Debes iniciar sesión para actualizar una reseña de una inmobiliaria',
@@ -26,7 +25,7 @@ export const updateRealEstateReview = async (
       .from('real_estate_reviews')
       .update(updateRealEstateReviewData)
       .eq('id', updateRealEstateReviewData.id)
-      .eq('user_id', user.id)
+      .eq('user_id', userId)
       .select()
       .single();
 

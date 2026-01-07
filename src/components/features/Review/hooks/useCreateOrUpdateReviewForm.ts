@@ -13,13 +13,13 @@ import { useAuthContext } from '@/components/providers/AuthProvider';
 
 export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormProps) => {
   const { isUpdate = false, defaultValues } = props;
-  const { user, isAuthenticated } = useAuthContext();
+  const { userId, isAuthenticated } = useAuthContext();
   const [isOwner, setIsOwner] = useState(false);
   const router = useRouter();
   const [selectedAddress, setSelectedAddress] = useState<SelectedAddress | null>(null);
   const queryClient = useQueryClient();
   const { data: existingReview } = useCheckUserReviewForAddress({
-    userId: user?.id,
+    userId,
     osmId: selectedAddress?.osmId ?? undefined,
   });
   const getDefaultValues = useCallback((): ReviewFormData => {
@@ -65,13 +65,13 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
   const { mutate: mutationUpdate, isPending: isUpdatePending } = useUpdateReview();
 
   const onSubmit = async (data: ReviewFormData) => {
-    if (!user || !isAuthenticated) {
+    if (!userId || !isAuthenticated) {
       toast.error('Debes iniciar sesión para publicar una reseña');
       return;
     }
 
     if (isUpdate && defaultValues) {
-      const isOwner = defaultValues.user_id === user.id;
+      const isOwner = defaultValues.user_id === userId;
       setIsOwner(isOwner);
       if (!isOwner) {
         toast.error('No tienes permisos para editar esta reseña');
@@ -106,7 +106,7 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
 
     const commonData = {
       ...data,
-      user_id: user.id,
+      user_id: userId,
       title: data.title.trim(),
       description: data.description.trim(),
       address_text: selectedAddress?.display_name,
@@ -167,7 +167,7 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
   };
 
   const handleAddressSelect = async (addressData: SelectedAddress) => {
-    if (!isUpdate && isAuthenticated && user && addressData.osmId && existingReview) {
+    if (!isUpdate && isAuthenticated && userId && addressData.osmId && existingReview) {
       toast.error('Ya has reseñado esta propiedad', {
         description:
           'Solo puedes escribir una reseña por propiedad. Puedes editar tu reseña existente desde tu perfil.',
@@ -204,7 +204,7 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
     router,
     isSubmitting: isPending || isUpdatePending,
     selectedAddress,
-    user,
+    userId,
     isAuthenticated,
     loading: isPending || isUpdatePending,
     form,
@@ -215,6 +215,6 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
     replace,
     isOwner,
     watch,
-    hasExistingReview: Boolean(!isUpdate && isAuthenticated && user && existingReview),
+    hasExistingReview: Boolean(!isUpdate && isAuthenticated && userId && existingReview),
   };
 };

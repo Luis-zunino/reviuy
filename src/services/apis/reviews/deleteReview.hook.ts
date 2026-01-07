@@ -13,7 +13,7 @@ export const useDeleteReview = (options?: UseDeleteReviewOptions) => {
   const router = useRouter();
   const { data } = useVerifyAuthentication();
   return useMutation({
-    mutationFn: (reviewId: string) => deleteReview({ reviewId, user: data?.user }),
+    mutationFn: (reviewId: string) => deleteReview({ reviewId, userId: data?.userId }),
 
     onMutate: async (reviewId: string) => {
       toast.loading('Eliminando reseña...', {

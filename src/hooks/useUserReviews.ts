@@ -6,14 +6,14 @@ import type { Review } from '@/types';
 import { useAuthContext } from '@/components/providers/AuthProvider';
 
 export const useUserReviews = () => {
-  const { user, isAuthenticated } = useAuthContext();
+  const { userId, isAuthenticated } = useAuthContext();
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!isAuthenticated || !user) {
+      if (!isAuthenticated || !userId) {
         setReviews([]);
         return;
       }
@@ -25,7 +25,7 @@ export const useUserReviews = () => {
         const { data, error: fetchError } = await supabaseClient
           .from('reviews')
           .select('*')
-          .eq('user_id', user.id)
+          .eq('user_id', userId)
           .order('created_at', { ascending: false });
 
         if (fetchError) {
@@ -42,10 +42,10 @@ export const useUserReviews = () => {
     };
 
     fetchData();
-  }, [user, isAuthenticated]);
+  }, [userId, isAuthenticated]);
 
   const refetchReviews = async () => {
-    if (!isAuthenticated || !user) {
+    if (!isAuthenticated || !userId) {
       setReviews([]);
       return;
     }
@@ -57,7 +57,7 @@ export const useUserReviews = () => {
       const { data, error: fetchError } = await supabaseClient
         .from('reviews')
         .select('*')
-        .eq('user_id', user.id)
+        .eq('user_id', userId)
         .order('created_at', { ascending: false });
 
       if (fetchError) {

@@ -9,11 +9,11 @@ import { useAuthContext } from '@/components/providers/AuthProvider';
 
 export const useReviewLikesButtons = (props: ReviewLikesButtonsProps) => {
   const { id, likes: initialLikes, dislikes: initialDislikes } = props;
-  const { user } = useAuthContext();
+  const { userId } = useAuthContext();
   const { mutateAsync, isPending: isVoting, isError } = useVoteReview();
   const { data, isLoading, refetch } = useGetReviewVote({
     reviewId: id,
-    userId: user?.id || '',
+    userId: userId || '',
   });
   const [clickedButton, setClickedButton] = useState<VoteType | null>(null);
 
@@ -21,7 +21,7 @@ export const useReviewLikesButtons = (props: ReviewLikesButtonsProps) => {
   const [optimisticDislikes, setOptimisticDislikes] = useState(initialDislikes);
 
   const addVote = async ({ id, voteType }: AddVoteParams) => {
-    if (!user?.id) redirect(PagesUrls.LOGIN);
+    if (!userId) redirect(PagesUrls.LOGIN);
 
     setClickedButton(voteType);
     setTimeout(() => setClickedButton(null), 300);

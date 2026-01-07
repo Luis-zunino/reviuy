@@ -1,16 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
 import { isRealEstateFavorite } from './isRealEstateFavorite.api';
-import { User } from '@supabase/supabase-js';
 
 export interface UseIsRealEstateFavoriteProps {
   realEstateId: string;
-  user: User | null;
+  userId: string | null;
 }
-export const useIsRealEstateFavorite = ({ realEstateId, user }: UseIsRealEstateFavoriteProps) => {
+export const useIsRealEstateFavorite = ({ realEstateId, userId }: UseIsRealEstateFavoriteProps) => {
   return useQuery({
-    queryKey: ['isFavorite', realEstateId, user?.id],
+    queryKey: ['isFavorite', realEstateId, userId],
     queryFn: () => isRealEstateFavorite({ realEstateId }),
-    enabled: !!user && !!realEstateId,
+    enabled: !!userId && !!realEstateId,
     staleTime: 0,
   });
 };

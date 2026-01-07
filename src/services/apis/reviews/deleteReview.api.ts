@@ -1,18 +1,17 @@
 import { supabaseClient } from '@/lib/supabase-client';
-import type { User } from '@supabase/supabase-js';
 import { DeleteReviewResponse } from './types';
 
 export interface DeleteReviewRequest {
   reviewId: string;
-  user?: User | null;
+  userId?: string | null;
 }
 
 export const deleteReview = async ({
   reviewId,
-  user,
+  userId,
 }: DeleteReviewRequest): Promise<DeleteReviewResponse> => {
   try {
-    if (!user) {
+    if (!userId) {
       return {
         success: false,
         message: 'Debes iniciar sesión para eliminar una reseña',
@@ -42,7 +41,7 @@ export const deleteReview = async ({
       };
     }
 
-    if (review.user_id !== user.id) {
+    if (review.user_id !== userId) {
       return {
         success: false,
         message: 'No tienes permisos para eliminar esta reseña',
@@ -54,7 +53,7 @@ export const deleteReview = async ({
       .from('reviews')
       .delete()
       .eq('id', reviewId)
-      .eq('user_id', user.id);
+      .eq('user_id', userId);
 
     if (deleteError) {
       return {

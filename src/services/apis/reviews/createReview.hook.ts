@@ -9,7 +9,7 @@ export const useCreateReview = () => {
   return useAuthMutation({
     authErrorMessage: 'Debes iniciar sesión para actualizar reseñas',
     mutationFn: ({ createReviewData }: CreateReviewRequest) =>
-      createReview({ createReviewData, user: data?.user }),
+      createReview({ createReviewData, userId: data?.userId }),
     mutationOptions: { mutationKey: ['create-review'] },
   });
 };

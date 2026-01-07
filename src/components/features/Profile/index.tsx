@@ -24,16 +24,18 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuthContext } from '@/components/providers/AuthProvider';
 
 export const ProfileComponent = () => {
-  const { user, isAuthenticated, signOut } = useAuthContext();
+  const { userId, isAuthenticated, signOut } = useAuthContext();
   const { reviews, loading, error, refetch } = useUserReviews();
-  const { data: favorites, isLoading: loadingFavorites } = useGetUserFavoriteRealEstates({ user });
+  const { data: favorites, isLoading: loadingFavorites } = useGetUserFavoriteRealEstates({
+    userId,
+  });
   const { data: favoriteReviews, isLoading: loadingFavoriteReviews } = useGetUserFavoriteReviews({
-    user,
+    userId,
   });
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('reviews');
 
-  if (!isAuthenticated || !user) {
+  if (!isAuthenticated || !userId) {
     return (
       <div className=" mx-auto p-6">
         <Card>
@@ -109,7 +111,6 @@ export const ProfileComponent = () => {
               Cerrar sesión
             </Button>
           </CardTitle>
-          <CardDescription>Usuario: {user.email}</CardDescription>
         </CardHeader>
       </Card>
 

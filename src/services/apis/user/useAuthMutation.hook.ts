@@ -12,13 +12,13 @@ export const useAuthMutation = <TData, TError = Error, TVariables = unknown>(
   } = config;
   const { data, error } = useVerifyAuthentication();
   const authenticatedMutationFn = async (variables: TVariables): Promise<TData> => {
-    if (error || !data?.user) {
+    if (error || !data?.userId) {
       throw new Error(authErrorMessage) as TError;
     }
 
     return mutationFn({
       ...variables,
-      user_id: data?.user.id,
+      user_id: data?.userId,
     });
   };
 

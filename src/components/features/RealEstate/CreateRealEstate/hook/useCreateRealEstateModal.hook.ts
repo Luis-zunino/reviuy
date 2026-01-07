@@ -8,7 +8,7 @@ import type { UseCreateRealEstateModalProps, CreateRealEstateFormData } from './
 
 export const useCreateRealEstateModal = (props: UseCreateRealEstateModalProps) => {
   const { onOpenChange } = props;
-  const { user } = useUser();
+  const { userId } = useUser();
 
   const {
     control,
@@ -20,7 +20,7 @@ export const useCreateRealEstateModal = (props: UseCreateRealEstateModalProps) =
   const { mutateAsync, isPending } = useCreateRealEstateHook();
 
   const onSubmit = async (data: CreateRealEstateFormData) => {
-    if (!user) {
+    if (!userId) {
       toast.error('Debes estar autenticado para crear una inmobiliaria');
       return;
     }
@@ -34,7 +34,7 @@ export const useCreateRealEstateModal = (props: UseCreateRealEstateModalProps) =
     try {
       const realEstateData: RealEstateInsert = {
         name: data.name,
-        created_by: user.id,
+        created_by: userId,
       };
 
       const newRealEstate = await mutateAsync(realEstateData, {

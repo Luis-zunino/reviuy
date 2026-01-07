@@ -1,14 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
 import { getUserFavoriteReviews } from './getUserFavoriteReviews.api';
-import { User } from '@supabase/supabase-js';
-
 export interface UseGetUserFavoriteReviewsProps {
-  user: User | null;
+  userId: string | null;
 }
-export const useGetUserFavoriteReviews = ({ user }: UseGetUserFavoriteReviewsProps) => {
+export const useGetUserFavoriteReviews = ({ userId }: UseGetUserFavoriteReviewsProps) => {
   return useQuery({
-    queryKey: ['favoriteReviews', user?.id],
+    queryKey: ['favoriteReviews', userId],
     queryFn: getUserFavoriteReviews,
-    enabled: !!user,
+    enabled: !!userId,
   });
 };

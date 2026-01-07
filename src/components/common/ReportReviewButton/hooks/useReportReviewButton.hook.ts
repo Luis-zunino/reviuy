@@ -7,7 +7,7 @@ import type { UseReportReviewButtonProps } from './types';
 
 export const useReportReviewButton = (props: UseReportReviewButtonProps) => {
   const { review } = props;
-  const { user } = useUser();
+  const { userId } = useUser();
   const [isOpen, setIsOpen] = useState(false);
   const [selectedReason, setSelectedReason] = useState('');
   const [description, setDescription] = useState('');
@@ -25,7 +25,7 @@ export const useReportReviewButton = (props: UseReportReviewButtonProps) => {
     { value: 'other', label: 'Otro motivo' },
   ];
 
-  const isOwner = user?.id && review?.user_id && user.id === review.user_id;
+  const isOwner = userId && review?.user_id && userId === review.user_id;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

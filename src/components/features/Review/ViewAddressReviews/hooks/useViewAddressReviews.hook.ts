@@ -8,7 +8,7 @@ import { useParams } from 'next/navigation';
 export const useViewAddressReviews = () => {
   const { osmId } = useParams<{ osmId: string }>();
   const router = useRouter();
-  const { isAuthenticated, user } = useUser();
+  const { isAuthenticated, userId } = useUser();
   const {
     data: addressData,
     isLoading: isLoadingAddress,
@@ -38,7 +38,7 @@ export const useViewAddressReviews = () => {
       return;
     }
 
-    const hasExistingReview = reviewsData?.some((review) => review.user_id === user?.id);
+    const hasExistingReview = reviewsData?.some((review) => review.user_id === userId);
 
     if (hasExistingReview) {
       toast.warning('Ya has reseñado esta propiedad', {

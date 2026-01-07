@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 
 export const useViewRealEstateDetails = () => {
   const { realEstateId } = useParams<{ realEstateId: string }>();
-  const { user } = useAuthContext();
+  const { userId } = useAuthContext();
   const { data, isLoading, error } = useGetAllRealEstateReviews({ id: realEstateId });
   const { data: reviewsData, isLoading: isLoadingReviews } =
     useGetReviewsByRealEstateId(realEstateId);
@@ -27,6 +27,6 @@ export const useViewRealEstateDetails = () => {
     averageRating: calculateAverageRating(),
     isLoadingReviews,
     router,
-    userId: user?.id,
+    userId: userId ?? '',
   };
 };

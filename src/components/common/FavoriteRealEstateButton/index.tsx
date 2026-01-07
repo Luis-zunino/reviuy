@@ -15,13 +15,13 @@ export const FavoriteRealEstateButton: React.FC<FavoriteRealEstateButtonProps> =
   showText = false,
   className = '',
 }) => {
-  const { user } = useAuthContext();
+  const { userId } = useAuthContext();
   const router = useRouter();
-  const { data: isFavorite, isLoading } = useIsRealEstateFavorite({ realEstateId, user });
+  const { data: isFavorite, isLoading } = useIsRealEstateFavorite({ realEstateId, userId });
   const toggleFavoriteMutation = useToggleFavoriteRealEstate();
 
   const handleToggleFavorite = async () => {
-    if (!user) {
+    if (!userId) {
       router.push(PagesUrls.LOGIN);
       return;
     }

@@ -1,6 +1,5 @@
 import { supabaseClient } from '@/lib/supabase-client';
 import type { ReviewInsert, ReviewRoom } from '@/types';
-import type { User } from '@supabase/supabase-js';
 import type { CreateReviewResponse } from './types';
 
 export interface CreateReviewData extends ReviewInsert {
@@ -9,15 +8,15 @@ export interface CreateReviewData extends ReviewInsert {
 
 export interface CreateReviewRequest {
   createReviewData: CreateReviewData;
-  user?: User | null;
+  userId?: string | null;
 }
 
 export const createReview = async ({
   createReviewData,
-  user,
+  userId,
 }: CreateReviewRequest): Promise<CreateReviewResponse> => {
   try {
-    if (!user) {
+    if (!userId) {
       return {
         success: false,
         message: 'Debes iniciar sesión para crear una reseña',
@@ -31,7 +30,7 @@ export const createReview = async ({
       .from('reviews')
       .insert({
         ...reviewData,
-        user_id: user.id,
+        user_id: userId,
       })
       .select()
       .single();

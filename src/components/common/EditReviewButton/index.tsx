@@ -10,10 +10,10 @@ import type { EditReviewButtonProps } from './types';
 
 export const EditReviewButton = (props: EditReviewButtonProps) => {
   const { review, showText = false, variant = 'ghost', size = 'sm' } = props;
-  const { user, isAuthenticated } = useUser();
+  const { userId, isAuthenticated } = useUser();
   const router = useRouter();
 
-  const isOwner = isAuthenticated && user?.id && review.user_id && user.id === review.user_id;
+  const isOwner = isAuthenticated && userId && review.user_id && userId === review.user_id;
 
   if (!isOwner) {
     return null;

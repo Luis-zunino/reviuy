@@ -1,16 +1,17 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import type { User, Session } from '@supabase/supabase-js';
 import { supabaseClient } from '@/lib/supabase-client';
 import type { AuthContextType, AuthProviderProps } from './types';
 import { getSession } from '@/services/apis/user/getSession.api';
 import { toast } from 'sonner';
 import { redirect } from 'next/navigation';
 import { PagesUrls } from '@/enums';
+import { AppSession } from '@/services/apis/user/types';
+import { sessionMapped } from '@/utils';
 
 const AuthContext = createContext<AuthContextType>({
-  user: null,
+  userId: null,
   session: null,
   loading: true,
   isAuthenticated: false,
@@ -27,8 +28,8 @@ export const useAuthContext = () => {
 };
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [session, setSession] = useState<AppSession | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -37,7 +38,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       const { session } = await getSession();
 
       setSession(session);
-      setUser(session?.user ?? null);
+      setUserId(session?.userId ?? null);
       setLoading(false);
     };
 
@@ -47,8 +48,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const {
       data: { subscription },
     } = supabaseClient.auth.onAuthStateChange(async (event, session) => {
-      setSession(session);
-      setUser(session?.user ?? null);
+      const sessionResult = sessionMapped(session);
+
+      setSession(sessionResult);
+      setUserId(session?.user?.id ?? null);
       setLoading(false);
 
       // Manejar eventos específicos
@@ -92,7 +95,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const value = {
-    user,
+    userId,
     session,
     loading,
     isAuthenticated: !!session,

@@ -1,6 +1,17 @@
-import { AuthError, Session } from '@supabase/supabase-js';
+import { AuthError } from '@supabase/supabase-js';
+
+export interface AppSession {
+  userId?: string;
+  providerToken?: string | null;
+  providerRefreshToken?: string | null;
+  accessToken?: string;
+  refreshToken?: string;
+  expiresIn?: number;
+  tokenType?: string;
+  expiresAt?: number;
+}
 
 export interface UseGetSession {
-  session: Session | null;
+  session: AppSession | null;
   error: null | AuthError;
 }
