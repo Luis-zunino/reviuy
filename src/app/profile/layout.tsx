@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import '../globals.css';
 import { MainLayout } from '@/components/common/MainLayout';
+import { AuthProvider } from '@/components/providers/AuthProvider';
 
 export const metadata: Metadata = {
   title: 'Mi Perfil | Reviuy',
@@ -12,5 +13,9 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <MainLayout>{children}</MainLayout>;
+  return (
+    <MainLayout>
+      <AuthProvider>{children}</AuthProvider>
+    </MainLayout>
+  );
 }

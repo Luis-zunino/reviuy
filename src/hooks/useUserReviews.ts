@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { supabaseClient } from '@/lib/supabase-client';
-import { useAuth } from '@/hooks/useAuth';
 import type { Review } from '@/types';
+import { useAuthContext } from '@/components/providers/AuthProvider';
 
 export const useUserReviews = () => {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated } = useAuthContext();
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

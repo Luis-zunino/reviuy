@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import type { LoginFormValues } from './types';
+import { useAuthContext } from '@/components/providers/AuthProvider';
 
 export const useLogin = () => {
   const {
@@ -13,7 +13,7 @@ export const useLogin = () => {
   } = useForm<LoginFormValues>();
 
   const [loading, setLoading] = useState(false);
-  const { signInWithEmail } = useAuth();
+  const { signInWithEmail } = useAuthContext();
 
   const onSubmit = async (data: LoginFormValues) => {
     setLoading(true);

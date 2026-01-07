@@ -5,6 +5,8 @@ export interface AuthContextType {
   session: Session | null;
   loading: boolean;
   isAuthenticated: boolean;
+  signOut: () => Promise<void>;
+  signInWithEmail: (email: string) => Promise<void>;
 }
 
 export interface AuthProviderProps {

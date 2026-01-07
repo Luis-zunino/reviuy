@@ -6,6 +6,7 @@ import { supabaseClient } from '@/lib/supabase-client';
 import { PagesUrls } from '@/enums';
 import { toast } from 'sonner';
 import { redirect } from 'next/navigation';
+import { getSession } from '@/services/apis/user/getSession.api';
 
 export const useAuth = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -14,9 +15,7 @@ export const useAuth = () => {
 
   useEffect(() => {
     const getInitialSession = async () => {
-      const {
-        data: { session },
-      } = await supabaseClient.auth.getSession();
+      const { session } = await getSession();
 
       setSession(session);
       setUser(session?.user ?? null);

@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { supabaseClient } from '@/lib/supabase-client';
 import { PagesUrls } from '@/enums';
 import { Loading } from '@/components/common/Loading';
 import { toast } from 'sonner';
+import { getSession } from '@/services/apis/user/getSession.api';
 
 export default function AuthCallback() {
   const router = useRouter();
@@ -15,7 +15,7 @@ export default function AuthCallback() {
     const handleAuthCallback = async () => {
       try {
         // Obtener el código de la URL
-        const { data, error } = await supabaseClient.auth.getSession();
+        const { session, error } = await getSession();
 
         if (error) {
           console.error('Error durante la autenticación:', error);
@@ -26,7 +26,7 @@ export default function AuthCallback() {
           return;
         }
 
-        if (data.session) {
+        if (session) {
           // Autenticación exitosa
           toast.success('¡Bienvenido!', {
             description: 'Has iniciado sesión correctamente.',

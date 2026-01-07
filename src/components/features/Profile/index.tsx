@@ -2,7 +2,6 @@
 
 import { FavoriteRealEstateButton, Header, ReviewCard } from '@/components/common';
 import { useUserReviews } from '@/hooks';
-import { useAuth } from '@/hooks/useAuth';
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,9 +21,10 @@ import { PagesUrls } from '@/enums';
 import Link from 'next/link';
 import { useGetUserFavoriteRealEstates, useGetUserFavoriteReviews } from '@/services';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useAuthContext } from '@/components/providers/AuthProvider';
 
 export const ProfileComponent = () => {
-  const { user, isAuthenticated, signOut } = useAuth();
+  const { user, isAuthenticated, signOut } = useAuthContext();
   const { reviews, loading, error, refetch } = useUserReviews();
   const { data: favorites, isLoading: loadingFavorites } = useGetUserFavoriteRealEstates();
   const { data: favoriteReviews, isLoading: loadingFavoriteReviews } = useGetUserFavoriteReviews();

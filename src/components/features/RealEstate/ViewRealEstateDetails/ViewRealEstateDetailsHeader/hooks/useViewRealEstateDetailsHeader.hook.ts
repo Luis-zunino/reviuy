@@ -1,4 +1,4 @@
-import { useAuth } from '@/hooks';
+import { useAuthContext } from '@/components/providers/AuthProvider';
 import {
   useGetRealEstateById,
   useGetRealEstateReviewByUserId,
@@ -7,7 +7,7 @@ import {
 import { useParams } from 'next/navigation';
 
 export const useViewRealEstateDetailsHeader = () => {
-  const { user } = useAuth();
+  const { user } = useAuthContext();
   const { realEstateId } = useParams<{ realEstateId: string }>();
   const {
     data: realEstate,

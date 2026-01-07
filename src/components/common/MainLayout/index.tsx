@@ -15,7 +15,6 @@ export const MainLayout = ({
   children: React.ReactNode;
 }>) => {
   const pathname = usePathname();
-
   const isHome = pathname.includes(PagesUrls.HOME);
 
   return (

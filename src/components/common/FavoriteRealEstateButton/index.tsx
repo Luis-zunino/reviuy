@@ -5,17 +5,17 @@ import { Button } from '@/components/ui/button';
 import { Heart } from 'lucide-react';
 import { useToggleFavoriteRealEstate } from '@/services/apis/realEstates/toggleFavoriteRealEstate.hook';
 import { useIsRealEstateFavorite } from '@/services/apis/realEstates/isRealEstateFavorite.hook';
-import { useAuth } from '@/hooks';
 import { useRouter } from 'next/navigation';
 import { PagesUrls } from '@/enums';
 import type { FavoriteRealEstateButtonProps } from './types';
+import { useAuthContext } from '@/components/providers/AuthProvider';
 
 export const FavoriteRealEstateButton: React.FC<FavoriteRealEstateButtonProps> = ({
   realEstateId,
   showText = false,
   className = '',
 }) => {
-  const { user } = useAuth();
+  const { user } = useAuthContext();
   const router = useRouter();
   const { data: isFavorite, isLoading } = useIsRealEstateFavorite(realEstateId);
   const toggleFavoriteMutation = useToggleFavoriteRealEstate();

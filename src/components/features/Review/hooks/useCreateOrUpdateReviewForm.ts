@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
-import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { useCreateReview, useUpdateReview, useCheckUserReviewForAddress } from '@/services';
@@ -10,10 +9,11 @@ import type { SelectedAddress, ReviewFormData } from '@/types';
 import { PagesUrls } from '@/enums';
 import { useQueryClient } from '@tanstack/react-query';
 import type { UseCreateOrUpdateReviewFormProps } from './types';
+import { useAuthContext } from '@/components/providers/AuthProvider';
 
 export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormProps) => {
   const { isUpdate = false, defaultValues } = props;
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated } = useAuthContext();
   const [isOwner, setIsOwner] = useState(false);
   const router = useRouter();
   const [selectedAddress, setSelectedAddress] = useState<SelectedAddress | null>(null);

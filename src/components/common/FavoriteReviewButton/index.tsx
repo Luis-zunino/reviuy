@@ -5,10 +5,10 @@ import { Button } from '@/components/ui/button';
 import { Heart } from 'lucide-react';
 import { useToggleFavoriteReview } from '@/services/apis/reviews/useToggleFavoriteReview.hook';
 import { useIsReviewFavorite } from '@/services/apis/reviews/useIsReviewFavorite.hook';
-import { useAuth } from '@/hooks';
 import { useRouter } from 'next/navigation';
 import { PagesUrls } from '@/enums';
 import type { FavoriteReviewButtonProps } from './types';
+import { useAuthContext } from '@/components/providers/AuthProvider';
 
 export const FavoriteReviewButton: React.FC<FavoriteReviewButtonProps> = ({
   reviewId,
@@ -16,7 +16,7 @@ export const FavoriteReviewButton: React.FC<FavoriteReviewButtonProps> = ({
   className = '',
   onClick,
 }) => {
-  const { user } = useAuth();
+  const { user } = useAuthContext();
   const router = useRouter();
   const { data: isFavorite, isLoading } = useIsReviewFavorite(reviewId);
   const { mutateAsync, isPending } = useToggleFavoriteReview();
