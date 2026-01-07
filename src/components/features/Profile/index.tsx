@@ -26,8 +26,10 @@ import { useAuthContext } from '@/components/providers/AuthProvider';
 export const ProfileComponent = () => {
   const { user, isAuthenticated, signOut } = useAuthContext();
   const { reviews, loading, error, refetch } = useUserReviews();
-  const { data: favorites, isLoading: loadingFavorites } = useGetUserFavoriteRealEstates();
-  const { data: favoriteReviews, isLoading: loadingFavoriteReviews } = useGetUserFavoriteReviews();
+  const { data: favorites, isLoading: loadingFavorites } = useGetUserFavoriteRealEstates({ user });
+  const { data: favoriteReviews, isLoading: loadingFavoriteReviews } = useGetUserFavoriteReviews({
+    user,
+  });
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('reviews');
 

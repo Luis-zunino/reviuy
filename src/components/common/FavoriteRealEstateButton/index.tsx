@@ -17,7 +17,7 @@ export const FavoriteRealEstateButton: React.FC<FavoriteRealEstateButtonProps> =
 }) => {
   const { user } = useAuthContext();
   const router = useRouter();
-  const { data: isFavorite, isLoading } = useIsRealEstateFavorite(realEstateId);
+  const { data: isFavorite, isLoading } = useIsRealEstateFavorite({ realEstateId, user });
   const toggleFavoriteMutation = useToggleFavoriteRealEstate();
 
   const handleToggleFavorite = async () => {
