@@ -7,14 +7,29 @@ import { Mail } from 'lucide-react';
 import React from 'react';
 import { useLogin } from './hooks';
 import Link from 'next/link';
+import { GoogleIcon } from './GoogleIcon';
 
 export const Login = () => {
-  const { register, handleSubmit, onSubmit, errors, loading } = useLogin();
+  const { register, handleSubmit, onSubmit, errors, loading, onGoogleSignIn } = useLogin();
 
   return (
     <div className="space-y-6 mx-auto">
       <div className="text-center space-y-2">
         <h1 className="text-2xl font-bold text-gray-900">Iniciar Sesión</h1>
+      </div>
+
+      <Button variant="outline" className="w-full flex items-center gap-2" onClick={onGoogleSignIn}>
+        <GoogleIcon />
+        Continuar con Google
+      </Button>
+
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <span className="w-full border-t" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-white px-2 text-gray-500">O continúa con</span>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

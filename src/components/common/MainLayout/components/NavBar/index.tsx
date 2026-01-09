@@ -49,7 +49,7 @@ export const NavBar = () => {
         backdropFilter: scrolled > 0 && scrolled < 1 ? 'blur(8px)' : 'none',
       }}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="xl:mx-40 mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <Logo />
           <div className="hidden md:flex items-center gap-6">
@@ -77,14 +77,14 @@ export const NavBar = () => {
           <div className="flex gap-2 items-center">
             <Link
               href={PagesUrls.REVIEW_CREATE}
-              className="hidden md:flex items-center gap-2 px-4 py-2 bg-blue-400 text-white rounded-lg hover:bg-blue-600 transition-colors"
+              className="hidden md:flex items-center gap-2 px-4 py-2 bg-blue-400 text-white rounded-lg hover:bg-blue-600 transition-colors h-8"
             >
               <FilePenLine className="w-4 h-4" />
               Escribir reseña
             </Link>
             <Link
               href={PagesUrls.PROFILE}
-              className="hidden md:flex flex-1 px-4 py-2 bg-blue-400 text-white rounded-lg hover:bg-blue-600 transition-colors"
+              className="hidden md:flex flex-1 px-4 py-2 bg-blue-400 text-white rounded-lg hover:bg-blue-600 transition-colors h-8"
             >
               <UserRoundCog className="w-4 h-4" />
             </Link>

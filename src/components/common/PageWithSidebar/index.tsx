@@ -21,16 +21,18 @@ export const PageWithSidebar: React.FC<PageWithSidebarProps> = ({
       </div>
       <div className="max-w-7xl mx-auto px-4 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          <div className="lg:col-span-1">
-            <div
-              className={cn(
-                'sticky top-20 bg-white rounded-lg border border-border p-6',
-                sidebarClassName
-              )}
-            >
-              {sidebar}
+          {sidebar ? (
+            <div className="lg:col-span-1">
+              <div
+                className={cn(
+                  'sticky top-20 bg-white rounded-lg border border-border p-6',
+                  sidebarClassName
+                )}
+              >
+                {sidebar}
+              </div>
             </div>
-          </div>
+          ) : null}
 
           <div className={cn('lg:col-span-3', contentClassName)}>{children}</div>
         </div>

@@ -1,19 +1,23 @@
-import { useGetAllRealEstates } from '@/services';
-import type { RealEstate } from '@/types';
+import { useInfiniteRealEstates } from '@/services';
+import type { RealEstate } from '@/types/realEstate';
 import { useMemo, useState } from 'react';
+import { useDebounce } from '@/hooks';
 
 export const useListRealEstate = () => {
   const [selectedRating, setSelectedRating] = useState<number>(0);
   const [selectedRealEstate, setSelectedRealEstate] = useState<RealEstate | null>(null);
   const [searchValue, setSearchValue] = useState<string | null>(null);
 
-  const { data: realEstates, isLoading } = useGetAllRealEstates();
+  const debouncedSearchValue = useDebounce(searchValue, 300);
+
+  // Infinite query for real estates
+  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useInfiniteRealEstates({ search: debouncedSearchValue, rating: selectedRating });
+
+  const allItems = useMemo(() => data?.pages.flatMap((page) => page.data) ?? [], [data]);
 
   const filteredRealEstates = useMemo(() => {
-    if (!realEstates) return [];
-
-    let filtered = [...realEstates];
-
+    let filtered = [...allItems];
     if (selectedRealEstate) {
       filtered = filtered.filter((re) => re.id === selectedRealEstate.id);
     }
@@ -27,7 +31,7 @@ export const useListRealEstate = () => {
     }
 
     return filtered;
-  }, [realEstates, selectedRealEstate, selectedRating, searchValue]);
+  }, [allItems, selectedRealEstate, selectedRating]);
 
   const handleRealEstateSelect = (realEstate: RealEstate | null) => {
     setSelectedRealEstate(realEstate);
@@ -39,15 +43,25 @@ export const useListRealEstate = () => {
     setSearchValue(null);
   };
 
+  const loadMore = () => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  };
+
   return {
-    filteredRealEstates,
     selectedRating,
     selectedRealEstate,
     searchValue,
     isLoading,
+    displayedItems: filteredRealEstates,
     setSearchValue,
     handleRealEstateSelect,
     handleClearFilters,
     setSelectedRating,
+    isFetchingNextPage,
+    // paginación
+    loadMore,
+    hasNextPage,
   };
 };

@@ -470,6 +470,7 @@ export type Database = {
         Row: {
           address_osm_id: string | null;
           address_text: string | null;
+          apartment_number: string | null;
           created_at: string;
           description: string;
           dislikes: number;
@@ -496,6 +497,7 @@ export type Database = {
         Insert: {
           address_osm_id?: string | null;
           address_text?: string | null;
+          apartment_number?: string | null;
           created_at?: string;
           description: string;
           dislikes?: number;
@@ -522,6 +524,7 @@ export type Database = {
         Update: {
           address_osm_id?: string | null;
           address_text?: string | null;
+          apartment_number?: string | null;
           created_at?: string;
           description?: string;
           dislikes?: number;

@@ -50,7 +50,7 @@ export async function middleware(request: NextRequest) {
         redirectUrl.searchParams.set('redirectTo', request.nextUrl.pathname);
         return NextResponse.redirect(redirectUrl);
     }
-    const authRoutes = [PagesUrls.LOGIN];
+    const authRoutes = [PagesUrls.LOGIN, '/authentication'];
     if (user && authRoutes.some(route => request.nextUrl.pathname.startsWith(route))) {
         return NextResponse.redirect(new URL(PagesUrls.HOME, request.url));
     }

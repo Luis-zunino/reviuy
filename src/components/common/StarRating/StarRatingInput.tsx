@@ -108,7 +108,7 @@ export const StarRatingInput: React.FC<StarRatingInputProps> = ({
 
         {showLabel && (
           <span className={cn('text-muted-foreground ml-1', config.text)}>
-            {value > 0 ? `${value}/5` : 'Selecciona'}
+            {value > 0 ? `${value}/5` : '0/0'}
           </span>
         )}
       </div>

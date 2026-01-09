@@ -44,7 +44,7 @@ export const useUser = () => {
 
   return {
     userId,
-    isAuthenticated: !!userId,
+    isAuthenticated: Boolean(userId),
     loading,
     logout,
     isOwner,

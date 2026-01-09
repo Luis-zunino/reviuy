@@ -7,6 +7,7 @@ export interface AuthContextType {
   isAuthenticated: boolean;
   signOut: () => Promise<void>;
   signInWithEmail: (email: string) => Promise<void>;
+  signInWithGoogle: () => Promise<void>;
 }
 
 export interface AuthProviderProps {

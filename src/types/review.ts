@@ -44,6 +44,7 @@ export type ReviewFormData = {
   image_url?: string | null;
   real_estate_id?: string | null;
   real_estate_experience?: string | null;
+  apartment_number?: string | null;
   review_rooms: {
     id?: string;
     room_type: string;

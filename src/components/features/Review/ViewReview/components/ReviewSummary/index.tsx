@@ -17,6 +17,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import Link from 'next/link';
+import { translateComfort, translateHumidity, translatePropertyType } from '@/utils';
 
 export const ReviewSummary = ({ review }: ReviewSummaryProps) => {
   const recommended = review.rating >= 3.5;
@@ -99,15 +100,21 @@ export const ReviewSummary = ({ review }: ReviewSummaryProps) => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div className="space-y-2">
               <span className="text-sm font-semibold text-foreground">Temperatura en verano</span>
-              <p className="text-base capitalize text-muted-foreground">{review?.summer_comfort}</p>
+              <p className="text-base capitalize text-muted-foreground">
+                {translateComfort(review?.summer_comfort)}
+              </p>
             </div>
             <div className="space-y-2">
               <span className="text-sm font-semibold text-foreground">Temperatura en invierno</span>
-              <p className="text-base capitalize text-muted-foreground">{review?.winter_comfort}</p>
+              <p className="text-base capitalize text-muted-foreground">
+                {translateComfort(review?.winter_comfort)}
+              </p>
             </div>
             <div className="space-y-2">
               <span className="text-sm font-semibold text-foreground">Humedad</span>
-              <p className="text-base capitalize text-muted-foreground">{review?.humidity}</p>
+              <p className="text-base capitalize text-muted-foreground">
+                {translateHumidity(review?.humidity)}
+              </p>
             </div>
             <div className="space-y-2">
               <span className="text-sm font-semibold text-foreground">Rating de la zona</span>
@@ -115,7 +122,9 @@ export const ReviewSummary = ({ review }: ReviewSummaryProps) => {
             </div>
             <div className="space-y-2">
               <span className="text-sm font-semibold text-foreground">Tipo de propiedad</span>
-              <p className="text-base capitalize text-muted-foreground">{review?.property_type}</p>
+              <p className="text-base capitalize text-muted-foreground">
+                {translatePropertyType(review?.property_type)}
+              </p>
             </div>
           </div>
         </CardContent>

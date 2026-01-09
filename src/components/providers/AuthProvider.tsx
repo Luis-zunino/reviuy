@@ -17,6 +17,7 @@ const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
   signOut: () => Promise.resolve(),
   signInWithEmail: () => Promise.resolve(),
+  signInWithGoogle: () => Promise.resolve(),
 });
 
 export const useAuthContext = () => {
@@ -65,6 +66,23 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     return () => subscription.unsubscribe();
   }, []);
 
+  const signInWithGoogle = async () => {
+    setLoading(true);
+    const { error } = await supabaseClient.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo:
+          process.env.NODE_ENV === 'production'
+            ? 'https://reviuy.vercel.app/auth/callback'
+            : 'http://localhost:3000/auth/callback',
+      },
+    });
+    setLoading(false);
+    if (error) {
+      throw error;
+    }
+  };
+
   const signInWithEmail = async (email: string) => {
     setLoading(true);
     const emailRedirectTo =
@@ -101,6 +119,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     isAuthenticated: !!session,
     signInWithEmail,
     signOut,
+    signInWithGoogle,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

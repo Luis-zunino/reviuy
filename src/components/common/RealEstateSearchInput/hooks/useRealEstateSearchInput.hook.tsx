@@ -31,7 +31,7 @@ export const useRealEstateSearchInput = (props: UseRealEstateSearchInputProps) =
 
   const handleRealEstateClick = (realEstate: RealEstate) => {
     setSearchInput('');
-    onChange?.(realEstate.id);
+    onChange?.(realEstate.name);
     onRealEstateSelect(realEstate);
 
     setShowResults(false);

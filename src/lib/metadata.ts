@@ -32,7 +32,7 @@ export function generatePageMetadata({
       title,
       description,
       url,
-      siteName: 'RevieUy',
+      siteName: 'ReviUy',
       locale: 'es_UY',
       type: 'website',
       images: [
@@ -74,7 +74,7 @@ export function generateReviewMetadata(review: {
 }): Metadata {
   return generatePageMetadata({
     title: `${review.title} - ${review.address_text}`,
-    description: `Reseña de ${review.address_text}: ${review.title}. Calificación: ${review.rating}/5 estrellas. Lee más experiencias en RevieUy.`,
+    description: `Reseña de ${review.address_text}: ${review.title}. Calificación: ${review.rating}/5 estrellas. Lee más experiencias en ReviUy.`,
     path: `/review/details/${review.id}`,
     keywords: [review.address_text, 'reseña propiedad', review.title],
   });
@@ -97,7 +97,7 @@ export function generateRealEstateMetadata(realEstate: {
     title: `${realEstate.name} - Inmobiliaria`,
     description:
       realEstate.description ||
-      `Lee reseñas y calificaciones de ${realEstate.name}. ${rating}. Descubre experiencias de otros usuarios en RevieUy.`,
+      `Lee reseñas y calificaciones de ${realEstate.name}. ${rating}. Descubre experiencias de otros usuarios en ReviUy.`,
     path: `/real-estate/${realEstate.id}`,
     keywords: [realEstate.name, 'inmobiliaria', 'reseñas inmobiliaria'],
   });
@@ -112,7 +112,7 @@ export function generateAddressMetadata(address: {
 }): Metadata {
   return generatePageMetadata({
     title: `${address.display_name} - Reseñas y Opiniones`,
-    description: `Descubre reseñas y experiencias sobre ${address.display_name}. Lee opiniones de inquilinos y calificaciones detalladas en RevieUy.`,
+    description: `Descubre reseñas y experiencias sobre ${address.display_name}. Lee opiniones de inquilinos y calificaciones detalladas en ReviUy.`,
     path: `/address/${address.osm_id}`,
     keywords: [address.display_name, 'reseñas dirección', 'opiniones alquiler'],
   });
@@ -160,7 +160,7 @@ export function generateWebsiteSchema() {
   return {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    name: 'RevieUy',
+    name: 'ReviUy',
     url: siteUrl,
     description: 'Plataforma de reseñas de propiedades de alquiler e inmobiliarias en Uruguay',
     potentialAction: {

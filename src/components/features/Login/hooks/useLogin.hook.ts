@@ -13,7 +13,26 @@ export const useLogin = () => {
   } = useForm<LoginFormValues>();
 
   const [loading, setLoading] = useState(false);
-  const { signInWithEmail } = useAuthContext();
+  const { signInWithEmail, signInWithGoogle } = useAuthContext();
+
+  const onGoogleSignIn = async () => {
+    setLoading(true);
+    try {
+      await signInWithGoogle();
+    } catch (error: unknown) {
+      console.error('Error al iniciar sesión con Google:', error);
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : 'Hubo un problema al iniciar sesión con Google. Inténtalo de nuevo.';
+      toast.error('Error al iniciar sesión', {
+        description: errorMessage,
+        duration: 4000,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const onSubmit = async (data: LoginFormValues) => {
     setLoading(true);
@@ -51,5 +70,6 @@ export const useLogin = () => {
     onSubmit,
     errors,
     loading,
+    onGoogleSignIn,
   };
 };

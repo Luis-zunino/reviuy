@@ -15,14 +15,14 @@ const layout = ({
               <Building2 className="w-8 h-8 text-white" />
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">RevieUy</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">ReviUy</h1>
           <p className="text-gray-600">Tu plataforma de reseñas inmobiliarias</p>
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">{children}</div>
 
         <div className="text-center mt-6 text-sm text-gray-500">
-          <p>© 2025 RevieUy. Todos los derechos reservados.</p>
+          <p>© 2025 ReviUy. Todos los derechos reservados.</p>
         </div>
       </div>
     </div>

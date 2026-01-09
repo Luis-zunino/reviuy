@@ -1,5 +1,5 @@
 import { LazyMapComponent, StarRatingDisplay } from '@/components/common';
-import { MapPinned, Calendar, Home } from 'lucide-react';
+import { MapPinned, Calendar, Home, DoorClosed } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import type { ReviewSidebarProps } from './types';
@@ -42,7 +42,6 @@ export const ReviewSidebar = ({ review }: ReviewSidebarProps) => {
               ) : null}
             </div>
 
-            {/* Property type with icon */}
             <div className="flex items-center gap-3 pt-4 border-t border-border">
               <Home className="h-4 w-4 text-muted-foreground flex-shrink-0" />
               <div className="flex flex-col gap-1">
@@ -53,8 +52,17 @@ export const ReviewSidebar = ({ review }: ReviewSidebarProps) => {
               </div>
             </div>
 
-            {/* Publication date with icon */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 pt-4">
+              <DoorClosed className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+              <div className="flex flex-col gap-1">
+                <span className="text-xs text-muted-foreground">Nº de apartamento</span>
+                <span className="text-sm font-medium text-foreground capitalize">
+                  {review?.apartment_number || 'N/A'}
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 pt-4 border-t border-border">
               <Calendar className="h-4 w-4 text-muted-foreground flex-shrink-0" />
               <div className="flex flex-col gap-1">
                 <span className="text-xs text-muted-foreground">Fecha de publicación</span>

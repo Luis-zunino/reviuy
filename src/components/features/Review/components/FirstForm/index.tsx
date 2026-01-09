@@ -1,7 +1,6 @@
 import { AddressSearchInput } from '@/components/common/AddressSearchInput';
 import { FormLabel } from '@/components/common/Form/FormLabel';
 import { StarRatingInput } from '@/components/common/StarRating';
-import { PropertyType } from '@/components/features/Review/CreateReview/enums';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { validateText } from '@/utils';
@@ -16,6 +15,7 @@ import {
 } from '@/components/ui/select';
 import { LazyMapComponent } from '@/components/common';
 import type { FirstFormProps } from './types';
+import { PropertyType } from '@/enums';
 
 export const FirstForm = (props: FirstFormProps) => {
   const { control, errors, selectedAddress, handleAddressSelect } = props;
@@ -70,61 +70,77 @@ export const FirstForm = (props: FirstFormProps) => {
         />
         {errors.title && <p className="text-red-500 text-sm">{errors.title.message}</p>}
       </div>
-      <div className="flex flex-col sm:flex-row gap-2 justify-between">
-        <div className="space-y-2">
-          <FormLabel htmlFor="propertyType" label="Tipo de propiedad" isRequired />
-          <Controller
-            name="property_type"
-            control={control}
-            rules={{ required: 'Selecciona el tipo de propiedad' }}
-            render={({ field }) => (
-              <Select onValueChange={field.onChange} defaultValue={field.value ?? undefined}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecciona el tipo de propiedad" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value={PropertyType.APARTMENT}>Apartamento</SelectItem>
-                  <SelectItem value={PropertyType.HOUSE}>Casa</SelectItem>
-                  <SelectItem value={PropertyType.ROOM}>Habitación</SelectItem>
-                </SelectContent>
-              </Select>
+      <div className="flex flex-col sm:flex-row gap-6 w-full">
+        <div className="flex flex-col lg:flex-row gap-6">
+          <div className="space-y-2">
+            <FormLabel htmlFor="propertyType" label="Tipo de propiedad" isRequired />
+            <Controller
+              name="property_type"
+              control={control}
+              rules={{ required: 'Selecciona el tipo de propiedad' }}
+              render={({ field }) => (
+                <Select onValueChange={field.onChange} defaultValue={field.value ?? undefined}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecciona el tipo de propiedad" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={PropertyType.APARTMENT}>Apartamento</SelectItem>
+                    <SelectItem value={PropertyType.HOUSE}>Casa</SelectItem>
+                    <SelectItem value={PropertyType.ROOM}>Habitación</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            {errors.property_type && (
+              <p className="text-red-500 text-sm">{errors.property_type.message}</p>
             )}
-          />
-          {errors.property_type && (
-            <p className="text-red-500 text-sm">{errors.property_type.message}</p>
-          )}
+          </div>
+          <div className="space-y-2">
+            <FormLabel htmlFor="apartment_number" label="Número de apartamento (opcional)" />
+            <Controller
+              name="apartment_number"
+              control={control}
+              rules={{
+                maxLength: { value: 10, message: 'El número de apartamento es muy largo' },
+              }}
+              render={({ field }) => (
+                <Input {...field} value={field.value ?? ''} placeholder="Ej: 3A, Piso 2, Apt 12" />
+              )}
+            />
+          </div>
         </div>
+        <div className="flex flex-col lg:flex-row gap-6 justify-between">
+          <div className="space-y-2">
+            <FormLabel label="Calificación general" isRequired />
 
-        <div className="space-y-2">
-          <FormLabel label="Calificación general" isRequired />
+            <Controller
+              name="rating"
+              control={control}
+              rules={{
+                required: 'La calificación es obligatoria',
+                min: { value: 1, message: 'Selecciona al menos 1 estrella' },
+              }}
+              render={({ field }) => (
+                <StarRatingInput value={field.value || 0} onChange={field.onChange} required />
+              )}
+            />
+            {errors.rating && <p className="text-red-500 text-sm">{errors.rating.message}</p>}
+          </div>
 
-          <Controller
-            name="rating"
-            control={control}
-            rules={{
-              required: 'La calificación es obligatoria',
-              min: { value: 1, message: 'Selecciona al menos 1 estrella' },
-            }}
-            render={({ field }) => (
-              <StarRatingInput value={field.value || 0} onChange={field.onChange} required />
-            )}
-          />
-          {errors.rating && <p className="text-red-500 text-sm">{errors.rating.message}</p>}
-        </div>
-
-        <div className="space-y-2">
-          <FormLabel label="Calificación de la zona" />
-          <Controller
-            name="zone_rating"
-            rules={{
-              required: 'La calificacion de la zona es requerido',
-              min: { value: 1, message: 'Selecciona al menos 1 estrella' },
-            }}
-            control={control}
-            render={({ field }) => (
-              <StarRatingInput value={field.value || 0} onChange={field.onChange} required />
-            )}
-          />
+          <div className="space-y-2">
+            <FormLabel label="Calificación de la zona" />
+            <Controller
+              name="zone_rating"
+              rules={{
+                required: 'La calificacion de la zona es requerido',
+                min: { value: 1, message: 'Selecciona al menos 1 estrella' },
+              }}
+              control={control}
+              render={({ field }) => (
+                <StarRatingInput value={field.value || 0} onChange={field.onChange} required />
+              )}
+            />
+          </div>
         </div>
       </div>
       <div className="space-y-2">

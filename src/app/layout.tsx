@@ -21,9 +21,10 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://reviuy.vercel.app';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
+  manifest: '/manifest.webmanifest',
   title: {
-    default: 'RevieUy - Reseñas de Propiedades e Inmobiliarias en Uruguay',
-    template: '%s | RevieUy',
+    default: 'ReviUy - Reseñas de Propiedades e Inmobiliarias en Uruguay',
+    template: '%s | ReviUy',
   },
   description:
     'Descubre y comparte experiencias sobre propiedades de alquiler e inmobiliarias en Uruguay. Lee reseñas detalladas, califica tu experiencia y toma decisiones informadas.',
@@ -36,18 +37,18 @@ export const metadata: Metadata = {
     'propiedades montevideo',
     'reviews propiedades',
   ],
-  authors: [{ name: 'RevieUy Team' }],
-  creator: 'RevieUy',
-  publisher: 'RevieUy',
-  applicationName: 'RevieUy',
+  authors: [{ name: 'ReviUy Team' }],
+  creator: 'ReviUy',
+  publisher: 'ReviUy',
+  applicationName: 'ReviUy',
   category: 'Real Estate',
 
   openGraph: {
     type: 'website',
     locale: 'es_UY',
     url: siteUrl,
-    siteName: 'RevieUy',
-    title: 'RevieUy - Reseñas de Propiedades e Inmobiliarias en Uruguay',
+    siteName: 'ReviUy',
+    title: 'ReviUy - Reseñas de Propiedades e Inmobiliarias en Uruguay',
     description:
       'Plataforma de reseñas de propiedades de alquiler e inmobiliarias en Uruguay. Comparte tu experiencia y ayuda a otros a tomar mejores decisiones.',
     images: [
@@ -55,14 +56,14 @@ export const metadata: Metadata = {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'RevieUy - Reseñas de Propiedades',
+        alt: 'ReviUy - Reseñas de Propiedades',
       },
     ],
   },
 
   twitter: {
     card: 'summary_large_image',
-    title: 'RevieUy - Reseñas de Propiedades e Inmobiliarias en Uruguay',
+    title: 'ReviUy - Reseñas de Propiedades e Inmobiliarias en Uruguay',
     description:
       'Descubre y comparte experiencias sobre propiedades de alquiler e inmobiliarias en Uruguay.',
     images: ['/og-image.png'],

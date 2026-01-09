@@ -1,2 +1,5 @@
 export * from './textValidation.util';
 export * from './sessionMapped.util';
+export * from './translateComfort.util';
+export * from './translateHumidity.util';
+export * from './translatePropertyType.util';
