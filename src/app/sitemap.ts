@@ -20,13 +20,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/authentication/login`,
-      lastModified: now,
-      changeFrequency: 'monthly',
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/authentication/register`,
+      url: `${baseUrl}/login`,
       lastModified: now,
       changeFrequency: 'monthly',
       priority: 0.7,

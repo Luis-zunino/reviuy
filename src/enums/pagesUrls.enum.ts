@@ -1,5 +1,5 @@
 export enum PagesUrls {
-  LOGIN = '/authentication/login',
+  LOGIN = '/login',
   HOME = '/home',
   REVIEW = '/review',
   ADDREES_DETAILS = '/address',

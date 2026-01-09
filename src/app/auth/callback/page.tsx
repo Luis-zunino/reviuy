@@ -14,7 +14,6 @@ export default function AuthCallback() {
   useEffect(() => {
     const handleAuthCallback = async () => {
       try {
-        // Obtener el código de la URL
         const { session, error } = await getSession();
 
         if (error) {
@@ -27,12 +26,9 @@ export default function AuthCallback() {
         }
 
         if (session) {
-          // Autenticación exitosa
           toast.success('¡Bienvenido!', {
             description: 'Has iniciado sesión correctamente.',
           });
-
-          // Redirigir al home
           router.push(PagesUrls.HOME);
         } else {
           router.push(PagesUrls.LOGIN);

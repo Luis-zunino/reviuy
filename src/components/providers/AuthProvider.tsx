@@ -73,8 +73,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       options: {
         redirectTo:
           process.env.NODE_ENV === 'production'
-            ? 'https://reviuy.vercel.app/auth/callback'
-            : 'http://localhost:3000/auth/callback',
+            ? process.env.NEXT_PUBLIC_SITE_URL
+            : 'http://localhost:3000',
       },
     });
     setLoading(false);
@@ -87,8 +87,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setLoading(true);
     const emailRedirectTo =
       process.env.NODE_ENV === 'production'
-        ? 'https://reviuy.vercel.app/auth/callback'
-        : 'http://localhost:3000/auth/callback';
+        ? process.env.NEXT_PUBLIC_SITE_URL
+        : 'http://localhost:3000';
     const { error } = await supabaseClient.auth.signInWithOtp({
       email,
       options: {
@@ -108,7 +108,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     if (error) {
       throw error;
     }
-    // Redirigir al home después del logout
     redirect(PagesUrls.HOME);
   };
 

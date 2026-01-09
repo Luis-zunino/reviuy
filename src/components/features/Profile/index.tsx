@@ -16,24 +16,28 @@ import {
   LogOut,
   Search,
 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import { PagesUrls } from '@/enums';
 import Link from 'next/link';
-import { useGetUserFavoriteRealEstates, useGetUserFavoriteReviews } from '@/services';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useAuthContext } from '@/components/providers/AuthProvider';
+import { useProfileComponent } from './hooks';
 
 export const ProfileComponent = () => {
-  const { userId, isAuthenticated, signOut } = useAuthContext();
-  const { reviews, loading, error, refetch } = useUserReviews();
-  const { data: favorites, isLoading: loadingFavorites } = useGetUserFavoriteRealEstates({
+  const {
     userId,
-  });
-  const { data: favoriteReviews, isLoading: loadingFavoriteReviews } = useGetUserFavoriteReviews({
-    userId,
-  });
-  const router = useRouter();
-  const [activeTab, setActiveTab] = useState('reviews');
+    isAuthenticated,
+    signOut,
+    reviews,
+    loading,
+    error,
+    refetch,
+    favorites,
+    loadingFavorites,
+    favoriteReviews,
+    loadingFavoriteReviews,
+    router,
+    activeTab,
+    setActiveTab,
+  } = useProfileComponent();
 
   if (!isAuthenticated || !userId) {
     return (
@@ -89,7 +93,7 @@ export const ProfileComponent = () => {
 
   return (
     <div className=" mx-auto p-6">
-      <Header title="Mi Perfil" />
+      <Header title="Mi perfil" />
       <Card className="mb-8">
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
@@ -107,14 +111,14 @@ export const ProfileComponent = () => {
               variant="outline"
               className="flex items-center gap-2 text-red-600 border-red-200 hover:bg-red-50"
               icon={LogOut}
+              title="Cerrar sesión"
             >
-              Cerrar sesión
+              <span className="hidden md:flex">Cerrar sesión</span>
             </Button>
           </CardTitle>
         </CardHeader>
       </Card>
 
-      {/* Tabs para Reseñas y Favoritos */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full flex flex-col gap-8">
         <TabsList className="grid w-full grid-cols-1 md:grid-cols-3 mb-6 gap-2">
           <TabsTrigger value="reviews" className="flex items-center gap-2">
@@ -131,7 +135,6 @@ export const ProfileComponent = () => {
           </TabsTrigger>
         </TabsList>
 
-        {/* Tab de Reseñas */}
         <TabsContent value="reviews" className="mt-6">
           <section>
             <div className="flex items-center justify-between mb-6">
@@ -164,7 +167,6 @@ export const ProfileComponent = () => {
           </section>
         </TabsContent>
 
-        {/* Tab de Reseñas Favoritas */}
         <TabsContent value="favoriteReviews" className="mt-6">
           <section>
             <div className="flex items-center justify-between mb-6">
@@ -210,7 +212,6 @@ export const ProfileComponent = () => {
           </section>
         </TabsContent>
 
-        {/* Tab de Inmobiliarias Favoritas */}
         <TabsContent value="favoriteRealEstates" className="mt-6">
           <section>
             <div className="flex items-center justify-between mb-6">
