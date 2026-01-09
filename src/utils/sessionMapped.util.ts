@@ -1,7 +1,11 @@
 import { AppSession } from '@/services/apis/user/types';
 import { Session } from '@supabase/supabase-js';
 
-export const sessionMapped = (session: Session | null) => {
+export const sessionMapped = (session: Session | null): AppSession | null => {
+  if (!session) {
+    return null;
+  }
+
   const sessionMapped: AppSession = {
     providerToken: session?.provider_token,
     providerRefreshToken: session?.provider_refresh_token,
