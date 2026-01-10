@@ -1,9 +1,9 @@
 import { PagesUrls } from '@/enums';
 import { redirect } from 'next/navigation';
 
-const RootAuthPage = () => {
-  redirect(PagesUrls.LOGIN);
+const RootPage = () => {
+  redirect(PagesUrls.HOME);
   return null;
 };
 
-export default RootAuthPage;
+export default RootPage;
