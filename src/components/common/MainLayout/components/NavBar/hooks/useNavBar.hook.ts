@@ -1,15 +1,9 @@
 import { useAuthContext } from '@/components/providers/AuthProvider';
-import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 export const useNavBar = () => {
-  const pathname = usePathname();
-  const { isAuthenticated } = useAuthContext();
-  const [open, setOpen] = useState(false);
+  const { isAuthenticated, signOut } = useAuthContext();
   const [scrolled, setScrolled] = useState(0);
-
-  const isActive = (route: string) => pathname === route || pathname.startsWith(route + '/');
-
   useEffect(() => {
     const initialScroll = window.scrollY;
 
@@ -28,9 +22,7 @@ export const useNavBar = () => {
 
   return {
     isAuthenticated,
-    open,
-    setOpen,
     scrolled,
-    isActive,
+    signOut,
   };
 };

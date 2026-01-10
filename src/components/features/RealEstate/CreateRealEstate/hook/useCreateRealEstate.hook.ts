@@ -42,5 +42,12 @@ export const useCreateRealEstate = () => {
     }
   };
 
-  return { handleSubmit, onSubmit, register, errors, isSubmitting: isPending };
+  return {
+    handleSubmit,
+    onSubmit,
+    register,
+    errors,
+    isSubmitting: isPending,
+    isAuthenticated: Boolean(userId),
+  };
 };

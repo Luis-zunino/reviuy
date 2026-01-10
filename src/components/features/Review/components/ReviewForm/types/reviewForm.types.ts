@@ -11,7 +11,6 @@ import type {
 import type { ReviewFormData, SelectedAddress } from '@/types';
 
 export interface ReviewFormProps {
-  isAuthenticated: boolean;
   userId?: string | null;
   loading: boolean;
   errors: FieldErrors<ReviewFormData>;

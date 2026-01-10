@@ -11,7 +11,6 @@ export const CreateReview = () => {
     errors,
     selectedAddress,
     userId,
-    isAuthenticated,
     loading,
     form,
     handleAddressSelect,
@@ -24,7 +23,6 @@ export const CreateReview = () => {
 
   return (
     <ReviewForm
-      isAuthenticated={isAuthenticated}
       userId={userId}
       loading={loading}
       errors={errors}

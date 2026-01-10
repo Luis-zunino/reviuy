@@ -1,5 +1,4 @@
 export { AddressSearchInput } from './AddressSearchInput';
-export { ErrorPage } from './ErrorPage';
 export { Loading, Skeleton, ReviewCardSkeleton, MapSkeleton, ListSkeleton } from './Loading';
 export { MainLayout } from './MainLayout/index';
 export { PageStateWrapper } from './PageStateWrapper/index';
@@ -23,3 +22,4 @@ export { ReportReviewButton } from './ReportReviewButton';
 export { Header } from './Header';
 export { ReviewLikesButtons } from './ReviewLikesButtons';
 export { PageWithSidebar } from './PageWithSidebar';
+export * from './PageStateWrapper/components';

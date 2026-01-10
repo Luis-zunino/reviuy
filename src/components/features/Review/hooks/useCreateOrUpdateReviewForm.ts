@@ -205,7 +205,6 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
     isSubmitting: isPending || isUpdatePending,
     selectedAddress,
     userId,
-    isAuthenticated,
     loading: isPending || isUpdatePending,
     form,
     handleAddressSelect,

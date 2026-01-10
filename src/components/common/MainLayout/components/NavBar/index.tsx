@@ -7,23 +7,23 @@ import {
   HelpCircle,
   Lightbulb,
   Menu,
-  X,
   UserRoundCog,
   FilePenLine,
+  LogOut,
 } from 'lucide-react';
 import { PagesUrls } from '@/enums';
 import { Button } from '@/components/ui/button';
-import { Logo } from './logo';
+import { Logo } from './components/Logo';
 import { useNavBar } from './hooks';
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { NavBarItem } from './components/NavBarItem';
 
 export const NavBar = () => {
-  const { isAuthenticated, open, setOpen, scrolled, isActive } = useNavBar();
+  const { isAuthenticated, scrolled, signOut } = useNavBar();
 
   return (
     <nav
@@ -67,129 +67,58 @@ export const NavBar = () => {
               <FilePenLine className="w-4 h-4" />
               Escribir reseña
             </Link>
-            {isAuthenticated ? (
-              <Link
-                href={PagesUrls.PROFILE}
-                className="hidden md:flex items-center justify-center px-4 py-2 bg-blue-400 text-white rounded-lg hover:bg-blue-600 transition-colors h-8"
-              >
-                <UserRoundCog className="w-4 h-4" />
-              </Link>
-            ) : (
-              <DropdownMenu modal={false}>
-                <DropdownMenuTrigger asChild className="h-8 hover:cursor-pointer">
-                  <Button
-                    variant="ghost"
-                    className="min-h-8 hidden md:flex items-center justify-center px-4 py-2 bg-blue-400 text-white rounded-lg hover:bg-blue-600 transition-colors h-8"
-                  >
-                    <UserRoundCog className="w-4 h-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuItem asChild>
-                    <Link
-                      href={PagesUrls.LOGIN}
-                      className="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-700 hover:text-blue-600 hover:bg-gray-50 hover:cursor-pointer"
-                    >
-                      <UserRoundCog className="w-4 h-4" />
-                      Iniciar sesión
-                    </Link>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
+            <DropdownMenu modal={false}>
+              <DropdownMenuTrigger asChild className="h-8 hover:cursor-pointer">
+                <Button
+                  variant="ghost"
+                  className="min-h-8 items-center justify-center px-4 py-2 bg-blue-400 text-white rounded-lg hover:bg-blue-600 transition-colors h-8"
+                >
+                  <Menu className="w-6 h-6" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <NavBarItem pageUrl={PagesUrls.HOME} Icon={Home} label="Inicio" />
+                <NavBarItem
+                  pageUrl={PagesUrls.REAL_ESTATE}
+                  Icon={Building2}
+                  label="Inmobiliarias"
+                />
+                <NavBarItem pageUrl={PagesUrls.TIPS} Icon={Lightbulb} label="Tips" />
+                <NavBarItem pageUrl={PagesUrls.FAQ} Icon={HelpCircle} label="FAQ" />
+                <NavBarItem
+                  pageUrl={PagesUrls.REVIEW_CREATE}
+                  Icon={FilePenLine}
+                  label="Escribir reseña"
+                />
+                {isAuthenticated ? (
+                  <>
+                    <NavBarItem
+                      pageUrl={PagesUrls.PROFILE}
+                      Icon={UserRoundCog}
+                      label="Perfil"
+                      showInDesktop={true}
+                    />
+                    <NavBarItem
+                      variant="destructive"
+                      Icon={LogOut}
+                      onClick={signOut}
+                      label="Cerrar sesión"
+                      showInDesktop={true}
+                    />
+                  </>
+                ) : (
+                  <NavBarItem
+                    pageUrl={PagesUrls.LOGIN}
+                    Icon={UserRoundCog}
+                    label="Iniciar sesión"
+                    showInDesktop={true}
+                  />
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
-          <Button
-            onClick={() => setOpen(!open)}
-            className="md:hidden p-2 text-gray-700 hover:text-blue-600"
-            variant="ghost"
-          >
-            {open ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </Button>
         </div>
       </div>
-
-      {open && (
-        <div className="md:hidden bg-white border-t border-gray-200 shadow-sm animate-slide-down">
-          <div className="flex flex-col p-4 gap-2">
-            <Link
-              href={PagesUrls.HOME}
-              onClick={() => setOpen(false)}
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg ${
-                isActive(PagesUrls.HOME)
-                  ? 'text-blue-600 bg-blue-50'
-                  : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
-              }`}
-            >
-              <Home className="w-4 h-4" />
-              Inicio
-            </Link>
-
-            <Link
-              href={PagesUrls.REAL_ESTATE}
-              onClick={() => setOpen(false)}
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg ${
-                isActive(PagesUrls.REAL_ESTATE)
-                  ? 'text-blue-600 bg-blue-50'
-                  : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
-              }`}
-            >
-              <Building2 className="w-4 h-4" />
-              Inmobiliarias
-            </Link>
-
-            <Link
-              href={PagesUrls.TIPS}
-              onClick={() => setOpen(false)}
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg ${
-                isActive(PagesUrls.TIPS)
-                  ? 'text-blue-600 bg-blue-50'
-                  : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
-              }`}
-            >
-              <Lightbulb className="w-4 h-4" />
-              Tips
-            </Link>
-
-            <Link
-              href={PagesUrls.FAQ}
-              onClick={() => setOpen(false)}
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg ${
-                isActive(PagesUrls.FAQ)
-                  ? 'text-blue-600 bg-blue-50'
-                  : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
-              }`}
-            >
-              <HelpCircle className="w-4 h-4" />
-              FAQ
-            </Link>
-
-            <Link
-              href={PagesUrls.REVIEW_CREATE}
-              onClick={() => setOpen(false)}
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg ${
-                isActive(PagesUrls.REVIEW_CREATE)
-                  ? 'text-blue-600 bg-blue-50'
-                  : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
-              }`}
-            >
-              <FilePenLine className="w-4 h-4" />
-              Escribir reseña
-            </Link>
-            <Link
-              href={isAuthenticated ? PagesUrls.PROFILE : PagesUrls.LOGIN}
-              onClick={() => setOpen(false)}
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg ${
-                isActive(PagesUrls.PROFILE)
-                  ? 'text-blue-600 bg-blue-50'
-                  : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
-              }`}
-            >
-              <UserRoundCog className="w-4 h-4" />
-              {isAuthenticated ? 'Perfil' : 'Iniciar sesión'}
-            </Link>
-          </div>
-        </div>
-      )}
     </nav>
   );
 };

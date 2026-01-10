@@ -8,7 +8,6 @@ import type { ReviewFormProps } from './types';
 
 export const ReviewForm = (props: ReviewFormProps) => {
   const {
-    isAuthenticated,
     userId,
     loading,
     errors,
@@ -28,7 +27,7 @@ export const ReviewForm = (props: ReviewFormProps) => {
 
   return (
     <PageStateWrapper
-      isAuthenticated={!isAuthenticated || !userId}
+      isAuthenticated={Boolean(userId)}
       isLoading={loading}
       isError={false}
       title="Comparte tu experiencia"

@@ -9,11 +9,13 @@ import { PageStateWrapper } from '@/components/common';
 import { useCreateRealEstate } from './hook';
 
 export const CreateRealEstate = () => {
-  const { handleSubmit, onSubmit, register, errors, isSubmitting } = useCreateRealEstate();
+  const { handleSubmit, onSubmit, register, errors, isSubmitting, isAuthenticated } =
+    useCreateRealEstate();
   return (
     <PageStateWrapper
       title="Agregar una nueva Inmobiliaria"
       subtitle="Agregar una nueva inmobiliaria para que pueda ser calificada por los usuarios."
+      isAuthenticated={isAuthenticated}
     >
       <Card>
         <CardContent>

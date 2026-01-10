@@ -1,9 +1,9 @@
 import { type ReactNode } from 'react';
-import { ErrorPage } from '../ErrorPage';
 import { type IPageStateWrapperProps } from './types';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Header } from '../Header';
 import { Loading } from '../Loading';
+import { ErrorPage, NoAuthenticated } from './components';
 
 /**
  * PageStateWrapper Component
@@ -57,25 +57,8 @@ export const PageStateWrapper = ({
     );
   }
 
-  if (isAuthenticated) {
-    return (
-      <div className="container mx-auto py-10">
-        <Card>
-          <CardHeader>
-            <CardTitle>Acceso requerido</CardTitle>
-            <CardDescription>Debes iniciar sesión</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              <p className="text-sm text-gray-600">
-                Estado de autenticación: {isAuthenticated ? 'Autenticado' : 'No autenticado'}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
+  if (!isAuthenticated) return <NoAuthenticated />;
+
   if (isError) {
     return (
       <ErrorPage

@@ -71,10 +71,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const { error } = await supabaseClient.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo:
-          process.env.NODE_ENV === 'production'
-            ? process.env.NEXT_PUBLIC_SITE_URL
-            : 'http://localhost:3000',
+        redirectTo: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
       },
     });
     setLoading(false);
@@ -85,17 +82,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const signInWithEmail = async (email: string) => {
     setLoading(true);
-    const emailRedirectTo =
-      process.env.NODE_ENV === 'production'
-        ? process.env.NEXT_PUBLIC_SITE_URL
-        : 'http://localhost:3000';
+    const emailRedirectTo = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
     const { error } = await supabaseClient.auth.signInWithOtp({
       email,
       options: {
         emailRedirectTo,
       },
     });
-
     setLoading(false);
 
     if (error) {
