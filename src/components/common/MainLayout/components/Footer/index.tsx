@@ -19,6 +19,11 @@ export const Footer = () => {
                 Sobre nosotros
               </Link>
             </li>
+            <li className="cursor-pointer">
+              <Link href={PagesUrls.CONTACT} title="Contáctanos">
+                Contáctanos
+              </Link>
+            </li>
           </ul>
         </div>
         <div className="lg:text-left">

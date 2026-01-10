@@ -10,6 +10,7 @@ import {
   UserRoundCog,
   FilePenLine,
   LogOut,
+  Contact,
 } from 'lucide-react';
 import { PagesUrls } from '@/enums';
 import { Button } from '@/components/ui/button';
@@ -92,6 +93,12 @@ export const NavBar = () => {
                 />
                 {isAuthenticated ? (
                   <>
+                    <NavBarItem
+                      pageUrl={PagesUrls.CONTACT}
+                      Icon={Contact}
+                      label="Contáctanos"
+                      showInDesktop={true}
+                    />
                     <NavBarItem
                       pageUrl={PagesUrls.PROFILE}
                       Icon={UserRoundCog}
