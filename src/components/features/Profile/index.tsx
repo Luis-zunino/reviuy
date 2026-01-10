@@ -1,8 +1,7 @@
 'use client';
 
 import { FavoriteRealEstateButton, Header, ReviewCard } from '@/components/common';
-import { useUserReviews } from '@/hooks';
-import React, { useState } from 'react';
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {

@@ -62,7 +62,7 @@ export const NavBar = () => {
           <div className="flex gap-2 items-center">
             <Link
               href={PagesUrls.REVIEW_CREATE}
-              className="hidden md:flex items-center gap-2 px-4 py-2 bg-blue-400 text-white rounded-lg hover:bg-blue-600 transition-colors h-8"
+              className="hidden md:flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-600 transition-colors h-8"
             >
               <FilePenLine className="w-4 h-4" />
               Escribir reseña
@@ -71,7 +71,7 @@ export const NavBar = () => {
               <DropdownMenuTrigger asChild className="h-8 hover:cursor-pointer">
                 <Button
                   variant="ghost"
-                  className="min-h-8 items-center justify-center px-4 py-2 bg-blue-400 text-white rounded-lg hover:bg-blue-600 transition-colors h-8"
+                  className="min-h-8 items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-600 transition-colors h-8"
                 >
                   <Menu className="w-6 h-6" />
                 </Button>
