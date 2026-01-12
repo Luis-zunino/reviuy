@@ -13,7 +13,11 @@ export const NavBarItem = (props: NavBarItemProps) => {
       variant={variant}
       className={`${showInDesktop ? '' : 'md:hidden'} px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-50 hover:cursor-pointer ${setClassNameByVariant()}`}
     >
-      <Link href={pageUrl ?? '#'} className="flex items-center gap-2 px-3 py-2" onClick={onClick}>
+      <Link
+        href={pageUrl ?? '#'}
+        className="flex items-center gap-2 px-3 py-2 w-full"
+        onClick={onClick}
+      >
         {Icon && <Icon className="w-4 h-4" color={ICON_VARIANT[variant]} />}
         {label}
       </Link>

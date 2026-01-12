@@ -31,9 +31,7 @@ export const ViewRealEstateDetailsHeader = (props: ViewRealEstateDetailsHeaderPr
       <CardContent>
         <div className="flex justify-between gap-6">
           <div className="space-y-4 sm:w-1/2">
-            <h3 className="font-semibold text-gray-900 mb-3">
-              Reseñas y calificaciones sobre: {realEstate?.name}
-            </h3>
+            <h3 className="font-semibold text-gray-900 mb-3">{realEstate?.name}</h3>
             <div className="flex items-center gap-3">
               <div className="text-3xl font-bold text-gray-900">{averageRating.toFixed(1)}</div>
               <div>

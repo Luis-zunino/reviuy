@@ -4,6 +4,17 @@
 -- Descripción: Votos, reportes, auditoría y funciones para reviews
 -- =============================================================================
 
+-- Funciones stub para rate limiting y logging (se reemplazarán en migraciones posteriores)
+CREATE OR REPLACE FUNCTION check_rate_limit(p_endpoint TEXT, p_max_requests INTEGER DEFAULT 10, p_window_minutes INTEGER DEFAULT 1) 
+RETURNS BOOLEAN 
+LANGUAGE plpgsql 
+AS $$ BEGIN RETURN TRUE; END; $$;
+
+CREATE OR REPLACE FUNCTION log_security_event(p_action TEXT, p_status TEXT DEFAULT 'success', p_error_message TEXT DEFAULT NULL, p_metadata JSONB DEFAULT NULL) 
+RETURNS VOID 
+LANGUAGE plpgsql 
+AS $$ BEGIN RETURN; END; $$;
+
 -- =============================================================================
 -- TABLAS PARA SISTEMA DE REVIEWS
 -- =============================================================================
@@ -85,6 +96,10 @@ DROP TRIGGER IF EXISTS review_votes_trigger ON public.review_votes;
 CREATE OR REPLACE FUNCTION update_review_votes()
 RETURNS TRIGGER AS $$
 BEGIN
+    -- En update_review_votes, agregar validación
+IF NEW.vote_type NOT IN ('like', 'dislike') THEN
+    RAISE EXCEPTION 'Invalid vote type';
+END IF;
     IF (TG_OP = 'INSERT') THEN
         UPDATE public.reviews 
         SET likes = likes + 1 
@@ -261,10 +276,17 @@ DECLARE
     v_review_id UUID;
     v_user_id UUID;
 BEGIN
+    -- Verificar rate limit (5 reseñas por 10 minutos)
+    IF NOT check_rate_limit('create_review', 5, 10) THEN
+        PERFORM log_security_event('create_review', 'blocked', 'Rate limit exceeded');
+        RETURN json_build_object('success', false, 'error', 'Demasiadas reseñas. Intenta más tarde.');
+    END IF;
+
     -- Obtener el ID del usuario autenticado
     v_user_id := auth.uid();
     
     IF v_user_id IS NULL THEN
+        PERFORM log_security_event('create_review', 'error', 'Usuario no autenticado');
         RETURN json_build_object(
             'success', false,
             'error', 'Usuario no autenticado. Debes iniciar sesión para crear una reseña.'
@@ -273,15 +295,18 @@ BEGIN
 
     -- Validar campos obligatorios
     IF p_title IS NULL OR p_title = '' THEN
+        PERFORM log_security_event('create_review', 'error', 'Título obligatorio faltante');
         RETURN json_build_object('success', false, 'error', 'El título es obligatorio');
     END IF;
 
     IF p_description IS NULL OR p_description = '' THEN
+        PERFORM log_security_event('create_review', 'error', 'Descripción obligatoria faltante');
         RETURN json_build_object('success', false, 'error', 'La descripción es obligatoria');
     END IF;
 
     -- Validar rating
     IF p_rating IS NULL OR p_rating < 1 OR p_rating > 5 THEN
+        PERFORM log_security_event('create_review', 'error', 'Rating inválido');
         RETURN json_build_object('success', false, 'error', 'El rating debe estar entre 1 y 5');
     END IF;
 
@@ -306,6 +331,23 @@ BEGIN
     END IF;
     IF p_humidity_level IS NOT NULL AND p_humidity_level = '' THEN
         p_humidity_level := NULL;
+    END IF;
+
+    -- VERIFICACIÓN DE DUPLICADOS
+    -- Si tenemos un address_osm_id, verificar si ya existe una reseña para este usuario y propiedad
+    IF p_address_osm_id IS NOT NULL THEN
+        IF EXISTS (
+            SELECT 1 
+            FROM public.reviews 
+            WHERE user_id = v_user_id 
+            AND address_osm_id = p_address_osm_id
+        ) THEN
+            PERFORM log_security_event('create_review', 'blocked', 'Duplicate review attempt');
+            RETURN json_build_object(
+                'success', false,
+                'error', 'Ya has publicado una reseña para esta propiedad. Solo puedes escribir una reseña por propiedad.'
+            );
+        END IF;
     END IF;
 
     -- Insertar la nueva reseña
@@ -348,6 +390,10 @@ BEGIN
     )
     RETURNING id INTO v_review_id;
 
+    -- Logging exitoso
+    PERFORM log_security_event('create_review', 'success', NULL, 
+        jsonb_build_object('review_id', v_review_id));
+
     RETURN json_build_object(
         'success', true,
         'review_id', v_review_id,
@@ -356,6 +402,7 @@ BEGIN
 
 EXCEPTION
     WHEN OTHERS THEN
+        PERFORM log_security_event('create_review', 'error', SQLERRM);
         RETURN json_build_object(
             'success', false,
             'error', 'Error al crear la reseña: ' || SQLERRM
@@ -509,14 +556,23 @@ AS $$
 DECLARE
   v_user_id UUID;
   v_existing_vote TEXT;
+  v_result JSON;
 BEGIN
+  -- Verificar rate limit (20 votos por hora)
+  IF NOT check_rate_limit('vote_review', 20, 60) THEN
+    PERFORM log_security_event('vote_review', 'blocked', 'Rate limit exceeded');
+    RETURN json_build_object('success', false, 'error', 'Demasiados votos. Intenta más tarde.');
+  END IF;
+
   v_user_id := auth.uid();
   
   IF v_user_id IS NULL THEN
+    PERFORM log_security_event('vote_review', 'error', 'Usuario no autenticado');
     RETURN json_build_object('success', false, 'error', 'Usuario no autenticado');
   END IF;
 
   IF p_vote_type NOT IN ('like', 'dislike') THEN
+    PERFORM log_security_event('vote_review', 'error', 'Tipo de voto inválido');
     RETURN json_build_object('success', false, 'error', 'Tipo de voto inválido. Use like o dislike');
   END IF;
 
@@ -529,7 +585,7 @@ BEGIN
   IF v_existing_vote = p_vote_type THEN
     DELETE FROM public.review_votes
     WHERE review_id = p_review_id AND user_id = v_user_id;
-    RETURN json_build_object(
+    v_result := json_build_object(
       'success', true, 
       'message', 'Voto eliminado exitosamente', 
       'action', 'deleted'
@@ -541,15 +597,22 @@ BEGIN
     ON CONFLICT (review_id, user_id) 
     DO UPDATE SET vote_type = p_vote_type;
     
-    RETURN json_build_object(
+    v_result := json_build_object(
       'success', true, 
       'message', 'Voto registrado exitosamente', 
       'action', CASE WHEN v_existing_vote IS NULL THEN 'inserted' ELSE 'updated' END
     );
   END IF;
 
+  -- Logging exitoso
+  PERFORM log_security_event('vote_review', 'success', NULL, 
+    jsonb_build_object('review_id', p_review_id, 'vote_type', p_vote_type, 'action', v_result->>'action'));
+
+  RETURN v_result;
+
 EXCEPTION
   WHEN OTHERS THEN
+    PERFORM log_security_event('vote_review', 'error', SQLERRM);
     RETURN json_build_object('success', false, 'error', 'Error al registrar el voto: ' || SQLERRM);
 END;
 $$;
@@ -569,13 +632,21 @@ DECLARE
   v_report_id UUID;
   v_existing_report UUID;
 BEGIN
+  -- Verificar rate limit (3 reports por hora)
+  IF NOT check_rate_limit('report_review', 3, 60) THEN
+    PERFORM log_security_event('report_review', 'blocked', 'Rate limit exceeded');
+    RETURN json_build_object('success', false, 'error', 'Demasiados reportes. Intenta más tarde.');
+  END IF;
+
   v_user_id := auth.uid();
   
   IF v_user_id IS NULL THEN
+    PERFORM log_security_event('report_review', 'error', 'Usuario no autenticado');
     RETURN json_build_object('success', false, 'error', 'Usuario no autenticado');
   END IF;
 
   IF NOT EXISTS (SELECT 1 FROM public.reviews WHERE id = p_review_id) THEN
+    PERFORM log_security_event('report_review', 'error', 'Review not found');
     RETURN json_build_object('success', false, 'error', 'La reseña no existe');
   END IF;
 
@@ -584,6 +655,7 @@ BEGIN
   WHERE review_id = p_review_id AND reported_by_user_id = v_user_id;
 
   IF v_existing_report IS NOT NULL THEN
+    PERFORM log_security_event('report_review', 'blocked', 'Duplicate report attempt');
     RETURN json_build_object('success', false, 'error', 'Ya has reportado esta reseña anteriormente');
   END IF;
 
@@ -591,12 +663,18 @@ BEGIN
   VALUES (p_review_id, v_user_id, p_reason, p_description)
   RETURNING id INTO v_report_id;
 
+  -- Logging exitoso
+  PERFORM log_security_event('report_review', 'success', NULL, 
+    jsonb_build_object('report_id', v_report_id, 'review_id', p_review_id, 'reason', p_reason));
+
   RETURN json_build_object('success', true, 'report_id', v_report_id, 'message', 'Reporte enviado exitosamente');
 
 EXCEPTION
   WHEN unique_violation THEN
+    PERFORM log_security_event('report_review', 'blocked', 'Unique violation');
     RETURN json_build_object('success', false, 'error', 'Ya has reportado esta reseña anteriormente');
   WHEN OTHERS THEN
+    PERFORM log_security_event('report_review', 'error', SQLERRM);
     RETURN json_build_object('success', false, 'error', 'Error interno del servidor');
 END;
 $$;
@@ -698,6 +776,7 @@ FOR SELECT USING (auth.uid() = deleted_by);
 
 -- Política para INSERT: permitir que el sistema registre eliminaciones
 -- (el trigger se ejecuta cuando el usuario tiene permisos para eliminar la review)
+DROP POLICY IF EXISTS "System can log review deletions" ON public.review_deletions;
 CREATE POLICY "System can log review deletions" ON public.review_deletions 
 FOR INSERT WITH CHECK (true);
 

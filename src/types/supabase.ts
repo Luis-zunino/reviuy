@@ -8,6 +8,33 @@ export type Database = {
   };
   public: {
     Tables: {
+      rate_limits: {
+        Row: {
+          endpoint: string;
+          id: string;
+          ip_address: unknown;
+          request_count: number;
+          user_id: string | null;
+          window_start: string;
+        };
+        Insert: {
+          endpoint: string;
+          id?: string;
+          ip_address?: unknown;
+          request_count?: number;
+          user_id?: string | null;
+          window_start?: string;
+        };
+        Update: {
+          endpoint?: string;
+          id?: string;
+          ip_address?: unknown;
+          request_count?: number;
+          user_id?: string | null;
+          window_start?: string;
+        };
+        Relationships: [];
+      };
       real_estate_favorites: {
         Row: {
           created_at: string | null;
@@ -558,11 +585,44 @@ export type Database = {
           },
         ];
       };
+      security_logs: {
+        Row: {
+          action: string | null;
+          created_at: string | null;
+          id: string;
+          ip_address: unknown;
+          user_id: string | null;
+        };
+        Insert: {
+          action?: string | null;
+          created_at?: string | null;
+          id?: string;
+          ip_address?: unknown;
+          user_id?: string | null;
+        };
+        Update: {
+          action?: string | null;
+          created_at?: string | null;
+          id?: string;
+          ip_address?: unknown;
+          user_id?: string | null;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       [_ in never]: never;
     };
     Functions: {
+      check_rate_limit: {
+        Args: {
+          p_endpoint: string;
+          p_max_requests?: number;
+          p_window_minutes?: number;
+        };
+        Returns: boolean;
+      };
+      cleanup_rate_limits: { Args: never; Returns: undefined };
       create_real_estate:
         | { Args: { p_name: string }; Returns: Json }
         | { Args: { p_description?: string; p_name: string }; Returns: Json };
@@ -648,6 +708,16 @@ export type Database = {
         Returns: boolean;
       };
       is_review_favorite: { Args: { p_review_id: string }; Returns: boolean };
+      log_security_event: {
+        Args: {
+          p_action: string;
+          p_error_message?: string;
+          p_metadata?: Json;
+          p_status?: string;
+        };
+        Returns: undefined;
+      };
+      moderate_reports: { Args: { report_id: string }; Returns: undefined };
       refresh_supabase_schema: { Args: never; Returns: undefined };
       report_real_estate: {
         Args: {

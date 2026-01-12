@@ -116,7 +116,7 @@ export const SearchableSelect: FC<SearchableSelectProps> = (props) => {
         </PopoverTrigger>
 
         {shouldShowPopover && (
-          <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
+          <PopoverContent className="w-(--radix-popover-trigger-width) p-0" align="start">
             <Command className="w-full flex-1">
               <CommandList>
                 {isLoading ? (

@@ -21,8 +21,7 @@
     "prepare": "husky",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,css,md}\"",
     "format:check": "prettier --check \"src/**/*.{js,jsx,ts,tsx,json,css,md}\"",
-    "analyze": "ANALYZE=true next build",
-    "supabase:type": "npx supabase gen types typescript --project-id csanveohpatkrglwcjki  --schema public > src/types/supabase.ts"
+    "analyze": "ANALYZE=true next build"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

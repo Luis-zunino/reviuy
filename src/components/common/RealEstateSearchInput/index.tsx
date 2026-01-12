@@ -92,7 +92,7 @@ export const RealEstateSearchInput = ({
                   onClick={() => handleRealEstateClick(result)}
                   className="flex items-start gap-3 px-4 py-3 hover:bg-gray-100 w-full justify-start h-auto border-b border-gray-100 last:border-b-0 rounded-none"
                 >
-                  <Building2 className="h-4 w-4 flex-shrink-0 mt-1 text-blue-500" />
+                  <Building2 className="h-4 w-4 shrink-0 mt-1 text-blue-500" />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-medium text-gray-900 truncate">

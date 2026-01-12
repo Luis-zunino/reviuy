@@ -19,7 +19,7 @@ export const ReviewCard = ({ review }: ReviewCardProps) => {
 
   return (
     <Card
-      className="min-w-80 h-60 flex flex-col overflow-hidden transition-shadow hover:shadow-md group"
+      className="min-w-80 flex flex-col overflow-hidden transition-shadow hover:shadow-md group"
       role="article"
     >
       <Link href={reviewUrl} className="flex flex-col flex-1">
@@ -45,8 +45,8 @@ export const ReviewCard = ({ review }: ReviewCardProps) => {
 
         {/* CONTENT */}
         <CardContent className="flex flex-col gap-3 flex-1">
-          <div className="flex md:flex-col xl:flex-row gap-3 text-sm">
-            <div className="flex items-center gap-2">
+          <div className="flex sm:flex-col xl:flex-row gap-3 text-sm justify-between">
+            <div className="flex flex-col gap-2">
               <span className="shrink-0">Lugar:</span>
               <StarRatingDisplay
                 rating={review.rating}
@@ -54,7 +54,7 @@ export const ReviewCard = ({ review }: ReviewCardProps) => {
               />
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex flex-col gap-2">
               <span className="shrink-0">Zona:</span>
               <StarRatingDisplay
                 rating={review.zone_rating ?? 0}
@@ -74,8 +74,7 @@ export const ReviewCard = ({ review }: ReviewCardProps) => {
           aria-label="Ver detalles de la reseña"
           className="flex items-center gap-2"
         >
-          <Eye className="h-5 w-5" />
-          Ver
+          Ver más
         </Link>
       </CardFooter>
     </Card>
