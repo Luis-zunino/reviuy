@@ -1,21 +1,26 @@
 'use client';
 
-import { Eye, ThumbsDown, ThumbsUp } from 'lucide-react';
-import { StarRatingDisplay } from '@/components/common/StarRating';
+import { SquareArrowRight, ThumbsDown, ThumbsUp } from 'lucide-react';
 import {
   DeleteReviewButton,
   EditReviewButton,
   ReportReviewButton,
   FavoriteReviewButton,
   ReviewLikesButtons,
+  StarRatingDisplay,
 } from '@/components/common';
 import type { ReviewSummaryProps } from './types';
-import { PagesUrls } from '@/enums';
+import { PagesUrls, RoomType } from '@/enums';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import Link from 'next/link';
-import { translateComfort, translateHumidity, translatePropertyType } from '@/utils';
+import {
+  translateComfort,
+  translateHumidity,
+  translatePropertyType,
+  translateRoomType,
+} from '@/utils';
 
 export const ReviewSummary = ({ review }: ReviewSummaryProps) => {
   const recommended = review.rating >= 3.5;
@@ -115,7 +120,9 @@ export const ReviewSummary = ({ review }: ReviewSummaryProps) => {
                   key={room.id}
                   className="flex items-center justify-between py-3 px-4 rounded-lg bg-accent/50 hover:bg-accent transition-colors"
                 >
-                  <span className="text-base text-foreground capitalize">{room.room_type}</span>
+                  <span className="text-base text-foreground capitalize">
+                    {translateRoomType(room.room_type as RoomType)}
+                  </span>
                   <span className="text-base font-semibold text-foreground">{room.area_m2} m²</span>
                 </div>
               ))}
@@ -136,11 +143,14 @@ export const ReviewSummary = ({ review }: ReviewSummaryProps) => {
                 <div className="space-y-2">
                   <span className="text-sm font-semibold text-foreground">Nombre</span>
                   <div className="flex items-center gap-3">
-                    <p className="text-base capitalize text-muted-foreground">
-                      {review?.real_estates.name}
-                    </p>
-                    <Link href={`${PagesUrls.REAL_ESTATE}/${review?.real_estates?.id}`}>
-                      <Eye className="h-5 w-5" />
+                    <Link
+                      href={PagesUrls.REAL_ESTATE_VIEW.replace(':id', review?.real_estates?.id)}
+                      className="flex gap-2 justify-center"
+                    >
+                      <p className="text-base capitalize text-muted-foreground">
+                        {review?.real_estates.name}
+                      </p>
+                      <SquareArrowRight className="h-5 w-5 text-base capitalize text-muted-foreground" />
                     </Link>
                   </div>
                 </div>

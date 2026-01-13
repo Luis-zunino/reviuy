@@ -18,7 +18,7 @@ export const UpdateRealEstateReview = () => {
       title={`Actualiza la reseña para ${realEstate?.name}`}
       subtitle="Comparte tu experiencia con esta inmobiliaria"
       isLoading={isLoading}
-      error={!realEstate}
+      error={!realEstate || !review}
       review={review}
     />
   );

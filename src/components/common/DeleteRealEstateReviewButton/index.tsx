@@ -37,6 +37,7 @@ export const DeleteRealEstateReviewButton: React.FC<DeleteRealEstateReviewButton
         disabled={isPending}
         icon={Trash2}
         iconPosition="left"
+        title="Eliminar"
       >
         {showText && <span className="ml-2 hidden md:inline">Eliminar</span>}
       </Button>

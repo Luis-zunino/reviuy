@@ -13,7 +13,7 @@ export const useReportRealEstateReviewButton = (props: UseReportRealEstateReview
   const [description, setDescription] = useState('');
 
   const { mutateAsync, isPending } = useReportRealEstateReview();
-  const { data: hasReported } = useHasUserReportedRealEstateReview(review.id);
+  const { data: hasReported } = useHasUserReportedRealEstateReview(review?.id ?? '');
 
   const reportReasons = [
     { value: 'spam', label: 'Spam o contenido promocional no solicitado' },
@@ -41,6 +41,7 @@ export const useReportRealEstateReviewButton = (props: UseReportRealEstateReview
     }
 
     try {
+      if (!review?.id) return;
       await mutateAsync({
         review_id: review.id,
         reason: selectedReason,
@@ -71,7 +72,7 @@ export const useReportRealEstateReviewButton = (props: UseReportRealEstateReview
     setDescription,
     handleCancel,
     isPending,
-    showReportedButton: !isOwner(review.user_id),
+    showReportedButton: !isOwner(review?.user_id),
     hasReported,
     reportReasons,
   };

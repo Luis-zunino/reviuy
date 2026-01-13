@@ -56,7 +56,7 @@ export const RealEstateReviewForm = <RR extends RealEstateReviewUpdate>(
     );
   }
 
-  if (error || !review) {
+  if (error) {
     return (
       <div className="container mx-auto p-6 ">
         <BackButton />

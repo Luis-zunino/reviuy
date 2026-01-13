@@ -14,8 +14,9 @@ export const Logo = () => {
       <div className="rounded-lg flex items-center justify-center z-10">
         <House className="w-4 h-4 text-white relative z-10" />
       </div>
-      <span className="text-xl text-gray-900 transition-colors duration-300 group-hover:text-white z-10 font-semibold relative">
-        ReviUy
+      <span className="text-xl z-10 font-semibold relative">
+        <span className='text-blue-600  transition-colors duration-300 group-hover:text-white font-semibold relative'>Revi</span>
+        <span className='text-[#FFC425]'>Uy</span>
       </span>
     </Link>
   );

@@ -55,6 +55,7 @@ export const DeleteReviewButton: React.FC<DeleteReviewButtonProps> = ({
         disabled={isPending}
         icon={Trash2}
         iconPosition="left"
+        title="Eliminar"
       >
         {showText && <span className="hidden sm:inline ml-2">Eliminar</span>}
       </Button>

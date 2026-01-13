@@ -28,9 +28,6 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
       const { real_estates, ...rest } = defaultValues;
       return {
         ...rest,
-        title: defaultValues.title || '',
-        description: defaultValues.description || '',
-        rating: defaultValues.rating || 0,
         review_rooms:
           defaultValues.review_rooms?.map((room) => ({
             id: room.id,
@@ -42,9 +39,9 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
 
     return {
       ...defaultValues,
-      title: '',
-      description: '',
-      rating: 0,
+      title: defaultValues?.title ?? '',
+      description: defaultValues?.description ?? '',
+      rating: defaultValues?.rating ?? 0,
       review_rooms: [],
     };
   }, [isUpdate, defaultValues]);
@@ -60,9 +57,9 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
     name: 'review_rooms',
   });
 
-  const { mutate: mutationCreate, isPending } = useCreateReview();
+  const { mutateAsync: mutationCreate, isPending } = useCreateReview();
 
-  const { mutate: mutationUpdate, isPending: isUpdatePending } = useUpdateReview();
+  const { mutateAsync: mutationUpdate, isPending: isUpdatePending } = useUpdateReview();
 
   const onSubmit = async (data: ReviewFormData) => {
     if (!userId || !isAuthenticated) {

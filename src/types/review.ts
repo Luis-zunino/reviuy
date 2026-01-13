@@ -35,13 +35,9 @@ export type ReviewFormData = {
   latitude?: number | null;
   longitude?: number | null;
   zone_rating?: number | null;
-  winter_comfort_rating?: number | null;
-  summer_comfort_rating?: number | null;
   winter_comfort?: string | null;
   summer_comfort?: string | null;
   humidity?: string | null;
-  humidity_level?: string | null;
-  image_url?: string | null;
   real_estate_id?: string | null;
   real_estate_experience?: string | null;
   apartment_number?: string | null;

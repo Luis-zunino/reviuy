@@ -50,3 +50,5 @@ next-env.d.ts
 .copilot
 .husky
 .yarn
+
+security.readme.md

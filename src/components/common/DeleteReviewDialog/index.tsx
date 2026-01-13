@@ -22,7 +22,7 @@ export const DeleteReviewDialog: React.FC<DeleteReviewDialogProps> = ({
 }) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-106.25">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-red-600">
             <AlertTriangle className="h-5 w-5" />
@@ -53,7 +53,7 @@ export const DeleteReviewDialog: React.FC<DeleteReviewDialogProps> = ({
         </div>
 
         <DialogFooter className="gap-2">
-          <Button variant="outline" onClick={onClose} disabled={isDeleting}>
+          <Button variant="outline" onClick={onClose} disabled={isDeleting} title="Cancelar">
             Cancelar
           </Button>
           <Button
@@ -63,6 +63,7 @@ export const DeleteReviewDialog: React.FC<DeleteReviewDialogProps> = ({
             className="bg-red-600 hover:bg-red-700"
             icon={isDeleting ? SplinePointer : Trash2}
             iconPosition="left"
+            title={isDeleting ? 'Eliminando' : 'Eliminar'}
           >
             {isDeleting ? 'Eliminando...' : 'Eliminar Reseña'}
           </Button>
