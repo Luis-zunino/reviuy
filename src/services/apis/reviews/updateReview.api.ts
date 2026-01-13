@@ -34,8 +34,14 @@ export const updateReview = async ({
       };
     }
 
-    const { review_rooms, ...reviewData } = updateData;
-
+    // Excluir campos que no deben actualizarse
+    const {
+      review_rooms,
+      user_id,
+      id,
+      created_at,
+      ...reviewData
+    } = updateData;
     const { error: updateError } = await supabaseClient
       .from('reviews')
       .update(reviewData)
@@ -53,7 +59,6 @@ export const updateReview = async ({
 
     let roomsUpdated = false;
     if (review_rooms !== undefined) {
-      // TODO ver aca
       const roomsMapped = review_rooms.map((room) => ({
         area_m2: room.area_m2 ?? null,
         created_at: room.created_at ?? '',
@@ -79,7 +84,7 @@ export const updateReview = async ({
 
     return {
       success: true,
-      message: `Reseña actualizada exitosamente${roomsUpdated ? ' (incluyendo rooms)' : ''}`,
+      message: `Reseña actualizada exitosamente${roomsUpdated ? ' (incluyendo habitaciones)' : ''}`,
       data: reviewWithRooms,
     };
   } catch (error) {

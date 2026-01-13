@@ -8,11 +8,23 @@ import { Button } from '@/components/ui/button';
 import { LazyMapComponent } from '@/components/common';
 
 export const ViewAddressReviews = () => {
-  const { data, reviews, isLoading, hasReviews, isError, handleCreateReview, averageRating } =
-    useViewAddressReviews();
+  const {
+    data,
+    reviews,
+    isLoading,
+    hasReviews,
+    isError,
+    handleCreateReview,
+    averageRating,
+    isAuthenticated,
+  } = useViewAddressReviews();
   const address = data?.address;
   return (
-    <PageStateWrapper isLoading={isLoading || !data} isError={isError}>
+    <PageStateWrapper
+      isLoading={isLoading || !data}
+      isError={isError}
+      isAuthenticated={isAuthenticated}
+    >
       <div className="lg:p-14 bg-white p-4 mb-11 lg:mb-0">
         <div className="flex justify-between">
           <div className="flex flex-col gap-2 mb-7">

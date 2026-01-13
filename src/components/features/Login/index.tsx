@@ -8,6 +8,7 @@ import React from 'react';
 import { useLogin } from './hooks';
 import Link from 'next/link';
 import { GoogleIcon } from './GoogleIcon';
+import { PagesUrls } from '@/enums';
 
 export const Login = () => {
   const { register, handleSubmit, onSubmit, errors, loading, onGoogleSignIn } = useLogin();
@@ -70,11 +71,17 @@ export const Login = () => {
 
       <div className="text-center text-xs text-gray-500 space-y-1">
         Al continuar, aceptas los{' '}
-        <Link href="/terminos" className="text-blue-600 hover:text-blue-800 underline">
+        <Link
+          href={PagesUrls.TERMS_AND_CONDITIONS}
+          className="text-blue-600 hover:text-blue-800 underline"
+        >
           términos y condiciones
         </Link>{' '}
         y la{' '}
-        <Link href="/privacidad" className="text-blue-600 hover:text-blue-800 underline">
+        <Link
+          href={PagesUrls.PRIVACY_POLICY}
+          className="text-blue-600 hover:text-blue-800 underline"
+        >
           política de privacidad
         </Link>
       </div>

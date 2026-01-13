@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Eye, MapPin } from 'lucide-react';
+import { MapPin } from 'lucide-react';
 import { StarRatingDisplay, FavoriteReviewButton } from '@/components/common';
 import { PagesUrls } from '@/enums';
 import Link from 'next/link';

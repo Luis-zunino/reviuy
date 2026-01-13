@@ -9,6 +9,7 @@ export const useContactForm = () => {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
+    reset,
   } = useForm<ContactFormValues>({
     defaultValues: { name: '', email: '', message: '' },
   });
@@ -17,6 +18,14 @@ export const useContactForm = () => {
   const [error, setError] = useState<string | null>(null);
 
   const onSubmit = async (data: ContactFormValues) => {
+    setSuccess(null);
+    setError(null);
+
+    if (!isAuthenticated) {
+      setError('Debes iniciar sesión para enviar un mensaje');
+      return;
+    }
+
     try {
       const res = await fetch('/api/contact', {
         method: 'POST',
@@ -25,18 +34,22 @@ export const useContactForm = () => {
           name: data.name,
           email: data.email,
           message: data.message,
-          loginEmail: isAuthenticated ? localStorage.getItem('email') : '',
         }),
       });
 
+      const responseData = await res.json();
+
       if (!res.ok) {
-        setError('No se pudo enviar el mensaje');
+        setError(responseData.error || 'No se pudo enviar el mensaje');
         return;
       }
+
+      setSuccess('El mensaje se envió correctamente');
+      reset();
     } catch (error) {
-      console.log(error);
+      console.error('Error enviando mensaje de contacto:', error);
+      setError('Error al enviar el mensaje. Por favor, intenta nuevamente.');
     }
-    setSuccess('El mensaje se envio correctamente');
   };
 
   return {

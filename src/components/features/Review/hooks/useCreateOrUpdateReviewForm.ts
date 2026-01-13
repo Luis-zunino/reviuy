@@ -70,14 +70,6 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
       return;
     }
 
-    if (isUpdate && defaultValues) {
-      const isOwner = defaultValues.user_id === userId;
-      setIsOwner(isOwner);
-      if (!isOwner) {
-        toast.error('No tienes permisos para editar esta reseña');
-        return;
-      }
-    }
 
     if (!selectedAddress && !isUpdate) {
       toast.error('Por favor selecciona una dirección');
@@ -123,10 +115,6 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
         },
         {
           onSuccess: ({ data }) => {
-            queryClient.invalidateQueries({ queryKey: ['reviews'] });
-            queryClient.invalidateQueries({ queryKey: ['latestReviews'] });
-            queryClient.invalidateQueries({ queryKey: ['reviewsByAddress'] });
-            queryClient.invalidateQueries({ queryKey: ['review', data?.id] });
             toast.dismiss(loadingToast);
             toast.success('Reseña actualizada exitosamente');
             router.push(PagesUrls.REVIEW_DETAILS.replace(':id', data?.id ?? ''));
@@ -194,8 +182,19 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
   useEffect(() => {
     if (isUpdate) {
       reset(getDefaultValues());
+
+      // Validar propiedad cuando es actualización
+      if (defaultValues && userId) {
+        const isOwner = defaultValues.user_id === userId;
+        setIsOwner(isOwner);
+
+        if (!isOwner) {
+          toast.error('No tienes permisos para editar esta reseña');
+          router.push(PagesUrls.HOME);
+        }
+      }
     }
-  }, [defaultValues, getDefaultValues, isUpdate, reset]);
+  }, [defaultValues, getDefaultValues, isUpdate, reset, userId, router]);
 
   return {
     ...form,
