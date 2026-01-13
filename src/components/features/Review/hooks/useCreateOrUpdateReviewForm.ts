@@ -70,7 +70,6 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
       return;
     }
 
-
     if (!selectedAddress && !isUpdate) {
       toast.error('Por favor selecciona una dirección');
       return;

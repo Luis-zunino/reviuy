@@ -35,13 +35,7 @@ export const updateReview = async ({
     }
 
     // Excluir campos que no deben actualizarse
-    const {
-      review_rooms,
-      user_id,
-      id,
-      created_at,
-      ...reviewData
-    } = updateData;
+    const { review_rooms, user_id, id, created_at, ...reviewData } = updateData;
     const { error: updateError } = await supabaseClient
       .from('reviews')
       .update(reviewData)

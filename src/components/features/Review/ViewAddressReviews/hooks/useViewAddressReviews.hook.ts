@@ -64,6 +64,6 @@ export const useViewAddressReviews = () => {
     hasReviews: (reviewsData?.length || 0) > 0,
     handleCreateReview,
     averageRating,
-    isAuthenticated: isAuthenticated || !!userId
+    isAuthenticated: isAuthenticated || !!userId,
   };
 };
