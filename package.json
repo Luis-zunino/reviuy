@@ -6,8 +6,6 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
     "type-check": "tsc --noEmit --pretty",
     "migrations": "npx supabase db push",
     "supabase:typeLocal": "npx supabase gen types typescript --local > src/types/supabase.ts",
@@ -21,7 +19,9 @@
     "prepare": "husky",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,css,md}\"",
     "format:check": "prettier --check \"src/**/*.{js,jsx,ts,tsx,json,css,md}\"",
-    "analyze": "ANALYZE=true next build"
+    "analyze": "ANALYZE=true next build",
+    "lint": "next lint",
+    "lint:fix": "next lint --fix"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -70,8 +70,8 @@
     "@types/nodemailer": "^7",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "eslint": "^9.39.1",
-    "eslint-config-next": "^16.0.7",
+    "eslint": "^9.39.2",
+    "eslint-config-next": "^16.1.1",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
     "husky": "^9.1.7",
