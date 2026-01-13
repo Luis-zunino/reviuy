@@ -112,13 +112,6 @@ USING ((SELECT auth.uid()) = reported_by_user_id);
 
 
 -- 6. Review Reports
-DROP POLICY IF EXISTS "Users can create reports" ON public.review_reports;
-CREATE POLICY "Users can create reports"
-ON public.review_reports
-FOR INSERT
-TO authenticated
-WITH CHECK ((SELECT auth.uid()) = reported_by_user_id);
-
 DROP POLICY IF EXISTS "Users can view their own reports" ON public.review_reports;
 CREATE POLICY "Users can view their own reports"
 ON public.review_reports

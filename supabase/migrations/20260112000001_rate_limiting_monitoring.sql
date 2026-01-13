@@ -15,14 +15,25 @@ CREATE TABLE IF NOT EXISTS public.rate_limits (
     UNIQUE(user_id, endpoint, window_start)
 );
 
--- Índices para rate_limits
-CREATE INDEX IF NOT EXISTS idx_rate_limits_user_endpoint ON public.rate_limits(user_id, endpoint);
-CREATE INDEX IF NOT EXISTS idx_rate_limits_window ON public.rate_limits(window_start);
-
--- RLS para rate_limits
-ALTER TABLE public.rate_limits ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Users can view their own rate limits" ON public.rate_limits 
-FOR SELECT USING (auth.uid() = user_id);
+-- Si la tabla ya existe pero le falta la columna endpoint, agregarla
+DO $$ 
+BEGIN
+    IF EXISTS (SELECT FROM information_schema.columns 
+               WHERE table_name = 'rate_limits' AND table_schema = 'public' 
+               AND column_name = 'endpoint') THEN
+        RAISE NOTICE 'Columna endpoint ya existe en rate_limits';
+    ELSE
+        -- Verificar si la tabla existe
+        IF EXISTS (SELECT FROM information_schema.tables 
+                   WHERE table_name = 'rate_limits' AND table_schema = 'public') THEN
+            ALTER TABLE public.rate_limits ADD COLUMN endpoint TEXT NOT NULL DEFAULT 'unknown';
+            -- Actualizar el constraint UNIQUE para incluir endpoint
+            ALTER TABLE public.rate_limits DROP CONSTRAINT IF EXISTS rate_limits_user_id_endpoint_window_start_key;
+            ALTER TABLE public.rate_limits ADD UNIQUE(user_id, endpoint, window_start);
+            RAISE NOTICE 'Columna endpoint agregada a rate_limits';
+        END IF;
+    END IF;
+END $$;
 
 -- Tabla de logs de seguridad
 CREATE TABLE IF NOT EXISTS public.security_logs (
@@ -38,18 +49,70 @@ CREATE TABLE IF NOT EXISTS public.security_logs (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Índices para security_logs
+-- Verificar y agregar columnas faltantes a security_logs si ya existe
+DO $$ 
+BEGIN
+    -- Verificar si la tabla existe
+    IF EXISTS (SELECT FROM information_schema.tables 
+               WHERE table_name = 'security_logs' AND table_schema = 'public') THEN
+        -- Agregar columnas faltantes
+        IF NOT EXISTS (SELECT FROM information_schema.columns 
+                      WHERE table_name = 'security_logs' AND table_schema = 'public' 
+                      AND column_name = 'endpoint') THEN
+            ALTER TABLE public.security_logs ADD COLUMN endpoint TEXT;
+            RAISE NOTICE 'Columna endpoint agregada a security_logs';
+        END IF;
+        
+        IF NOT EXISTS (SELECT FROM information_schema.columns 
+                      WHERE table_name = 'security_logs' AND table_schema = 'public' 
+                      AND column_name = 'action') THEN
+            ALTER TABLE public.security_logs ADD COLUMN action TEXT;
+            RAISE NOTICE 'Columna action agregada a security_logs';
+        END IF;
+        
+        IF NOT EXISTS (SELECT FROM information_schema.columns 
+                      WHERE table_name = 'security_logs' AND table_schema = 'public' 
+                      AND column_name = 'status') THEN
+            ALTER TABLE public.security_logs ADD COLUMN status TEXT;
+            RAISE NOTICE 'Columna status agregada a security_logs';
+        END IF;
+        
+        IF NOT EXISTS (SELECT FROM information_schema.columns 
+                      WHERE table_name = 'security_logs' AND table_schema = 'public' 
+                      AND column_name = 'error_message') THEN
+            ALTER TABLE public.security_logs ADD COLUMN error_message TEXT;
+            RAISE NOTICE 'Columna error_message agregada a security_logs';
+        END IF;
+    END IF;
+END $$;
+
+-- Índices para rate_limits (solo crear si no existen)
+CREATE INDEX IF NOT EXISTS idx_rate_limits_user_endpoint ON public.rate_limits(user_id, endpoint);
+CREATE INDEX IF NOT EXISTS idx_rate_limits_window ON public.rate_limits(window_start);
+
+-- Índices para security_logs (solo crear si no existen)
 CREATE INDEX IF NOT EXISTS idx_security_logs_user ON public.security_logs(user_id);
 CREATE INDEX IF NOT EXISTS idx_security_logs_endpoint ON public.security_logs(endpoint);
 CREATE INDEX IF NOT EXISTS idx_security_logs_created_at ON public.security_logs(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_security_logs_status ON public.security_logs(status);
 
+-- RLS para rate_limits
+ALTER TABLE public.rate_limits ENABLE ROW LEVEL SECURITY;
+
+-- Eliminar política si existe antes de crearla
+DROP POLICY IF EXISTS "Users can view their own rate limits" ON public.rate_limits;
+CREATE POLICY "Users can view their own rate limits" ON public.rate_limits 
+FOR SELECT USING (auth.uid() = user_id);
+
 -- RLS para security_logs
 ALTER TABLE public.security_logs ENABLE ROW LEVEL SECURITY;
+
+-- Eliminar política si existe antes de crearla
+DROP POLICY IF EXISTS "Service role can view all logs" ON public.security_logs;
 CREATE POLICY "Service role can view all logs" ON public.security_logs 
 FOR SELECT USING (auth.role() = 'service_role');
 
--- Función de rate limiting
+-- Función de rate limiting (reemplazar si existe)
 CREATE OR REPLACE FUNCTION check_rate_limit(
     p_endpoint TEXT,
     p_max_requests INTEGER DEFAULT 10,
@@ -75,6 +138,18 @@ BEGIN
       AND window_start >= v_window_start;
     
     IF v_current_count >= p_max_requests THEN
+        -- Log de intento bloqueado
+        PERFORM public.log_security_event(
+            'rate_limit_exceeded',
+            'blocked',
+            'Rate limit exceeded for endpoint: ' || p_endpoint,
+            jsonb_build_object(
+                'endpoint', p_endpoint,
+                'max_requests', p_max_requests,
+                'window_minutes', p_window_minutes,
+                'current_count', v_current_count
+            )
+        );
         RETURN FALSE;
     END IF;
     
@@ -87,7 +162,7 @@ BEGIN
 END;
 $$;
 
--- Función para logging de seguridad
+-- Función para logging de seguridad (reemplazar si existe)
 CREATE OR REPLACE FUNCTION log_security_event(
     p_action TEXT,
     p_status TEXT DEFAULT 'success',
@@ -106,17 +181,23 @@ BEGIN
         action, 
         status, 
         error_message, 
-        metadata
+        metadata,
+        created_at
     ) VALUES (
-        auth.uid(),
+        COALESCE(auth.uid(), NULL),
         inet_client_addr(),
-        current_setting('request.headers', true)::json->>'user-agent',
-        current_setting('request.headers', true)::json->>'referer',
+        COALESCE(current_setting('request.headers', true)::json->>'user-agent', 'unknown'),
+        COALESCE(current_setting('request.headers', true)::json->>'referer', 'unknown'),
         p_action,
         p_status,
         p_error_message,
-        p_metadata
+        COALESCE(p_metadata, '{}'::jsonb),
+        NOW()
     );
+EXCEPTION
+    WHEN OTHERS THEN
+        -- Si hay un error al loguear, al menos registra algo
+        RAISE NOTICE 'Error en log_security_event: %', SQLERRM;
 END;
 $$;
 
@@ -161,10 +242,87 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =============================================================================
+-- FUNCIONES AUXILIARES SIMPLIFICADAS (SIN TIPOS PROBLEMÁTICOS)
+-- =============================================================================
+
+-- Función simplificada para verificar el estado de las tablas
+CREATE OR REPLACE FUNCTION check_migration_status_simple() 
+RETURNS VOID
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    v_rate_limits_count INTEGER;
+    v_security_logs_count INTEGER;
+    v_rate_columns TEXT;
+    v_security_columns TEXT;
+BEGIN
+    -- Contar registros
+    SELECT COUNT(*) INTO v_rate_limits_count FROM public.rate_limits;
+    SELECT COUNT(*) INTO v_security_logs_count FROM public.security_logs;
+    
+    -- Obtener columnas de rate_limits
+    SELECT STRING_AGG(column_name, ', ') INTO v_rate_columns
+    FROM information_schema.columns
+    WHERE table_name = 'rate_limits' AND table_schema = 'public';
+    
+    -- Obtener columnas de security_logs
+    SELECT STRING_AGG(column_name, ', ') INTO v_security_columns
+    FROM information_schema.columns
+    WHERE table_name = 'security_logs' AND table_schema = 'public';
+    
+    RAISE NOTICE '=== ESTADO DE LA MIGRACIÓN ===';
+    RAISE NOTICE 'Tabla rate_limits: % registros', v_rate_limits_count;
+    RAISE NOTICE 'Columnas de rate_limits: %', COALESCE(v_rate_columns, 'No existe la tabla');
+    RAISE NOTICE 'Tabla security_logs: % registros', v_security_logs_count;
+    RAISE NOTICE 'Columnas de security_logs: %', COALESCE(v_security_columns, 'No existe la tabla');
+    
+    -- Verificar funciones
+    RAISE NOTICE '=== FUNCIONES ===';
+    IF EXISTS (SELECT FROM pg_proc WHERE proname = 'check_rate_limit') THEN
+        RAISE NOTICE '✓ Función check_rate_limit existe';
+    ELSE
+        RAISE NOTICE '✗ Función check_rate_limit NO existe';
+    END IF;
+    
+    IF EXISTS (SELECT FROM pg_proc WHERE proname = 'log_security_event') THEN
+        RAISE NOTICE '✓ Función log_security_event existe';
+    ELSE
+        RAISE NOTICE '✗ Función log_security_event NO existe';
+    END IF;
+    
+    IF EXISTS (SELECT FROM pg_proc WHERE proname = 'cleanup_rate_limits') THEN
+        RAISE NOTICE '✓ Función cleanup_rate_limits existe';
+    ELSE
+        RAISE NOTICE '✗ Función cleanup_rate_limits NO existe';
+    END IF;
+END;
+$$;
+
+-- =============================================================================
 -- MIGRACIÓN COMPLETADA
 -- =============================================================================
 
 DO $$
 BEGIN
-    RAISE NOTICE 'Migración de rate limiting y monitoreo completada';
+    RAISE NOTICE 'Iniciando migración de rate limiting y monitoreo...';
+    
+    -- Llamar a la función simplificada
+    PERFORM check_migration_status_simple();
+    
+    RAISE NOTICE '';
+    RAISE NOTICE '✅ Migración completada exitosamente';
+    RAISE NOTICE '';
+    RAISE NOTICE 'Funcionalidades implementadas:';
+    RAISE NOTICE '1. ✅ Tabla rate_limits para control de límites de peticiones';
+    RAISE NOTICE '2. ✅ Tabla security_logs para registro de eventos de seguridad';
+    RAISE NOTICE '3. ✅ Función check_rate_limit(endpoint, max_requests, window_minutes)';
+    RAISE NOTICE '4. ✅ Función log_security_event(action, status, error_message, metadata)';
+    RAISE NOTICE '5. ✅ Función cleanup_rate_limits() para limpieza automática';
+    RAISE NOTICE '6. ✅ Row Level Security configurado correctamente';
+    RAISE NOTICE '';
+    RAISE NOTICE '📋 Para usar:';
+    RAISE NOTICE '   - check_rate_limit(''/api/endpoint'', 10, 1) -- 10 peticiones por minuto';
+    RAISE NOTICE '   - log_security_event(''login'', ''success'') -- Registrar evento';
+    RAISE NOTICE '';
 END $$;

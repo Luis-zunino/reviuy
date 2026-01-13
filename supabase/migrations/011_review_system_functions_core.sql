@@ -1,8 +1,3 @@
--- =============================================================================
--- MIGRACIÓN 2: SISTEMA COMPLETO DE REVIEWS
--- Fecha: 09 de octubre de 2025
--- Descripción: Votos, reportes, auditoría y funciones para reviews
--- =============================================================================
 
 -- Funciones stub para rate limiting y logging (se reemplazarán en migraciones posteriores)
 CREATE OR REPLACE FUNCTION check_rate_limit(p_endpoint TEXT, p_max_requests INTEGER DEFAULT 10, p_window_minutes INTEGER DEFAULT 1) 
@@ -15,75 +10,6 @@ RETURNS VOID
 LANGUAGE plpgsql 
 AS $$ BEGIN RETURN; END; $$;
 
--- =============================================================================
--- TABLAS PARA SISTEMA DE REVIEWS
--- =============================================================================
-
--- Tabla de votos para reviews
-CREATE TABLE IF NOT EXISTS public.review_votes (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    review_id UUID NOT NULL REFERENCES public.reviews(id) ON DELETE CASCADE,
-    user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
-    vote_type TEXT NOT NULL CHECK (vote_type IN ('like', 'dislike')),
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    UNIQUE(review_id, user_id)
-);
-
--- Tabla para reportes de reviews
-CREATE TABLE IF NOT EXISTS public.review_reports (
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    review_id UUID NOT NULL REFERENCES public.reviews(id) ON DELETE CASCADE,
-    reported_by_user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-    reason TEXT NOT NULL,
-    description TEXT,
-    status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'reviewed', 'resolved', 'dismissed')),
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    UNIQUE(review_id, reported_by_user_id)
-);
-
--- Tabla de auditoría para eliminaciones
-CREATE TABLE IF NOT EXISTS public.review_deletions (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    review_id UUID NOT NULL,
-    deleted_by UUID NOT NULL REFERENCES auth.users(id),
-    review_title TEXT,
-    review_rating INTEGER,
-    review_created_at TIMESTAMPTZ,
-    deletion_reason TEXT,
-    deleted_at TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
--- Tabla de auditoría completa
-CREATE TABLE IF NOT EXISTS public.review_audit (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    review_id UUID NOT NULL,
-    old_data JSONB,
-    new_data JSONB,
-    changed_by UUID REFERENCES auth.users(id),
-    change_type TEXT NOT NULL CHECK (change_type IN ('create', 'update', 'delete')),
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
--- =============================================================================
--- ÍNDICES PARA SISTEMA DE REVIEWS
--- =============================================================================
-
--- Índices para review_votes
-CREATE INDEX IF NOT EXISTS idx_review_votes_review_id ON public.review_votes(review_id);
-CREATE INDEX IF NOT EXISTS idx_review_votes_user_id ON public.review_votes(user_id);
-
--- Índices para review_reports
-CREATE INDEX IF NOT EXISTS idx_review_reports_review_id ON public.review_reports(review_id);
-CREATE INDEX IF NOT EXISTS idx_review_reports_status ON public.review_reports(status);
-CREATE INDEX IF NOT EXISTS idx_review_reports_created_at ON public.review_reports(created_at);
-
--- Índices para auditoría
-CREATE INDEX IF NOT EXISTS idx_review_deletions_deleted_by ON public.review_deletions(deleted_by);
-CREATE INDEX IF NOT EXISTS idx_review_deletions_deleted_at ON public.review_deletions(deleted_at);
-CREATE INDEX IF NOT EXISTS idx_review_audit_review_id ON public.review_audit(review_id);
-CREATE INDEX IF NOT EXISTS idx_review_audit_change_type ON public.review_audit(change_type);
-CREATE INDEX IF NOT EXISTS idx_review_audit_created_at ON public.review_audit(created_at DESC);
 
 -- =============================================================================
 -- FUNCIONES PARA SISTEMA DE REVIEWS
@@ -261,12 +187,9 @@ CREATE OR REPLACE FUNCTION create_review(
     p_latitude DECIMAL DEFAULT NULL,
     p_longitude DECIMAL DEFAULT NULL,
     p_zone_rating INTEGER DEFAULT NULL,
-    p_winter_comfort_rating INTEGER DEFAULT NULL,
-    p_summer_comfort_rating INTEGER DEFAULT NULL,
     p_winter_comfort TEXT DEFAULT NULL,
     p_summer_comfort TEXT DEFAULT NULL,
-    p_humidity TEXT DEFAULT NULL,
-    p_humidity_level TEXT DEFAULT NULL
+    p_humidity TEXT DEFAULT NULL
 )
 RETURNS JSON
 LANGUAGE plpgsql
@@ -329,9 +252,6 @@ BEGIN
     IF p_humidity IS NOT NULL AND p_humidity = '' THEN
         p_humidity := NULL;
     END IF;
-    IF p_humidity_level IS NOT NULL AND p_humidity_level = '' THEN
-        p_humidity_level := NULL;
-    END IF;
 
     -- VERIFICACIÓN DE DUPLICADOS
     -- Si tenemos un address_osm_id, verificar si ya existe una reseña para este usuario y propiedad
@@ -363,12 +283,9 @@ BEGIN
         latitude,
         longitude,
         zone_rating,
-        winter_comfort_rating,
-        summer_comfort_rating,
         winter_comfort,
         summer_comfort,
-        humidity,
-        humidity_level
+        humidity
     ) VALUES (
         v_user_id,
         p_title,
@@ -381,12 +298,9 @@ BEGIN
         p_latitude,
         p_longitude,
         p_zone_rating,
-        p_winter_comfort_rating,
-        p_summer_comfort_rating,
         p_winter_comfort,
         p_summer_comfort,
-        p_humidity,
-        p_humidity_level
+        p_humidity
     )
     RETURNING id INTO v_review_id;
 
@@ -487,12 +401,9 @@ CREATE OR REPLACE FUNCTION update_review(
   p_rating INTEGER,
   p_property_type TEXT DEFAULT NULL,
   p_zone_rating INTEGER DEFAULT NULL,
-  p_winter_comfort_rating INTEGER DEFAULT NULL,
-  p_summer_comfort_rating INTEGER DEFAULT NULL,
   p_winter_comfort TEXT DEFAULT NULL,
   p_summer_comfort TEXT DEFAULT NULL,
-  p_humidity TEXT DEFAULT NULL,
-  p_humidity_level TEXT DEFAULT NULL
+  p_humidity TEXT DEFAULT NULL
 )
 RETURNS JSON
 LANGUAGE plpgsql
@@ -526,13 +437,10 @@ BEGIN
     description = p_description,
     rating = p_rating,
     property_type = COALESCE(p_property_type, property_type),
-    zone_rating = COALESCE(p_zone_rating, zone_rating),
-    winter_comfort_rating = COALESCE(p_winter_comfort_rating, winter_comfort_rating),
-    summer_comfort_rating = COALESCE(p_summer_comfort_rating, summer_comfort_rating),
+    zone_rating = COALESCE(p_zone_rating, zone_rating),     
     winter_comfort = COALESCE(p_winter_comfort, winter_comfort),
     summer_comfort = COALESCE(p_summer_comfort, summer_comfort),
     humidity = COALESCE(p_humidity, humidity),
-    humidity_level = COALESCE(p_humidity_level, humidity_level),
     updated_at = NOW()
   WHERE id = p_review_id;
 
@@ -699,113 +607,3 @@ BEGIN
   );
 END;
 $$;
-
--- =============================================================================
--- TRIGGERS PARA SISTEMA DE REVIEWS
--- =============================================================================
-
--- Triggers para votos
-DROP TRIGGER IF EXISTS review_votes_trigger ON public.review_votes;
-CREATE TRIGGER review_votes_trigger
-    AFTER INSERT OR DELETE OR UPDATE ON public.review_votes
-    FOR EACH ROW
-    EXECUTE FUNCTION update_review_votes();
-
--- Triggers para contadores de inmobiliarias
-DROP TRIGGER IF EXISTS update_real_estate_counters_trigger ON public.reviews;
-CREATE TRIGGER update_real_estate_counters_trigger
-    AFTER INSERT OR UPDATE OR DELETE ON public.reviews
-    FOR EACH ROW
-    EXECUTE FUNCTION update_real_estate_counters();
-
--- Triggers para auditoría
-DROP TRIGGER IF EXISTS review_changes_audit ON public.reviews;
-CREATE TRIGGER review_changes_audit
-    AFTER INSERT OR UPDATE ON public.reviews
-    FOR EACH ROW
-    EXECUTE FUNCTION log_review_changes();
-
-DROP TRIGGER IF EXISTS review_deletion_audit ON public.reviews;
-CREATE TRIGGER review_deletion_audit
-    BEFORE DELETE ON public.reviews
-    FOR EACH ROW
-    EXECUTE FUNCTION log_review_deletion();
-
--- =============================================================================
--- RLS PARA SISTEMA DE REVIEWS
--- =============================================================================
-
--- Habilitar RLS en nuevas tablas
-ALTER TABLE public.review_votes ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.review_reports ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.review_deletions ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.review_audit ENABLE ROW LEVEL SECURITY;
-
--- Políticas para REVIEW_VOTES
--- Política para SELECT (todos pueden ver)
-CREATE POLICY "Anyone can view review_votes" ON public.review_votes 
-FOR SELECT USING (true);
-
--- Política unificada para INSERT, UPDATE, DELETE
-CREATE POLICY "Users can manage own review_votes" ON public.review_votes 
-FOR ALL USING (auth.uid() = user_id);
-
-DROP POLICY IF EXISTS "enable_insert_review_votes" ON public.review_votes;
-
--- CREAR política de INSERT CORRECTA
-CREATE POLICY "enable_insert_review_votes" ON public.review_votes
-FOR INSERT WITH CHECK (
-  auth.uid() IS NOT NULL 
-  AND user_id = auth.uid()
-);
-
-CREATE POLICY "enable_delete_review_votes" ON public.review_votes
-FOR DELETE USING (auth.uid() = user_id);
-
--- Políticas para REVIEW_REPORTS
-DROP POLICY IF EXISTS "Users can create reports" ON public.review_reports;
-CREATE POLICY "Users can create reports" ON public.review_reports FOR INSERT WITH CHECK (reported_by_user_id = auth.uid());
-
-DROP POLICY IF EXISTS "Users can view their own reports" ON public.review_reports;
-CREATE POLICY "Users can view their own reports" ON public.review_reports FOR SELECT USING (reported_by_user_id = auth.uid());
-
--- Políticas para REVIEW_DELETIONS
-DROP POLICY IF EXISTS "Users can view their own deletions" ON public.review_deletions;
-CREATE POLICY "Users can view their own deletions" ON public.review_deletions 
-FOR SELECT USING (auth.uid() = deleted_by);
-
--- Política para INSERT: permitir que el sistema registre eliminaciones
--- (el trigger se ejecuta cuando el usuario tiene permisos para eliminar la review)
-DROP POLICY IF EXISTS "System can log review deletions" ON public.review_deletions;
-CREATE POLICY "System can log review deletions" ON public.review_deletions 
-FOR INSERT WITH CHECK (true);
-
--- Políticas para REVIEW_AUDIT
-DROP POLICY IF EXISTS "System can insert audit records" ON public.review_audit;
-CREATE POLICY "System can insert audit records" ON public.review_audit FOR INSERT WITH CHECK (true);
-
-DROP POLICY IF EXISTS "Users can view audit of their reviews" ON public.review_audit;
-CREATE POLICY "Users can view audit of their reviews" ON public.review_audit FOR SELECT USING (
-    EXISTS (SELECT 1 FROM public.reviews WHERE reviews.id = review_audit.review_id AND reviews.user_id = auth.uid())
-);
-
--- =============================================================================
--- PERMISOS PARA FUNCIONES DE REVIEWS
--- =============================================================================
-
-GRANT EXECUTE ON FUNCTION create_review(TEXT, TEXT, INTEGER, UUID, TEXT, TEXT, TEXT, DECIMAL, DECIMAL, INTEGER, INTEGER, INTEGER, TEXT, TEXT, TEXT, TEXT) TO authenticated;
-GRANT EXECUTE ON FUNCTION delete_review_safe(UUID) TO authenticated;
-GRANT EXECUTE ON FUNCTION vote_review(UUID, TEXT) TO authenticated;
-GRANT EXECUTE ON FUNCTION get_review_delete_info(UUID) TO authenticated;
-GRANT EXECUTE ON FUNCTION update_review(UUID, TEXT, TEXT, INTEGER, TEXT, INTEGER, INTEGER, INTEGER, TEXT, TEXT, TEXT, TEXT) TO authenticated;
-GRANT EXECUTE ON FUNCTION report_review(UUID, TEXT, TEXT) TO authenticated;
-GRANT EXECUTE ON FUNCTION has_user_reported_review(UUID) TO authenticated;
-
--- =============================================================================
--- MIGRACIÓN 2 COMPLETADA
--- =============================================================================
-
-DO $$ 
-BEGIN
-    RAISE NOTICE 'Migración 2 completada: Sistema completo de reviews (votos, reportes, auditoría, funciones)';
-END $$;

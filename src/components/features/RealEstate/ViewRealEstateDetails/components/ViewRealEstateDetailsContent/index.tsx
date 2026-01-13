@@ -1,7 +1,6 @@
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MessageSquare } from 'lucide-react';
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { RealEstateReview, Review } from '@/types';
 import { RealEstateReviewTabContent, RealEstateUserExperienceTabContent } from './components';
 
@@ -14,7 +13,6 @@ export interface ViewRealEstateDetailsContentProps {
 }
 export const ViewRealEstateDetailsContent = (props: ViewRealEstateDetailsContentProps) => {
   const { reviews, realEstateReview, isLoadingReviews, realEstateId, userId } = props;
-  const router = useRouter();
   const [activeTab, setActiveTab] = useState('realEstateReview');
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col">

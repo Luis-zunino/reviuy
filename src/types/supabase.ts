@@ -66,34 +66,34 @@ export type Database = {
       };
       real_estate_reports: {
         Row: {
-          created_at: string;
+          created_at: string | null;
           description: string | null;
           id: string;
           real_estate_id: string;
           reason: string;
           reported_by_user_id: string;
           status: string | null;
-          updated_at: string;
+          updated_at: string | null;
         };
         Insert: {
-          created_at?: string;
+          created_at?: string | null;
           description?: string | null;
           id?: string;
           real_estate_id: string;
           reason: string;
           reported_by_user_id: string;
           status?: string | null;
-          updated_at?: string;
+          updated_at?: string | null;
         };
         Update: {
-          created_at?: string;
+          created_at?: string | null;
           description?: string | null;
           id?: string;
           real_estate_id?: string;
           reason?: string;
           reported_by_user_id?: string;
           status?: string | null;
-          updated_at?: string;
+          updated_at?: string | null;
         };
         Relationships: [
           {
@@ -227,24 +227,27 @@ export type Database = {
       };
       real_estate_votes: {
         Row: {
-          created_at: string;
+          created_at: string | null;
           id: string;
           real_estate_id: string;
-          user_id: string | null;
+          updated_at: string | null;
+          user_id: string;
           vote_type: string;
         };
         Insert: {
-          created_at?: string;
+          created_at?: string | null;
           id?: string;
           real_estate_id: string;
-          user_id?: string | null;
+          updated_at?: string | null;
+          user_id: string;
           vote_type: string;
         };
         Update: {
-          created_at?: string;
+          created_at?: string | null;
           id?: string;
           real_estate_id?: string;
-          user_id?: string | null;
+          updated_at?: string | null;
+          user_id?: string;
           vote_type?: string;
         };
         Relationships: [
@@ -266,7 +269,7 @@ export type Database = {
           likes: number;
           name: string;
           rating: number | null;
-          review_count: number | null;
+          review_count: number;
           updated_at: string;
         };
         Insert: {
@@ -277,7 +280,7 @@ export type Database = {
           likes?: number;
           name: string;
           rating?: number | null;
-          review_count?: number | null;
+          review_count?: number;
           updated_at?: string;
         };
         Update: {
@@ -288,7 +291,7 @@ export type Database = {
           likes?: number;
           name?: string;
           rating?: number | null;
-          review_count?: number | null;
+          review_count?: number;
           updated_at?: string;
         };
         Relationships: [];
@@ -502,9 +505,7 @@ export type Database = {
           description: string;
           dislikes: number;
           humidity: string | null;
-          humidity_level: string | null;
           id: string;
-          image_url: string | null;
           latitude: number | null;
           likes: number;
           longitude: number | null;
@@ -513,12 +514,10 @@ export type Database = {
           real_estate_experience: string | null;
           real_estate_id: string | null;
           summer_comfort: string | null;
-          summer_comfort_rating: number | null;
           title: string;
           updated_at: string;
           user_id: string;
           winter_comfort: string | null;
-          winter_comfort_rating: number | null;
           zone_rating: number | null;
         };
         Insert: {
@@ -529,9 +528,7 @@ export type Database = {
           description: string;
           dislikes?: number;
           humidity?: string | null;
-          humidity_level?: string | null;
           id?: string;
-          image_url?: string | null;
           latitude?: number | null;
           likes?: number;
           longitude?: number | null;
@@ -540,12 +537,10 @@ export type Database = {
           real_estate_experience?: string | null;
           real_estate_id?: string | null;
           summer_comfort?: string | null;
-          summer_comfort_rating?: number | null;
           title: string;
           updated_at?: string;
           user_id: string;
           winter_comfort?: string | null;
-          winter_comfort_rating?: number | null;
           zone_rating?: number | null;
         };
         Update: {
@@ -556,9 +551,7 @@ export type Database = {
           description?: string;
           dislikes?: number;
           humidity?: string | null;
-          humidity_level?: string | null;
           id?: string;
-          image_url?: string | null;
           latitude?: number | null;
           likes?: number;
           longitude?: number | null;
@@ -567,12 +560,10 @@ export type Database = {
           real_estate_experience?: string | null;
           real_estate_id?: string | null;
           summer_comfort?: string | null;
-          summer_comfort_rating?: number | null;
           title?: string;
           updated_at?: string;
           user_id?: string;
           winter_comfort?: string | null;
-          winter_comfort_rating?: number | null;
           zone_rating?: number | null;
         };
         Relationships: [
@@ -589,22 +580,31 @@ export type Database = {
         Row: {
           action: string | null;
           created_at: string | null;
+          endpoint: string | null;
+          error_message: string | null;
           id: string;
           ip_address: unknown;
+          status: string | null;
           user_id: string | null;
         };
         Insert: {
           action?: string | null;
           created_at?: string | null;
+          endpoint?: string | null;
+          error_message?: string | null;
           id?: string;
           ip_address?: unknown;
+          status?: string | null;
           user_id?: string | null;
         };
         Update: {
           action?: string | null;
           created_at?: string | null;
+          endpoint?: string | null;
+          error_message?: string | null;
           id?: string;
           ip_address?: unknown;
+          status?: string | null;
           user_id?: string | null;
         };
         Relationships: [];
@@ -614,6 +614,7 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      check_migration_status_simple: { Args: never; Returns: undefined };
       check_rate_limit: {
         Args: {
           p_endpoint: string;
@@ -623,69 +624,49 @@ export type Database = {
         Returns: boolean;
       };
       cleanup_rate_limits: { Args: never; Returns: undefined };
-      create_real_estate:
-        | { Args: { p_name: string }; Returns: Json }
-        | { Args: { p_description?: string; p_name: string }; Returns: Json };
-      create_real_estate_review:
-        | {
-            Args: {
-              p_description: string;
-              p_rating: number;
-              p_real_estate_id: string;
-              p_title: string;
-            };
-            Returns: Json;
-          }
-        | {
-            Args: {
-              p_customer_service_rating?: number;
-              p_description: string;
-              p_professionalism_rating?: number;
-              p_rating: number;
-              p_real_estate_id: string;
-              p_response_time_rating?: number;
-              p_title: string;
-              p_transparency_rating?: number;
-            };
-            Returns: Json;
-          };
-      create_review:
-        | {
-            Args: {
-              p_address_osm_id?: string;
-              p_address_text?: string;
-              p_description: string;
-              p_humidity?: string;
-              p_humidity_level?: string;
-              p_latitude?: number;
-              p_longitude?: number;
-              p_property_type?: string;
-              p_rating: number;
-              p_real_estate_id?: string;
-              p_summer_comfort?: string;
-              p_summer_comfort_rating?: number;
-              p_title: string;
-              p_winter_comfort?: string;
-              p_winter_comfort_rating?: number;
-              p_zone_rating?: number;
-            };
-            Returns: Json;
-          }
-        | {
-            Args: {
-              p_address_text?: string;
-              p_description: string;
-              p_property_type?: string;
-              p_rating: number;
-              p_real_estate_id?: string;
-              p_title: string;
-              p_zone_rating?: number;
-            };
-            Returns: Json;
-          };
+      create_real_estate: {
+        Args: { p_description?: string; p_name: string };
+        Returns: Json;
+      };
+      create_real_estate_review: {
+        Args: {
+          p_description: string;
+          p_rating: number;
+          p_real_estate_id: string;
+          p_title: string;
+        };
+        Returns: Json;
+      };
+      create_review: {
+        Args: {
+          p_address_osm_id?: string;
+          p_address_text?: string;
+          p_description: string;
+          p_humidity?: string;
+          p_latitude?: number;
+          p_longitude?: number;
+          p_property_type?: string;
+          p_rating: number;
+          p_real_estate_id?: string;
+          p_summer_comfort?: string;
+          p_title: string;
+          p_winter_comfort?: string;
+          p_zone_rating?: number;
+        };
+        Returns: Json;
+      };
       delete_review_safe: {
         Args: { review_id_param: string };
         Returns: boolean;
+      };
+      detect_suspicious_activity: {
+        Args: { p_user_id?: string };
+        Returns: {
+          blocked_requests: number;
+          suspicious_score: number;
+          total_requests: number;
+          user_id: string;
+        }[];
       };
       get_review_delete_info: {
         Args: { review_id_param: string };
@@ -718,7 +699,6 @@ export type Database = {
         Returns: undefined;
       };
       moderate_reports: { Args: { report_id: string }; Returns: undefined };
-      refresh_supabase_schema: { Args: never; Returns: undefined };
       report_real_estate: {
         Args: {
           p_description?: string;
@@ -744,62 +724,20 @@ export type Database = {
         Returns: Json;
       };
       toggle_favorite_review: { Args: { p_review_id: string }; Returns: Json };
-      update_review:
-        | {
-            Args: {
-              p_description: string;
-              p_humidity?: string;
-              p_humidity_level?: string;
-              p_property_type?: string;
-              p_rating: number;
-              p_review_id: string;
-              p_summer_comfort?: string;
-              p_summer_comfort_rating?: number;
-              p_title: string;
-              p_winter_comfort?: string;
-              p_winter_comfort_rating?: number;
-              p_zone_rating?: number;
-            };
-            Returns: Json;
-          }
-        | {
-            Args: {
-              p_agency_experience?: string;
-              p_description: string;
-              p_humidity?: string;
-              p_humidity_level?: string;
-              p_image_url?: string;
-              p_management_company?: string;
-              p_property_type?: string;
-              p_rating: number;
-              p_review_id: string;
-              p_summer_comfort?: string;
-              p_summer_comfort_rating?: number;
-              p_title: string;
-              p_winter_comfort?: string;
-              p_winter_comfort_rating?: number;
-              p_zone_rating?: number;
-            };
-            Returns: Json;
-          }
-        | {
-            Args: {
-              p_description: string;
-              p_humidity?: string;
-              p_humidity_level?: string;
-              p_image_url?: string;
-              p_property_type?: string;
-              p_rating: number;
-              p_review_id: string;
-              p_summer_comfort?: string;
-              p_summer_comfort_rating?: number;
-              p_title: string;
-              p_winter_comfort?: string;
-              p_winter_comfort_rating?: number;
-              p_zone_rating?: number;
-            };
-            Returns: Json;
-          };
+      update_review: {
+        Args: {
+          p_description: string;
+          p_humidity?: string;
+          p_property_type?: string;
+          p_rating: number;
+          p_review_id: string;
+          p_summer_comfort?: string;
+          p_title: string;
+          p_winter_comfort?: string;
+          p_zone_rating?: number;
+        };
+        Returns: Json;
+      };
       vote_real_estate: {
         Args: { p_real_estate_id: string; p_vote_type: string };
         Returns: Json;

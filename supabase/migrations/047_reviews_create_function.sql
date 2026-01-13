@@ -1,15 +1,3 @@
--- =============================================================================
--- MIGRACIÓN: RESTRICCIÓN DE RESEÑA ÚNICA POR PROPIEDAD
--- Fecha: 03 de enero de 2026
--- Descripción: Restringe a los usuarios a una sola reseña por propiedad (usando address_osm_id)
--- =============================================================================
-
--- 1. Agregar restricción única a la tabla reviews
--- Nota: Esto fallará si ya existen duplicados. 
--- Asumimos que es una base de datos nueva o limpia, o que el usuario limpiará duplicados manualmente si falla.
-ALTER TABLE public.reviews 
-ADD CONSTRAINT unique_user_property_review UNIQUE (user_id, address_osm_id);
-
 -- 2. Actualizar función create_review para manejar la restricción elegantemente
 CREATE OR REPLACE FUNCTION create_review(
     p_title TEXT,
@@ -22,12 +10,9 @@ CREATE OR REPLACE FUNCTION create_review(
     p_latitude DECIMAL DEFAULT NULL,
     p_longitude DECIMAL DEFAULT NULL,
     p_zone_rating INTEGER DEFAULT NULL,
-    p_winter_comfort_rating INTEGER DEFAULT NULL,
-    p_summer_comfort_rating INTEGER DEFAULT NULL,
     p_winter_comfort TEXT DEFAULT NULL,
     p_summer_comfort TEXT DEFAULT NULL,
-    p_humidity TEXT DEFAULT NULL,
-    p_humidity_level TEXT DEFAULT NULL
+    p_humidity TEXT DEFAULT NULL
 )
 RETURNS JSON
 LANGUAGE plpgsql
@@ -80,9 +65,6 @@ BEGIN
     IF p_humidity IS NOT NULL AND p_humidity = '' THEN
         p_humidity := NULL;
     END IF;
-    IF p_humidity_level IS NOT NULL AND p_humidity_level = '' THEN
-        p_humidity_level := NULL;
-    END IF;
 
     -- VERIFICACIÓN DE DUPLICADOS
     -- Si tenemos un address_osm_id, verificar si ya existe una reseña para este usuario y propiedad
@@ -113,12 +95,9 @@ BEGIN
         latitude,
         longitude,
         zone_rating,
-        winter_comfort_rating,
-        summer_comfort_rating,
         winter_comfort,
         summer_comfort,
-        humidity,
-        humidity_level
+        humidity
     ) VALUES (
         v_user_id,
         p_title,
@@ -131,12 +110,9 @@ BEGIN
         p_latitude,
         p_longitude,
         p_zone_rating,
-        p_winter_comfort_rating,
-        p_summer_comfort_rating,
         p_winter_comfort,
         p_summer_comfort,
-        p_humidity,
-        p_humidity_level
+        p_humidity
     )
     RETURNING id INTO v_review_id;
 

@@ -13,8 +13,7 @@ DROP POLICY IF EXISTS "Users can update own reviews" ON public.reviews;
 DROP POLICY IF EXISTS "Users can update their own reviews" ON public.reviews;
 
 DROP POLICY IF EXISTS "Users can delete own reviews" ON public.reviews;
-DROP POLICY IF EXISTS "Users can delete their own reviews" ON public.reviews;
-
+ 
 -- RE-CREATE optimized single policies
 CREATE POLICY "Authenticated users can create reviews"
 ON public.reviews

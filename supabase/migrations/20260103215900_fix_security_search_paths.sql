@@ -4,11 +4,11 @@
 ALTER FUNCTION public.update_updated_at_column() SET search_path = public;
 ALTER FUNCTION public.update_real_estate_counters() SET search_path = public;
 ALTER FUNCTION public.vote_review(UUID, TEXT) SET search_path = public;
-ALTER FUNCTION public.update_review(UUID, TEXT, TEXT, INTEGER, TEXT, INTEGER, INTEGER, INTEGER, TEXT, TEXT, TEXT, TEXT) SET search_path = public;
+ALTER FUNCTION public.update_review(UUID, TEXT, TEXT, INTEGER, TEXT, INTEGER, TEXT, TEXT, TEXT) SET search_path = public;
 ALTER FUNCTION public.has_user_reported_real_estate_review(UUID) SET search_path = public;
 ALTER FUNCTION public.log_review_changes() SET search_path = public;
 ALTER FUNCTION public.log_review_deletion() SET search_path = public;
-ALTER FUNCTION public.create_review(TEXT, TEXT, INTEGER, UUID, TEXT, TEXT, TEXT, DECIMAL, DECIMAL, INTEGER, INTEGER, INTEGER, TEXT, TEXT, TEXT, TEXT) SET search_path = public;
+ALTER FUNCTION public.create_review(TEXT, TEXT, INTEGER, UUID, TEXT, TEXT, TEXT, DECIMAL, DECIMAL, INTEGER, TEXT, TEXT, TEXT) SET search_path = public;
 ALTER FUNCTION public.report_review(UUID, TEXT, TEXT) SET search_path = public;
 ALTER FUNCTION public.update_review_votes() SET search_path = public;
 

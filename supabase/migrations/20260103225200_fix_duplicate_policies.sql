@@ -22,19 +22,9 @@ USING (true);
 
 
 -- 2. Table: public.reviews
--- Problem: Multiple permissive policies for SELECT (e.g. "Anyone can view reviews" vs "Reviews are viewable by everyone")
-
+ 
 -- Drop duplicate read policies
-DROP POLICY IF EXISTS "Anyone can view reviews" ON public.reviews;
 DROP POLICY IF EXISTS "Reviews are viewable by everyone" ON public.reviews;
-
--- Create ONE clear read policy
-CREATE POLICY "Anyone can view reviews"
-ON public.reviews
-FOR SELECT
-TO public
-USING (true);
-
 
 -- 3. Table: public.real_estate_review_reports
 -- Problem: Multiple permissive policies for SELECT (e.g. "Users can view own..." vs "Users can view their own...")

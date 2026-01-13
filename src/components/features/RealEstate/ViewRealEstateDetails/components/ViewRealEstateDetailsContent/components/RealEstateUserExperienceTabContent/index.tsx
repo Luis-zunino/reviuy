@@ -2,7 +2,7 @@ import { TabsContent } from '@/components/ui/tabs';
 import React from 'react';
 import { TabDetailsSkeleton } from '../../../TabDetailsSkeleton';
 import { Card, CardContent } from '@/components/ui/card';
-import { Calendar, Eye, Map, MapPin, ThumbsDown, ThumbsUp } from 'lucide-react';
+import { Calendar, Eye, MapPin, ThumbsDown, ThumbsUp } from 'lucide-react';
 import { StarRatingDisplay } from '@/components/common';
 import { Review } from '@/types';
 import { Button } from '@/components/ui/button';

@@ -1,7 +1,6 @@
 'use client';
 
 import { Eye, ThumbsDown, ThumbsUp } from 'lucide-react';
-import Image from 'next/image';
 import { StarRatingDisplay } from '@/components/common/StarRating';
 import {
   DeleteReviewButton,
@@ -12,7 +11,6 @@ import {
 } from '@/components/common';
 import type { ReviewSummaryProps } from './types';
 import { PagesUrls } from '@/enums';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
@@ -65,32 +63,6 @@ export const ReviewSummary = ({ review }: ReviewSummaryProps) => {
           </div>
         </CardContent>
       </Card>
-
-      {review?.image_url && (
-        <Card className="shadow-sm border-border/50">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-xl font-bold text-foreground">Imágenes</CardTitle>
-          </CardHeader>
-          <Separator />
-          <CardContent className="pt-6">
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 gap-4">
-              <Button variant="ghost" className="p-0 h-auto group hover:bg-transparent">
-                <div className="relative w-full overflow-hidden rounded-lg border border-border">
-                  <Image
-                    alt="Imagen de la propiedad"
-                    width={300}
-                    height={400}
-                    className="object-cover w-full h-64 transition-transform duration-300 group-hover:scale-105"
-                    src={review.image_url || '/placeholder.svg'}
-                    unoptimized
-                  />
-                </div>
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
       <Card className="shadow-sm border-border/50">
         <CardHeader className="pb-4">
           <CardTitle className="text-xl font-bold text-foreground">Valoración</CardTitle>
