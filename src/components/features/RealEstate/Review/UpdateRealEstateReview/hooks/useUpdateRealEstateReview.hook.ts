@@ -1,7 +1,7 @@
 'use client';
 
+import { useAuthContext } from '@/components/providers/AuthProvider';
 import { PagesUrls } from '@/enums';
-import { useUser } from '@/hooks';
 import { useUpdateRealEstateReviewHook, useGetRealEstateReviewById } from '@/services';
 import { RealEstateReviewUpdate } from '@/types/realEstate';
 import { useParams, useRouter } from 'next/navigation';
@@ -12,7 +12,7 @@ import { toast } from 'sonner';
 export const useUpdateRealEstateReview = () => {
   const { reviewId } = useParams<{ realEstateId: string; reviewId: string }>();
   const router = useRouter();
-  const { userId } = useUser();
+  const { userId } = useAuthContext();
 
   const { data } = useGetRealEstateReviewById({ reviewId });
   const form = useForm<RealEstateReviewUpdate>();

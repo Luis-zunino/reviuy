@@ -2,7 +2,7 @@ export enum PagesUrls {
   LOGIN = '/login',
   HOME = '/home',
   REVIEW = '/review',
-  ADDREES_DETAILS = '/address',
+  ADDRESS_DETAILS = '/address/:osmId',
   REVIEW_DETAILS = '/review/details/:id',
   REVIEW_CREATE = '/review/create',
   ABOUT = '/about',

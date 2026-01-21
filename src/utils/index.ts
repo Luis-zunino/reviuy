@@ -4,3 +4,4 @@ export * from './translateComfort.util';
 export * from './translateHumidity.util';
 export * from './translatePropertyType.util';
 export * from './translateRoomType.util';
+export * from './normalizeNullable.utils';

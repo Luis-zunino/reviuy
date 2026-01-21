@@ -1,3 +1,4 @@
+import { PagesUrls } from '@/enums';
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
@@ -117,6 +118,15 @@ const nextConfig: NextConfig = {
     ];
   },
 
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: PagesUrls.HOME,
+        permanent: true,
+      },
+    ]
+  },
   transpilePackages: ['@supabase/supabase-js', '@supabase/ssr'],
 };
 

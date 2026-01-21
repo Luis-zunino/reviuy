@@ -1,4 +1,4 @@
-import { PageStateWrapper } from '@/components/common';
+import { PageWithSidebar } from '@/components/common';
 import { MultiForm } from '@/components/common/Form';
 import React from 'react';
 import { FirstForm } from '../FirstForm';
@@ -8,11 +8,8 @@ import type { ReviewFormProps } from './types';
 
 export const ReviewForm = (props: ReviewFormProps) => {
   const {
-    userId,
-    loading,
+    isLoading,
     errors,
-    selectedAddress,
-    handleAddressSelect,
     fields,
     replace,
     control,
@@ -21,17 +18,24 @@ export const ReviewForm = (props: ReviewFormProps) => {
     onSubmit,
     append,
     remove,
-    defaultRealEstateId,
-    hasExistingReview,
+    isSubmitDisabled,
+    onSelectAddress,
+    open,
+    setOpen,
+    queryValue,
+    handleClearAddress,
+    openRealEstateModal,
+    setOpenRealEstateModal,
+    handleClearRealEstate,
+    onSelectRealEstate,
+    queryValueRealEstate,
   } = props;
-
   return (
-    <PageStateWrapper
-      isAuthenticated={Boolean(userId)}
-      isLoading={loading}
-      isError={false}
+    <PageWithSidebar
+      authIsRequired={true}
+      isLoading={isLoading}
       title="Comparte tu experiencia"
-      subtitle="Busca una dirección y comparte tu experiencia para ayudar a otros."
+      description="Busca una dirección y comparte tu experiencia para ayudar a otros."
     >
       <MultiForm
         onSubmit={handleSubmit(onSubmit)}
@@ -40,8 +44,12 @@ export const ReviewForm = (props: ReviewFormProps) => {
             key="firstForm"
             control={control}
             errors={errors}
-            selectedAddress={selectedAddress}
-            handleAddressSelect={handleAddressSelect}
+            form={form}
+            open={open}
+            setOpen={setOpen}
+            queryValue={queryValue}
+            handleClear={handleClearAddress}
+            onSelectAddress={onSelectAddress}
           />,
           <SecondForm
             key="secondForm"
@@ -54,13 +62,20 @@ export const ReviewForm = (props: ReviewFormProps) => {
           <ThirdForm
             key="thirdForm"
             control={control}
-            defaultRealEstateId={defaultRealEstateId}
             errors={errors}
+            form={form}
+            open={openRealEstateModal}
+            setOpen={setOpenRealEstateModal}
+            handleClear={handleClearRealEstate}
+            onSelect={onSelectRealEstate}
+            placeholder="Busca el nombre de una Inmobiliaria"
+            label="Inmobiliaria"
+            queryValue={queryValueRealEstate}
           />,
         ]}
         form={form}
-        isSubmitDisabled={hasExistingReview}
+        isSubmitDisabled={isSubmitDisabled}
       />
-    </PageStateWrapper>
+    </PageWithSidebar>
   );
 };

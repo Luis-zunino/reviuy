@@ -106,7 +106,7 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${inter.className} antialiased bg-blue-50`}
+        className={`${geistSans.variable} ${geistMono.variable} ${inter.className} antialiased bg-blue-50 relative overflow-x-hidden`}
       >
         <AuthProvider>
           {children}

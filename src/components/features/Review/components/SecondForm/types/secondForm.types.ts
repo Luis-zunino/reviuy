@@ -5,12 +5,12 @@ import type {
   UseFieldArrayRemove,
   UseFieldArrayReplace,
 } from 'react-hook-form';
-import type { ReviewFormData } from '@/types';
+import { FormReviewSchema } from '../../../constants';
 
 export interface SecondFormProps {
-  control: Control<ReviewFormData>;
-  fields: FieldArrayWithId<ReviewFormData, 'review_rooms', 'id'>[];
-  append: UseFieldArrayAppend<ReviewFormData, 'review_rooms'>;
+  control: Control<FormReviewSchema>;
+  fields: FieldArrayWithId<FormReviewSchema, 'review_rooms', 'id'>[];
+  append: UseFieldArrayAppend<FormReviewSchema, 'review_rooms'>;
   remove: UseFieldArrayRemove;
-  replace: UseFieldArrayReplace<ReviewFormData, 'review_rooms'>;
+  replace: UseFieldArrayReplace<FormReviewSchema, 'review_rooms'>;
 }

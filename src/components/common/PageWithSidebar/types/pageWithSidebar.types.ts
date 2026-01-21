@@ -6,4 +6,9 @@ export interface PageWithSidebarProps {
   headerClassName?: string;
   sidebarClassName?: string;
   contentClassName?: string;
+  isLoading?: boolean;
+  isError?: boolean;
+  errorTitle?: string;
+  errorSubTitle?: string;
+  authIsRequired?: boolean;
 }

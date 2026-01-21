@@ -7,7 +7,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { PagesUrls } from '@/enums';
-import { redirect } from 'next/navigation';
 import React from 'react';
 import type { ViewRealEstateDetailsHeaderProps } from './types';
 import { NotebookPen } from 'lucide-react';
@@ -24,6 +23,7 @@ export const ViewRealEstateDetailsHeader = (props: ViewRealEstateDetailsHeaderPr
     refetchRealEstateVote,
     isLoading,
     isLoadingVote,
+    push,
   } = useViewRealEstateDetailsHeader();
 
   return (
@@ -61,7 +61,7 @@ export const ViewRealEstateDetailsHeader = (props: ViewRealEstateDetailsHeaderPr
               {!hasRealEstateReview ? (
                 <Button
                   onClick={() =>
-                    redirect(PagesUrls.REAL_ESTATE_CREATE_REVIEW.replace(':id', realEstateId))
+                    push(PagesUrls.REAL_ESTATE_CREATE_REVIEW.replace(':id', realEstateId))
                   }
                   className="max-w-min"
                   size="sm"

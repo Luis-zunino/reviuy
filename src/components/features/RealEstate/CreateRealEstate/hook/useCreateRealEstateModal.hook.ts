@@ -1,14 +1,14 @@
-import { useUser } from '@/hooks';
 import { useCreateRealEstateHook } from '@/services';
 import type { RealEstateInsert } from '@/types';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { validateText } from '@/utils';
 import type { UseCreateRealEstateModalProps, CreateRealEstateFormData } from './types';
+import { useAuthContext } from '@/components/providers/AuthProvider';
 
 export const useCreateRealEstateModal = (props: UseCreateRealEstateModalProps) => {
   const { onOpenChange } = props;
-  const { userId } = useUser();
+  const { userId } = useAuthContext();
 
   const {
     control,

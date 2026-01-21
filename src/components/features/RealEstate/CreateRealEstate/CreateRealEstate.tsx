@@ -5,17 +5,16 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { Building2 } from 'lucide-react';
-import { PageStateWrapper } from '@/components/common';
+import { PageWithSidebar } from '@/components/common';
 import { useCreateRealEstate } from './hook';
 
 export const CreateRealEstate = () => {
-  const { handleSubmit, onSubmit, register, errors, isSubmitting, isAuthenticated } =
-    useCreateRealEstate();
+  const { handleSubmit, onSubmit, register, errors, isSubmitting } = useCreateRealEstate();
   return (
-    <PageStateWrapper
+    <PageWithSidebar
       title="Agregar una nueva Inmobiliaria"
-      subtitle="Agregar una nueva inmobiliaria para que pueda ser calificada por los usuarios."
-      isAuthenticated={isAuthenticated}
+      description="Agregar una nueva inmobiliaria para que pueda ser calificada por los usuarios."
+      authIsRequired={true}
     >
       <Card>
         <CardContent>
@@ -52,6 +51,6 @@ export const CreateRealEstate = () => {
           </form>
         </CardContent>
       </Card>
-    </PageStateWrapper>
+    </PageWithSidebar>
   );
 };

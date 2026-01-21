@@ -1,66 +1,45 @@
 'use client';
 
-import type { ReviewFormData } from '@/types';
-import { SearchableSelectFormField } from '../SearchableSelectFormField';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { X } from 'lucide-react';
 import type { AddressSearchInputProps } from './types';
 import { useAddressSearchInput } from './hooks';
+import { AsyncSearchSelect } from '../AsyncSearchSelect';
+import { FieldValues, Path } from 'react-hook-form';
+import { NominatimEntity } from '@/types';
 
-export const AddressSearchInput = ({
-  name,
-  control,
-  handleOnClick,
-  defaultValue,
-  className,
-  rules,
-}: AddressSearchInputProps) => {
-  const { setSearchTerm, defaultValueData, handleSelect, handleClear, isLoading, data } =
-    useAddressSearchInput({
-      defaultValue,
-      handleOnClick,
-    });
+export const AddressSearchInput = <T extends FieldValues>(props: AddressSearchInputProps<T>) => {
+  const {
+    setOpen,
+    queryValue,
+    name,
+    form,
+    open,
+    handleClear,
+    onSelect,
+    placeholder,
+    label,
+    className,
+  } = props;
+  const { data, isLoading } = useAddressSearchInput({ queryValue });
 
   return (
     <div className="relative w-full">
-      {defaultValueData ? (
-        <div className="flex">
-          <Input defaultValue={defaultValueData} name={name} readOnly />
-          <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex gap-1">
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 p-0 hover:bg-red-100"
-              onClick={handleClear}
-            >
-              <X className="h-6 w-6 text-red-500" />
-            </Button>
-          </div>
-        </div>
-      ) : (
-        <SearchableSelectFormField
-          control={control}
-          name={name as keyof ReviewFormData}
-          required
-          rules={rules}
-          options={data ?? []}
-          emptyMessage={isLoading ? 'Buscando...' : 'No se encontraron direcciones.'}
-          isLoading={isLoading}
-          loadingMessage="Buscando direcciones..."
-          onInputChange={setSearchTerm}
-          onValueChange={(value) => {
-            if (value) {
-              const selected = data?.find((r) => r.osm_id.toString() === value);
-              if (selected) {
-                handleSelect(selected);
-              }
-            }
-          }}
-          className={className}
-        />
-      )}
+      <AsyncSearchSelect<T, NominatimEntity & { id: string; name: string }>
+        name={name as Path<T>}
+        options={data?.map((item) => ({
+          ...item,
+          id: item.osm_id.toString(),
+          name: item.display_name,
+        }))}
+        isFetching={isLoading}
+        open={open}
+        setOpen={setOpen}
+        form={form}
+        handleClear={handleClear}
+        onSelect={onSelect}
+        placeholder={placeholder}
+        label={label}
+        className={className}
+      />
     </div>
   );
 };

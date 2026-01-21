@@ -38,7 +38,7 @@ export const FAQComponent = () => {
             >
               <h3 className="text-lg font-semibold text-gray-900 text-left">{item.question}</h3>
               <ChevronDown
-                className={`w-5 h-5 text-gray-500 transition-transform flex-shrink-0 ml-4 ${
+                className={`w-5 h-5 text-gray-500 transition-transform shrink-0 ml-4 ${
                   openId === item.id ? 'rotate-180' : ''
                 }`}
               />

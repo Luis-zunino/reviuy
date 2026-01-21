@@ -16,31 +16,29 @@ import {
 import { LazyMapComponent } from '@/components/common';
 import type { FirstFormProps } from './types';
 import { PropertyType } from '@/enums';
+import { FormReviewSchema } from '../../constants';
 
 export const FirstForm = (props: FirstFormProps) => {
-  const { control, errors, selectedAddress, handleAddressSelect } = props;
-
+  const { control, errors, form, onSelectAddress, ...rest } = props;
+  const lat = form.watch('latitude') ?? 0;
+  const lon = form.watch('longitude') ?? 0;
   return (
     <div className="flex flex-col gap-6">
       <div className="space-y-2">
         <FormLabel htmlFor="address_text" label="Dirección" isRequired />
-        <AddressSearchInput
-          handleOnClick={handleAddressSelect}
+        <AddressSearchInput<FormReviewSchema>
           name="address_text"
-          control={control}
-          defaultValue={selectedAddress?.display_name}
-          rules={{
-            required: 'La dirección es obligatoria',
-          }}
+          form={form}
+          onSelect={onSelectAddress}
+          placeholder="Busca una direccion..."
+          className={{ container: 'w-full', item: 'min-w-full' }}
+          {...rest}
         />
-        {selectedAddress?.position && (
+        {lat.length > 0 || lon.length > 0 ? (
           <div className="mt-4">
-            <LazyMapComponent
-              lat={selectedAddress.position.lat ?? 0}
-              lon={selectedAddress.position.lon ?? 0}
-            />
+            <LazyMapComponent key={lat + lon} lat={Number(lat)} lon={Number(lon)} />
           </div>
-        )}
+        ) : null}
       </div>
 
       <div className="space-y-2">
@@ -79,9 +77,16 @@ export const FirstForm = (props: FirstFormProps) => {
               control={control}
               rules={{ required: 'Selecciona el tipo de propiedad' }}
               render={({ field }) => (
-                <Select onValueChange={field.onChange} defaultValue={field.value ?? undefined}>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  value={field.value}
+                >
                   <SelectTrigger>
-                    <SelectValue placeholder="Selecciona el tipo de propiedad" />
+                    <SelectValue
+                      placeholder="Selecciona el tipo de propiedad"
+                      defaultValue={field.value}
+                    />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value={PropertyType.APARTMENT}>Apartamento</SelectItem>

@@ -1,14 +1,16 @@
-import { useUser } from '@/hooks';
+'use client';
+
 import { useCreateRealEstateHook } from '@/services';
 import type { RealEstateInsert } from '@/types';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import type { CreateRealEstateFormData } from './types';
+import { useAuthContext } from '@/components/providers/AuthProvider';
 
 export const useCreateRealEstate = () => {
   const router = useRouter();
-  const { userId } = useUser();
+  const { userId } = useAuthContext();
 
   const {
     register,
@@ -48,6 +50,5 @@ export const useCreateRealEstate = () => {
     register,
     errors,
     isSubmitting: isPending,
-    isAuthenticated: Boolean(userId),
   };
 };

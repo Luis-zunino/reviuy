@@ -1,5 +1,5 @@
 import { Search, Star, Users } from 'lucide-react';
-import { Tips, Filters, CreateReviewHomeSection } from './components';
+import { Tips, SearcherAddressHomeSection, CreateReviewHomeSection } from './components';
 
 export const Home = () => {
   return (
@@ -15,7 +15,7 @@ export const Home = () => {
 
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-foreground mb-8 leading-[1.1]">
               Encontrá tu lugar ideal con <br className="hidden md:block" />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 animate-gradient">
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-600 to-purple-600 animate-gradient">
                 reseñas reales
               </span>
             </h1>
@@ -26,7 +26,7 @@ export const Home = () => {
             </p>
           </div>
 
-          <Filters />
+          <SearcherAddressHomeSection />
         </div>
       </section>
 

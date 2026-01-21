@@ -1,8 +1,6 @@
 import { HumidityValue } from '@/enums';
 
 export const translateHumidity = (value?: string | null) => {
-  if (!value) return '';
-
   switch (value) {
     case HumidityValue.HIGH:
       return 'Alta';
@@ -11,6 +9,6 @@ export const translateHumidity = (value?: string | null) => {
     case HumidityValue.LOW:
       return 'Baja';
     default:
-      return value.charAt(0).toUpperCase() + value.slice(1);
+      return '----';
   }
 };

@@ -1,7 +1,7 @@
 import { PagesUrls } from '@/enums';
 import { useGetReviewVote, useVoteReview } from '@/services';
 import { VoteType } from '@/types';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import type { ReviewLikesButtonsProps } from '../types';
 import type { AddVoteParams } from './types';
@@ -10,6 +10,8 @@ import { useAuthContext } from '@/components/providers/AuthProvider';
 export const useReviewLikesButtons = (props: ReviewLikesButtonsProps) => {
   const { id, likes: initialLikes, dislikes: initialDislikes } = props;
   const { userId } = useAuthContext();
+  const { push } = useRouter();
+
   const { mutateAsync, isPending: isVoting, isError } = useVoteReview();
   const { data, isLoading, refetch } = useGetReviewVote({
     reviewId: id,
@@ -21,7 +23,7 @@ export const useReviewLikesButtons = (props: ReviewLikesButtonsProps) => {
   const [optimisticDislikes, setOptimisticDislikes] = useState(initialDislikes);
 
   const addVote = async ({ id, voteType }: AddVoteParams) => {
-    if (!userId) redirect(PagesUrls.LOGIN);
+    if (!userId) push(PagesUrls.LOGIN);
 
     setClickedButton(voteType);
     setTimeout(() => setClickedButton(null), 300);

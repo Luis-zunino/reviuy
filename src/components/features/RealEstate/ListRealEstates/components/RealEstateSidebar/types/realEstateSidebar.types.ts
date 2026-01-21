@@ -1,11 +1,7 @@
-import type { RealEstate } from '@/types';
+import { UseFormReturn } from 'react-hook-form';
+import { FormSearcherRealEstate } from './formSearcherRealEstate.type';
 
 export interface RealEstateSidebarProps {
-  searchValue: string | null;
-  selectedRealEstate: RealEstate | null;
-  selectedRating: number;
-  setSearchValue: (value: string) => void;
-  handleRealEstateSelect: (realEstate: RealEstate | null) => void;
-  setSelectedRating: (rating: number) => void;
+  form: UseFormReturn<FormSearcherRealEstate, any, FormSearcherRealEstate>;
   handleClearFilters: () => void;
 }

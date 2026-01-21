@@ -29,29 +29,29 @@ export async function middleware(request: NextRequest) {
     );
 
     const {
-        data: { user },
-    } = await supabase.auth.getUser();
+        data: { session },
+    } = await supabase.auth.getSession();
+    const pathname = request.nextUrl.pathname
 
-    const protectedRoutes = [PagesUrls.PROFILE, PagesUrls.REVIEW_CREATE, PagesUrls.REAL_ESTATE_CREATE];
+    const protectedRoutes = ["/profile", "/review/create", "/review/edit", "/real-estate/create", "/review/edit"];
+    const authRoutes = [PagesUrls.LOGIN];
 
     const protectedDynamicRoutes = [
-        PagesUrls.EDIT_REVIEW,
         PagesUrls.REAL_ESTATE_CREATE_REVIEW.replace(':id', '[^/]+'),
         PagesUrls.REAL_ESTATE_UPDATE_REVIEW.replace(':id', '[^/]+').replace(':reviewId', '[^/]+'),
         PagesUrls.REAL_ESTATE_UPDATE.replace('[id]', '[^/]+'),
     ];
 
-    const isProtectedRoute =
-        protectedRoutes.some(route => request.nextUrl.pathname.startsWith(route)) ||
-        protectedDynamicRoutes.some(route => new RegExp(route).test(request.nextUrl.pathname));
+    const isProtected = protectedRoutes.some(route =>
+        pathname.startsWith(route) || protectedDynamicRoutes.some(route => pathname.startsWith(route))
+    )
 
-    if (isProtectedRoute && !user) {
+    if (isProtected && !session) {
         const redirectUrl = new URL(PagesUrls.LOGIN, request.url);
         redirectUrl.searchParams.set('redirectTo', request.nextUrl.pathname);
         return NextResponse.redirect(redirectUrl);
     }
-    const authRoutes = [PagesUrls.LOGIN];
-    if (user && authRoutes.some(route => request.nextUrl.pathname.startsWith(route))) {
+    if (session && authRoutes.some(route => pathname.startsWith(route))) {
         return NextResponse.redirect(new URL(PagesUrls.HOME, request.url));
     }
 

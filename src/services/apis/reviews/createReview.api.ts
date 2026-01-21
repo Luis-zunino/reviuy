@@ -7,12 +7,12 @@ export interface CreateReviewData extends ReviewInsert {
 }
 
 export interface CreateReviewRequest {
-  createReviewData: CreateReviewData;
+  data: CreateReviewData;
   userId?: string | null;
 }
 
 export const createReview = async ({
-  createReviewData,
+  data,
   userId,
 }: CreateReviewRequest): Promise<CreateReviewResponse> => {
   try {
@@ -24,7 +24,7 @@ export const createReview = async ({
       };
     }
 
-    const { review_rooms, ...reviewData } = createReviewData;
+    const { review_rooms, ...reviewData } = data;
 
     const { data: insertedReview, error: insertError } = await supabaseClient
       .from('reviews')

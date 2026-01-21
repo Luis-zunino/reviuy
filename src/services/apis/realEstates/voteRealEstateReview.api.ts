@@ -9,7 +9,7 @@ export const voteRealEstateReview = async ({
   voteType: VoteType;
 }) => {
   const { data, error } = await supabaseClient.rpc('vote_real_estate_review', {
-    p_review_id: reviewId,
+    p_real_estate_review_id: reviewId,
     p_vote_type: voteType,
   });
   if (error) {

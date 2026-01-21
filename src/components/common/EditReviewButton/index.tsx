@@ -2,15 +2,15 @@
 
 import { Button } from '@/components/ui/button';
 import { PagesUrls } from '@/enums';
-import { useUser } from '@/hooks';
 import { PencilIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 import type { EditReviewButtonProps } from './types';
+import { useAuthContext } from '@/components/providers/AuthProvider';
 
 export const EditReviewButton = (props: EditReviewButtonProps) => {
   const { review, showText = false, variant = 'ghost', size = 'sm' } = props;
-  const { userId, isAuthenticated } = useUser();
+  const { userId, isAuthenticated } = useAuthContext();
   const router = useRouter();
 
   const isOwner = isAuthenticated && userId && review.user_id && userId === review.user_id;

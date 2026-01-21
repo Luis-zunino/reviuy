@@ -1,46 +1,30 @@
 import { useInfiniteRealEstates } from '@/services';
-import type { RealEstate } from '@/types/realEstate';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useDebounce } from '@/hooks';
+import { useForm } from 'react-hook-form';
+import { formSchema, FormSearcherRealEstate } from '../components/RealEstateSidebar/types';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 export const useListRealEstate = () => {
-  const [selectedRating, setSelectedRating] = useState<number>(0);
-  const [selectedRealEstate, setSelectedRealEstate] = useState<RealEstate | null>(null);
-  const [searchValue, setSearchValue] = useState<string | null>(null);
-
-  const debouncedSearchValue = useDebounce(searchValue, 300);
-
+  const form = useForm<FormSearcherRealEstate>({
+    defaultValues: {
+      real_estate_name: '',
+      rating: 0,
+    },
+    resolver: zodResolver(formSchema),
+  });
+  const { watch, setValue } = form;
+  const { real_estate_name, rating } = watch();
+  const debouncedSearchValue = useDebounce(real_estate_name, 300);
   // Infinite query for real estates
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useInfiniteRealEstates({ search: debouncedSearchValue, rating: selectedRating });
+    useInfiniteRealEstates({ search: debouncedSearchValue, rating: rating });
 
-  const allItems = useMemo(() => data?.pages.flatMap((page) => page.data) ?? [], [data]);
-
-  const filteredRealEstates = useMemo(() => {
-    let filtered = [...allItems];
-    if (selectedRealEstate) {
-      filtered = filtered.filter((re) => re.id === selectedRealEstate.id);
-    }
-
-    if (selectedRating > 0) {
-      const minRating = selectedRating;
-      filtered = filtered.filter((re) => {
-        const rating = re.rating ? parseFloat(re.rating.toString()) : 0;
-        return rating >= minRating;
-      });
-    }
-
-    return filtered;
-  }, [allItems, selectedRealEstate, selectedRating]);
-
-  const handleRealEstateSelect = (realEstate: RealEstate | null) => {
-    setSelectedRealEstate(realEstate);
-  };
+  const filteredRealEstates = useMemo(() => data?.pages.flatMap((page) => page.data) ?? [], [data]);
 
   const handleClearFilters = () => {
-    setSelectedRating(0);
-    setSelectedRealEstate(null);
-    setSearchValue(null);
+    setValue('real_estate_name', '');
+    setValue('rating', 0);
   };
 
   const loadMore = () => {
@@ -50,18 +34,12 @@ export const useListRealEstate = () => {
   };
 
   return {
-    selectedRating,
-    selectedRealEstate,
-    searchValue,
     isLoading,
-    displayedItems: filteredRealEstates,
-    setSearchValue,
-    handleRealEstateSelect,
     handleClearFilters,
-    setSelectedRating,
     isFetchingNextPage,
-    // paginación
     loadMore,
     hasNextPage,
+    form,
+    displayedItems: filteredRealEstates,
   };
 };

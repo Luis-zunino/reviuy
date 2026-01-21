@@ -3,10 +3,10 @@
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-defaulticon-compatibility';
 import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css';
-import { icon } from 'leaflet';
+import { icon, LatLngTuple } from 'leaflet';
 
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
-import { FC, PropsWithChildren, useEffect, useState } from 'react';
+import { FC, PropsWithChildren, useMemo } from 'react';
 import { Loading } from '../Loading';
 
 const ICON = icon({
@@ -14,26 +14,22 @@ const ICON = icon({
   iconSize: [24, 24],
 });
 
-export const MapComponent: FC<{ lat: number | null; lon: number | null } & PropsWithChildren> = ({
-  lat,
-  lon,
-  children,
-}) => {
-  const [isMounted, setIsMounted] = useState(false);
-  const [position, setPosition] = useState<[number, number] | null>(null);
+export interface MapComponentProps extends PropsWithChildren {
+  lat: number | null;
+  lon: number | null;
+}
 
-  useEffect(() => {
-    if (lat != null && lon != null) {
-      setPosition([lat, lon]);
-    } else {
-      setPosition(null);
+export const MapComponent: FC<MapComponentProps> = ({ lat, lon, children }) => {
+  const position = useMemo(() => {
+    let result: LatLngTuple | undefined = undefined;
+    if (lat !== null && lon !== null) {
+      result = [lat, lon];
+      return result;
     }
-    if (typeof window !== 'undefined') {
-      setIsMounted(true);
-    }
+    return result;
   }, [lat, lon]);
 
-  if (!isMounted || !position) {
+  if (!position) {
     return (
       <div className="h-80 w-full bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center">
         <Loading />

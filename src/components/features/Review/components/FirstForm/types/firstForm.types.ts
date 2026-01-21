@@ -1,10 +1,16 @@
-import type { Control, FieldErrors } from 'react-hook-form';
-import type { ReviewFormData, SelectedAddress } from '@/types';
+import type { Control, FieldErrors, UseFormReturn } from 'react-hook-form';
+import type { NominatimEntity } from '@/types';
+import { Dispatch, SetStateAction } from 'react';
+import { FormReviewSchema } from '../../../constants';
 
 export interface FirstFormProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  control: Control<ReviewFormData, any, ReviewFormData>;
-  errors: FieldErrors<ReviewFormData>;
-  selectedAddress: SelectedAddress | null;
-  handleAddressSelect: (addressData: SelectedAddress) => void;
+  control: Control<FormReviewSchema, any, FormReviewSchema>;
+  errors: FieldErrors<FormReviewSchema>;
+  form: UseFormReturn<FormReviewSchema, any, FormReviewSchema>;
+  open: boolean;
+  queryValue: string;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+  handleClear: () => void;
+  onSelectAddress: (item: NominatimEntity) => void;
 }

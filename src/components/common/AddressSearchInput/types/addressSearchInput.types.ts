@@ -1,11 +1,16 @@
-import type { Control, RegisterOptions } from 'react-hook-form';
-import type { ReviewFormData, SelectedAddress } from '@/types';
+import { NominatimEntity } from '@/types';
+import { Dispatch, SetStateAction } from 'react';
+import { FieldValues, UseFormReturn } from 'react-hook-form';
 
-export interface AddressSearchInputProps {
-  handleOnClick: (data: SelectedAddress) => void;
+export interface AddressSearchInputProps<T extends FieldValues> {
+  form: UseFormReturn<T, any, T>;
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+  handleClear: () => void;
   name: string;
-  control: Control<ReviewFormData>;
-  defaultValue?: string | null;
-  className?: { inputContainer?: string; input?: string };
-  rules?: RegisterOptions<ReviewFormData, keyof ReviewFormData>;
+  queryValue: string;
+  onSelect: (item: NominatimEntity) => void;
+  placeholder: string;
+  label?: string;
+  className?: { container?: string; item?: string };
 }

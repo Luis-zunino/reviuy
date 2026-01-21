@@ -5,10 +5,10 @@ import { Button } from '@/components/ui/button';
 import { Trash2 } from 'lucide-react';
 import { DeleteReviewDialog } from '@/components/common';
 import { useDeleteReview } from '@/services/apis/reviews';
-import { useUser } from '@/hooks';
 import { useRouter } from 'next/navigation';
 import { PagesUrls } from '@/enums';
 import type { DeleteReviewButtonProps } from './types';
+import { useAuthContext } from '@/components/providers/AuthProvider';
 
 export const DeleteReviewButton: React.FC<DeleteReviewButtonProps> = ({
   review,
@@ -20,7 +20,7 @@ export const DeleteReviewButton: React.FC<DeleteReviewButtonProps> = ({
 }) => {
   const route = useRouter();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const { isOwner } = useUser();
+  const { isOwner } = useAuthContext();
 
   const { mutateAsync, isPending } = useDeleteReview({
     onSuccess: () => {

@@ -2,17 +2,17 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { PagesUrls } from '@/enums';
-import { useUser } from '@/hooks';
 import { Decoration } from '@/components/ui/Decoration';
+import { useAuthContext } from '@/components/providers/AuthProvider';
 
 export const CreateReviewHomeSection = () => {
-  const { isAuthenticated } = useUser();
-
+  const { isAuthenticated } = useAuthContext();
+  const { push } = useRouter();
   return (
-    <div className="min-h-[640px] relative">
-      <Decoration className="min-h-[640px] w-screen opacity-70" />
+    <div className="min-h-160 relative">
+      <Decoration className="min-h-160 w-screen opacity-70" />
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="text-center p-4 lg:py-10 lg:px-16 bg-primary-100/90 backdrop-blur-xs rounded-2xl shadow-lg mx-4">
           <h2 className="text-3xl font-bold mb-4 text-gray-900">
@@ -25,9 +25,7 @@ export const CreateReviewHomeSection = () => {
             <Button
               title="Crea una nueva opinión en Reviu"
               onClick={() => {
-                return isAuthenticated
-                  ? redirect(PagesUrls.REVIEW_CREATE)
-                  : redirect(PagesUrls.LOGIN);
+                return isAuthenticated ? push(PagesUrls.REVIEW_CREATE) : push(PagesUrls.LOGIN);
               }}
               variant="outline"
               className="px-8 py-3"

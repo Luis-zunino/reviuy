@@ -6,7 +6,7 @@ import { TabsContent } from '@/components/ui/tabs';
 import { PagesUrls } from '@/enums';
 import { RealEstateReview } from '@/types';
 import { Calendar, Eye, MessageSquare, Pencil, ThumbsDown, ThumbsUp } from 'lucide-react';
-import { redirect, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import React from 'react';
 
 export interface RealEstateReviewTabContentProps {
@@ -17,7 +17,7 @@ export interface RealEstateReviewTabContentProps {
 
 export const RealEstateReviewTabContent = (props: RealEstateReviewTabContentProps) => {
   const { realEstateReview, realEstateId, userId } = props;
-  const router = useRouter();
+  const { push } = useRouter();
   return (
     <TabsContent value="realEstateReview" className="mt-6">
       <section>
@@ -29,7 +29,7 @@ export const RealEstateReviewTabContent = (props: RealEstateReviewTabContentProp
                 <p className="text-gray-600 mb-4">Aún no hay reseñas para esta inmobiliaria</p>
                 <Button
                   onClick={() =>
-                    redirect(PagesUrls.REAL_ESTATE_CREATE_REVIEW.replace(':id', realEstateId))
+                    push(PagesUrls.REAL_ESTATE_CREATE_REVIEW.replace(':id', realEstateId))
                   }
                 >
                   Ser el primero en reseñar
@@ -54,7 +54,7 @@ export const RealEstateReviewTabContent = (props: RealEstateReviewTabContentProp
                           <Button
                             variant="seeMore"
                             onClick={() =>
-                              router.push(
+                              push(
                                 PagesUrls.REAL_ESTATE_VIEW_REVIEW.replace(
                                   ':id',
                                   realEstateId
@@ -69,7 +69,7 @@ export const RealEstateReviewTabContent = (props: RealEstateReviewTabContentProp
                             <Button
                               variant="outline"
                               onClick={() =>
-                                router.push(
+                                push(
                                   PagesUrls.REAL_ESTATE_UPDATE_REVIEW.replace(
                                     ':id',
                                     realEstateId

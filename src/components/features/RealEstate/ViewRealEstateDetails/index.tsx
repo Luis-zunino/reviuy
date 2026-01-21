@@ -1,8 +1,6 @@
 'use client';
 
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Building2 } from 'lucide-react';
 import { useViewRealEstateDetails } from './hooks';
 import { PageWithSidebar } from '@/components/common';
 import { ViewRealEstateDetailsContent, ViewRealEstateDetailsHeader } from './components';
@@ -41,39 +39,28 @@ export const ViewRealEstateDetails = () => {
     );
   }
 
-  if (error || !reviews) {
-    return (
-      <div className="container mx-auto p-6 max-w-6xl">
-        <Card className="mt-6">
-          <CardContent className="p-6 text-center">
-            <Building2 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600 mb-4">{'No se pudo encontrar la inmobiliaria'}</p>
-            <Button onClick={() => window.history.back()} variant="outline">
-              Volver atrás
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
   return (
     <PageWithSidebar
       title="Reseñas y calificaciones"
       description="Ecnuentra los detalles de la inmobiliaria"
+      isError={!!error || !reviews}
+      errorTitle="No se pudo encontrar la inmobiliaria"
+      errorSubTitle="Por favor, inténtalo de nuevo más tarde"
     >
       <div className="space-y-6">
         <ViewRealEstateDetailsHeader
           averageRating={averageRating}
           amountReviews={realEstateReview?.length ?? 0}
         />
-        <ViewRealEstateDetailsContent
-          realEstateReview={realEstateReview}
-          reviews={reviews}
-          isLoadingReviews={isLoadingReviews}
-          realEstateId={realEstateId}
-          userId={userId}
-        />
+        {reviews ? (
+          <ViewRealEstateDetailsContent
+            realEstateReview={realEstateReview}
+            reviews={reviews}
+            isLoadingReviews={isLoadingReviews}
+            realEstateId={realEstateId}
+            userId={userId}
+          />
+        ) : null}
       </div>
     </PageWithSidebar>
   );

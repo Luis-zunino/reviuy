@@ -1,3 +1,3 @@
 export { Tips } from './Tips';
-export { Filters } from './Filters';
+export { SearcherAddressHomeSection } from './SearcherAddressHomeSection';
 export { CreateReviewHomeSection } from './CreateReviewHomeSection';

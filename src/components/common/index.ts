@@ -1,9 +1,7 @@
 export { AddressSearchInput } from './AddressSearchInput';
 export { Loading, Skeleton, ReviewCardSkeleton, MapSkeleton, ListSkeleton } from './Loading';
 export { MainLayout } from './MainLayout/index';
-export { PageStateWrapper } from './PageStateWrapper/index';
 export { StarRatingDisplay, StarRatingInput } from './StarRating';
-export { RealEstateSearchInput } from './RealEstateSearchInput';
 export { LazyMapComponent } from './MapComponent/index';
 export { FeedBackBadge } from './FeedBackBadge';
 export { BackButton } from './BackButton';
@@ -22,5 +20,5 @@ export { ReportReviewButton } from './ReportReviewButton';
 export { Header } from './Header';
 export { ReviewLikesButtons } from './ReviewLikesButtons';
 export { PageWithSidebar } from './PageWithSidebar';
-export * from './PageStateWrapper/components';
+export * from './PageWithSidebar/components';
 export * from './Emails';

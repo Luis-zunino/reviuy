@@ -1,24 +1,33 @@
 import { FormLabel } from '@/components/common/Form';
 import { Textarea } from '@/components/ui/textarea';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Controller } from 'react-hook-form';
-import type { RealEstate } from '@/types';
-import { RealEstateSearchInput } from '@/components/common';
-import { useGetRealEstateById } from '@/services';
 import { validateText } from '@/utils';
 import type { ThirdFormProps } from './types';
+import { RealEstate } from '@/types';
+import { AsyncSearchSelect } from '@/components/common/AsyncSearchSelect';
+import { FormReviewSchema } from '../../constants';
+import { CreateRealEstateModal } from '@/components/features/RealEstate/CreateRealEstate/CreateRealEstateModal';
+import { useThirdForm } from './hooks';
 
 export const ThirdForm = (props: ThirdFormProps) => {
-  const { control, defaultRealEstateId, errors } = props;
-  const [selectedRealEstate, setSelectedRealEstate] = useState<RealEstate | null>(null);
-  const { data, isLoading } = useGetRealEstateById(defaultRealEstateId ?? '');
+  const {
+    control,
+    errors,
+    form,
+    open,
+    setOpen,
+    handleClear,
+    onSelect,
+    placeholder,
+    label,
+    description,
+    queryValue,
+  } = props;
 
-  useEffect(() => {
-    if (!data) return;
-    setSelectedRealEstate(data);
-  }, [data]);
-
-  if (isLoading) return <div className="flex flex-col flex-1">Cargando</div>;
+  const { isModalOpen, setIsModalOpen, handleCreateNew, data, isLoading, showModal } = useThirdForm(
+    { queryValue }
+  );
   return (
     <div className="space-y-6">
       <div className="space-y-2">
@@ -51,33 +60,32 @@ export const ThirdForm = (props: ThirdFormProps) => {
         )}
       </div>
       <div className="space-y-2">
-        <FormLabel htmlFor="real_estate_id" label="Inmobiliaria" />
-        <div className="text-sm text-gray-500 mb-2">
-          Selecciona la inmobiliaria asociada a esta reseña (opcional)
+        <div className="relative w-full">
+          <AsyncSearchSelect<FormReviewSchema, RealEstate>
+            name="real_estate_name"
+            options={data}
+            isFetching={isLoading}
+            open={open}
+            setOpen={setOpen}
+            form={form}
+            handleClear={handleClear}
+            onSelect={onSelect}
+            placeholder={placeholder}
+            label={label}
+            description={description}
+            className={{ container: 'w-full', item: 'min-w-1/2' }}
+            emptyComponent={
+              <CreateRealEstateModal
+                isOpen={isModalOpen}
+                onOpenChange={setIsModalOpen}
+                defaultValue={form.watch('real_estate_name')}
+                handleCreateNew={handleCreateNew}
+                isModal={true}
+                showModal={showModal}
+              />
+            }
+          />
         </div>
-
-        <Controller
-          name="real_estate_id"
-          control={control}
-          render={({ field }) => (
-            <RealEstateSearchInput
-              value={field.value ?? ''}
-              selectedRealEstate={selectedRealEstate}
-              onRealEstateSelect={(realEstate) => {
-                setSelectedRealEstate(realEstate);
-                field.onChange(realEstate?.id ?? '');
-              }}
-              onChange={(value) => {
-                if (!value) {
-                  setSelectedRealEstate(null);
-                  field.onChange('');
-                }
-              }}
-              isModal
-              name="real_estate_id"
-            />
-          )}
-        />
       </div>
     </div>
   );

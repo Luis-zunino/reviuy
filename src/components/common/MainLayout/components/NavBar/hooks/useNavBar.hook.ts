@@ -3,26 +3,23 @@ import { useEffect, useState } from 'react';
 
 export const useNavBar = () => {
   const { isAuthenticated, signOut } = useAuthContext();
-  const [scrolled, setScrolled] = useState(0);
+  const [opacity, setOpacity] = useState(0);
+
   useEffect(() => {
-    const initialScroll = window.scrollY;
-
-    const initialOpacity = Math.min(initialScroll / 100, 1);
-    setScrolled(initialOpacity);
-
     const handleScroll = () => {
-      const scrollPosition = window.scrollY;
-      const opacity = Math.min(scrollPosition / 100, 1);
-      setScrolled(opacity);
+      const newOpacity = Math.min(window.scrollY / 100, 1);
+
+      setOpacity((prev) => (prev !== newOpacity ? newOpacity : prev));
     };
 
-    window.addEventListener('scroll', handleScroll);
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return {
     isAuthenticated,
-    scrolled,
+    opacity,
     signOut,
   };
 };

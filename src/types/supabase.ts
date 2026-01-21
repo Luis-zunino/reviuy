@@ -10,6 +10,7 @@ export type Database = {
     Tables: {
       rate_limits: {
         Row: {
+          created_at: string | null;
           endpoint: string;
           id: string;
           ip_address: unknown;
@@ -18,6 +19,7 @@ export type Database = {
           window_start: string;
         };
         Insert: {
+          created_at?: string | null;
           endpoint: string;
           id?: string;
           ip_address?: unknown;
@@ -26,6 +28,7 @@ export type Database = {
           window_start?: string;
         };
         Update: {
+          created_at?: string | null;
           endpoint?: string;
           id?: string;
           ip_address?: unknown;
@@ -71,7 +74,7 @@ export type Database = {
           id: string;
           real_estate_id: string;
           reason: string;
-          reported_by_user_id: string;
+          reported_by_user_id: string | null;
           status: string | null;
           updated_at: string | null;
         };
@@ -81,7 +84,7 @@ export type Database = {
           id?: string;
           real_estate_id: string;
           reason: string;
-          reported_by_user_id: string;
+          reported_by_user_id?: string | null;
           status?: string | null;
           updated_at?: string | null;
         };
@@ -91,7 +94,7 @@ export type Database = {
           id?: string;
           real_estate_id?: string;
           reason?: string;
-          reported_by_user_id?: string;
+          reported_by_user_id?: string | null;
           status?: string | null;
           updated_at?: string | null;
         };
@@ -112,7 +115,7 @@ export type Database = {
           id: string;
           real_estate_review_id: string;
           reason: string;
-          reported_by_user_id: string;
+          reported_by_user_id: string | null;
           status: string | null;
           updated_at: string | null;
         };
@@ -122,7 +125,7 @@ export type Database = {
           id?: string;
           real_estate_review_id: string;
           reason: string;
-          reported_by_user_id: string;
+          reported_by_user_id?: string | null;
           status?: string | null;
           updated_at?: string | null;
         };
@@ -132,7 +135,7 @@ export type Database = {
           id?: string;
           real_estate_review_id?: string;
           reason?: string;
-          reported_by_user_id?: string;
+          reported_by_user_id?: string | null;
           status?: string | null;
           updated_at?: string | null;
         };
@@ -151,21 +154,27 @@ export type Database = {
           created_at: string;
           id: string;
           real_estate_review_id: string;
-          user_id: string | null;
+          updated_at: string;
+          user_id: string;
+          user_id_snapshot: string;
           vote_type: string;
         };
         Insert: {
           created_at?: string;
           id?: string;
           real_estate_review_id: string;
-          user_id?: string | null;
+          updated_at?: string;
+          user_id: string;
+          user_id_snapshot: string;
           vote_type: string;
         };
         Update: {
           created_at?: string;
           id?: string;
           real_estate_review_id?: string;
-          user_id?: string | null;
+          updated_at?: string;
+          user_id?: string;
+          user_id_snapshot?: string;
           vote_type?: string;
         };
         Relationships: [
@@ -181,6 +190,7 @@ export type Database = {
       real_estate_reviews: {
         Row: {
           created_at: string;
+          deleted_at: string | null;
           description: string;
           dislikes: number;
           id: string;
@@ -193,6 +203,7 @@ export type Database = {
         };
         Insert: {
           created_at?: string;
+          deleted_at?: string | null;
           description: string;
           dislikes?: number;
           id?: string;
@@ -205,6 +216,7 @@ export type Database = {
         };
         Update: {
           created_at?: string;
+          deleted_at?: string | null;
           description?: string;
           dislikes?: number;
           id?: string;
@@ -264,33 +276,39 @@ export type Database = {
         Row: {
           created_at: string;
           created_by: string | null;
+          deleted_at: string | null;
+          description: string | null;
           dislikes: number;
           id: string;
           likes: number;
           name: string;
-          rating: number | null;
+          rating: number;
           review_count: number;
           updated_at: string;
         };
         Insert: {
           created_at?: string;
           created_by?: string | null;
+          deleted_at?: string | null;
+          description?: string | null;
           dislikes?: number;
           id?: string;
           likes?: number;
           name: string;
-          rating?: number | null;
+          rating?: number;
           review_count?: number;
           updated_at?: string;
         };
         Update: {
           created_at?: string;
           created_by?: string | null;
+          deleted_at?: string | null;
+          description?: string | null;
           dislikes?: number;
           id?: string;
           likes?: number;
           name?: string;
-          rating?: number | null;
+          rating?: number;
           review_count?: number;
           updated_at?: string;
         };
@@ -324,12 +342,20 @@ export type Database = {
           old_data?: Json | null;
           review_id?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: 'review_audit_review_id_fkey';
+            columns: ['review_id'];
+            isOneToOne: false;
+            referencedRelation: 'reviews';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       review_deletions: {
         Row: {
           deleted_at: string;
-          deleted_by: string;
+          deleted_by: string | null;
           deletion_reason: string | null;
           id: string;
           review_created_at: string | null;
@@ -339,7 +365,7 @@ export type Database = {
         };
         Insert: {
           deleted_at?: string;
-          deleted_by: string;
+          deleted_by?: string | null;
           deletion_reason?: string | null;
           id?: string;
           review_created_at?: string | null;
@@ -349,7 +375,7 @@ export type Database = {
         };
         Update: {
           deleted_at?: string;
-          deleted_by?: string;
+          deleted_by?: string | null;
           deletion_reason?: string | null;
           id?: string;
           review_created_at?: string | null;
@@ -357,7 +383,15 @@ export type Database = {
           review_rating?: number | null;
           review_title?: string | null;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: 'review_deletions_review_id_fkey';
+            columns: ['review_id'];
+            isOneToOne: false;
+            referencedRelation: 'reviews';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       review_favorites: {
         Row: {
@@ -394,7 +428,7 @@ export type Database = {
           description: string | null;
           id: string;
           reason: string;
-          reported_by_user_id: string;
+          reported_by_user_id: string | null;
           review_id: string;
           status: string | null;
           updated_at: string | null;
@@ -404,7 +438,7 @@ export type Database = {
           description?: string | null;
           id?: string;
           reason: string;
-          reported_by_user_id: string;
+          reported_by_user_id?: string | null;
           review_id: string;
           status?: string | null;
           updated_at?: string | null;
@@ -414,7 +448,7 @@ export type Database = {
           description?: string | null;
           id?: string;
           reason?: string;
-          reported_by_user_id?: string;
+          reported_by_user_id?: string | null;
           review_id?: string;
           status?: string | null;
           updated_at?: string | null;
@@ -469,21 +503,21 @@ export type Database = {
           created_at: string;
           id: string;
           review_id: string;
-          user_id: string | null;
+          user_id: string;
           vote_type: string;
         };
         Insert: {
           created_at?: string;
           id?: string;
           review_id: string;
-          user_id?: string | null;
+          user_id: string;
           vote_type: string;
         };
         Update: {
           created_at?: string;
           id?: string;
           review_id?: string;
-          user_id?: string | null;
+          user_id?: string;
           vote_type?: string;
         };
         Relationships: [
@@ -498,17 +532,18 @@ export type Database = {
       };
       reviews: {
         Row: {
-          address_osm_id: string | null;
-          address_text: string | null;
+          address_osm_id: string;
+          address_text: string;
           apartment_number: string | null;
           created_at: string;
+          deleted_at: string | null;
           description: string;
           dislikes: number;
           humidity: string | null;
           id: string;
-          latitude: number | null;
+          latitude: number;
           likes: number;
-          longitude: number | null;
+          longitude: number;
           property_type: string | null;
           rating: number;
           real_estate_experience: string | null;
@@ -521,17 +556,18 @@ export type Database = {
           zone_rating: number | null;
         };
         Insert: {
-          address_osm_id?: string | null;
-          address_text?: string | null;
+          address_osm_id: string;
+          address_text: string;
           apartment_number?: string | null;
           created_at?: string;
+          deleted_at?: string | null;
           description: string;
           dislikes?: number;
           humidity?: string | null;
           id?: string;
-          latitude?: number | null;
+          latitude: number;
           likes?: number;
-          longitude?: number | null;
+          longitude: number;
           property_type?: string | null;
           rating: number;
           real_estate_experience?: string | null;
@@ -544,17 +580,18 @@ export type Database = {
           zone_rating?: number | null;
         };
         Update: {
-          address_osm_id?: string | null;
-          address_text?: string | null;
+          address_osm_id?: string;
+          address_text?: string;
           apartment_number?: string | null;
           created_at?: string;
+          deleted_at?: string | null;
           description?: string;
           dislikes?: number;
           humidity?: string | null;
           id?: string;
-          latitude?: number | null;
+          latitude?: number;
           likes?: number;
-          longitude?: number | null;
+          longitude?: number;
           property_type?: string | null;
           rating?: number;
           real_estate_experience?: string | null;
@@ -584,7 +621,9 @@ export type Database = {
           error_message: string | null;
           id: string;
           ip_address: unknown;
+          metadata: Json | null;
           status: string | null;
+          user_agent: string | null;
           user_id: string | null;
         };
         Insert: {
@@ -594,7 +633,9 @@ export type Database = {
           error_message?: string | null;
           id?: string;
           ip_address?: unknown;
+          metadata?: Json | null;
           status?: string | null;
+          user_agent?: string | null;
           user_id?: string | null;
         };
         Update: {
@@ -604,14 +645,26 @@ export type Database = {
           error_message?: string | null;
           id?: string;
           ip_address?: unknown;
+          metadata?: Json | null;
           status?: string | null;
+          user_agent?: string | null;
           user_id?: string | null;
         };
         Relationships: [];
       };
     };
     Views: {
-      [_ in never]: never;
+      rate_limit_stats: {
+        Row: {
+          avg_requests_per_window: number | null;
+          endpoint: string | null;
+          last_request_time: string | null;
+          max_requests_per_window: number | null;
+          total_requests: number | null;
+          unique_users: number | null;
+        };
+        Relationships: [];
+      };
     };
     Functions: {
       check_migration_status_simple: { Args: never; Returns: undefined };
@@ -637,24 +690,43 @@ export type Database = {
         };
         Returns: Json;
       };
-      create_review: {
-        Args: {
-          p_address_osm_id?: string;
-          p_address_text?: string;
-          p_description: string;
-          p_humidity?: string;
-          p_latitude?: number;
-          p_longitude?: number;
-          p_property_type?: string;
-          p_rating: number;
-          p_real_estate_id?: string;
-          p_summer_comfort?: string;
-          p_title: string;
-          p_winter_comfort?: string;
-          p_zone_rating?: number;
-        };
-        Returns: Json;
-      };
+      create_review:
+        | {
+            Args: {
+              p_address_osm_id: string;
+              p_address_text: string;
+              p_description: string;
+              p_humidity?: string;
+              p_latitude: number;
+              p_longitude: number;
+              p_property_type?: string;
+              p_rating: number;
+              p_real_estate_id?: string;
+              p_summer_comfort?: string;
+              p_title: string;
+              p_winter_comfort?: string;
+              p_zone_rating?: number;
+            };
+            Returns: Json;
+          }
+        | {
+            Args: {
+              p_address_osm_id?: string;
+              p_address_text?: string;
+              p_description: string;
+              p_humidity?: string;
+              p_latitude?: number;
+              p_longitude?: number;
+              p_property_type?: string;
+              p_rating: number;
+              p_real_estate_id?: string;
+              p_summer_comfort?: string;
+              p_title: string;
+              p_winter_comfort?: string;
+              p_zone_rating?: number;
+            };
+            Returns: Json;
+          };
       delete_review_safe: {
         Args: { review_id_param: string };
         Returns: boolean;
@@ -743,7 +815,7 @@ export type Database = {
         Returns: Json;
       };
       vote_real_estate_review: {
-        Args: { p_review_id: string; p_vote_type: string };
+        Args: { p_real_estate_review_id: string; p_vote_type: string };
         Returns: Json;
       };
       vote_review: {

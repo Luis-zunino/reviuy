@@ -1,3 +1,6 @@
+import next from 'eslint-config-next';
+import nextCoreWebVitals from 'eslint-config-next/core-web-vitals';
+import nextTypescript from 'eslint-config-next/typescript';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import js from '@eslint/js';
@@ -8,6 +11,9 @@ import reactHooksPlugin from 'eslint-plugin-react-hooks';
 const __filename = fileURLToPath(import.meta.url);
 
 const eslintConfig = [
+  ...next,
+  ...nextCoreWebVitals,
+  ...nextTypescript,
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {

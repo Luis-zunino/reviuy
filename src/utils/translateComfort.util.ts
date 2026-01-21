@@ -1,8 +1,6 @@
 import { ComfortValue } from '@/enums';
 
 export const translateComfort = (value?: string | null) => {
-  if (!value) return '';
-
   switch (value) {
     case ComfortValue.HOT:
       return 'Caluroso';
@@ -17,7 +15,6 @@ export const translateComfort = (value?: string | null) => {
     case ComfortValue.COMFORTABLE:
       return 'Cómodo';
     default:
-      // fallback capitalize
-      return value.charAt(0).toUpperCase() + value.slice(1);
+      return '----';
   }
 };

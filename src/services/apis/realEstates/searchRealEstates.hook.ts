@@ -11,6 +11,6 @@ export const useSearchRealEstates = ({
   return useQuery({
     queryKey: [REAL_ESTATE_REVIEWS.searchRealEstates, query, limit],
     queryFn: () => searchRealEstates({ query, limit }),
-    enabled: !!query,
+    enabled: query.length >= 3,
   });
 };

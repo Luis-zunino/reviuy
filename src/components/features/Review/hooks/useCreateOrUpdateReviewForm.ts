@@ -1,89 +1,84 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { useCreateReview, useUpdateReview, useCheckUserReviewForAddress } from '@/services';
-import type { SelectedAddress, ReviewFormData } from '@/types';
+import type { NominatimEntity, RealEstate } from '@/types';
 import { PagesUrls } from '@/enums';
-import { useQueryClient } from '@tanstack/react-query';
 import type { UseCreateOrUpdateReviewFormProps } from './types';
 import { useAuthContext } from '@/components/providers/AuthProvider';
+import { FormReviewSchema } from '../constants';
+import { formatDataToBackend, getDefaultValues } from '../utils';
 
 export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormProps) => {
-  const { isUpdate = false, defaultValues } = props;
-  const { userId, isAuthenticated } = useAuthContext();
-  const [isOwner, setIsOwner] = useState(false);
+  const { defaultValues } = props;
+  const { userId, isAuthenticated, isOwner } = useAuthContext();
   const router = useRouter();
-  const [selectedAddress, setSelectedAddress] = useState<SelectedAddress | null>(null);
-  const queryClient = useQueryClient();
+  const [open, setOpen] = useState(false);
+  const [openRealEstateModal, setOpenRealEstateModal] = useState(false);
+  const isUpdate = Boolean(defaultValues);
+
+  const form = useForm<FormReviewSchema>({
+    defaultValues: getDefaultValues(defaultValues),
+  });
+
+  const { control, reset, formState, watch, setValue } = form;
+  const { address_text, osm_id: osmId, real_estate_name } = watch();
   const { data: existingReview } = useCheckUserReviewForAddress({
     userId,
-    osmId: selectedAddress?.osmId ?? undefined,
+    osmId,
   });
-  const getDefaultValues = useCallback((): ReviewFormData => {
-    if (isUpdate && defaultValues) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { real_estates, ...rest } = defaultValues;
-      return {
-        ...rest,
-        review_rooms:
-          defaultValues.review_rooms?.map((room) => ({
-            id: room.id,
-            room_type: room.room_type || 'bedroom',
-            area_m2: room.area_m2 || 0,
-          })) || [],
-      };
-    }
-
-    return {
-      ...defaultValues,
-      title: defaultValues?.title ?? '',
-      description: defaultValues?.description ?? '',
-      rating: defaultValues?.rating ?? 0,
-      review_rooms: [],
-    };
-  }, [isUpdate, defaultValues]);
-
-  const form = useForm<ReviewFormData>({
-    defaultValues: getDefaultValues(),
-  });
-
-  const { control, reset, formState, watch } = form;
-
   const { fields, append, remove, replace } = useFieldArray({
     control,
     name: 'review_rooms',
   });
-
   const { mutateAsync: mutationCreate, isPending } = useCreateReview();
-
   const { mutateAsync: mutationUpdate, isPending: isUpdatePending } = useUpdateReview();
 
-  const onSubmit = async (data: ReviewFormData) => {
+  const handleClearAddress = () => {
+    setValue('address_text', '');
+    setOpen(false);
+  };
+
+  const onSelectAddress = (item: NominatimEntity) => {
+    setValue('address_text', item.display_name, {
+      shouldValidate: true,
+    });
+    setValue('osm_id', String(item.osm_id), {
+      shouldValidate: true,
+    });
+    setValue('osm_type', String(item.osm_type), {
+      shouldValidate: true,
+    });
+
+    setValue('latitude', item.lat, {
+      shouldValidate: true,
+    });
+
+    setValue('longitude', item.lon, {
+      shouldValidate: true,
+    });
+
+    if (!isUpdate && isAuthenticated && userId && item.osm_id && existingReview) {
+      toast.error('Ya has reseñado esta propiedad', {
+        description:
+          'Solo puedes escribir una reseña por propiedad. Puedes editar tu reseña existente desde tu perfil.',
+      });
+    }
+    setOpen(false);
+  };
+
+  const onSubmit = async (formData: FormReviewSchema) => {
+    if (!isOwner(defaultValues?.user_id) && isUpdate) {
+      toast.error('No tienes permisos para editar esta reseña');
+      router.push(PagesUrls.HOME);
+      return;
+    }
+
     if (!userId || !isAuthenticated) {
       toast.error('Debes iniciar sesión para publicar una reseña');
-      return;
-    }
-
-    if (!selectedAddress && !isUpdate) {
-      toast.error('Por favor selecciona una dirección');
-      return;
-    }
-
-    if (!data.title.trim()) {
-      toast.error('Por favor ingresa un título para tu reseña');
-      return;
-    }
-
-    if (!data.description.trim()) {
-      toast.error('Por favor describe tu experiencia');
-      return;
-    }
-
-    if (data.rating === 0) {
-      toast.error('Por favor califica tu experiencia general');
       return;
     }
 
@@ -91,26 +86,22 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
       isUpdate ? 'Actualizando tu reseña...' : 'Publicando tu reseña...',
       { id: `${isUpdate ? 'update' : 'create'}-review` }
     );
+    const data = formatDataToBackend(formData, userId);
 
-    const commonData = {
-      ...data,
-      user_id: userId,
-      title: data.title.trim(),
-      description: data.description.trim(),
-      address_text: selectedAddress?.display_name,
-      address_osm_id: selectedAddress?.osmId,
-      latitude: selectedAddress?.position?.lat || null,
-      longitude: selectedAddress?.position?.lon || null,
-    };
-
-    if (isUpdate && defaultValues && defaultValues.id) {
+    if (defaultValues && defaultValues.id) {
       mutationUpdate(
         {
           reviewId: defaultValues.id,
-          updateData: commonData,
+          updateData: data,
         },
         {
-          onSuccess: ({ data }) => {
+          onSuccess: ({ data, success, message }) => {
+            toast.dismiss(loadingToast);
+
+            if (!success) {
+              toast.error('Error inesperado', { description: message });
+              return;
+            }
             toast.dismiss(loadingToast);
             toast.success('Reseña actualizada exitosamente');
             router.push(PagesUrls.REVIEW_DETAILS.replace(':id', data?.id ?? ''));
@@ -124,20 +115,20 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
       );
     } else {
       mutationCreate(
+        { data },
         {
-          createReviewData: { ...commonData, likes: 0, dislikes: 0 },
-        },
-        {
-          onSuccess: ({ data }) => {
+          onSuccess: ({ data, success }) => {
             toast.dismiss(loadingToast);
-
+            if (!success) {
+              toast.error('Error inesperado', {
+                description: 'No se pudo crear la reseña. Inténtalo de nuevo.',
+              });
+              return;
+            }
             toast.success('¡Reseña publicada exitosamente!', {
               description: 'Tu experiencia ha sido compartida con la comunidad',
             });
 
-            queryClient.invalidateQueries({ queryKey: ['reviews'] });
-            queryClient.invalidateQueries({ queryKey: ['latestReviews'] });
-            queryClient.invalidateQueries({ queryKey: ['reviewsByAddress'] });
             router.push(PagesUrls.REVIEW_DETAILS.replace(':id', data?.id ?? ''));
           },
           onError: () => {
@@ -150,47 +141,39 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
     }
   };
 
-  const handleAddressSelect = async (addressData: SelectedAddress) => {
-    if (!isUpdate && isAuthenticated && userId && addressData.osmId && existingReview) {
-      toast.error('Ya has reseñado esta propiedad', {
-        description:
-          'Solo puedes escribir una reseña por propiedad. Puedes editar tu reseña existente desde tu perfil.',
-      });
-    }
+  const handleClearRealEstate = () => {
+    setValue('real_estate_id', '');
+    setValue('real_estate_name', '');
 
-    const addressDataFormatted: SelectedAddress = {
-      osmId: addressData?.osmId?.toString(),
-      display_name: addressData.display_name,
-      position: {
-        lat: addressData.position.lat,
-        lon: addressData.position.lon,
-      },
-    };
-    setSelectedAddress(addressDataFormatted);
+    setOpenRealEstateModal(false);
+  };
 
-    if (!existingReview) {
-      toast.success('Dirección seleccionada', {
-        description: 'La dirección se ha cargado correctamente',
-      });
-    }
+  const onSelectRealEstate = (item: RealEstate) => {
+    setValue('real_estate_id', item.id, {
+      shouldValidate: true,
+    });
+    setValue('real_estate_name', String(item.name), {
+      shouldValidate: true,
+    });
+
+    setOpenRealEstateModal(false);
   };
 
   useEffect(() => {
-    if (isUpdate) {
-      reset(getDefaultValues());
+    if (defaultValues && !isOwner(defaultValues.user_id)) {
+      router.push(PagesUrls.HOME);
 
-      // Validar propiedad cuando es actualización
-      if (defaultValues && userId) {
-        const isOwner = defaultValues.user_id === userId;
-        setIsOwner(isOwner);
+      const timer = setTimeout(() => {
+        toast.error('No tienes permisos para editar esta reseña');
+      }, 100);
 
-        if (!isOwner) {
-          toast.error('No tienes permisos para editar esta reseña');
-          router.push(PagesUrls.HOME);
-        }
-      }
+      return () => clearTimeout(timer);
     }
-  }, [defaultValues, getDefaultValues, isUpdate, reset, userId, router]);
+  }, [defaultValues, router, isOwner]);
+
+  useEffect(() => {
+    reset(getDefaultValues(defaultValues));
+  }, [defaultValues, reset]);
 
   return {
     ...form,
@@ -198,17 +181,23 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
     errors: formState.errors,
     router,
     isSubmitting: isPending || isUpdatePending,
-    selectedAddress,
-    userId,
-    loading: isPending || isUpdatePending,
     form,
-    handleAddressSelect,
     fields,
     append,
     remove,
     replace,
-    isOwner,
+    isOwner: isOwner(defaultValues?.user_id),
     watch,
-    hasExistingReview: Boolean(!isUpdate && isAuthenticated && userId && existingReview),
+    isSubmitDisabled: Boolean(existingReview && defaultValues && !form.formState.isValid),
+    open,
+    setOpen,
+    queryValue: address_text,
+    queryValueRealEstate: real_estate_name,
+    handleClearAddress,
+    onSelectAddress,
+    openRealEstateModal,
+    setOpenRealEstateModal,
+    handleClearRealEstate,
+    onSelectRealEstate,
   };
 };

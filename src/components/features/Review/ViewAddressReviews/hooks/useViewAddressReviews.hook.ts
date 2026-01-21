@@ -1,14 +1,14 @@
 import { PagesUrls } from '@/enums';
-import { useUser } from '@/hooks';
 import { useGetAddressInfo, useGetReviewsByAddress } from '@/services';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { useParams } from 'next/navigation';
+import { useAuthContext } from '@/components/providers/AuthProvider';
 
 export const useViewAddressReviews = () => {
   const { osmId } = useParams<{ osmId: string }>();
   const router = useRouter();
-  const { isAuthenticated, userId } = useUser();
+  const { isAuthenticated, userId } = useAuthContext();
   const {
     data: addressData,
     isLoading: isLoadingAddress,
@@ -64,6 +64,5 @@ export const useViewAddressReviews = () => {
     hasReviews: (reviewsData?.length || 0) > 0,
     handleCreateReview,
     averageRating,
-    isAuthenticated: isAuthenticated || !!userId,
   };
 };

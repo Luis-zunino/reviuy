@@ -24,15 +24,15 @@ import {
 import { NavBarItem } from './components/NavBarItem';
 
 export const NavBar = () => {
-  const { isAuthenticated, scrolled, signOut } = useNavBar();
+  const { isAuthenticated, opacity, signOut } = useNavBar();
 
   return (
     <nav
       className="sticky top-0 z-50 transition-all duration-300"
       style={{
-        backgroundColor: `rgba(255, 255, 255, ${scrolled})`,
-        borderBottom: `1px solid rgba(229, 231, 235, ${scrolled})`,
-        backdropFilter: scrolled > 0 && scrolled < 1 ? 'blur(8px)' : 'none',
+        backgroundColor: `rgba(255, 255, 255, ${opacity})`,
+        borderBottom: `1px solid rgba(229, 231, 235, ${opacity})`,
+        backdropFilter: opacity > 0 && opacity < 1 ? 'blur(8px)' : 'none',
       }}
     >
       <div className="xl:mx-40 mx-auto px-4 sm:px-6 lg:px-8">

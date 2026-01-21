@@ -9,48 +9,14 @@ export const useUpdateReviewForm = () => {
   const reviewId = typeof params.id === 'string' ? params.id : '';
   const { data: reviewData, isLoading, error: reviewError } = useGetReviewById({ id: reviewId });
 
-  const {
-    isSubmitting,
-    form,
-    onSubmit,
-    isOwner,
-    selectedAddress,
-    userId,
-    loading,
-    handleAddressSelect,
-    fields,
-    replace,
-    router,
-    append,
-    remove,
-  } = useCreateOrUpdateReviewForm({
+  const props = useCreateOrUpdateReviewForm({
     defaultValues: reviewData,
-    isUpdate: true,
   });
 
   return {
-    onSubmit,
-    isSubmitting,
+    ...props,
     isLoading,
-    isOwner,
     hasError: reviewError,
-    handleSubmit: form.handleSubmit,
-    control: form.control,
-    errors: form.formState.errors,
-    selectedAddress: selectedAddress ?? {
-      display_name: reviewData?.address_text,
-      osmId: reviewData?.address_osm_id,
-      position: { lat: reviewData?.latitude, lon: reviewData?.longitude },
-    },
-    userId,
-    loading,
-    form,
-    handleAddressSelect,
-    fields,
-    replace,
-    router,
-    append,
-    remove,
     defaultRealEstateId: reviewData?.real_estate_id,
   };
 };

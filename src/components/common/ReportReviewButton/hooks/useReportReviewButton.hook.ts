@@ -1,13 +1,13 @@
-import { useUser } from '@/hooks';
 import { useHasUserReportedReview, useReportReview } from '@/services';
 import React, { useState } from 'react';
 import { validateText } from '@/utils';
 import { toast } from 'sonner';
 import type { UseReportReviewButtonProps } from './types';
+import { useAuthContext } from '@/components/providers/AuthProvider';
 
 export const useReportReviewButton = (props: UseReportReviewButtonProps) => {
   const { review } = props;
-  const { userId } = useUser();
+  const { userId } = useAuthContext();
   const [isOpen, setIsOpen] = useState(false);
   const [selectedReason, setSelectedReason] = useState('');
   const [description, setDescription] = useState('');

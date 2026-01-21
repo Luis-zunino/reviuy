@@ -1,6 +1,6 @@
 'use client';
 
-import { PageStateWrapper, StarRatingDisplay } from '@/components/common';
+import { PageWithSidebar, StarRatingDisplay } from '@/components/common';
 import { Share, Plus } from 'lucide-react';
 import { useViewAddressReviews } from './hooks';
 import { AddressReviewCard } from './components/AddressReviewCard';
@@ -8,24 +8,18 @@ import { Button } from '@/components/ui/button';
 import { LazyMapComponent } from '@/components/common';
 
 export const ViewAddressReviews = () => {
-  const {
-    data,
-    reviews,
-    isLoading,
-    hasReviews,
-    isError,
-    handleCreateReview,
-    averageRating,
-    isAuthenticated,
-  } = useViewAddressReviews();
+  const { data, reviews, isLoading, hasReviews, isError, handleCreateReview, averageRating } =
+    useViewAddressReviews();
   const address = data?.address;
   return (
-    <PageStateWrapper
-      isLoading={isLoading || !data}
-      isError={isError}
-      isAuthenticated={isAuthenticated}
+    <PageWithSidebar
+      isLoading={isLoading}
+      isError={isError || !data}
+      authIsRequired={true}
+      title="Reseñas de la dirección"
+      description="Lee las reseñas de otros usuarios sobre esta dirección o comparte tu experiencia"
     >
-      <div className="lg:p-14 bg-white p-4 mb-11 lg:mb-0">
+      <div className="lg:px-14 lg:pb:-14 bg-white pb-4 mb-11 lg:mb-0">
         <div className="flex justify-between">
           <div className="flex flex-col gap-2 mb-7">
             <h1 className="text-2xl lg:text-3xl  font-secondary">
@@ -51,7 +45,7 @@ export const ViewAddressReviews = () => {
         </div>
         <div>
           <div className="h-72 w-full mb-10">
-            <LazyMapComponent lat={Number(data?.lat)} lon={Number(data?.lon)}>
+            <LazyMapComponent key={data?.osm_id} lat={Number(data?.lat)} lon={Number(data?.lon)}>
               {data?.address?.road}, {data?.address?.house_number}
             </LazyMapComponent>
           </div>
@@ -79,6 +73,6 @@ export const ViewAddressReviews = () => {
           )}
         </div>
       </div>
-    </PageStateWrapper>
+    </PageWithSidebar>
   );
 };

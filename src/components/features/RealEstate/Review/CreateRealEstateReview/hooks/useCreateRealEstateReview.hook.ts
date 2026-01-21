@@ -1,7 +1,7 @@
 'use client';
 
+import { useAuthContext } from '@/components/providers/AuthProvider';
 import { PagesUrls } from '@/enums';
-import { useUser } from '@/hooks';
 import { useCreateRealEstateReviewHook } from '@/services';
 import { RealEstateReviewInsert } from '@/types/realEstate';
 import { useParams, useRouter } from 'next/navigation';
@@ -11,7 +11,7 @@ import { toast } from 'sonner';
 export const useCreateRealEstateReview = () => {
   const { realEstateId } = useParams<{ realEstateId: string }>();
   const router = useRouter();
-  const { userId } = useUser();
+  const { userId } = useAuthContext();
   const form = useForm<RealEstateReviewInsert>();
   const { mutateAsync, isPending } = useCreateRealEstateReviewHook();
 

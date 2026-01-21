@@ -1,6 +1,6 @@
 'use client';
 
-import { FavoriteRealEstateButton, PageStateWrapper, ReviewCard } from '@/components/common';
+import { FavoriteRealEstateButton, PageWithSidebar, ReviewCard } from '@/components/common';
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -38,14 +38,14 @@ export const ProfileComponent = () => {
   } = useProfileComponent();
 
   return (
-    <PageStateWrapper
+    <PageWithSidebar
       isLoading={loading}
       isError={Boolean(error)}
       errorTitle="Hubo un problema al cargar tu perfil"
       errorSubTitle=""
-      isAuthenticated={isAuthenticated || Boolean(userId)}
+      authIsRequired={true}
       title="Mi perfil"
-      subtitle=""
+      description="Gestiona tus reseñas y favoritos"
     >
       <div className=" mx-auto p-6">
         <Card className="mb-8">
@@ -154,7 +154,7 @@ export const ProfileComponent = () => {
               ) : !favorites || favorites.length === 0 ? (
                 <EmptySection
                   title="No tienes inmobiliarias en favoritos"
-                  link={PagesUrls.HOME}
+                  link={PagesUrls.REAL_ESTATE}
                   icon={Search}
                   description="Explorar inmobiliarias"
                 />
@@ -190,6 +190,6 @@ export const ProfileComponent = () => {
           </TabsContent>
         </Tabs>
       </div>
-    </PageStateWrapper>
+    </PageWithSidebar>
   );
 };

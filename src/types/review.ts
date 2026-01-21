@@ -23,27 +23,3 @@ export type ReviewWithRelations = Review & {
   review_rooms: ReviewRoomUpdate[];
   real_estates: RealEstate | null;
 };
-
-// Tipo para formulario
-export type ReviewFormData = {
-  title: string;
-  description: string;
-  rating: number;
-  property_type?: string | null;
-  address_text?: string | null;
-  address_osm_id?: string | null;
-  latitude?: number | null;
-  longitude?: number | null;
-  zone_rating?: number | null;
-  winter_comfort?: string | null;
-  summer_comfort?: string | null;
-  humidity?: string | null;
-  real_estate_id?: string | null;
-  real_estate_experience?: string | null;
-  apartment_number?: string | null;
-  review_rooms: {
-    id?: string;
-    room_type: string;
-    area_m2: number;
-  }[];
-};

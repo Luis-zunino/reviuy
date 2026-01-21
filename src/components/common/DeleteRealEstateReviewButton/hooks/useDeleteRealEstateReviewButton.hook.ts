@@ -1,9 +1,9 @@
 import { PagesUrls } from '@/enums';
-import { useUser } from '@/hooks';
 import { useDeleteRealEstateReview } from '@/services';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { UseDeleteRealEstateReviewButtonProps } from '../types';
+import { useAuthContext } from '@/components/providers/AuthProvider';
 
 export const useDeleteRealEstateReviewButton = ({
   review,
@@ -11,7 +11,7 @@ export const useDeleteRealEstateReviewButton = ({
 }: UseDeleteRealEstateReviewButtonProps) => {
   const router = useRouter();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const { userId, isAuthenticated } = useUser();
+  const { isOwner } = useAuthContext();
 
   const { mutateAsync, isPending } = useDeleteRealEstateReview({
     onSuccess: () => {
@@ -22,8 +22,6 @@ export const useDeleteRealEstateReviewButton = ({
       router.push(PagesUrls.HOME);
     },
   });
-
-  const isOwner = isAuthenticated && userId && review.user_id && userId === review.user_id;
 
   const handleDeleteClick = () => {
     setShowDeleteDialog(true);
@@ -39,6 +37,6 @@ export const useDeleteRealEstateReviewButton = ({
     showDeleteDialog,
     setShowDeleteDialog,
     isPending,
-    isOwner,
+    isOwner: isOwner(review.user_id),
   };
 };

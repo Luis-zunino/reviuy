@@ -4,11 +4,13 @@ import {
   useGetRealEstateReviewByUserId,
   useGetUserRealEstateVote,
 } from '@/services';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 
 export const useViewRealEstateDetailsHeader = () => {
   const { userId } = useAuthContext();
   const { realEstateId } = useParams<{ realEstateId: string }>();
+  const { push } = useRouter();
+
   const {
     data: realEstate,
     refetch: refetchRealEstate,
@@ -37,6 +39,7 @@ export const useViewRealEstateDetailsHeader = () => {
     refetchRealEstateVote,
     isLoading,
     isLoadingVote,
+    push,
   };
 };
 

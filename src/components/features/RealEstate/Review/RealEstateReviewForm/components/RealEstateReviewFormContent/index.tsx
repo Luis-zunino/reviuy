@@ -29,6 +29,7 @@ export const RealEstateReviewFormContent = <RR extends RealEstateReviewUpdate>(
           render={({ field }) => (
             <Input
               {...field}
+              value={field.value as string}
               id="title"
               name="title"
               placeholder="Ej: Excelente atención y profesionalismo"
@@ -59,6 +60,7 @@ export const RealEstateReviewFormContent = <RR extends RealEstateReviewUpdate>(
           render={({ field }) => (
             <Textarea
               {...field}
+              value={field.value as string}
               id="description"
               name="description"
               placeholder="Ej: Excelente atención y profesionalismo"

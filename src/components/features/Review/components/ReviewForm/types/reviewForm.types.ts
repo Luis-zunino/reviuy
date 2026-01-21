@@ -8,24 +8,32 @@ import type {
   UseFormHandleSubmit,
   UseFormReturn,
 } from 'react-hook-form';
-import type { ReviewFormData, SelectedAddress } from '@/types';
+import type { NominatimEntity, RealEstate } from '@/types';
+import { Dispatch, SetStateAction } from 'react';
+import { FormReviewSchema } from '../../../constants';
 
 export interface ReviewFormProps {
-  userId?: string | null;
-  loading: boolean;
-  errors: FieldErrors<ReviewFormData>;
-  selectedAddress: SelectedAddress | null;
-  handleAddressSelect: (addressData: SelectedAddress) => void;
-  fields: FieldArrayWithId<ReviewFormData, 'review_rooms', 'id'>[];
-  replace: UseFieldArrayReplace<ReviewFormData, 'review_rooms'>;
+  isLoading?: boolean;
+  errors: FieldErrors<FormReviewSchema>;
+  fields: FieldArrayWithId<FormReviewSchema, 'review_rooms', 'id'>[];
+  replace: UseFieldArrayReplace<FormReviewSchema, 'review_rooms'>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  control: Control<ReviewFormData, any, ReviewFormData>;
+  control: Control<FormReviewSchema, any, FormReviewSchema>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  form: UseFormReturn<ReviewFormData, any, ReviewFormData>;
-  handleSubmit: UseFormHandleSubmit<ReviewFormData, ReviewFormData>;
-  onSubmit: (data: ReviewFormData) => void;
-  append: UseFieldArrayAppend<ReviewFormData, 'review_rooms'>;
+  form: UseFormReturn<FormReviewSchema, any, FormReviewSchema>;
+  handleSubmit: UseFormHandleSubmit<FormReviewSchema, FormReviewSchema>;
+  onSubmit: (data: FormReviewSchema) => void;
+  append: UseFieldArrayAppend<FormReviewSchema, 'review_rooms'>;
   remove: UseFieldArrayRemove;
-  defaultRealEstateId?: string | null;
-  hasExistingReview?: boolean;
+  isSubmitDisabled?: boolean;
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+  queryValue: string;
+  handleClearAddress: () => void;
+  onSelectAddress: (item: NominatimEntity) => void;
+  openRealEstateModal: boolean;
+  setOpenRealEstateModal: Dispatch<SetStateAction<boolean>>;
+  handleClearRealEstate: () => void;
+  onSelectRealEstate: (item: RealEstate) => void;
+  queryValueRealEstate?: string;
 }

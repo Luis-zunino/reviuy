@@ -14,5 +14,6 @@ export const useGetAddressInfo = (props: UseGetAddressInfoProps) => {
       if (!response.ok) throw new Error('Network response was not ok');
       return response.json();
     },
+    enabled: osmId.length > 0,
   });
 };

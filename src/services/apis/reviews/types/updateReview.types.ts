@@ -10,4 +10,5 @@ export interface UpdateReviewResponse {
 export interface UpdateReviewApiRequest {
   reviewId: string;
   updateData: ReviewUpdate & { review_rooms?: ReviewRoomUpdate[] };
+  userId?: string;
 }

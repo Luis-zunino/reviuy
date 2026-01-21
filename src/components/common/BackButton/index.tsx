@@ -16,29 +16,17 @@ import type { BackButtonProps } from './types';
  * // Comportamiento por defecto (router.back)
  * <BackButton />
  *
- * // Con callback personalizado
- * <BackButton handleOnClick={() => router.push('/home')} />
- *
  * // Con URL de fallback si no hay historial
  * <BackButton fallbackUrl="/home" />
  */
-export const BackButton: React.FC<BackButtonProps> = ({ handleOnClick, fallbackUrl }) => {
+export const BackButton: React.FC<BackButtonProps> = ({ fallbackUrl }) => {
   const router = useRouter();
 
   const handleClick = () => {
-    if (handleOnClick) {
-      handleOnClick();
-    } else if (fallbackUrl) {
-      // Intenta ir atrás, si no hay historial va al fallback
-      if (window.history.length > 1) {
-        router.back();
-      } else {
-        router.push(fallbackUrl);
-      }
-    } else {
-      // Comportamiento por defecto: ir atrás
-      router.back();
+    if (fallbackUrl) {
+      router.push(fallbackUrl);
     }
+    router.back();
   };
 
   return (
@@ -49,6 +37,7 @@ export const BackButton: React.FC<BackButtonProps> = ({ handleOnClick, fallbackU
       aria-label="Volver atrás"
       icon={ArrowLeft}
       iconPosition="left"
+      className="hover:cursor-pointer"
     />
   );
 };

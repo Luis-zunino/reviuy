@@ -3,16 +3,17 @@ import { VoteType } from '@/types';
 import { getUserRealEstateVote } from './getUserRealEstateVote.api';
 import { REAL_ESTATE_REVIEWS } from '@/services/constants';
 
+export interface useGetUserRealEstateVoteParams {
+  realEstateId: string;
+  userId?: string | null;
+}
 export const useGetUserRealEstateVote = ({
   realEstateId,
   userId,
-}: {
-  realEstateId: string;
-  userId?: string | null;
-}): UseQueryResult<VoteType | null> => {
+}: useGetUserRealEstateVoteParams): UseQueryResult<VoteType | null> => {
   return useQuery({
     queryKey: [REAL_ESTATE_REVIEWS.getUserRealEstateVote, realEstateId, userId],
     queryFn: () => getUserRealEstateVote({ realEstateId, userId: userId || '' }),
-    enabled: !!userId && !!realEstateId,
+    enabled: Boolean(userId) && Boolean(realEstateId),
   });
 };

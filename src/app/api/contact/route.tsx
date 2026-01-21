@@ -8,10 +8,10 @@ import { ContactEmailTemplate } from '@/components/common/Emails';
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: Request) {
+  let emailData;
+
   try {
     const cookieStore = await cookies();
-
-    // 1. Validar que el usuario esté autenticado
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -34,7 +34,6 @@ export async function POST(req: Request) {
       data: { user },
     } = await supabase.auth.getUser();
 
-    // 2. Si no hay usuario autenticado, rechazar la petición
     if (!user) {
       return NextResponse.json(
         { error: 'No autorizado. Debes iniciar sesión para enviar un mensaje.' },
@@ -44,34 +43,40 @@ export async function POST(req: Request) {
 
     const { name, email, message } = await req.json();
 
-    // 3. Validar campos obligatorios
     if (!name || !email || !message) {
       return NextResponse.json({ error: 'Faltan campos obligatorios' }, { status: 400 });
     }
 
-    // 4. Validar formato del email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return NextResponse.json({ error: 'El formato del email es inválido' }, { status: 400 });
     }
 
-    // 5. Obtener el email del usuario autenticado directamente de la sesión
     const loginEmail = user.email;
 
-    // 5. Validar que el loginEmail coincida con el usuario autenticado
     if (!loginEmail) {
       return NextResponse.json({ error: 'El email de sesión no encontrado' }, { status: 403 });
     }
 
-    // 6. Enviar el email a través de Resend
+    emailData = {
+      name,
+      email,
+      message,
+      loginEmail,
+    };
+  } catch (error) {
+    return NextResponse.json({ error: 'Error procesando datos' }, { status: 400 });
+  }
+
+  const template = <ContactEmailTemplate {...emailData} />;
+
+  try {
     const { error } = await resend.emails.send({
-      from: process.env.CONTACT_EMAIL!, // TODO: corregir esto
+      from: process.env.FROM_EMAIL!, // TODO: corroborar esto
       to: [process.env.CONTACT_EMAIL!],
-      replyTo: email,
-      subject: `Nuevo mensaje de contacto - ${name}`,
-      react: (
-        <ContactEmailTemplate name={name} email={email} message={message} loginEmail={loginEmail} />
-      ),
+      replyTo: emailData.email,
+      subject: `Nuevo mensaje de contacto - ${emailData.name}`,
+      react: template,
     });
 
     if (error) {

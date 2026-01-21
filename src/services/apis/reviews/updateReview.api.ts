@@ -6,15 +6,12 @@ import { ReviewWithRoomsAndRealEstates } from '@/types';
 export const updateReview = async ({
   reviewId,
   updateData,
+  userId,
 }: UpdateReviewApiRequest): Promise<UpdateReviewResponse> => {
   try {
-    const {
-      data: { user },
-    } = await supabaseClient.auth.getUser();
-
     const { data: review, error: fetchError } = await supabaseClient
       .from('reviews')
-      .select('id, user_id, title')
+      .select('user_id')
       .eq('id', reviewId)
       .single();
 
@@ -26,7 +23,7 @@ export const updateReview = async ({
       };
     }
 
-    if (review.user_id !== user?.id) {
+    if (review.user_id !== userId) {
       return {
         success: false,
         message: 'No tienes permisos para actualizar esta reseña',
@@ -35,7 +32,7 @@ export const updateReview = async ({
     }
 
     // Excluir campos que no deben actualizarse
-    const { review_rooms, user_id, id, created_at, ...reviewData } = updateData;
+    const { review_rooms, user_id, id, ...reviewData } = updateData;
     const { error: updateError } = await supabaseClient
       .from('reviews')
       .update(reviewData)
