@@ -15,7 +15,6 @@ export const ViewAddressReviews = () => {
     <PageWithSidebar
       isLoading={isLoading}
       isError={isError || !data}
-      authIsRequired={true}
       title="Reseñas de la dirección"
       description="Lee las reseñas de otros usuarios sobre esta dirección o comparte tu experiencia"
     >
