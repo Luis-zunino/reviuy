@@ -2,11 +2,9 @@
 -- Funciones
 --=============================================================================
 -- Función para crear inmobiliaria 
-CREATE
-    OR REPLACE FUNCTION create_real_estate (p_name text, p_description text DEFAULT NULL)
-        RETURNS json
-        LANGUAGE plpgsql
-        SECURITY DEFINER SET search_path = public AS $$ DECLARE v_user_id uuid;
+create or replace function create_real_estate (p_name text, p_description text default null) RETURNS json LANGUAGE plpgsql SECURITY DEFINER
+set
+  search_path = public as $$ DECLARE v_user_id uuid;
 
 v_real_estate_id uuid;
 
@@ -51,10 +49,8 @@ END;
 $$;
 
 -- Función para votar inmobiliarias
-
 -- Función trigger: actualizar contadores de votos de inmobiliarias a partir de real_estate_votes
-CREATE OR REPLACE FUNCTION update_real_estate_votes_counters()
-RETURNS TRIGGER AS $$
+create or replace function update_real_estate_votes_counters () RETURNS TRIGGER as $$
 DECLARE
     v_real_estate_id UUID;
     v_vote_type TEXT;
@@ -123,12 +119,10 @@ BEGIN
     RETURN COALESCE(NEW, OLD);
 END;
 $$ LANGUAGE plpgsql;
-CREATE OR REPLACE FUNCTION vote_real_estate (p_real_estate_id uuid, p_vote_type text)
-    RETURNS json
-    LANGUAGE plpgsql
-    SECURITY DEFINER
-    SET search_path = public
-    AS $$
+
+create or replace function vote_real_estate (p_real_estate_id uuid, p_vote_type text) RETURNS json LANGUAGE plpgsql SECURITY DEFINER
+set
+  search_path = public as $$
 DECLARE
     v_user_id uuid;
     v_existing_vote text;
@@ -247,11 +241,13 @@ END;
 $$;
 
 -- Función para reportar inmobiliarias 
-CREATE
-    OR REPLACE FUNCTION report_real_estate (p_real_estate_id UUID, p_reason TEXT, p_description TEXT DEFAULT NULL)
-        RETURNS JSON
-        LANGUAGE plpgsql
-        SECURITY DEFINER SET search_path = public AS $$ DECLARE v_user_id UUID;
+create or replace function report_real_estate (
+  p_real_estate_id UUID,
+  p_reason TEXT,
+  p_description TEXT default null
+) RETURNS JSON LANGUAGE plpgsql SECURITY DEFINER
+set
+  search_path = public as $$ DECLARE v_user_id UUID;
 
 BEGIN
     v_user_id := auth.uid ();
@@ -305,12 +301,9 @@ END;
 $$;
 
 -- Función para verificar si usuario ya reportó una inmobiliaria
-CREATE OR REPLACE FUNCTION has_user_reported_real_estate (p_real_estate_id uuid)
-    RETURNS boolean
-    LANGUAGE plpgsql
-    SECURITY DEFINER
-    SET search_path = public
-    AS $$
+create or replace function has_user_reported_real_estate (p_real_estate_id uuid) RETURNS boolean LANGUAGE plpgsql SECURITY DEFINER
+set
+  search_path = public as $$
 DECLARE
     v_user_id uuid;
 BEGIN
@@ -332,58 +325,53 @@ $$;
 -- =============================================================================
 -- FUNCIÓN PARA AGREGAR / QUITAR FAVORITO (TOGGLE)
 --=============================================================================
-CREATE OR REPLACE FUNCTION toggle_favorite_real_estate (p_real_estate_id uuid)
-    RETURNS json
-    LANGUAGE plpgsql
-    SECURITY DEFINER
-    SET search_path = public
-    AS $$
+create or replace function toggle_favorite_real_estate (p_real_estate_id uuid) RETURNS public.toggle_favorite_result LANGUAGE plpgsql SECURITY DEFINER
+set
+  search_path = public as $$
 DECLARE
     v_user_id uuid;
-    v_favorite_exists boolean;
+    result public.toggle_favorite_result;
 BEGIN
-    v_user_id := auth.uid ();
+    v_user_id := auth.uid();
+
     IF v_user_id IS NULL THEN
-        RETURN json_build_object('success', FALSE, 'error', 'Usuario no autenticado');
+        result.success := false;
+        result.error := 'Usuario no autenticado';
+        RETURN result;
     END IF;
-    -- Verificar si ya existe en favoritos
-    SELECT
-        EXISTS (
-            SELECT
-                1
-            FROM
-                public.real_estate_favorites
-            WHERE
-                real_estate_id = p_real_estate_id
-                AND user_id = v_user_id) INTO v_favorite_exists;
-    -- Si existe, eliminarlo 
-    IF v_favorite_exists THEN
+
+    IF EXISTS (
+        SELECT 1
+        FROM public.real_estate_favorites
+        WHERE real_estate_id = p_real_estate_id
+          AND user_id = v_user_id
+    ) THEN
         DELETE FROM public.real_estate_favorites
         WHERE real_estate_id = p_real_estate_id
-            AND user_id = v_user_id;
-        RETURN json_build_object('success', TRUE, 'isFavorite', FALSE, 'message', 'Eliminado de favoritos');
-    ELSE
-        -- Si NO existe, agregarlo 
-        INSERT INTO public.real_estate_favorites (real_estate_id, user_id)
-            VALUES (p_real_estate_id, v_user_id);
-        RETURN json_build_object('success', TRUE, 'isFavorite', TRUE, 'message', 'Agregado a favoritos');
-    END IF;
-EXCEPTION
-    WHEN OTHERS THEN
-        RETURN json_build_object('success', FALSE, 'error', 'Error al actualizar favoritos: ' || SQLERRM);
-END;
+          AND user_id = v_user_id;
 
+        result.success := true;
+        result.is_favorite := false;
+        result.message := 'Eliminado de favoritos';
+    ELSE
+        INSERT INTO public.real_estate_favorites(real_estate_id, user_id)
+        VALUES (p_real_estate_id, v_user_id);
+
+        result.success := true;
+        result.is_favorite := true;
+        result.message := 'Agregado a favoritos';
+    END IF;
+
+    RETURN result;
+END;
 $$;
 
 -- =============================================================================
 -- FUNCIÓN PARA VERIFICAR SI UNA INMOBILIARIA ES FAVORITA
 --=============================================================================
-CREATE OR REPLACE FUNCTION is_real_estate_favorite (p_real_estate_id uuid)
-    RETURNS boolean
-    LANGUAGE plpgsql
-    SECURITY DEFINER
-    SET search_path = public
-    AS $$
+create or replace function is_real_estate_favorite (p_real_estate_id uuid) RETURNS boolean LANGUAGE plpgsql SECURITY DEFINER
+set
+  search_path = public as $$
 DECLARE
     v_user_id uuid;
 BEGIN
@@ -405,12 +393,9 @@ $$;
 -- =============================================================================
 -- FUNCIÓN PARA AGREGAR / QUITAR FAVORITO DE RESEÑA (TOGGLE)
 --=============================================================================
-CREATE OR REPLACE FUNCTION toggle_favorite_review (p_review_id uuid)
-    RETURNS json
-    LANGUAGE plpgsql
-    SECURITY DEFINER
-    SET search_path = public
-    AS $$
+create or replace function toggle_favorite_review (p_review_id uuid) RETURNS json LANGUAGE plpgsql SECURITY DEFINER
+set
+  search_path = public as $$
 DECLARE
     v_user_id uuid;
     v_favorite_exists boolean;
@@ -451,12 +436,9 @@ $$;
 --=============================================================================
 -- FUNCIÓN PARA VERIFICAR SI UNA RESEÑA ES FAVORITA
 --=============================================================================
-CREATE OR REPLACE FUNCTION is_review_favorite (p_review_id uuid)
-    RETURNS boolean
-    LANGUAGE plpgsql
-    SECURITY DEFINER
-    SET search_path = public
-    AS $$
+create or replace function is_review_favorite (p_review_id uuid) RETURNS boolean LANGUAGE plpgsql SECURITY DEFINER
+set
+  search_path = public as $$
 DECLARE
     v_user_id uuid;
 BEGIN
@@ -475,12 +457,9 @@ BEGIN
 END;
 $$;
 
-CREATE OR REPLACE FUNCTION moderate_reports (report_id uuid)
-    RETURNS VOID
-    LANGUAGE plpgsql
-    SECURITY DEFINER
-    SET search_path = public
-    AS $$
+create or replace function moderate_reports (report_id uuid) RETURNS VOID LANGUAGE plpgsql SECURITY DEFINER
+set
+  search_path = public as $$
 BEGIN
     IF auth.role () != 'service_role' THEN
         RAISE EXCEPTION 'Access denied';
@@ -490,14 +469,14 @@ END;
 $$;
 
 -- Función para detectar actividad sospechosa 
-CREATE
-    OR REPLACE FUNCTION detect_suspicious_activity (p_user_id UUID DEFAULT NULL)
-        RETURNS TABLE (user_id UUID,
-            total_requests INTEGER,
-            blocked_requests INTEGER,
-            suspicious_score INTEGER)
-        LANGUAGE plpgsql
-        SECURITY DEFINER SET search_path = public AS $$
+create or replace function detect_suspicious_activity (p_user_id UUID default null) RETURNS table (
+  user_id UUID,
+  total_requests INTEGER,
+  blocked_requests INTEGER,
+  suspicious_score INTEGER
+) LANGUAGE plpgsql SECURITY DEFINER
+set
+  search_path = public as $$
 BEGIN
     IF auth.role () != 'service_role' THEN
         RAISE EXCEPTION 'Access denied';
@@ -544,12 +523,9 @@ $$;
 -- FUNCIONES AUXILIARES SIMPLIFICADAS (SIN TIPOS PROBLEMÁTICOS)
 -- =============================================================================
 -- Función simplificada para verificar el estado de las tablas
-CREATE OR REPLACE FUNCTION check_migration_status_simple ()
-    RETURNS VOID
-    LANGUAGE plpgsql
-    SECURITY DEFINER
-    SET search_path = public
-    AS $$
+create or replace function check_migration_status_simple () RETURNS VOID LANGUAGE plpgsql SECURITY DEFINER
+set
+  search_path = public as $$
 DECLARE
     v_rate_limits_count integer;
     v_security_logs_count integer;
@@ -643,56 +619,112 @@ $$;
 
 -- Security fix: SET search_path TO public FOR ALL functions TO prevent search_path hijacking 
 -- See: https: / / supabase.com / docs / guides / database / database - linter ? lint = 0011_function_search_path_mutable
-ALTER FUNCTION public.update_updated_at_column () SET search_path = public;
+alter function public.update_updated_at_column ()
+set
+  search_path = public;
 
-ALTER FUNCTION public.update_real_estate_counters () SET search_path = public;
+alter function public.update_real_estate_counters ()
+set
+  search_path = public;
 
-ALTER FUNCTION public.vote_review (uuid, text) SET search_path = public;
+alter function public.vote_review (uuid, text)
+set
+  search_path = public;
 
-ALTER FUNCTION public.update_review (uuid, text, text, integer, text, integer, text, text, text) SET search_path = public;
+alter function public.update_review (
+  uuid,
+  text,
+  text,
+  integer,
+  text,
+  integer,
+  text,
+  text,
+  text
+)
+set
+  search_path = public;
 
-ALTER FUNCTION public.has_user_reported_real_estate_review (uuid) SET search_path = public;
+alter function public.has_user_reported_real_estate_review (uuid)
+set
+  search_path = public;
 
-ALTER FUNCTION public.log_review_changes () SET search_path = public;
+alter function public.log_review_changes ()
+set
+  search_path = public;
 
-ALTER FUNCTION public.log_review_deletion () SET search_path = public;
+alter function public.log_review_deletion ()
+set
+  search_path = public;
 
-ALTER FUNCTION public.create_review (text, text, integer, uuid, text, text, text, DECIMAL, DECIMAL, integer, text, text, text) SET search_path = public;
+alter function public.report_review (uuid, text, text)
+set
+  search_path = public;
 
-ALTER FUNCTION public.report_review (uuid, text, text) SET search_path = public;
+alter function public.update_review_votes ()
+set
+  search_path = public;
 
-ALTER FUNCTION public.update_review_votes () SET search_path = public;
+alter function public.vote_real_estate (uuid, text)
+set
+  search_path = public;
 
+alter function public.create_real_estate_review (uuid, text, text, integer)
+set
+  search_path = public;
 
-ALTER FUNCTION public.vote_real_estate (uuid, text) SET search_path = public;
+alter function public.has_user_reported_review (uuid)
+set
+  search_path = public;
 
-ALTER FUNCTION public.create_real_estate_review (uuid, text, text, integer) SET search_path = public;
+alter function public.update_real_estate_review_votes ()
+set
+  search_path = public;
 
-ALTER FUNCTION public.has_user_reported_review (uuid) SET search_path = public;
+alter function public.vote_real_estate_review (uuid, text)
+set
+  search_path = public;
 
-ALTER FUNCTION public.update_real_estate_review_votes () SET search_path = public;
+alter function public.has_user_reported_real_estate (uuid)
+set
+  search_path = public;
 
-ALTER FUNCTION public.vote_real_estate_review (uuid, text) SET search_path = public;
+alter function public.toggle_favorite_review (uuid)
+set
+  search_path = public;
 
-ALTER FUNCTION public.has_user_reported_real_estate (uuid) SET search_path = public;
+alter function public.create_real_estate (text, text)
+set
+  search_path = public;
 
-ALTER FUNCTION public.toggle_favorite_review (uuid) SET search_path = public;
+alter function public.report_real_estate (uuid, text, text)
+set
+  search_path = public;
 
-ALTER FUNCTION public.create_real_estate (text, text) SET search_path = public;
+alter function public.is_review_favorite (uuid)
+set
+  search_path = public;
 
-ALTER FUNCTION public.report_real_estate (uuid, text, text) SET search_path = public;
+alter function public.update_real_estate_rating_from_reviews ()
+set
+  search_path = public;
 
-ALTER FUNCTION public.is_review_favorite (uuid) SET search_path = public;
+alter function public.get_review_delete_info (uuid)
+set
+  search_path = public;
 
-ALTER FUNCTION public.update_real_estate_rating_from_reviews () SET search_path = public;
+alter function public.delete_review_safe (uuid)
+set
+  search_path = public;
 
-ALTER FUNCTION public.get_review_delete_info (uuid) SET search_path = public;
+alter function public.report_real_estate_review (uuid, text, text)
+set
+  search_path = public;
 
-ALTER FUNCTION public.delete_review_safe (uuid) SET search_path = public;
+alter function public.toggle_favorite_real_estate (uuid)
+set
+  search_path = public;
 
-ALTER FUNCTION public.report_real_estate_review (uuid, text, text) SET search_path = public;
-
-ALTER FUNCTION public.toggle_favorite_real_estate (uuid) SET search_path = public;
-
-ALTER FUNCTION public.is_real_estate_favorite (uuid) SET search_path = public;
-
+alter function public.is_real_estate_favorite (uuid)
+set
+  search_path = public;

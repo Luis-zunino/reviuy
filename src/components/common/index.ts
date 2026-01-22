@@ -1,5 +1,5 @@
 export { AddressSearchInput } from './AddressSearchInput';
-export { Loading, Skeleton, ReviewCardSkeleton, MapSkeleton, ListSkeleton } from './Loading';
+export * from './Loaders';
 export { MainLayout } from './MainLayout/index';
 export { StarRatingDisplay, StarRatingInput } from './StarRating';
 export { LazyMapComponent } from './MapComponent/index';

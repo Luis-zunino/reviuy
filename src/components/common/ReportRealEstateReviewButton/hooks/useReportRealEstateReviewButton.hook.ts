@@ -45,7 +45,7 @@ export const useReportRealEstateReviewButton = (props: UseReportRealEstateReview
       await mutateAsync({
         review_id: review.id,
         reason: selectedReason,
-        description: description.trim() || undefined,
+        description: description.trim(),
       });
 
       setIsOpen(false);

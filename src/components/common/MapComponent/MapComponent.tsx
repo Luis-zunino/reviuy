@@ -7,7 +7,7 @@ import { icon, LatLngTuple } from 'leaflet';
 
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
 import { FC, PropsWithChildren, useMemo } from 'react';
-import { Loading } from '../Loading';
+import { Loader } from '../Loaders';
 
 const ICON = icon({
   iconUrl: '/leaflet/marker-icon.png',
@@ -32,7 +32,7 @@ export const MapComponent: FC<MapComponentProps> = ({ lat, lon, children }) => {
   if (!position) {
     return (
       <div className="h-80 w-full bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center">
-        <Loading />
+        <Loader />
       </div>
     );
   }

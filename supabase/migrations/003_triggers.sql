@@ -2,120 +2,100 @@
 -- TRIGGERS BASE
 -- =============================================================================
 -- Triggers para updated_at
-DROP TRIGGER IF EXISTS update_reviews_updated_at ON public.reviews;
+drop trigger IF exists update_reviews_updated_at on public.reviews;
 
-CREATE TRIGGER update_reviews_updated_at BEFORE
-UPDATE ON public.reviews FOR EACH ROW
-EXECUTE FUNCTION update_updated_at_column ();
+create trigger update_reviews_updated_at BEFORE
+update on public.reviews for EACH row execute FUNCTION update_updated_at_column ();
 
-DROP TRIGGER IF EXISTS update_real_estates_updated_at ON public.real_estates;
+drop trigger IF exists update_real_estates_updated_at on public.real_estates;
 
-CREATE TRIGGER update_real_estates_updated_at BEFORE
-UPDATE ON public.real_estates FOR EACH ROW
-EXECUTE FUNCTION update_updated_at_column ();
+create trigger update_real_estates_updated_at BEFORE
+update on public.real_estates for EACH row execute FUNCTION update_updated_at_column ();
 
-DROP TRIGGER IF EXISTS update_review_rooms_updated_at ON public.review_rooms;
+drop trigger IF exists update_review_rooms_updated_at on public.review_rooms;
 
-CREATE TRIGGER update_review_rooms_updated_at BEFORE
-UPDATE ON public.review_rooms FOR EACH ROW
-EXECUTE FUNCTION update_updated_at_column ();
+create trigger update_review_rooms_updated_at BEFORE
+update on public.review_rooms for EACH row execute FUNCTION update_updated_at_column ();
 
 -- =============================================================================
 -- TRIGGERS PARA SISTEMA DE REVIEWS
 -- =============================================================================
 -- Triggers para votos
-DROP TRIGGER IF EXISTS review_votes_trigger ON public.review_votes;
+drop trigger IF exists review_votes_trigger on public.review_votes;
 
-CREATE TRIGGER review_votes_trigger
-AFTER INSERT
-OR DELETE
-OR
-UPDATE ON public.review_votes FOR EACH ROW
-EXECUTE FUNCTION update_review_votes ();
+create trigger review_votes_trigger after INSERT
+or DELETE
+or
+update on public.review_votes for EACH row execute FUNCTION update_review_votes ();
 
 -- Triggers para contadores de inmobiliarias
-DROP TRIGGER IF EXISTS update_real_estate_counters_trigger ON public.reviews;
+drop trigger IF exists update_real_estate_counters_trigger on public.reviews;
 
-CREATE TRIGGER update_real_estate_counters_trigger
-AFTER INSERT
-OR
-UPDATE
-OR DELETE ON public.reviews FOR EACH ROW
-EXECUTE FUNCTION update_real_estate_counters ();
+create trigger update_real_estate_counters_trigger after INSERT
+or
+update
+or DELETE on public.reviews for EACH row execute FUNCTION update_real_estate_counters ();
 
 -- Triggers para auditoría
-DROP TRIGGER IF EXISTS review_changes_audit ON public.reviews;
+drop trigger IF exists review_changes_audit on public.reviews;
 
-CREATE TRIGGER review_changes_audit
-AFTER INSERT
-OR
-UPDATE ON public.reviews FOR EACH ROW
-EXECUTE FUNCTION log_review_changes ();
+create trigger review_changes_audit after INSERT
+or
+update on public.reviews for EACH row execute FUNCTION log_review_changes ();
 
-DROP TRIGGER IF EXISTS review_deletion_audit ON public.reviews;
+drop trigger IF exists review_deletion_audit on public.reviews;
 
-CREATE TRIGGER review_deletion_audit BEFORE DELETE ON public.reviews FOR EACH ROW
-EXECUTE FUNCTION log_review_deletion ();
+create trigger review_deletion_audit BEFORE DELETE on public.reviews for EACH row execute FUNCTION log_review_deletion ();
 
 -- =============================================================================
 -- TRIGGERS PARA RESEÑAS DE INMOBILIARIAS
 -- =============================================================================
 -- Trigger para updated_at en real_estate_reviews
-DROP TRIGGER IF EXISTS update_real_estate_reviews_updated_at ON public.real_estate_reviews;
+drop trigger IF exists update_real_estate_reviews_updated_at on public.real_estate_reviews;
 
-CREATE TRIGGER update_real_estate_reviews_updated_at BEFORE
-UPDATE ON public.real_estate_reviews FOR EACH ROW
-EXECUTE FUNCTION update_updated_at_column ();
+create trigger update_real_estate_reviews_updated_at BEFORE
+update on public.real_estate_reviews for EACH row execute FUNCTION update_updated_at_column ();
 
 -- Trigger para votos de reseñas de inmobiliarias
-DROP TRIGGER IF EXISTS real_estate_review_votes_trigger ON public.real_estate_review_votes;
+drop trigger IF exists real_estate_review_votes_trigger on public.real_estate_review_votes;
 
-CREATE TRIGGER real_estate_review_votes_trigger
-AFTER INSERT
-OR DELETE
-OR
-UPDATE ON public.real_estate_review_votes FOR EACH ROW
-EXECUTE FUNCTION update_real_estate_review_votes ();
+create trigger real_estate_review_votes_trigger after INSERT
+or DELETE
+or
+update on public.real_estate_review_votes for EACH row execute FUNCTION update_real_estate_review_votes ();
 
 -- Trigger para actualizar rating de inmobiliaria cuando cambian sus reseñas
-DROP TRIGGER IF EXISTS update_real_estate_rating_trigger ON public.real_estate_reviews;
+drop trigger IF exists update_real_estate_rating_trigger on public.real_estate_reviews;
 
-CREATE TRIGGER update_real_estate_rating_trigger
-AFTER INSERT
-OR
-UPDATE
-OR DELETE ON public.real_estate_reviews FOR EACH ROW
-EXECUTE FUNCTION update_real_estate_rating_from_reviews ();
+create trigger update_real_estate_rating_trigger after INSERT
+or
+update
+or DELETE on public.real_estate_reviews for EACH row execute FUNCTION update_real_estate_rating_from_reviews ();
 
 -- Trigger para capturar snapshot
-DROP TRIGGER IF EXISTS set_user_snapshot_on_insert ON public.real_estate_review_votes;
+drop trigger IF exists set_user_snapshot_on_insert on public.real_estate_review_votes;
 
-CREATE TRIGGER set_user_snapshot_on_insert BEFORE INSERT ON public.real_estate_review_votes FOR EACH ROW
-EXECUTE FUNCTION public.sync_user_snapshot ();
+create trigger set_user_snapshot_on_insert BEFORE INSERT on public.real_estate_review_votes for EACH row execute FUNCTION public.sync_user_snapshot ();
 
 -- =============================================================================
 -- Triggers (después de crear las tablas)
 -- =============================================================================
 -- Trigger para updated_at en real_estate_reports
-DROP TRIGGER IF EXISTS update_real_estate_reports_updated_at ON public.real_estate_reports;
+drop trigger IF exists update_real_estate_reports_updated_at on public.real_estate_reports;
 
-CREATE TRIGGER update_real_estate_reports_updated_at BEFORE
-UPDATE ON public.real_estate_reports FOR EACH ROW
-EXECUTE FUNCTION update_updated_at_column ();
+create trigger update_real_estate_reports_updated_at BEFORE
+update on public.real_estate_reports for EACH row execute FUNCTION update_updated_at_column ();
 
 -- Trigger para updated_at en real_estate_votes
-DROP TRIGGER IF EXISTS update_real_estate_votes_updated_at ON public.real_estate_votes;
+drop trigger IF exists update_real_estate_votes_updated_at on public.real_estate_votes;
 
-CREATE TRIGGER update_real_estate_votes_updated_at BEFORE
-UPDATE ON public.real_estate_votes FOR EACH ROW
-EXECUTE FUNCTION update_updated_at_column ();
+create trigger update_real_estate_votes_updated_at BEFORE
+update on public.real_estate_votes for EACH row execute FUNCTION update_updated_at_column ();
 
 -- Trigger para contadores de votos de inmobiliarias
-DROP TRIGGER IF EXISTS real_estate_votes_counters_trigger ON public.real_estate_votes;
+drop trigger IF exists real_estate_votes_counters_trigger on public.real_estate_votes;
 
-CREATE TRIGGER real_estate_votes_counters_trigger
-AFTER INSERT
-OR DELETE
-OR
-UPDATE ON public.real_estate_votes FOR EACH ROW
-EXECUTE FUNCTION update_real_estate_votes_counters ();
+create trigger real_estate_votes_counters_trigger after INSERT
+or DELETE
+or
+update on public.real_estate_votes for EACH row execute FUNCTION update_real_estate_votes_counters ();

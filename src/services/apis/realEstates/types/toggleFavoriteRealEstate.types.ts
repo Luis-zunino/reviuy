@@ -3,8 +3,8 @@ export interface ToggleFavoriteRealEstateRequest {
 }
 
 export interface ToggleFavoriteRealEstateResponse {
-  success: boolean;
-  isFavorite?: boolean;
-  message?: string;
-  error?: string;
+  success: boolean | null;
+  is_favorite: boolean | null;
+  message: string | null;
+  error: string | null;
 }

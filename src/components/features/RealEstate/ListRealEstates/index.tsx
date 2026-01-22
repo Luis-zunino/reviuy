@@ -1,7 +1,7 @@
 'use client';
 
 import { Building2 } from 'lucide-react';
-import { StarRatingDisplay, PageWithSidebar } from '@/components/common';
+import { StarRatingDisplay, PageWithSidebar, Loader } from '@/components/common';
 import Link from 'next/link';
 import { PagesUrls } from '@/enums';
 import { useListRealEstate } from './hooks';
@@ -29,7 +29,15 @@ export const ListRealEstates: React.FC = () => {
         Mostrando {displayedItems.length}{' '}
         {displayedItems.length === 1 ? 'inmobiliaria' : 'inmobiliarias'}
       </div>
-
+      {isLoading ? (
+        <>
+          <div className="flex items-center justify-center">
+            <div className="text-center">
+              <Loader message="Cargando inmobiliarias..." />
+            </div>
+          </div>
+        </>
+      ) : null}
       {!isLoading && displayedItems.length === 0 ? (
         <div className="bg-white rounded-xl p-12 text-center">
           <Building2 className="w-16 h-16 text-gray-400 mx-auto mb-4" />

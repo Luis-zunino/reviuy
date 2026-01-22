@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { LazyMapComponent } from '@/components/common';
 
 export const ViewAddressReviews = () => {
-  const { data, reviews, isLoading, hasReviews, isError, handleCreateReview, averageRating } =
+  const { data, reviews, isLoading, isError, handleCreateReview, averageRating } =
     useViewAddressReviews();
   const address = data?.address;
   return (
@@ -30,7 +30,7 @@ export const ViewAddressReviews = () => {
             <p className="text-sm tracking-widest">
               {address?.suburb ? `${address?.suburb},` : ''} {address?.postcode}
             </p>
-            {hasReviews && (
+            {reviews?.length && (
               <div className="flex items-center gap-2 mt-2">
                 <StarRatingDisplay rating={averageRating} />
                 <span className="text-sm text-gray-600">
@@ -52,14 +52,14 @@ export const ViewAddressReviews = () => {
 
           <div className="flex justify-between items-center my-4 py-4">
             <h2 className="h-plain text-base lg:text-xl">
-              {hasReviews ? 'Últimas opiniones' : 'Sin opiniones'}
+              {reviews?.length ? 'Últimas opiniones' : 'Sin opiniones'}
             </h2>
             <Button onClick={handleCreateReview} icon={Plus}>
               <span className="text-sm font-medium">Crear reseña</span>
             </Button>
           </div>
 
-          {hasReviews ? (
+          {reviews?.length ? (
             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3">
               {reviews.map((review) => (
                 <AddressReviewCard key={review.id} review={review} />

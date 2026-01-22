@@ -2,52 +2,52 @@
 -- ÍNDICES PARA TABLAS BASE
 -- =============================================================================
 -- Índices básicos para rate_limits
-CREATE INDEX IF NOT EXISTS idx_rate_limits_user_endpoint ON public.rate_limits (user_id, endpoint);
+create index IF not exists idx_rate_limits_user_endpoint on public.rate_limits (user_id, endpoint);
 
-CREATE INDEX IF NOT EXISTS idx_rate_limits_window ON public.rate_limits (window_start);
+create index IF not exists idx_rate_limits_window on public.rate_limits (window_start);
 
 -- Índice compuesto optimizado para check_rate_limit
-CREATE INDEX IF NOT EXISTS idx_rate_limits_user_endpoint_window ON public.rate_limits (user_id, endpoint, window_start);
+create index IF not exists idx_rate_limits_user_endpoint_window on public.rate_limits (user_id, endpoint, window_start);
 
 -- Índices básicos para security_logs
-CREATE INDEX IF NOT EXISTS idx_security_logs_user ON public.security_logs (user_id);
+create index IF not exists idx_security_logs_user on public.security_logs (user_id);
 
-CREATE INDEX IF NOT EXISTS idx_security_logs_endpoint ON public.security_logs (endpoint);
+create index IF not exists idx_security_logs_endpoint on public.security_logs (endpoint);
 
-CREATE INDEX IF NOT EXISTS idx_security_logs_created_at ON public.security_logs (created_at DESC);
+create index IF not exists idx_security_logs_created_at on public.security_logs (created_at desc);
 
-CREATE INDEX IF NOT EXISTS idx_security_logs_status ON public.security_logs (status);
+create index IF not exists idx_security_logs_status on public.security_logs (status);
 
 -- Índices para real_estates
-CREATE INDEX IF NOT EXISTS idx_real_estates_name ON public.real_estates (name);
+create index IF not exists idx_real_estates_name on public.real_estates (name);
 
-CREATE INDEX IF NOT EXISTS idx_real_estates_created_by ON public.real_estates (created_by);
+create index IF not exists idx_real_estates_created_by on public.real_estates (created_by);
 
-CREATE INDEX IF NOT EXISTS idx_real_estates_created_at ON public.real_estates (created_at DESC);
+create index IF not exists idx_real_estates_created_at on public.real_estates (created_at desc);
 
-CREATE INDEX IF NOT EXISTS idx_real_estates_review_count ON public.real_estates (review_count DESC);
+create index IF not exists idx_real_estates_review_count on public.real_estates (review_count desc);
 
 -- Índices para reviews
-CREATE INDEX IF NOT EXISTS idx_reviews_user_id ON public.reviews (user_id);
+create index IF not exists idx_reviews_user_id on public.reviews (user_id);
 
-CREATE INDEX IF NOT EXISTS idx_reviews_created_at ON public.reviews (created_at DESC);
+create index IF not exists idx_reviews_created_at on public.reviews (created_at desc);
 
-CREATE INDEX IF NOT EXISTS idx_reviews_rating ON public.reviews (rating);
+create index IF not exists idx_reviews_rating on public.reviews (rating);
 
-CREATE INDEX IF NOT EXISTS idx_reviews_real_estate_id ON public.reviews (real_estate_id);
+create index IF not exists idx_reviews_real_estate_id on public.reviews (real_estate_id);
 
-CREATE INDEX IF NOT EXISTS idx_reviews_real_estate_id_rating ON public.reviews (real_estate_id, rating);
+create index IF not exists idx_reviews_real_estate_id_rating on public.reviews (real_estate_id, rating);
 
 -- Búsqueda por dirección exacta
-CREATE INDEX IF NOT EXISTS idx_reviews_address_text ON public.reviews (address_text);
+create index IF not exists idx_reviews_address_text on public.reviews (address_text);
 
 -- Índice de búsqueda de texto completo
-CREATE INDEX IF NOT EXISTS idx_reviews_text_search ON public.reviews USING gin (
-    to_tsvector('spanish', title || ' ' || description)
+create index IF not exists idx_reviews_text_search on public.reviews using gin (
+  to_tsvector('spanish', title || ' ' || description)
 );
 
 -- Índices condicionales para columnas opcionales
-DO $$ BEGIN IF EXISTS (
+do $$ BEGIN IF EXISTS (
     SELECT
         1
     FROM
@@ -114,107 +114,107 @@ END IF;
 
 END $$;
 
-CREATE INDEX IF NOT EXISTS idx_reviews_active ON public.reviews (id)
-WHERE
-    deleted_at IS NULL;
+create index IF not exists idx_reviews_active on public.reviews (id)
+where
+  deleted_at is null;
 
 -- =============================================================================
 -- ÍNDICES PARA SISTEMA DE REVIEWS
 -- =============================================================================
 -- Índices para review_votes
-CREATE INDEX IF NOT EXISTS idx_review_votes_review_id ON public.review_votes (review_id);
+create index IF not exists idx_review_votes_review_id on public.review_votes (review_id);
 
-CREATE INDEX IF NOT EXISTS idx_review_votes_user_id ON public.review_votes (user_id);
+create index IF not exists idx_review_votes_user_id on public.review_votes (user_id);
 
 -- Índices para review_reports
-CREATE INDEX IF NOT EXISTS idx_review_reports_review_id ON public.review_reports (review_id);
+create index IF not exists idx_review_reports_review_id on public.review_reports (review_id);
 
-CREATE INDEX IF NOT EXISTS idx_review_reports_status ON public.review_reports (status);
+create index IF not exists idx_review_reports_status on public.review_reports (status);
 
-CREATE INDEX IF NOT EXISTS idx_review_reports_created_at ON public.review_reports (created_at);
+create index IF not exists idx_review_reports_created_at on public.review_reports (created_at);
 
 -- Índices para auditoría
-CREATE INDEX IF NOT EXISTS idx_review_deletions_deleted_by ON public.review_deletions (deleted_by);
+create index IF not exists idx_review_deletions_deleted_by on public.review_deletions (deleted_by);
 
-CREATE INDEX IF NOT EXISTS idx_review_deletions_deleted_at ON public.review_deletions (deleted_at);
+create index IF not exists idx_review_deletions_deleted_at on public.review_deletions (deleted_at);
 
-CREATE INDEX IF NOT EXISTS idx_review_audit_review_id ON public.review_audit (review_id);
+create index IF not exists idx_review_audit_review_id on public.review_audit (review_id);
 
-CREATE INDEX IF NOT EXISTS idx_review_audit_change_type ON public.review_audit (change_type);
+create index IF not exists idx_review_audit_change_type on public.review_audit (change_type);
 
-CREATE INDEX IF NOT EXISTS idx_review_audit_created_at ON public.review_audit (created_at DESC);
+create index IF not exists idx_review_audit_created_at on public.review_audit (created_at desc);
 
 -- =============================================================================
 -- ÍNDICES PARA RESEÑAS DE INMOBILIARIAS
 -- =============================================================================
 -- Índices para real_estate_reviews
-CREATE INDEX IF NOT EXISTS idx_real_estate_reviews_real_estate_id ON public.real_estate_reviews (real_estate_id);
+create index IF not exists idx_real_estate_reviews_real_estate_id on public.real_estate_reviews (real_estate_id);
 
-CREATE INDEX IF NOT EXISTS idx_real_estate_reviews_user_id ON public.real_estate_reviews (user_id);
+create index IF not exists idx_real_estate_reviews_user_id on public.real_estate_reviews (user_id);
 
-CREATE INDEX IF NOT EXISTS idx_real_estate_reviews_created_at ON public.real_estate_reviews (created_at DESC);
+create index IF not exists idx_real_estate_reviews_created_at on public.real_estate_reviews (created_at desc);
 
-CREATE INDEX IF NOT EXISTS idx_real_estate_reviews_rating ON public.real_estate_reviews (rating);
+create index IF not exists idx_real_estate_reviews_rating on public.real_estate_reviews (rating);
 
-CREATE INDEX IF NOT EXISTS idx_real_estate_reviews_real_estate_rating ON public.real_estate_reviews (real_estate_id, rating);
+create index IF not exists idx_real_estate_reviews_real_estate_rating on public.real_estate_reviews (real_estate_id, rating);
 
 -- Índices para real_estate_review_votes
-CREATE INDEX IF NOT EXISTS idx_real_estate_review_votes_review_id ON public.real_estate_review_votes (real_estate_review_id);
+create index IF not exists idx_real_estate_review_votes_review_id on public.real_estate_review_votes (real_estate_review_id);
 
-CREATE INDEX IF NOT EXISTS idx_real_estate_review_votes_user_id ON public.real_estate_review_votes (user_id);
+create index IF not exists idx_real_estate_review_votes_user_id on public.real_estate_review_votes (user_id);
 
 -- Índices para real_estate_review_reports
-CREATE INDEX IF NOT EXISTS idx_real_estate_review_reports_review_id ON public.real_estate_review_reports (real_estate_review_id);
+create index IF not exists idx_real_estate_review_reports_review_id on public.real_estate_review_reports (real_estate_review_id);
 
-CREATE INDEX IF NOT EXISTS idx_real_estate_review_reports_status ON public.real_estate_review_reports (status);
+create index IF not exists idx_real_estate_review_reports_status on public.real_estate_review_reports (status);
 
-CREATE INDEX IF NOT EXISTS idx_real_estate_review_reports_created_at ON public.real_estate_review_reports (created_at);
+create index IF not exists idx_real_estate_review_reports_created_at on public.real_estate_review_reports (created_at);
 
 -- Índices de búsqueda de texto completo
-CREATE INDEX IF NOT EXISTS idx_real_estate_reviews_text_search ON public.real_estate_reviews USING gin (
-    to_tsvector('spanish', title || ' ' || description)
+create index IF not exists idx_real_estate_reviews_text_search on public.real_estate_reviews using gin (
+  to_tsvector('spanish', title || ' ' || description)
 );
 
-CREATE INDEX IF NOT EXISTS idx_real_estate_reviews_active ON public.real_estate_reviews (id)
-WHERE
-    deleted_at IS NULL;
+create index IF not exists idx_real_estate_reviews_active on public.real_estate_reviews (id)
+where
+  deleted_at is null;
 
 -- =============================================================================
 -- Índices para mejor rendimiento
 -- =============================================================================
-CREATE INDEX IF NOT EXISTS idx_real_estate_votes_real_estate_id ON public.real_estate_votes (real_estate_id);
+create index IF not exists idx_real_estate_votes_real_estate_id on public.real_estate_votes (real_estate_id);
 
-CREATE INDEX IF NOT EXISTS idx_real_estate_votes_user_id ON public.real_estate_votes (user_id);
+create index IF not exists idx_real_estate_votes_user_id on public.real_estate_votes (user_id);
 
-CREATE INDEX IF NOT EXISTS idx_real_estate_reports_real_estate_id ON public.real_estate_reports (real_estate_id);
+create index IF not exists idx_real_estate_reports_real_estate_id on public.real_estate_reports (real_estate_id);
 
-CREATE INDEX IF NOT EXISTS idx_real_estate_reports_reported_by ON public.real_estate_reports (reported_by_user_id);
+create index IF not exists idx_real_estate_reports_reported_by on public.real_estate_reports (reported_by_user_id);
 
 -- Índice compuesto para búsquedas de voto único por usuario y propiedad
-CREATE INDEX IF NOT EXISTS idx_real_estate_votes_composite ON public.real_estate_votes (real_estate_id, user_id);
+create index IF not exists idx_real_estate_votes_composite on public.real_estate_votes (real_estate_id, user_id);
 
 -- Índices para mejorar el rendimiento
-CREATE INDEX IF NOT EXISTS idx_real_estate_favorites_real_estate_id ON public.real_estate_favorites (real_estate_id);
+create index IF not exists idx_real_estate_favorites_real_estate_id on public.real_estate_favorites (real_estate_id);
 
-CREATE INDEX IF NOT EXISTS idx_real_estate_favorites_user_id ON public.real_estate_favorites (user_id);
+create index IF not exists idx_real_estate_favorites_user_id on public.real_estate_favorites (user_id);
 
 -- Índices para mejorar el rendimiento
-CREATE INDEX IF NOT EXISTS idx_review_favorites_review_id ON public.review_favorites (review_id);
+create index IF not exists idx_review_favorites_review_id on public.review_favorites (review_id);
 
-CREATE INDEX IF NOT EXISTS idx_review_favorites_user_id ON public.review_favorites (user_id);
+create index IF not exists idx_review_favorites_user_id on public.review_favorites (user_id);
 
 -- Add missing indexes for foreign keys to improve join performance and avoid linter warnings.
 -- 1. review_audit.changed_by
-CREATE INDEX IF NOT EXISTS idx_review_audit_changed_by ON public.review_audit (changed_by);
+create index IF not exists idx_review_audit_changed_by on public.review_audit (changed_by);
 
 -- 2. review_reports.reported_by_user_id
-CREATE INDEX IF NOT EXISTS idx_review_reports_reported_by_user_id ON public.review_reports (reported_by_user_id);
+create index IF not exists idx_review_reports_reported_by_user_id on public.review_reports (reported_by_user_id);
 
 -- 3. review_rooms.review_id
-CREATE INDEX IF NOT EXISTS idx_review_rooms_review_id ON public.review_rooms (review_id);
+create index IF not exists idx_review_rooms_review_id on public.review_rooms (review_id);
 
 -- Limpiar constraint antiguo si existe (mantener esta parte por seguridad)
-DO $$ 
+do $$ 
 BEGIN
     IF EXISTS (
         SELECT 1 FROM information_schema.table_constraints 
@@ -228,7 +228,7 @@ BEGIN
 END $$;
 
 -- Eliminar índice antiguo si fue creado por error (preparar para 054)
-DO $$
+do $$
 BEGIN
     IF EXISTS (
         SELECT 1 FROM pg_indexes 
@@ -247,7 +247,7 @@ END $$;
 -- Uses CONCURRENTLY to avoid locking tables in production
 -- NOTA: CONCURRENTLY + IF NOT EXISTS no funciona bien en transacciones, por eso usamos bloques DO
 -- 1. review_audit.changed_by
-DO $$
+do $$
 BEGIN
     IF NOT EXISTS (
         SELECT 1 FROM pg_indexes 
@@ -265,7 +265,7 @@ EXCEPTION
 END $$;
 
 -- 2. review_reports.reported_by_user_id
-DO $$
+do $$
 BEGIN
     IF NOT EXISTS (
         SELECT 1 FROM pg_indexes 
@@ -283,7 +283,7 @@ EXCEPTION
 END $$;
 
 -- 3. review_rooms.review_id
-DO $$
+do $$
 BEGIN
     IF NOT EXISTS (
         SELECT 1 FROM pg_indexes 
@@ -304,7 +304,7 @@ END $$;
 -- Uses CONCURRENTLY to avoid locking tables in production
 -- NOTA: CONCURRENTLY + IF NOT EXISTS no funciona bien en transacciones, por eso usamos bloques DO
 -- 1. Uniqueness for Reviews based on OSM ID
-DO $$
+do $$
 BEGIN
     -- Primero eliminar índice antiguo si existe
     IF EXISTS (
@@ -331,7 +331,7 @@ EXCEPTION
 END $$;
 
 -- 2. Uniqueness for Real Estate Reviews table
-DO $$
+do $$
 BEGIN
     -- Primero eliminar índice antiguo si existe
     IF EXISTS (
@@ -359,11 +359,9 @@ END $$;
 
 -- Enforce 1 review per user per property at the Database level (Review uniqueness constraints)
 -- 1. Uniqueness for Reviews based on OSM ID
-
 -- 2. Uniqueness for Real Estate Reviews table
-
 -- Documentación de índices únicos (aclara condiciones parciales)
-DO $$
+do $$
 BEGIN
     IF EXISTS (
         SELECT 1
@@ -376,7 +374,7 @@ BEGIN
     END IF;
 END $$;
 
-DO $$
+do $$
 BEGIN
     IF EXISTS (
         SELECT 1
@@ -388,12 +386,13 @@ BEGIN
         'Unicidad por usuario+real_estate_id en real_estate_reviews; aplica solo cuando deleted_at IS NULL. Garantiza 1 reseña por inmobiliaria por usuario.';
     END IF;
 END $$;
+
 -- =============================================================================
 -- Usa CONCURRENTLY para evitar locks en tablas con datos existentes
 -- NOTA: CONCURRENTLY + IF NOT EXISTS no funciona bien en transacciones, por eso usamos bloques DO
 -- =============================================================================
 -- Índice para búsquedas "Mis reseñas" (user_id + ordenado por created_at DESC)
-DO $$
+do $$
 BEGIN
     IF NOT EXISTS (
         SELECT 1 FROM pg_indexes 
@@ -411,7 +410,7 @@ EXCEPTION
 END $$;
 
 -- Índice para búsquedas de reseñas recientes por propiedad
-DO $$
+do $$
 BEGIN
     IF NOT EXISTS (
         SELECT 1 FROM pg_indexes 
@@ -429,7 +428,7 @@ EXCEPTION
 END $$;
 
 -- Índice para contar votos por tipo en una propiedad
-DO $$
+do $$
 BEGIN
     IF NOT EXISTS (
         SELECT 1 FROM pg_indexes 
@@ -447,7 +446,7 @@ EXCEPTION
 END $$;
 
 -- Índice para búsquedas en reported_by_user_id
-DO $$
+do $$
 BEGIN
     IF NOT EXISTS (
         SELECT 1 FROM pg_indexes 
@@ -465,7 +464,7 @@ EXCEPTION
 END $$;
 
 -- Índice para búsquedas por status en reports
-DO $$
+do $$
 BEGIN
     IF NOT EXISTS (
         SELECT 1 FROM pg_indexes 
@@ -494,7 +493,7 @@ END $$;
 -- =============================================================================
 -- NOTA: CONCURRENTLY + IF NOT EXISTS no funciona bien en transacciones, por eso usamos bloques DO
 -- 1. Índice compuesto para optimizar la query principal
-DO $$
+do $$
 BEGIN
     -- Eliminar índice antiguo si existe
     IF EXISTS (
@@ -521,7 +520,7 @@ EXCEPTION
 END $$;
 
 -- 2. Índice para cleanup eficiente
-DO $$
+do $$
 BEGIN
     -- Eliminar índice antiguo si existe
     IF EXISTS (

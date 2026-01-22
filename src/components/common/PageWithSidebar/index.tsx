@@ -4,7 +4,7 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 import type { PageWithSidebarProps } from './types';
 import { useAuthContext } from '@/components/providers/AuthProvider';
-import { Loading } from '../Loading';
+import { Loader } from '../Loaders';
 import { ErrorPage, NoAuthenticated } from './components';
 import { BackButton } from '../BackButton';
 
@@ -27,7 +27,7 @@ export const PageWithSidebar: React.FC<PageWithSidebarProps> = ({
   if (isLoading) {
     return (
       <div className="container mx-auto py-10 flex flex-1 flex-col items-center justify-center w-full">
-        <Loading />
+        <Loader />
       </div>
     );
   }

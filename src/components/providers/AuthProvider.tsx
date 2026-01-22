@@ -102,8 +102,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       // Manejar eventos específicos
       if (event === 'SIGNED_OUT') {
         toast.success('Usuario desautenticado');
-      } else if (event === 'TOKEN_REFRESHED') {
-        toast.success('Token renovado');
       }
     });
 

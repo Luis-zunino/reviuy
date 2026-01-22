@@ -43,10 +43,8 @@ export const FirstForm = (props: FirstFormProps) => {
 
       <div className="space-y-2">
         <FormLabel htmlFor="title" label="Título de tu reseña" isRequired />
-        <Controller
-          name="title"
-          control={control}
-          rules={{
+        <Input
+          {...form.register('title', {
             required: 'El título es obligatorio',
             minLength: {
               value: 10,
@@ -57,28 +55,27 @@ export const FirstForm = (props: FirstFormProps) => {
               const validation = validateText(value || '');
               return validation.isValid || validation.message;
             },
-          }}
-          render={({ field }) => (
-            <Input
-              {...field}
-              placeholder="Ej: Excelente ubicación, departamento muy cómodo"
-              className={errors.title ? 'border-red-500' : ''}
-            />
-          )}
+          })}
+          value={form.watch('title') || ''}
+          placeholder="Ej: Excelente ubicación, departamento muy cómodo"
+          className={errors.title ? 'border-red-500' : ''}
         />
         {errors.title && <p className="text-red-500 text-sm">{errors.title.message}</p>}
       </div>
       <div className="flex flex-col sm:flex-row gap-6 w-full">
         <div className="flex flex-col lg:flex-row gap-6">
           <div className="space-y-2">
-            <FormLabel htmlFor="propertyType" label="Tipo de propiedad" isRequired />
+            <FormLabel htmlFor="property_type" label="Tipo de propiedad" isRequired />
             <Controller
               name="property_type"
               control={control}
               rules={{ required: 'Selecciona el tipo de propiedad' }}
               render={({ field }) => (
                 <Select
-                  onValueChange={field.onChange}
+                  onValueChange={(e) => {
+                    const value = e.length > 0 ? e : field.value;
+                    field.onChange(value);
+                  }}
                   defaultValue={field.value}
                   value={field.value}
                 >
@@ -102,16 +99,16 @@ export const FirstForm = (props: FirstFormProps) => {
           </div>
           <div className="space-y-2">
             <FormLabel htmlFor="apartment_number" label="Número de apartamento (opcional)" />
-            <Controller
-              name="apartment_number"
-              control={control}
-              rules={{
+            <Input
+              {...form.register('apartment_number', {
                 maxLength: { value: 10, message: 'El número de apartamento es muy largo' },
-              }}
-              render={({ field }) => (
-                <Input {...field} value={field.value ?? ''} placeholder="Ej: 3A, Piso 2, Apt 12" />
-              )}
+              })}
+              value={form.watch('apartment_number') || ''}
+              placeholder="Ej: 3A, Piso 2, Apt 12"
             />
+            {errors.apartment_number && (
+              <p className="text-red-500 text-sm">{errors.apartment_number.message}</p>
+            )}
           </div>
         </div>
         <div className="flex flex-col lg:flex-row gap-6 justify-between">
@@ -150,34 +147,20 @@ export const FirstForm = (props: FirstFormProps) => {
       </div>
       <div className="space-y-2">
         <FormLabel htmlFor="description" label="Describe tu experiencia" isRequired />
-
-        <Controller
-          name="description"
-          control={control}
-          rules={{
-            required: 'La descripción es obligatoria',
-            minLength: {
-              value: 20,
-              message: 'La descripción debe tener al menos 20 caracteres',
-            },
-            maxLength: {
-              value: 1000,
-              message: 'La descripción no puede exceder 1000 caracteres',
-            },
-            validate: (value) => {
+        <Textarea
+          {...form.register('description', {
+            required: true,
+            minLength: 20,
+            maxLength: 800,
+            validate: (value: string) => {
               const validation = validateText(value || '');
-              return validation.isValid || validation.message;
+              return validation.isValid ? undefined : validation.message;
             },
-          }}
-          render={({ field }) => (
-            <Textarea
-              {...field}
-              required
-              placeholder="Comparte los detalles de tu experiencia viviendo aquí..."
-              rows={4}
-              className={errors.description ? 'border-red-500' : ''}
-            />
-          )}
+          })}
+          placeholder="Comparte los detalles de tu experiencia viviendo aquí..."
+          rows={4}
+          value={form.watch('description')}
+          className={errors.description ? 'border-red-500' : ''}
         />
         {errors.description && <p className="text-red-500 text-sm">{errors.description.message}</p>}
       </div>

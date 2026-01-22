@@ -3,7 +3,7 @@ import { Skeleton } from './Skeleton';
 
 export const MapSkeleton: React.FC = () => {
   return (
-    <div className="relative w-full h-full min-h-[300px] rounded-lg overflow-hidden">
+    <div className="relative w-full h-full min-h-75 rounded-lg overflow-hidden">
       <Skeleton className="absolute inset-0 w-full h-full" />
 
       {/* Map controls skeleton */}

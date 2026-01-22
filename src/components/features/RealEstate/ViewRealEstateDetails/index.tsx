@@ -42,7 +42,7 @@ export const ViewRealEstateDetails = () => {
   return (
     <PageWithSidebar
       title="Reseñas y calificaciones"
-      description="Ecnuentra los detalles de la inmobiliaria"
+      description="Encuentra los detalles de la inmobiliaria"
       isError={!!error || !reviews}
       errorTitle="No se pudo encontrar la inmobiliaria"
       errorSubTitle="Por favor, inténtalo de nuevo más tarde"

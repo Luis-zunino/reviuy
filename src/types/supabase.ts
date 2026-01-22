@@ -690,43 +690,30 @@ export type Database = {
         };
         Returns: Json;
       };
-      create_review:
-        | {
-            Args: {
-              p_address_osm_id: string;
-              p_address_text: string;
-              p_description: string;
-              p_humidity?: string;
-              p_latitude: number;
-              p_longitude: number;
-              p_property_type?: string;
-              p_rating: number;
-              p_real_estate_id?: string;
-              p_summer_comfort?: string;
-              p_title: string;
-              p_winter_comfort?: string;
-              p_zone_rating?: number;
-            };
-            Returns: Json;
-          }
-        | {
-            Args: {
-              p_address_osm_id?: string;
-              p_address_text?: string;
-              p_description: string;
-              p_humidity?: string;
-              p_latitude?: number;
-              p_longitude?: number;
-              p_property_type?: string;
-              p_rating: number;
-              p_real_estate_id?: string;
-              p_summer_comfort?: string;
-              p_title: string;
-              p_winter_comfort?: string;
-              p_zone_rating?: number;
-            };
-            Returns: Json;
-          };
+      create_review: {
+        Args: {
+          p_address_osm_id: string;
+          p_address_text: string;
+          p_description: string;
+          p_humidity?: string;
+          p_latitude: number;
+          p_longitude: number;
+          p_property_type?: string;
+          p_rating: number;
+          p_real_estate_id?: string;
+          p_summer_comfort?: string;
+          p_title: string;
+          p_winter_comfort?: string;
+          p_zone_rating?: number;
+        };
+        Returns: Database['public']['CompositeTypes']['create_review_result'];
+        SetofOptions: {
+          from: '*';
+          to: 'create_review_result';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
       delete_review_safe: {
         Args: { review_id_param: string };
         Returns: boolean;
@@ -742,7 +729,13 @@ export type Database = {
       };
       get_review_delete_info: {
         Args: { review_id_param: string };
-        Returns: Json;
+        Returns: Database['public']['CompositeTypes']['get_review_delete_info_result'];
+        SetofOptions: {
+          from: '*';
+          to: 'get_review_delete_info_result';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
       };
       has_user_reported_real_estate: {
         Args: { p_real_estate_id: string };
@@ -781,11 +774,17 @@ export type Database = {
       };
       report_real_estate_review: {
         Args: {
-          p_description?: string;
+          p_description: string;
           p_real_estate_review_id: string;
           p_reason: string;
         };
-        Returns: Json;
+        Returns: Database['public']['CompositeTypes']['report_result'];
+        SetofOptions: {
+          from: '*';
+          to: 'report_result';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
       };
       report_review: {
         Args: { p_description?: string; p_reason: string; p_review_id: string };
@@ -793,7 +792,13 @@ export type Database = {
       };
       toggle_favorite_real_estate: {
         Args: { p_real_estate_id: string };
-        Returns: Json;
+        Returns: Database['public']['CompositeTypes']['toggle_favorite_result'];
+        SetofOptions: {
+          from: '*';
+          to: 'toggle_favorite_result';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
       };
       toggle_favorite_review: { Args: { p_review_id: string }; Returns: Json };
       update_review: {
@@ -827,7 +832,135 @@ export type Database = {
       [_ in never]: never;
     };
     CompositeTypes: {
-      [_ in never]: never;
+      action_result: {
+        success: boolean | null;
+        message: string | null;
+        error: string | null;
+      };
+      create_real_estate_result: {
+        success: boolean | null;
+        message: string | null;
+        id: string | null;
+      };
+      create_real_estate_review_result: {
+        success: boolean | null;
+        message: string | null;
+        review_id: string | null;
+      };
+      create_review_result: {
+        success: boolean | null;
+        review_id: string | null;
+        message: string | null;
+        error: string | null;
+      };
+      detect_suspicious_activity_result: {
+        user_id: string | null;
+        total_requests: number | null;
+        blocked_requests: number | null;
+        suspicious_score: number | null;
+      };
+      get_review_delete_info_result: {
+        id: string | null;
+        title: string | null;
+        created_at: string | null;
+        rating: number | null;
+        likes: number | null;
+        dislikes: number | null;
+        can_delete: boolean | null;
+        vote_count: number | null;
+        error: string | null;
+      };
+      report_real_estate_result: {
+        success: boolean | null;
+        message: string | null;
+      };
+      report_real_estate_review_result: {
+        success: boolean | null;
+        message: string | null;
+        report_id: string | null;
+      };
+      report_result: {
+        success: boolean | null;
+        report_id: string | null;
+        message: string | null;
+        error: string | null;
+      };
+      report_review_result: {
+        success: boolean | null;
+        message: string | null;
+        report_id: string | null;
+      };
+      result_error: {
+        success: boolean | null;
+        error: string | null;
+      };
+      result_report: {
+        success: boolean | null;
+        message: string | null;
+        report_id: string | null;
+      };
+      result_success: {
+        success: boolean | null;
+        message: string | null;
+      };
+      result_success_id: {
+        success: boolean | null;
+        message: string | null;
+        id: string | null;
+      };
+      result_toggle: {
+        success: boolean | null;
+        message: string | null;
+        is_favorite: boolean | null;
+      };
+      result_vote: {
+        success: boolean | null;
+        message: string | null;
+        action: string | null;
+      };
+      review_delete_info: {
+        id: string | null;
+        title: string | null;
+        created_at: string | null;
+        rating: number | null;
+        likes: number | null;
+        dislikes: number | null;
+        can_delete: boolean | null;
+        vote_count: number | null;
+      };
+      toggle_favorite_real_estate_result: {
+        success: boolean | null;
+        message: string | null;
+        is_favorite: boolean | null;
+      };
+      toggle_favorite_result: {
+        success: boolean | null;
+        is_favorite: boolean | null;
+        message: string | null;
+        error: string | null;
+      };
+      toggle_favorite_review_result: {
+        success: boolean | null;
+        message: string | null;
+        is_favorite: boolean | null;
+      };
+      update_review_result: {
+        success: boolean | null;
+        message: string | null;
+      };
+      vote_real_estate_result: {
+        success: boolean | null;
+        message: string | null;
+      };
+      vote_real_estate_review_result: {
+        success: boolean | null;
+        message: string | null;
+      };
+      vote_review_result: {
+        success: boolean | null;
+        message: string | null;
+        action: string | null;
+      };
     };
   };
 };

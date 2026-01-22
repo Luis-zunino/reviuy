@@ -13,7 +13,7 @@ export const toggleFavoriteRealEstate = async ({
       throw error;
     }
 
-    return data as unknown as ToggleFavoriteRealEstateResponse;
+    return data;
   } catch (error) {
     console.error('Error toggling favorite:', error);
     throw error;

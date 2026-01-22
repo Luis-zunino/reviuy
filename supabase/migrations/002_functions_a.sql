@@ -2,13 +2,15 @@
 -- MIGRACIÓN 002: FUNCIONES AUXILIARES
 --=============================================================================
 -- 1.Función de rate limiting optimizada 
-DROP FUNCTION IF EXISTS check_rate_limit (TEXT, INTEGER, INTEGER);
-CREATE OR REPLACE FUNCTION check_rate_limit (p_endpoint text, p_max_requests integer DEFAULT 10, p_window_minutes integer DEFAULT 1)
-    RETURNS boolean
-    LANGUAGE plpgsql
-    SECURITY DEFINER
-    SET search_path = public
-    AS $$
+drop function IF exists check_rate_limit (TEXT, INTEGER, INTEGER);
+
+create or replace function check_rate_limit (
+  p_endpoint text,
+  p_max_requests integer default 10,
+  p_window_minutes integer default 1
+) RETURNS boolean LANGUAGE plpgsql SECURITY DEFINER
+set
+  search_path = public as $$
 DECLARE
     v_user_id UUID;
     v_window_start TIMESTAMPTZ;
@@ -82,13 +84,13 @@ EXCEPTION
         RAISE WARNING 'Error en check_rate_limit: %', SQLERRM;
         RETURN TRUE;
 END;
-$$
-;
+$$;
+
 -- 4. Mejorar la función de cleanup (no ejecutar COUNT en cada insert)
-DROP FUNCTION IF EXISTS cleanup_rate_limits_on_insert () CASCADE;
+drop function IF exists cleanup_rate_limits_on_insert () CASCADE;
+
 -- Nueva estrategia: Cleanup probabilístico (1% de chance por insert)
-CREATE OR REPLACE FUNCTION cleanup_rate_limits_on_insert ()
-    RETURNS TRIGGER AS $$
+create or replace function cleanup_rate_limits_on_insert () RETURNS TRIGGER as $$
 BEGIN
     -- Solo limpiar el 1% de las veces (reduce overhead)
     IF random() < 0.01 THEN
@@ -110,10 +112,10 @@ WHERE
 
     RETURN NEW;
 END;
-$$
-        LANGUAGE plpgsql;
-        -- Recrear TRIGGER (solo si la tabla existe)
-        DO $$
+$$ LANGUAGE plpgsql;
+
+-- Recrear TRIGGER (solo si la tabla existe)
+do $$
 BEGIN
     IF EXISTS (
         SELECT 1
@@ -135,11 +137,12 @@ BEGIN
         RAISE WARNING 'Tabla rate_limits no existe aún. El trigger se creará cuando la tabla sea creada.';
     END IF;
 END $$;
-        -- =============================================================================
-        -- MÉTRICAS Y MONITOREO
-        -- =============================================================================
-        -- View para monitorear rate limiting
-        DO $$
+
+-- =============================================================================
+-- MÉTRICAS Y MONITOREO
+-- =============================================================================
+-- View para monitorear rate limiting
+do $$
 BEGIN
     IF EXISTS (
         SELECT 1
@@ -171,27 +174,31 @@ ORDER BY
         RAISE WARNING 'Table rate_limits does not exist yet. View will be created when table is created.';
     END IF;
 END $$;
-            COMMENT ON FUNCTION check_rate_limit IS 'Rate limiting en PostgreSQL (TEMPORAL). Migrar a Redis en producción para mejor performance.';
-            -- =============================================================================
-            -- FUNCIONES BASE
-            -- =============================================================================
-            -- Función para actualizar timestamp de updated_at
-            CREATE OR REPLACE FUNCTION update_updated_at_column ()
-                RETURNS TRIGGER AS $$
+
+COMMENT on FUNCTION check_rate_limit is 'Rate limiting en PostgreSQL (TEMPORAL). Migrar a Redis en producción para mejor performance.';
+
+-- =============================================================================
+-- FUNCIONES BASE
+-- =============================================================================
+-- Función para actualizar timestamp de updated_at
+create or replace function update_updated_at_column () RETURNS TRIGGER as $$
 BEGIN
     IF NEW IS DISTINCT FROM OLD THEN
         NEW.updated_at = now();
     END IF;
     RETURN NEW;
 END;
-$$
-                LANGUAGE plpgsql;
-                -- Función básica de logging de seguridad
-                CREATE OR REPLACE FUNCTION log_security_event (p_action text, p_status text DEFAULT 'success', p_error_message text DEFAULT NULL, p_metadata jsonb DEFAULT NULL)
-                    RETURNS VOID
-                    LANGUAGE plpgsql
-                    SECURITY DEFINER
-                    SET search_path = public AS $$
+$$ LANGUAGE plpgsql;
+
+-- Función básica de logging de seguridad
+create or replace function log_security_event (
+  p_action text,
+  p_status text default 'success',
+  p_error_message text default null,
+  p_metadata jsonb default null
+) RETURNS VOID LANGUAGE plpgsql SECURITY DEFINER
+set
+  search_path = public as $$
 BEGIN
     INSERT INTO
         public.security_logs (
@@ -228,13 +235,14 @@ EXCEPTION
         RAISE NOTICE 'Error en log_security_event: %', SQLERRM;
 END;
 $$;
-COMMENT ON FUNCTION log_security_event IS 'Función básica de logging. Puede ser sobrescrita en migraciones posteriores.';
+
+COMMENT on FUNCTION log_security_event is 'Función básica de logging. Puede ser sobrescrita en migraciones posteriores.';
+
 -- =============================================================================
 -- FUNCIONES PARA SISTEMA DE REVIEWS
 -- =============================================================================
 -- Función para actualizar contadores de votos de reviews
-CREATE OR REPLACE FUNCTION update_review_votes ()
-                        RETURNS TRIGGER AS $$
+create or replace function update_review_votes () RETURNS TRIGGER as $$
 DECLARE
     v_review_id UUID;
     v_vote_type TEXT;
@@ -337,11 +345,10 @@ RETURN COALESCE(NEW, OLD);
 
 END;
 
-$$
-LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql;
+
 -- Función para actualizar contadores de inmobiliarias
-CREATE OR REPLACE FUNCTION update_real_estate_counters ()
-                            RETURNS TRIGGER AS $$
+create or replace function update_real_estate_counters () RETURNS TRIGGER as $$
 BEGIN
     IF (TG_OP = 'INSERT') THEN
         IF NEW.real_estate_id IS NOT NULL THEN
@@ -383,12 +390,11 @@ BEGIN
 
     RETURN COALESCE(NEW, OLD);
 END;
-$$
-LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql;
+
 -- Función para auditoría completa de cambios
 -- Con manejo de excepciones para no bloquear operaciones principales
-CREATE OR REPLACE FUNCTION log_review_changes ()
-    RETURNS TRIGGER AS $$
+create or replace function log_review_changes () RETURNS TRIGGER as $$
 BEGIN
     BEGIN
         IF (
@@ -442,15 +448,13 @@ SQLERRM;
     RETURN COALESCE(NEW, OLD);
 END;
 
-$$
-LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql;
+
 -- Función para registrar eliminaciones
 -- Con manejo de excepciones para no bloquear la eliminación de reviews
-CREATE OR REPLACE FUNCTION log_review_deletion ()
-    RETURNS TRIGGER
-    LANGUAGE plpgsql
-    SECURITY DEFINER
-    SET search_path = public AS $$
+create or replace function log_review_deletion () RETURNS TRIGGER LANGUAGE plpgsql SECURITY DEFINER
+set
+  search_path = public as $$
 BEGIN
     BEGIN
         INSERT INTO public.review_deletions (
@@ -478,25 +482,23 @@ END;
 $$;
 
 -- Función para crear reseñas
-CREATE OR REPLACE FUNCTION create_review (
-    p_title text,
-    p_description text,
-    p_rating integer,
-    p_address_text text,
-    p_address_osm_id text,
-    p_latitude DECIMAL,
-    p_longitude DECIMAL,
-    p_real_estate_id uuid DEFAULT NULL,
-    p_property_type text DEFAULT NULL,
-    p_zone_rating integer DEFAULT NULL,
-    p_winter_comfort text DEFAULT NULL,
-    p_summer_comfort text DEFAULT NULL,
-    p_humidity text DEFAULT NULL
-)
-    RETURNS json
-    LANGUAGE plpgsql
-    SECURITY DEFINER
-    SET search_path = public AS $$
+create or replace function public.create_review (
+  p_title text,
+  p_description text,
+  p_rating integer,
+  p_address_text text,
+  p_address_osm_id text,
+  p_latitude DECIMAL,
+  p_longitude DECIMAL,
+  p_real_estate_id uuid default null,
+  p_property_type text default null,
+  p_zone_rating integer default null,
+  p_winter_comfort text default null,
+  p_summer_comfort text default null,
+  p_humidity text default null
+) RETURNS public.create_review_result LANGUAGE plpgsql SECURITY DEFINER
+set
+  search_path = public as $$
 DECLARE
     v_review_id UUID;
     v_user_id UUID;
@@ -504,114 +506,146 @@ BEGIN
     -- Verificar rate limit (5 reseñas por 10 minutos)
     IF NOT check_rate_limit('create_review', 5, 10) THEN
         PERFORM log_security_event('create_review', 'blocked', 'Rate limit exceeded');
-        RETURN json_build_object('success', false, 'error', 'Demasiadas reseñas. Intenta más tarde.');
+        RETURN ( false, NULL, NULL, 'Demasiadas reseñas. Intenta más tarde.');
     END IF;
 
-    -- Obtener el ID del usuario autenticado
+    -- Usuario autenticado
     v_user_id := auth.uid();
     IF v_user_id IS NULL THEN
         PERFORM log_security_event('create_review', 'error', 'Usuario no autenticado');
-        RETURN json_build_object('success', false, 'error', 'Usuario no autenticado. Debes iniciar sesión para crear una reseña.');
+        RETURN ( false, NULL, NULL, 'Usuario no autenticado. Debes iniciar sesión para crear una reseña.');
     END IF;
-    IF p_title IS NULL OR p_title = '' THEN
+    -- Validaciones obligatorias
+    IF p_title IS NULL OR btrim(p_title) = '' THEN
         PERFORM log_security_event(
             'create_review',
             'error',
             'Título obligatorio faltante'
         );
-        RETURN json_build_object(
-            'success',
+        RETURN (
             false,
-            'error',
+            NULL,
+            NULL,
             'El título es obligatorio'
         );
     END IF;
 
 
-    IF p_description IS NULL OR p_description = '' THEN
+    IF p_description IS NULL OR btrim(p_description) = '' THEN
         PERFORM log_security_event(
             'create_review',
             'error',
             'Descripción obligatoria faltante'
         );
-        RETURN json_build_object(
-            'success',
+        RETURN (
             false,
-            'error',
+            NULL,
+            NULL,
             'La descripción es obligatoria'
         );
     END IF;
 
     IF p_rating IS NULL OR p_rating < 1 OR p_rating > 5 THEN
         PERFORM log_security_event(
-    'create_review',
-    'error',
-    'Rating inválido'
-);
+            'create_review',
+            'error',
+            'Rating inválido'
+        );
 
-RETURN json_build_object(
-    'success',
-    false,
-    'error',
-    'El rating debe estar entre 1 y 5'
-);
+        RETURN (
+            false,
+            NULL,
+            NULL,
+            'El rating debe estar entre 1 y 5'
+        );
+    END IF;
 
-END IF;
-
-    -- Validar campos requeridos
     IF p_address_text IS NULL OR btrim(p_address_text) = '' THEN
-        PERFORM log_security_event('create_review', 'error', 'address_text requerido');
-        RETURN json_build_object('success', false, 'error', 'La dirección (address_text) es obligatoria');
+        PERFORM log_security_event(
+            'create_review',
+            'error',
+            'address_text requerido'
+        );
+
+        RETURN (
+            false,
+            NULL,
+            NULL,
+            'La dirección (address_text) es obligatoria'
+        );
     END IF;
 
     IF p_address_osm_id IS NULL OR btrim(p_address_osm_id) = '' THEN
-        PERFORM log_security_event('create_review', 'error', 'address_osm_id requerido');
-        RETURN json_build_object('success', false, 'error', 'El OSM ID (address_osm_id) es obligatorio');
+        PERFORM log_security_event(
+            'create_review',
+            'error',
+            'address_osm_id requerido'
+        );
+
+        RETURN (
+            false,
+            NULL,
+            NULL,
+            'El OSM ID (address_osm_id) es obligatorio'
+        );
     END IF;
 
     IF p_latitude IS NULL OR p_longitude IS NULL THEN
-        PERFORM log_security_event('create_review', 'error', 'Coordenadas requeridas');
-        RETURN json_build_object('success', false, 'error', 'Latitud y longitud son obligatorias');
+        PERFORM log_security_event(
+            'create_review',
+            'error',
+            'Coordenadas requeridas'
+        );
+
+        RETURN (
+            false,
+            NULL,
+            NULL,
+            'Latitud y longitud son obligatorias'
+        );
     END IF;
 
-    -- Limpiar campos opcionales que vengan vacíos
-    IF p_property_type IS NOT NULL AND p_property_type = '' THEN
+    -- Normalizar campos opcionales vacíos
+    IF p_property_type IS NOT NULL AND btrim(p_property_type) = '' THEN
         p_property_type := NULL;
     END IF;
 
-    IF p_winter_comfort IS NOT NULL AND p_winter_comfort = '' THEN
+    IF p_winter_comfort IS NOT NULL AND btrim(p_winter_comfort) = '' THEN
         p_winter_comfort := NULL;
     END IF;
 
-    IF p_summer_comfort IS NOT NULL AND p_summer_comfort = '' THEN
+    IF p_summer_comfort IS NOT NULL AND btrim(p_summer_comfort) = '' THEN
         p_summer_comfort := NULL;
     END IF;
 
-    IF p_humidity IS NOT NULL AND p_humidity = '' THEN
+    IF p_humidity IS NOT NULL AND btrim(p_humidity) = '' THEN
         p_humidity := NULL;
     END IF;
 
-    -- VERIFICACIÓN DE DUPLICADOS
-    -- Verificar si ya existe una reseña para este usuario y propiedad (por OSM ID o dirección)
-    IF p_address_osm_id IS NOT NULL THEN
-        IF EXISTS (
-            SELECT 1
-            FROM public.reviews
-            WHERE user_id = v_user_id
-              AND address_osm_id = p_address_osm_id
-              AND deleted_at IS NULL
-        ) THEN
-            PERFORM log_security_event('create_review','blocked','Duplicate review attempt (OSM ID)');
-            RETURN json_build_object(
-                'success', false,
-                'error', 'Ya has publicado una reseña para esta propiedad. Solo puedes escribir una reseña por propiedad.'
-            );
-        END IF;
+    -- Verificación de duplicados (una reseña por usuario y propiedad)
+    IF EXISTS (
+        SELECT 1
+        FROM public.reviews
+        WHERE user_id = v_user_id
+          AND address_osm_id = p_address_osm_id
+          AND deleted_at IS NULL
+    ) THEN
+        PERFORM log_security_event(
+            'create_review',
+            'blocked',
+            'Duplicate review attempt (OSM ID)'
+        );
+
+        RETURN (
+            false,
+            NULL,
+            NULL,
+            'Ya has publicado una reseña para esta propiedad. Solo puedes escribir una reseña por propiedad.'
+        );
     END IF;
 
-    -- Insertar la nueva reseña
-    INSERT INTO
-    public.reviews (
+    -- Insertar reseña
+    INSERT INTO public.reviews (
         user_id,
         title,
         description,
@@ -645,7 +679,7 @@ VALUES
         p_humidity
     ) RETURNING id INTO v_review_id;
 
-    -- Logging exitoso
+    -- Log exitoso
     PERFORM log_security_event(
     'create_review',
     'success',
@@ -653,34 +687,34 @@ VALUES
     jsonb_build_object('review_id', v_review_id)
 );
 
-    RETURN json_build_object(
-        'success',
+    RETURN (
         true,
-        'review_id',
         v_review_id,
-        'message',
-        'Reseña creada exitosamente'
+        'Reseña creada exitosamente',
+        NULL
     );
 
 EXCEPTION
     WHEN OTHERS THEN
-        PERFORM log_security_event('create_review', 'error', SQLERRM);
-        RETURN json_build_object(
-            'success',
-            false,
+        PERFORM log_security_event(
+            'create_review',
             'error',
+            SQLERRM
+        );
+
+        RETURN (
+            false,
+            NULL,
+            NULL,
             'Error al crear la reseña: ' || SQLERRM
         );
 END;
-
 $$;
+
 -- Función para eliminar una reseña de forma segura
--- Función para eliminar una reseña de forma segura
-CREATE OR REPLACE FUNCTION delete_review_safe (review_id_param uuid)
-    RETURNS boolean
-    LANGUAGE plpgsql
-    SECURITY DEFINER
-    SET search_path = public AS $$
+create or replace function delete_review_safe (review_id_param uuid) RETURNS boolean LANGUAGE plpgsql SECURITY DEFINER
+set
+  search_path = public as $$
 DECLARE
     review_owner UUID;
     current_user_id UUID;
@@ -713,85 +747,126 @@ END;
 $$;
 
 -- Función para obtener estadísticas antes de eliminar
-CREATE OR REPLACE FUNCTION get_review_delete_info (review_id_param UUID)
-    RETURNS JSON
-    LANGUAGE plpgsql
-    SECURITY DEFINER
-    SET search_path = public
-    AS $$
+create or replace function public.get_review_delete_info (review_id_param uuid) RETURNS public.get_review_delete_info_result LANGUAGE plpgsql SECURITY DEFINER
+set
+  search_path = public as $$
 DECLARE
-    review_info json;
+    result public.get_review_delete_info_result;
     current_user_id uuid;
 BEGIN
     current_user_id := auth.uid();
+
     IF current_user_id IS NULL THEN
-        RETURN json_build_object('error', 'Usuario no autenticado');
+        result.error := 'Usuario no autenticado';
+        RETURN result;
     END IF;
 
-    SELECT json_build_object(
-               'id', r.id,
-               'title', r.title,
-               'created_at', r.created_at,
-               'rating', r.rating,
-               'likes', r.likes,
-               'dislikes', r.dislikes,
-               'can_delete', (r.user_id = current_user_id),
-               'vote_count', (
-                   SELECT COUNT(*)
-                   FROM public.review_votes rv
-                   WHERE rv.review_id = r.id)
-           ) INTO review_info
+    SELECT
+        r.id,
+        r.title,
+        r.created_at,
+        r.rating,
+        r.likes,
+        r.dislikes,
+        (r.user_id = current_user_id),
+        (
+            SELECT COUNT(*)
+            FROM public.review_votes rv
+            WHERE rv.review_id = r.id
+        ),
+        NULL
+    INTO result
     FROM public.reviews r
     WHERE r.id = review_id_param;
 
-    RETURN COALESCE(review_info, json_build_object('error', 'Reseña no encontrada'));
+    IF NOT FOUND THEN
+        result.error := 'Reseña no encontrada';
+    END IF;
+
+    RETURN result;
 END;
 $$;
+
 -- Función para actualizar una reseña 
-CREATE
-OR REPLACE FUNCTION update_review (p_review_id UUID, p_title TEXT, p_description TEXT, p_rating INTEGER, p_property_type TEXT DEFAULT NULL, p_zone_rating INTEGER DEFAULT NULL, p_winter_comfort TEXT DEFAULT NULL, p_summer_comfort TEXT DEFAULT NULL, p_humidity TEXT DEFAULT NULL)
- RETURNS JSON
- LANGUAGE plpgsql
- SECURITY DEFINER SET search_path = public AS $$ DECLARE v_user_id UUID;
-v_review_owner UUID;
+create or replace function public.update_review (
+  p_review_id UUID,
+  p_title TEXT,
+  p_description TEXT,
+  p_rating INTEGER,
+  p_property_type TEXT default null,
+  p_zone_rating INTEGER default null,
+  p_winter_comfort TEXT default null,
+  p_summer_comfort TEXT default null,
+  p_humidity TEXT default null
+) RETURNS json LANGUAGE plpgsql SECURITY DEFINER
+set
+  search_path = public as $$
+DECLARE
+    v_user_id UUID;
+    v_review_owner UUID;
 BEGIN
-    v_user_id := auth.uid ();
+    -- Usuario autenticado
+    v_user_id := auth.uid();
     IF v_user_id IS NULL THEN
-        RETURN json_build_object('success', FALSE, 'error', 'Usuario no autenticado');
+        RETURN json_build_object(
+            'success', false,
+            'error', 'Usuario no autenticado'
+        );
     END IF;
+
     -- Rate limiting: máx 10 actualizaciones por hora
-    IF NOT check_rate_limit ('update_review', 10, 3600) THEN
-        RETURN json_build_object('success', FALSE, 'error', 'Límite de actualizaciones alcanzado. Intenta nuevamente en una hora.');
+    IF NOT check_rate_limit('update_review', 10, 3600) THEN
+        RETURN json_build_object(
+            'success', false,
+            'error', 'Límite de actualizaciones alcanzado. Intenta nuevamente en una hora.'
+        );
     END IF;
-    SELECT
-        user_id INTO v_review_owner
-    FROM
-        public.reviews
-    WHERE
-        id = p_review_id;
-        IF v_review_owner IS NULL THEN
-            RETURN json_build_object('success', FALSE, 'error', 'La reseña no existe');
-        END IF;
-        IF v_review_owner != v_user_id THEN
-            RETURN json_build_object('success', FALSE, 'error', 'No tienes permisos para editar esta reseña');
-        END IF;
-        UPDATE
-            public.reviews
-        SET
-            title = p_title,
-            description = p_description,
-            rating = p_rating,
-            property_type = COALESCE(p_property_type, property_type),
-            zone_rating = COALESCE(p_zone_rating, zone_rating),
-            winter_comfort = COALESCE(p_winter_comfort, winter_comfort),
-            summer_comfort = COALESCE(p_summer_comfort, summer_comfort),
-            humidity = COALESCE(p_humidity, humidity),
-            updated_at = now()
-        WHERE
-            id = p_review_id;
-            RETURN json_build_object('success', TRUE, 'message', 'Reseña actualizada exitosamente');
+
+    -- Verificar existencia y ownership
+    SELECT user_id
+    INTO v_review_owner
+    FROM public.reviews
+    WHERE id = p_review_id
+      AND deleted_at IS NULL;
+
+    IF v_review_owner IS NULL THEN
+        RETURN json_build_object(
+            'success', false,
+            'error', 'La reseña no existe'
+        );
+    END IF;
+
+    IF v_review_owner <> v_user_id THEN
+        RETURN json_build_object(
+            'success', false,
+            'error', 'No tienes permisos para editar esta reseña'
+        );
+    END IF;
+
+    -- Actualización
+    UPDATE public.reviews
+    SET
+        title = p_title,
+        description = p_description,
+        rating = p_rating,
+        property_type = COALESCE(p_property_type, property_type),
+        zone_rating = COALESCE(p_zone_rating, zone_rating),
+        winter_comfort = COALESCE(p_winter_comfort, winter_comfort),
+        summer_comfort = COALESCE(p_summer_comfort, summer_comfort),
+        humidity = COALESCE(p_humidity, humidity),
+        updated_at = now()
+    WHERE id = p_review_id;
+
+    RETURN json_build_object(
+        'success', true,
+        'message', 'Reseña actualizada exitosamente'
+    );
+
 EXCEPTION
     WHEN OTHERS THEN
-        RETURN json_build_object('success', FALSE, 'error', 'Error interno del servidor');
+        RETURN json_build_object(
+            'success', false,
+            'error', 'Error interno del servidor'
+        );
 END;
 $$;

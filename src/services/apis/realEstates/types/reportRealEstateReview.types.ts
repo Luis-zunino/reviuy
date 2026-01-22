@@ -1,7 +1,7 @@
 export interface ReportRealEstateReviewRequest {
   review_id: string;
   reason: string;
-  description?: string;
+  description: string;
   user_id?: string;
 }
 

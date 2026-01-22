@@ -1,13 +1,16 @@
 import { CreateReviewData } from '@/services/apis/reviews/createReview.api';
 import { FormReviewSchema } from '../constants';
+import { getAddressOsmId } from '@/utils';
 
 export const formatDataToBackend = (data: FormReviewSchema, userId: string): CreateReviewData => {
+  const addressOsmId = getAddressOsmId({ osm_type: data.osm_type, osm_id: data.osm_id });
+
   return {
     user_id: userId,
     title: data.title,
     description: data.description,
     rating: data.rating,
-    address_osm_id: data.osm_id,
+    address_osm_id: addressOsmId,
     property_type: data.property_type,
     address_text: data.address_text,
     latitude: Number(data.latitude),

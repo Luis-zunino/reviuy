@@ -11,7 +11,7 @@ export const isReviewFavorite = async ({ reviewId }: IsReviewFavoriteRequest): P
       throw error;
     }
 
-    return data as boolean;
+    return data;
   } catch (error) {
     console.error('Error checking if review is favorite:', error);
     return false;

@@ -1,7 +1,7 @@
 -- Dynamic fix for "Function Search Path Mutable"
 -- Updates ALL functions in the public schema to have search_path = public.
 -- This handles overloaded functions and "ghost" functions that might be left over from previous migrations.
-DO $$
+do $$
 DECLARE
     r RECORD;
 BEGIN

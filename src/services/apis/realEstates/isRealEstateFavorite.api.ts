@@ -14,7 +14,7 @@ export const isRealEstateFavorite = async ({
       throw error;
     }
 
-    return data as boolean;
+    return data;
   } catch (error) {
     console.error('Error checking if favorite:', error);
     return false;

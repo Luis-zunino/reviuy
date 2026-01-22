@@ -8,6 +8,7 @@ export const getDefaultValues = (
 ): FormReviewSchema | undefined => {
   if (!defaultValues) return undefined;
   const normalizedValues = normalizeNullable<ReviewWithRelations>(defaultValues);
+
   return {
     ...normalizedValues,
     property_type: normalizedValues.property_type ?? PropertyType.HOUSE,

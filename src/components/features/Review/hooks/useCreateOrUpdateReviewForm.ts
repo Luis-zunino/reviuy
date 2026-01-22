@@ -11,6 +11,7 @@ import type { UseCreateOrUpdateReviewFormProps } from './types';
 import { useAuthContext } from '@/components/providers/AuthProvider';
 import { FormReviewSchema } from '../constants';
 import { formatDataToBackend, getDefaultValues } from '../utils';
+import { getAddressOsmId } from '@/utils';
 
 export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormProps) => {
   const { defaultValues } = props;
@@ -25,10 +26,10 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
   });
 
   const { control, reset, formState, watch, setValue } = form;
-  const { address_text, osm_id: osmId, real_estate_name } = watch();
+  const { address_text, osm_id: osmId, osm_type, real_estate_name } = watch();
   const { data: existingReview } = useCheckUserReviewForAddress({
     userId,
-    osmId,
+    osmId: getAddressOsmId({ osm_id: osmId, osm_type }),
   });
   const { fields, append, remove, replace } = useFieldArray({
     control,
@@ -61,12 +62,6 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
       shouldValidate: true,
     });
 
-    if (!isUpdate && isAuthenticated && userId && item.osm_id && existingReview) {
-      toast.error('Ya has reseñado esta propiedad', {
-        description:
-          'Solo puedes escribir una reseña por propiedad. Puedes editar tu reseña existente desde tu perfil.',
-      });
-    }
     setOpen(false);
   };
 
@@ -172,8 +167,20 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
   }, [defaultValues, router, isOwner]);
 
   useEffect(() => {
-    reset(getDefaultValues(defaultValues));
+    if (defaultValues) reset(getDefaultValues(defaultValues), { keepDirty: false });
   }, [defaultValues, reset]);
+
+  useEffect(() => {
+    if (isAuthenticated && userId && existingReview && form.formState.isDirty) {
+      toast.warning('Ya has reseñado esta propiedad', {
+        description: 'Puedes editar tu reseña existente desde tu perfil.',
+        action: {
+          label: 'Ir a la reseña',
+          onClick: () => router.push(PagesUrls.REVIEW_DETAILS.replace(':id', existingReview.id)),
+        },
+      });
+    }
+  }, [existingReview, isAuthenticated, userId]);
 
   return {
     ...form,

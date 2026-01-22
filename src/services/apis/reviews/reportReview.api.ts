@@ -44,7 +44,7 @@ export const hasUserReportedReview = async (reviewId: string): Promise<boolean> 
       return false;
     }
 
-    return data as boolean;
+    return data;
   } catch (error) {
     return !!error;
   }

@@ -2,6 +2,7 @@ import { useAuthContext } from '@/components/providers/AuthProvider';
 import { useGetReviewsByRealEstateId } from '@/services';
 import { useGetAllRealEstateReviews } from '@/services';
 import { useParams } from 'next/navigation';
+import { useMemo } from 'react';
 
 export const useViewRealEstateDetails = () => {
   const { realEstateId } = useParams<{ realEstateId: string }>();
@@ -10,11 +11,20 @@ export const useViewRealEstateDetails = () => {
   const { data: reviewsData, isLoading: isLoadingReviews } =
     useGetReviewsByRealEstateId(realEstateId);
 
-  const calculateAverageRating = () => {
-    if (!reviewsData || reviewsData?.length === 0) return 0;
-    const sum = reviewsData?.reduce((acc, review) => acc + review.rating, 0);
-    return sum / reviewsData?.length;
-  };
+  const averageRating = useMemo(() => {
+    if (!data?.length) return 0;
+
+    const validReviews = data.filter(
+      (review) => review?.rating != null && typeof review.rating === 'number'
+    );
+
+    if (validReviews.length === 0) return 0;
+
+    const sum = validReviews.reduce((acc, review) => acc + review.rating, 0);
+    const average = sum / validReviews.length;
+
+    return Math.round(average * 10) / 10;
+  }, [data]);
 
   return {
     realEstateReview: data,
@@ -23,7 +33,7 @@ export const useViewRealEstateDetails = () => {
     isLoading,
     error,
     realEstateId,
-    averageRating: calculateAverageRating(),
+    averageRating,
     isLoadingReviews,
     userId: userId ?? '',
   };

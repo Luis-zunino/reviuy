@@ -1,7 +1,7 @@
 'use client';
 import { ReviewSidebar, ReviewSummary } from './components';
 import { useViewReview } from './hooks';
-import { Loading, ErrorPage, BackButton } from '@/components/common';
+import { Loader, ErrorPage, BackButton } from '@/components/common';
 
 export const ViewReview = () => {
   const { data, isLoading, error } = useViewReview();
@@ -10,7 +10,7 @@ export const ViewReview = () => {
     return (
       <div className="min-h-screen bg-background py-8 px-4 lg:py-16 lg:px-12">
         <div className="max-w-7xl mx-auto rounded-xl bg-card shadow-sm p-8 lg:p-16">
-          <Loading />
+          <Loader />
         </div>
       </div>
     );

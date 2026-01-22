@@ -40,7 +40,7 @@ export const hasUserReportedRealEstate = async (realEstateId: string): Promise<b
       return false;
     }
 
-    return data as boolean;
+    return data;
   } catch (error) {
     return !!error;
   }

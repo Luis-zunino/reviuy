@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { PagesUrls } from '@/enums';
-import { Loading } from '@/components/common/Loading';
+import { Loader } from '@/components/common/Loaders';
 import { toast } from 'sonner';
 import { getSession } from '@/services/apis/user/getSession.api';
 
@@ -51,7 +51,7 @@ export default function AuthCallback() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-blue-50">
         <div className="text-center">
-          <Loading />
+          <Loader />
           <p className="mt-4 text-gray-600">Procesando tu autenticación...</p>
         </div>
       </div>

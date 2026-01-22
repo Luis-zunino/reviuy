@@ -3,7 +3,16 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 import type { LoadingProps } from './types';
 
-export const Loading: React.FC<LoadingProps> = ({
+/**
+ * Loader component for displaying loading states
+ * @param param {@link LoadingProps} - Props for the loading component
+ * @param message Optional loading message (default: 'Cargando...')
+ * @param className Optional additional CSS classes
+ * @param variant Optional variant of the loading component ('spinner', 'inline', 'overlay') (default: 'spinner')
+ * @param size Optional size of the loader ('sm', 'md', 'lg') (default: 'md')
+ * @returns Loader component
+ */
+export const Loader: React.FC<LoadingProps> = ({
   message = 'Cargando...',
   className,
   variant = 'spinner',
@@ -51,9 +60,3 @@ export const Loading: React.FC<LoadingProps> = ({
     </div>
   );
 };
-
-// Re-export skeleton components
-export { Skeleton } from './Skeleton';
-export { ReviewCardSkeleton } from './ReviewCardSkeleton';
-export { MapSkeleton } from './MapSkeleton';
-export { ListSkeleton } from './ListSkeleton';

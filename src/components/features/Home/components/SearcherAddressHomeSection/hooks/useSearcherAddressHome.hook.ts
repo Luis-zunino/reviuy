@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useState } from 'react';
 import { NominatimEntity } from '@/types';
 import { formSchema, FormSearcherAddressHome } from '../constants';
+import { getAddressOsmId } from '@/utils';
 
 export const useSearcherAddressHome = () => {
   const [open, setOpen] = useState(false);
@@ -38,7 +39,7 @@ export const useSearcherAddressHome = () => {
 
   const handleSelect = (address: { osm_id: string; osm_type: OsmType }) => {
     const { osm_id, osm_type } = address;
-    const osmId = osm_type.charAt(0).toUpperCase() + osm_id.toString();
+    const osmId = getAddressOsmId({ osm_type, osm_id });
 
     if (!osmId) return;
     push(PagesUrls.ADDRESS_DETAILS.replace(':osmId', osmId));

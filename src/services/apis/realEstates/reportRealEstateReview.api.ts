@@ -40,7 +40,7 @@ export const hasUserReportedRealEstateReview = async (reviewId: string): Promise
       return false;
     }
 
-    return data as boolean;
+    return data;
   } catch (error) {
     return !!error;
   }

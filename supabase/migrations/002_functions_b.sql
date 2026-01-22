@@ -1,10 +1,7 @@
 -- Función para votar reviews (con toggle)
-CREATE OR REPLACE FUNCTION vote_review (p_review_id uuid, p_vote_type text)
-    RETURNS json
-    LANGUAGE plpgsql
-    SECURITY DEFINER
-    SET search_path = public
-    AS $$
+create or replace function vote_review (p_review_id uuid, p_vote_type text) RETURNS json LANGUAGE plpgsql SECURITY DEFINER
+set
+  search_path = public as $$
 DECLARE
     v_user_id uuid;
     v_existing_vote text;
@@ -68,11 +65,13 @@ END;
 $$;
 
 -- Función para reportar reviews 
-CREATE
-    OR REPLACE FUNCTION report_review (p_review_id UUID, p_reason TEXT, p_description TEXT DEFAULT NULL)
-        RETURNS JSON
-        LANGUAGE plpgsql
-        SECURITY DEFINER SET search_path = public AS $$ DECLARE v_user_id UUID;
+create or replace function report_review (
+  p_review_id UUID,
+  p_reason TEXT,
+  p_description TEXT default null
+) RETURNS JSON LANGUAGE plpgsql SECURITY DEFINER
+set
+  search_path = public as $$ DECLARE v_user_id UUID;
 
 v_report_id UUID;
 
@@ -166,10 +165,9 @@ END;
 $$;
 
 -- Función para verificar si usuario ya reportóuna review 
-CREATE OR REPLACE FUNCTION has_user_reported_review (p_review_id UUID)
-        RETURNS BOOLEAN
-        LANGUAGE plpgsql
-        SECURITY DEFINER SET search_path = public AS $$ DECLARE v_user_id UUID;
+create or replace function has_user_reported_review (p_review_id UUID) RETURNS BOOLEAN LANGUAGE plpgsql SECURITY DEFINER
+set
+  search_path = public as $$ DECLARE v_user_id UUID;
 
 BEGIN
     v_user_id := auth.uid ();
@@ -196,18 +194,16 @@ $$;
 -- FUNCIONES PARA RESEÑAS DE INMOBILIARIAS 
 -- ============================================================================= 
 -- Limpiar funciones anteriores si existen 
+drop function IF exists public.update_real_estate_review_votes () CASCADE;
 
-DROP FUNCTION IF EXISTS public.update_real_estate_review_votes() CASCADE;
-DROP FUNCTION IF EXISTS public.update_real_estate_rating_from_reviews () CASCADE;
+drop function IF exists public.update_real_estate_rating_from_reviews () CASCADE;
 
-DROP FUNCTION IF EXISTS public.create_real_estate_review (UUID, TEXT, TEXT, INTEGER) CASCADE;
+drop function IF exists public.create_real_estate_review (UUID, TEXT, TEXT, INTEGER) CASCADE;
 
-DROP FUNCTION IF EXISTS public.report_real_estate_review (UUID, TEXT, TEXT) CASCADE;
+drop function IF exists public.report_real_estate_review (UUID, TEXT, TEXT) CASCADE;
 
 -- Función para actualizar contadores de votos de reseñas de inmobiliarias
-CREATE
-    OR REPLACE FUNCTION update_real_estate_review_votes ()
-        RETURNS TRIGGER AS $$ DECLARE v_review_id UUID;
+create or replace function update_real_estate_review_votes () RETURNS TRIGGER as $$ DECLARE v_review_id UUID;
 
         v_vote_type TEXT;
 
@@ -318,13 +314,10 @@ BEGIN
 
 END;
 
-$$
-LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql;
 
 -- Función para actualizar rating de inmobiliaria basado en sus reseñas
-CREATE
-    OR REPLACE FUNCTION update_real_estate_rating_from_reviews ()
-        RETURNS TRIGGER AS $$
+create or replace function update_real_estate_rating_from_reviews () RETURNS TRIGGER as $$
 BEGIN
     IF (TG_OP = 'INSERT' OR TG_OP = 'UPDATE' OR TG_OP = 'DELETE') THEN
         UPDATE
@@ -353,15 +346,17 @@ BEGIN
 
 END;
 
-$$
-LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql;
 
 -- Función para crear reseña de inmobiliaria
-CREATE
-    OR REPLACE FUNCTION create_real_estate_review (p_real_estate_id UUID, p_title TEXT, p_description TEXT, p_rating INTEGER)
-        RETURNS JSON
-        LANGUAGE plpgsql
-        SECURITY DEFINER SET search_path = public AS $$ DECLARE v_review_id UUID;
+create or replace function create_real_estate_review (
+  p_real_estate_id UUID,
+  p_title TEXT,
+  p_description TEXT,
+  p_rating INTEGER
+) RETURNS JSON LANGUAGE plpgsql SECURITY DEFINER
+set
+  search_path = public as $$ DECLARE v_review_id UUID;
 
         v_user_id UUID;
 
@@ -442,12 +437,9 @@ END;
 $$;
 
 -- Función para votar reseñas de inmobiliarias
-CREATE OR REPLACE FUNCTION vote_real_estate_review (p_real_estate_review_id uuid, p_vote_type text)
-    RETURNS json
-    LANGUAGE plpgsql
-    SECURITY DEFINER
-    SET search_path = public
-    AS $$
+create or replace function vote_real_estate_review (p_real_estate_review_id uuid, p_vote_type text) RETURNS json LANGUAGE plpgsql SECURITY DEFINER
+set
+  search_path = public as $$
 DECLARE
     v_user_id uuid;
     v_existing_vote text;
@@ -494,12 +486,13 @@ END;
 $$;
 
 -- Función para reportar reseñas de inmobiliarias
-CREATE OR REPLACE FUNCTION report_real_estate_review (p_real_estate_review_id uuid, p_reason text, p_description text DEFAULT NULL)
-    RETURNS json
-    LANGUAGE plpgsql
-    SECURITY DEFINER
-    SET search_path = public
-    AS $$
+create or replace function report_real_estate_review (
+  p_real_estate_review_id uuid,
+  p_reason text,
+  p_description text default null
+) RETURNS json LANGUAGE plpgsql SECURITY DEFINER
+set
+  search_path = public as $$
 DECLARE
     v_user_id uuid;
     v_report_id uuid;
@@ -558,11 +551,9 @@ $$;
 -- ============================================================================= 
 -- FUNCIÓN PARA VERIFICAR SI USUARIO YA REPORTÓUNA RESEÑA DE INMOBILIARIA 
 -- =============================================================================
-CREATE
-    OR REPLACE FUNCTION public.has_user_reported_real_estate_review (p_review_id UUID)
-        RETURNS BOOLEAN
-        LANGUAGE plpgsql
-        SECURITY DEFINER SET search_path = public AS $$ DECLARE v_user_id UUID;
+create or replace function public.has_user_reported_real_estate_review (p_review_id UUID) RETURNS BOOLEAN LANGUAGE plpgsql SECURITY DEFINER
+set
+  search_path = public as $$ DECLARE v_user_id UUID;
 
 BEGIN
     v_user_id := auth.uid ();
@@ -585,18 +576,16 @@ END;
 
 $$;
 
-GRANT EXECUTE ON FUNCTION public.has_user_reported_real_estate_review (UUID) TO authenticated;
+grant
+execute on FUNCTION public.has_user_reported_real_estate_review (UUID) to authenticated;
 
-DROP FUNCTION IF EXISTS public.sync_user_snapshot () CASCADE;
+drop function IF exists public.sync_user_snapshot () CASCADE;
 
-CREATE OR REPLACE FUNCTION public.sync_user_snapshot ()
-    RETURNS TRIGGER
-    AS $$
+create or replace function public.sync_user_snapshot () RETURNS TRIGGER as $$
 BEGIN
     NEW.user_id_snapshot := COALESCE(NEW.user_id_snapshot, NEW.user_id);
     RETURN NEW;
 END;
-$$
-LANGUAGE plpgsql
-SECURITY DEFINER SET search_path = public;
-
+$$ LANGUAGE plpgsql SECURITY DEFINER
+set
+  search_path = public;

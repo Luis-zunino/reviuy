@@ -30,6 +30,7 @@ export class TextValidator {
     // Agregar palabras personalizadas en español si es necesario
     this.filter.addWords(
       'puta',
+      'puto',
       'mierda',
       'carajo',
       'boludo',
@@ -38,7 +39,10 @@ export class TextValidator {
       'verga',
       'choto',
       'pija',
-      'sorete'
+      'sorete',
+      'boba',
+      'bobo',
+      'pelotuda'
       // Agregar más según necesites
     );
   }

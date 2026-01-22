@@ -16,7 +16,7 @@ export const useViewAddressReviews = () => {
     isError,
   } = useGetAddressInfo({ osmId });
   const {
-    data: reviewsData,
+    data: reviews,
     isLoading: isLoadingReviews,
     error: reviewsError,
     isError: isErrorReviews,
@@ -38,7 +38,7 @@ export const useViewAddressReviews = () => {
       return;
     }
 
-    const hasExistingReview = reviewsData?.some((review) => review.user_id === userId);
+    const hasExistingReview = reviews?.some((review) => review.user_id === userId);
 
     if (hasExistingReview) {
       toast.warning('Ya has reseñado esta propiedad', {
@@ -52,16 +52,15 @@ export const useViewAddressReviews = () => {
   };
 
   const averageRating =
-    reviewsData && reviewsData.length > 0
-      ? reviewsData.reduce((acc, review) => acc + (review.rating || 0), 0) / reviewsData.length
+    reviews && reviews.length > 0
+      ? reviews.reduce((acc, review) => acc + (review.rating || 0), 0) / reviews.length
       : 0;
 
   return {
     data: addressData?.[0],
-    reviews: reviewsData || [],
+    reviews,
     isLoading,
     isError: isError || isErrorReviews,
-    hasReviews: (reviewsData?.length || 0) > 0,
     handleCreateReview,
     averageRating,
   };
