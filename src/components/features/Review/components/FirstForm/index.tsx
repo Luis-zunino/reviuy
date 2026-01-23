@@ -68,8 +68,8 @@ export const FirstForm = (props: FirstFormProps) => {
         />
         {errors.title && <p className="text-red-500 text-sm">{errors.title.message}</p>}
       </div>
-      <div className="flex flex-col sm:flex-row gap-6 w-full">
-        <div className="flex flex-col lg:flex-row gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div className="space-y-2">
             <FormLabel htmlFor="property_type" label="Tipo de propiedad" isRequired />
             <Controller
@@ -85,13 +85,13 @@ export const FirstForm = (props: FirstFormProps) => {
                   defaultValue={field.value}
                   value={field.value}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue
                       placeholder="Selecciona el tipo de propiedad"
                       defaultValue={field.value}
                     />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="w-full">
                     <SelectItem value={PropertyType.APARTMENT}>Apartamento</SelectItem>
                     <SelectItem value={PropertyType.HOUSE}>Casa</SelectItem>
                     <SelectItem value={PropertyType.ROOM}>Habitación</SelectItem>
@@ -117,10 +117,9 @@ export const FirstForm = (props: FirstFormProps) => {
             )}
           </div>
         </div>
-        <div className="flex flex-col lg:flex-row gap-6 justify-between">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 justify-between">
           <div className="space-y-2">
             <FormLabel label="Calificación general" isRequired />
-
             <Controller
               name="rating"
               control={control}
@@ -129,7 +128,12 @@ export const FirstForm = (props: FirstFormProps) => {
                 min: { value: 1, message: 'Selecciona al menos 1 estrella' },
               }}
               render={({ field }) => (
-                <StarRatingInput value={field.value || 0} onChange={field.onChange} required />
+                <StarRatingInput
+                  value={field.value || 0}
+                  onChange={field.onChange}
+                  required
+                  className="flex-row gap-6 items-center"
+                />
               )}
             />
             {errors.rating && <p className="text-red-500 text-sm">{errors.rating.message}</p>}
@@ -145,7 +149,12 @@ export const FirstForm = (props: FirstFormProps) => {
               }}
               control={control}
               render={({ field }) => (
-                <StarRatingInput value={field.value || 0} onChange={field.onChange} required />
+                <StarRatingInput
+                  value={field.value || 0}
+                  onChange={field.onChange}
+                  required
+                  className="flex-row gap-6 items-center"
+                />
               )}
             />
           </div>

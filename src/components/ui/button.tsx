@@ -15,7 +15,7 @@ const buttonVariants = cva(
         destructive:
           'bg-reviuy-error-500 text-white hover:bg-reviuy-error-600 focus:ring-reviuy-error-500/20 shadow-sm hover:shadow-md transform hover:-translate-y-0.5',
         outline:
-          'bg-white text-reviuy-gray-700 border-2 border-reviuy-gray-200 hover:border-reviuy-primary-300 hover:bg-reviuy-primary-50 focus:ring-reviuy-primary-500/20 shadow-sm hover:shadow-md transform hover:-translate-y-0.5',
+          'bg-white text-reviuy-gray-700 border-2 border-reviuy-gray-200 hover:border-reviuy-primary-300 hover:bg-reviuy-primary-50 focus:ring-reviuy-primary-500/20 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 hover:cursor-pointer',
         secondary:
           'bg-reviuy-secondary-200 text-white hover:bg-reviuy-secondary-500 focus:ring-reviuy-secondary-500/20 shadow-sm hover:shadow-md transform hover:-translate-y-0.5',
         success:
@@ -23,18 +23,18 @@ const buttonVariants = cva(
         warning:
           'bg-reviuy-warning-500 text-white hover:bg-reviuy-warning-600 focus:ring-reviuy-warning-500/20 shadow-sm hover:shadow-md transform hover:-translate-y-0.5',
         ghost:
-          'bg-transparent text-reviuy-gray-700 hover:bg-reviuy-gray-100 focus:ring-reviuy-gray-500/20',
-        link: 'text-reviuy-primary-600 underline-offset-4 hover:underline hover:text-reviuy-primary-700',
+          'bg-transparent text-reviuy-gray-700 hover:bg-reviuy-gray-100 focus:ring-reviuy-gray-500/20 hover:cursor-pointer',
+        link: 'text-reviuy-primary-600 underline-offset-4 hover:underline hover:text-reviuy-primary-700  hover:cursor-pointer',
         // Variantes específicas de la plataforma
-        like: 'bg-blue-50 text-blue-700 border-1 border-blue-50 hover:border-blue-400 hover:bg-blue-100 hover:text-blue-600 focus:ring-blue-500/20 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 data-[active=true]:bg-blue-100 data-[active=true]:border-blue-500 data-[active=true]:text-blue-600 data-[active=true]:[&_svg]:fill-current',
+        like: 'bg-blue-50 text-blue-700 border-1 border-blue-50 hover:border-blue-400 hover:bg-blue-100 hover:text-blue-600 focus:ring-blue-500/20 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 data-[active=true]:bg-blue-100 data-[active=true]:border-blue-500 data-[active=true]:text-blue-600 data-[active=true]:[&_svg]:fill-current hover:cursor-pointer',
         favorite:
-          'bg-red-50 text-red-700 border-1 border-red-50 hover:border-red-400 hover:bg-red-100 hover:text-red-600 focus:ring-red-500/20 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 data-[active=true]:bg-red-100 data-[active=true]:border-red-500 data-[active=true]:text-red-600 data-[active=true]:[&_svg]:fill-current',
+          'bg-red-50 text-red-700 border-1 border-red-50 hover:border-red-400 hover:bg-red-100 hover:text-red-600 focus:ring-red-500/20 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 data-[active=true]:bg-red-100 data-[active=true]:border-red-500 data-[active=true]:text-red-600 data-[active=true]:[&_svg]:fill-current hover:cursor-pointer',
         share:
-          'bg-violet-50 text-violet-700 border-1 border-violet-50 hover:border-violet-400 hover:bg-violet-100 hover:text-violet-600 focus:ring-violet-500/20 shadow-sm hover:shadow-md transform hover:-translate-y-0.5',
+          'bg-violet-50 text-violet-700 border-1 border-violet-50 hover:border-violet-400 hover:bg-violet-100 hover:text-violet-600 focus:ring-violet-500/20 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 hover:cursor-pointer',
         report:
-          'bg-yellow-50 text-yellow-700 border-1 border-yellow-50 hover:border-yellow-400 hover:bg-yellow-100 hover:text-yellow-600 focus:ring-yellow-500/20 shadow-sm hover:shadow-md transform hover:-translate-y-0.5',
+          'bg-yellow-50 text-yellow-700 border-1 border-yellow-50 hover:border-yellow-400 hover:bg-yellow-100 hover:text-yellow-600 focus:ring-yellow-500/20 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 hover:cursor-pointer',
         seeMore:
-          'bg-green-50 text-green-700 border-2 border-green-50 hover:bg-green-100 hover:border-green-400 focus:ring-green-500/20 shadow-sm hover:shadow-md transform hover:-translate-y-0.5',
+          'bg-green-50 text-green-700 border-1 border-green-50 hover:bg-green-100 hover:border-green-400 focus:ring-green-500/20 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 hover:cursor-pointer',
       },
       size: {
         xs: 'h-8 px-3 py-1.5 text-xs rounded-lg gap-1.5',

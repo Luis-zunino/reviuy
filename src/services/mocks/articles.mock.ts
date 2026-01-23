@@ -659,8 +659,8 @@ export const articles: Article[] = [
       ],
       // Red Flags del Propietario o Agente
       [
-        { type: ContentType.H2, text: '🚩 Red Flags del Propietario o Agente' },
-        { type: ContentType.H3, text: '1. Presión Excesiva para Firmar Rápidamente' },
+        { type: ContentType.H2, text: '🚩 Red Flags del propietario o agente' },
+        { type: ContentType.H3, text: '1. Presión excesiva para firmar rápidamente' },
         { type: ContentType.P, text: 'Señales de alerta:' },
         {
           type: ContentType.UL,
@@ -682,7 +682,7 @@ export const articles: Article[] = [
           type: ContentType.P,
           text: 'Qué hacer: Tómate el tiempo necesario. Si alguien no respeta tu necesidad de analizar, es mejor buscar otra opción.',
         },
-        { type: ContentType.H3, text: '2. Se Niega a Mostrarte la Propiedad en Persona' },
+        { type: ContentType.H3, text: '2. Se niega a mostrarte la propiedad en persona' },
         { type: ContentType.P, text: 'Señales de alerta:' },
         {
           type: ContentType.UL,
@@ -727,7 +727,7 @@ export const articles: Article[] = [
           type: ContentType.P,
           text: 'Qué hacer: Usa solo métodos verificables: transferencias bancarias oficiales, cheques, o plataformas de pago con protección al comprador. SIEMPRE pide recibos.',
         },
-        { type: ContentType.H3, text: '4. Información Inconsistente o Evasiva' },
+        { type: ContentType.H3, text: '4. Información inconsistente o evasiva' },
         { type: ContentType.P, text: 'Señales de alerta:' },
         {
           type: ContentType.UL,
@@ -774,8 +774,8 @@ export const articles: Article[] = [
       ],
       // Red Flags de la Propiedad
       [
-        { type: ContentType.H2, text: '🚩 Red Flags de la Propiedad' },
-        { type: ContentType.H3, text: '6. Precio Sospechosamente Bajo' },
+        { type: ContentType.H2, text: '🚩 Red Flags de la propiedad' },
+        { type: ContentType.H3, text: '6. Precio sospechosamente bajo' },
         { type: ContentType.P, text: 'Señales de alerta:' },
         {
           type: ContentType.UL,

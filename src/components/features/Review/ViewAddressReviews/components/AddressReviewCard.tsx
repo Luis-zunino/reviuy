@@ -24,28 +24,22 @@ export const AddressReviewCard = ({ review }: AddressReviewCardProps) => {
 
   return (
     <Card className="h-72 overflow-hidden hover:shadow-md transition-shadow duration-200 flex flex-col">
-      <div className="px-4 py-2 bg-gradient-to-r from-background to-muted/20 flex sm:flex-row items-center gap-3 justify-between flex-shrink-0">
-        <Badge
-          variant={recommended ? 'default' : 'destructive'}
-          className="flex items-center gap-1.5 w-fit px-3 py-1 text-xs font-semibold"
-        >
-          {recommended ? (
-            <>
-              <ThumbsUp className="h-3 w-3" />
-              LO RECOMIENDO
-            </>
-          ) : (
-            <>
-              <ThumbsDown className="h-3 w-3" />
-              NO LO RECOMIENDO
-            </>
-          )}
-        </Badge>
-        <div className="flex items-center gap-1">
-          <Calendar className="h-3 w-3" />
-          <span className="text-xs text-muted-foreground">Hace {daysSinceCreated}d</span>
-        </div>
-      </div>
+      <Badge
+        variant={recommended ? 'default' : 'destructive'}
+        className="flex items-center gap-1.5 w-fit text-xs font-semibold px-4 mx-4 py-2 shrink-0"
+      >
+        {recommended ? (
+          <>
+            <ThumbsUp className="h-3 w-3" />
+            LO RECOMIENDO
+          </>
+        ) : (
+          <>
+            <ThumbsDown className="h-3 w-3" />
+            NO LO RECOMIENDO
+          </>
+        )}
+      </Badge>
 
       <div className="p-4 pb-0 flex flex-col gap-3 flex-1 min-h-0">
         <div className="flex-1 min-w-0 w-full overflow-auto">
@@ -57,8 +51,12 @@ export const AddressReviewCard = ({ review }: AddressReviewCardProps) => {
           </p>
         </div>
         <StarRatingDisplay rating={review.rating} />
-        <Separator className="flex-shrink-0" />
-        <div className="flex justify-end w-full flex-shrink-0">
+        <Separator className="shrink-0" />
+        <div className="flex justify-between align-middle w-full shrink-0">
+          <div className="flex items-center gap-1">
+            <Calendar className="h-3 w-3" />
+            <span className="text-xs text-muted-foreground">Hace {daysSinceCreated}d</span>
+          </div>
           <Button onClick={handleViewMore} variant="seeMore" size="sm">
             Ver más
           </Button>

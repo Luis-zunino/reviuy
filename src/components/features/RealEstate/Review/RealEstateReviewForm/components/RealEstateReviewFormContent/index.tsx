@@ -12,33 +12,34 @@ export const RealEstateReviewFormContent = <RR extends RealEstateReviewUpdate>(
   props: RealEstateReviewFormContentProps<RR>
 ) => {
   const { form, isReadOnly } = props;
+  const {
+    register,
+    watch,
+    formState: { errors },
+  } = form;
   return (
     <>
       <div>
         <FormLabel htmlFor="title" label="Breve descripción" isRequired={!isReadOnly} />
-        <Controller
-          name={'title' as Path<RR>}
-          control={form.control}
-          rules={{
+        <Input
+          {...register('title' as Path<RR>, {
             required: 'Este campo es necesario',
             validate: (value) => {
               const validation = validateText(String(value) || '');
               return validation.isValid || validation.message;
             },
-          }}
-          render={({ field }) => (
-            <Input
-              {...field}
-              value={field.value as string}
-              id="title"
-              name="title"
-              placeholder="Ej: Excelente atención y profesionalismo"
-              required
-              className="mt-1"
-              disabled={isReadOnly}
-            />
-          )}
+          })}
+          value={watch('title' as Path<RR>) || ''}
+          id="title"
+          name="title"
+          placeholder="Ej: Excelente atención y profesionalismo"
+          required
+          className="mt-1"
+          disabled={isReadOnly}
         />
+        {errors.title && (
+          <p className="text-sm text-red-500 mt-1">{errors?.title?.message as string}</p>
+        )}
       </div>
 
       <div>
@@ -47,29 +48,26 @@ export const RealEstateReviewFormContent = <RR extends RealEstateReviewUpdate>(
           label="Descripcion de la reseña"
           isRequired={!isReadOnly}
         />
-        <Controller
-          name={'description' as Path<RR>}
-          control={form.control}
-          rules={{
+
+        <Textarea
+          {...register('description' as Path<RR>, {
             required: 'La descripción es obligatoria',
             validate: (value) => {
               const validation = validateText(String(value) || '');
               return validation.isValid || validation.message;
             },
-          }}
-          render={({ field }) => (
-            <Textarea
-              {...field}
-              value={field.value as string}
-              id="description"
-              name="description"
-              placeholder="Ej: Excelente atención y profesionalismo"
-              required
-              className="mt-1"
-              disabled={isReadOnly}
-            />
-          )}
+          })}
+          value={watch('description' as Path<RR>) || ''}
+          id="description"
+          name="description"
+          placeholder="Ej: Excelente atención y profesionalismo"
+          required
+          className="mt-1"
+          disabled={isReadOnly}
         />
+        {errors.description && (
+          <p className="text-sm text-red-500 mt-1">{errors?.description?.message as string}</p>
+        )}
       </div>
       <div className="space-y-2">
         <FormLabel label="Calificación general" isRequired={!isReadOnly} />
@@ -93,6 +91,9 @@ export const RealEstateReviewFormContent = <RR extends RealEstateReviewUpdate>(
             )
           }
         />
+        {errors.rating && (
+          <p className="text-sm text-red-500 mt-1">{errors.rating.message as string}</p>
+        )}
       </div>
     </>
   );

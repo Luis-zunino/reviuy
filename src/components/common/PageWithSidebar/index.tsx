@@ -7,7 +7,24 @@ import { useAuthContext } from '@/components/providers/AuthProvider';
 import { Loader } from '../Loaders';
 import { ErrorPage, NoAuthenticated } from './components';
 import { BackButton } from '../BackButton';
-
+/**
+ * @description Page layout component with a sidebar and main content area.
+ * @param param {@link PageWithSidebarProps}
+ * @param title Title of the page
+ * @param description Description of the page
+ * @param sidebar Sidebar content
+ * @param children Main content
+ * @param headerClassName Additional classes for the header
+ * @param sidebarClassName Additional classes for the sidebar
+ * @param contentClassName Additional classes for the main content
+ * @param isLoading Loading state
+ * @param isError Error state
+ * @param errorTitle Title to show in case of error
+ * @param errorSubTitle Subtitle to show in case of error
+ * @param authIsRequired Whether authentication is required to view the page
+ *
+ * @returns A page layout with a sidebar and main content area.
+ */
 export const PageWithSidebar: React.FC<PageWithSidebarProps> = ({
   title,
   description,
@@ -48,7 +65,7 @@ export const PageWithSidebar: React.FC<PageWithSidebarProps> = ({
           </div>
         </div>
       </div>
-      <div className="md:max-w-7xl mx-auto py-12 px-4 md:px-0">
+      <div className="md:max-w-7xl mx-auto py-12 px-4 xl:px-0">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 w-full">
           {sidebar ? (
             <div className="lg:col-span-1">

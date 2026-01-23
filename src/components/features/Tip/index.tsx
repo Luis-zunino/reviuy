@@ -2,9 +2,7 @@
 
 import React from 'react';
 import { useTip } from './hooks';
-import { Button } from '@/components/ui/button';
-import { Share } from 'lucide-react';
-import { Header } from '@/components/common';
+import { PageWithSidebar } from '@/components/common';
 import type { ContentBlock, ContentSection } from '@/types';
 
 const renderContentBlock = (block: ContentBlock, index: number): React.ReactNode => {
@@ -102,22 +100,14 @@ export const TipComponent = () => {
   const { tip } = useTip();
 
   return (
-    <div className="max-w-5xl mx-auto my-20 rounded-2xl p-8 bg-white">
-      <div className="bg-white">
-        <div className="flex flex-col sm:flex-row justify-between items-center mb-8 p-4 md:p-10">
-          <Header title={tip.title} />
-          <Button variant="share" size="sm" icon={Share}>
-            Compartir
-          </Button>
-        </div>
-        <div className="prose prose-lg max-w-none px-4 md:px-10">
-          {Array.isArray(tip.content) ? (
-            tip.content.map((section, index) => renderContentSection(section, index))
-          ) : (
-            <div className="whitespace-pre-wrap">{tip.content}</div>
-          )}
-        </div>
+    <PageWithSidebar title={tip.title} description="">
+      <div className="prose prose-lg max-w-none px-4 md:px-10">
+        {Array.isArray(tip.content) ? (
+          tip.content.map((section, index) => renderContentSection(section, index))
+        ) : (
+          <div className="whitespace-pre-wrap">{tip.content}</div>
+        )}
       </div>
-    </div>
+    </PageWithSidebar>
   );
 };

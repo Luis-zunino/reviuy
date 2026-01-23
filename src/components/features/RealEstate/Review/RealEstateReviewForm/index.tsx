@@ -1,20 +1,19 @@
 'use client';
 
 import {
-  BackButton,
   DeleteRealEstateReviewButton,
-  Header,
+  PageWithSidebar,
   RealEstateReviewVoteButtons,
   ReportRealEstateReviewButton,
 } from '@/components/common';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import type { RealEstateReviewUpdate } from '@/types';
-import { Building2, Save } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { Save } from 'lucide-react';
 import React from 'react';
 import { RealEstateReviewFormContent } from './components/RealEstateReviewFormContent';
 import type { RealEstateReviewFormProps } from './types';
+import { Form } from '@/components/ui/form';
 
 export const RealEstateReviewForm = <RR extends RealEstateReviewUpdate>(
   props: RealEstateReviewFormProps<RR>
@@ -31,8 +30,6 @@ export const RealEstateReviewForm = <RR extends RealEstateReviewUpdate>(
     review,
     refetchRealEstateReview,
   } = props;
-
-  const router = useRouter();
 
   if (isLoading) {
     return (
@@ -56,52 +53,39 @@ export const RealEstateReviewForm = <RR extends RealEstateReviewUpdate>(
     );
   }
 
-  if (error) {
-    return (
-      <div className="container mx-auto p-6 ">
-        <BackButton />
-        <Card className="mt-6">
-          <CardContent className="p-6 text-center">
-            <Building2 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600 mb-4">No se pudo encontrar la inmobiliaria</p>
-            <Button onClick={() => router.back()} variant="outline">
-              Volver atrás
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
   return (
-    <div className="container mx-auto p-6 ">
-      <Header title={title} subtitle={subtitle} />
+    <PageWithSidebar
+      title={title}
+      description={subtitle ?? ''}
+      errorTitle="No se pudo encontrar la inmobiliaria"
+      isError={!!error}
+    >
       <div className="mt-6 space-y-6">
-        <Card>
-          <CardContent>
-            <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-              <RealEstateReviewFormContent form={form} isReadOnly={isReadOnly} />
-              <div className="flex gap-4 pt-4 justify-end">
-                {review && isReadOnly ? (
-                  <RealEstateReviewVoteButtons
-                    reviewId={review.id}
-                    likes={review.likes}
-                    dislikes={review.dislikes}
-                    refetchRealEstateReview={refetchRealEstateReview}
-                  />
-                ) : null}
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+            <RealEstateReviewFormContent form={form} isReadOnly={isReadOnly} />
+            <div className="flex gap-4 pt-4 justify-end">
+              {review && isReadOnly ? (
+                <RealEstateReviewVoteButtons
+                  reviewId={review.id}
+                  likes={review.likes}
+                  dislikes={review.dislikes}
+                  refetchRealEstateReview={refetchRealEstateReview}
+                />
+              ) : null}
+              {review && isReadOnly ? (
                 <ReportRealEstateReviewButton review={review} showText />
-                {review ? <DeleteRealEstateReviewButton review={review} showText /> : null}
-                {!isReadOnly ? (
-                  <Button type="submit" disabled={isSubmitting} icon={Save}>
-                    {isSubmitting ? 'Guardando...' : 'Publicar reseña'}
-                  </Button>
-                ) : null}
-              </div>
-            </form>
-          </CardContent>
-        </Card>
+              ) : null}
+              {review ? <DeleteRealEstateReviewButton review={review} showText /> : null}
+              {!isReadOnly ? (
+                <Button type="submit" disabled={isSubmitting} icon={Save} size="sm">
+                  {isSubmitting ? 'Guardando...' : 'Publicar reseña'}
+                </Button>
+              ) : null}
+            </div>
+          </form>
+        </Form>
       </div>
-    </div>
+    </PageWithSidebar>
   );
 };

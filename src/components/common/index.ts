@@ -17,7 +17,6 @@ export { FavoriteRealEstateButton } from './FavoriteRealEstateButton';
 export { FavoriteReviewButton } from './FavoriteReviewButton';
 export { EditReviewButton } from './EditReviewButton';
 export { ReportReviewButton } from './ReportReviewButton';
-export { Header } from './Header';
 export { ReviewLikesButtons } from './ReviewLikesButtons';
 export { PageWithSidebar } from './PageWithSidebar';
 export * from './PageWithSidebar/components';

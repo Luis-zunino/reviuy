@@ -1,7 +1,7 @@
 'use client';
 
 import { PageWithSidebar, StarRatingDisplay } from '@/components/common';
-import { Share, Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { useViewAddressReviews } from './hooks';
 import { AddressReviewCard } from './components/AddressReviewCard';
 import { Button } from '@/components/ui/button';
@@ -19,28 +19,23 @@ export const ViewAddressReviews = () => {
       description="Lee las reseñas de otros usuarios sobre esta dirección o comparte tu experiencia"
     >
       <div className="lg:px-14 lg:pb:-14 bg-white pb-4 mb-11 lg:mb-0">
-        <div className="flex justify-between">
-          <div className="flex flex-col gap-2 mb-7">
-            <h1 className="text-2xl lg:text-3xl  font-secondary">
-              {address?.road ? `${address.road},` : ''}{' '}
-              {address?.house_number ? `${address.house_number},` : ''}{' '}
-              {address?.city ? address.city : ''}
-            </h1>
-            <p className="text-sm tracking-widest">
-              {address?.suburb ? `${address?.suburb},` : ''} {address?.postcode}
-            </p>
-            {reviews?.length && (
-              <div className="flex items-center gap-2 mt-2">
-                <StarRatingDisplay rating={averageRating} />
-                <span className="text-sm text-gray-600">
-                  ({reviews.length} {reviews.length === 1 ? 'reseña' : 'reseñas'})
-                </span>
-              </div>
-            )}
-          </div>
-          <Button variant="share" icon={Share}>
-            Compartir
-          </Button>
+        <div className="flex flex-col gap-2 mb-7">
+          <h1 className="text-2xl lg:text-3xl  font-secondary">
+            {address?.road ? `${address.road},` : ''}{' '}
+            {address?.house_number ? `${address.house_number},` : ''}{' '}
+            {address?.city ? address.city : ''}
+          </h1>
+          <p className="text-sm tracking-widest">
+            {address?.suburb ? `${address?.suburb},` : ''} {address?.postcode}
+          </p>
+          {reviews?.length && (
+            <div className="flex items-center gap-2 mt-2">
+              <StarRatingDisplay rating={averageRating} />
+              <span className="text-sm text-gray-600">
+                ({reviews.length} {reviews.length === 1 ? 'reseña' : 'reseñas'})
+              </span>
+            </div>
+          )}
         </div>
         <div>
           <div className="h-72 w-full mb-10">
@@ -59,7 +54,7 @@ export const ViewAddressReviews = () => {
           </div>
 
           {reviews?.length ? (
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
               {reviews.map((review) => (
                 <AddressReviewCard key={review.id} review={review} />
               ))}

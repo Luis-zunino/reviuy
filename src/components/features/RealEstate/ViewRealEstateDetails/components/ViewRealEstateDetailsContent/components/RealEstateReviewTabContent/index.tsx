@@ -50,7 +50,7 @@ export const RealEstateReviewTabContent = (props: RealEstateReviewTabContentProp
                           <p className="text-gray-600 mb-2 truncate">{rer.description}</p>
                           <StarRatingDisplay rating={rer.rating} />
                         </div>
-                        <div className="flex flex-col gap-2  items-center ml-auto">
+                        <div className="grid grid-cols-1 gap-2 ml-auto">
                           <Button
                             variant="seeMore"
                             onClick={() =>
@@ -61,6 +61,7 @@ export const RealEstateReviewTabContent = (props: RealEstateReviewTabContentProp
                                 ).replace(':reviewId', rer.id)
                               )
                             }
+                            size="sm"
                             icon={Eye}
                           >
                             <span className="hidden md:inline">Ver</span>
@@ -77,6 +78,7 @@ export const RealEstateReviewTabContent = (props: RealEstateReviewTabContentProp
                                 )
                               }
                               icon={Pencil}
+                              size="sm"
                             >
                               <span className="hidden md:inline">Editar</span>
                             </Button>

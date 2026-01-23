@@ -51,6 +51,7 @@ export const RealEstateUserExperienceTabContent = (
                           router.push(PagesUrls.REVIEW_DETAILS.replace(':id', review.id))
                         }
                         icon={Eye}
+                        size="sm"
                       >
                         <span className="hidden md:inline">Ver</span>
                       </Button>

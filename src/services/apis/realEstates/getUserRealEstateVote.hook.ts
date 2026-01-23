@@ -14,6 +14,6 @@ export const useGetUserRealEstateVote = ({
   return useQuery({
     queryKey: [REAL_ESTATE_REVIEWS.getUserRealEstateVote, realEstateId, userId],
     queryFn: () => getUserRealEstateVote({ realEstateId, userId: userId || '' }),
-    enabled: Boolean(userId) && Boolean(realEstateId),
+    enabled: Boolean(userId?.length) && Boolean(realEstateId.length),
   });
 };
