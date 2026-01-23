@@ -19,7 +19,7 @@ export const SearcherAddressHomeSection = () => {
           form={form}
           onSelect={onSelect}
           placeholder="Busca una direccion..."
-          className={{ container: 'w-1/2 mx-auto' }}
+          className={{ container: 'w-3/4 md:w-1/2 mx-auto' }}
         />
       </Form>
     </div>
