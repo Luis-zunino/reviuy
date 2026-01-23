@@ -1,15 +1,6 @@
 import { supabaseClient } from '@/lib/supabase-client';
-import type { ReviewInsert, ReviewRoom } from '@/types';
-import type { CreateReviewResponse } from './types';
-
-export interface CreateReviewData extends ReviewInsert {
-  review_rooms?: Omit<ReviewRoom, 'id' | 'review_id' | 'created_at' | 'updated_at'>[];
-}
-
-export interface CreateReviewRequest {
-  data: CreateReviewData;
-  userId?: string | null;
-}
+import type { ReviewRoom } from '@/types';
+import type { CreateReviewRequest, CreateReviewResponse } from './types';
 
 export const createReview = async ({
   data,
@@ -59,6 +50,7 @@ export const createReview = async ({
 
       if (roomsError) {
         console.error('Error insertando rooms:', roomsError);
+        throw new Error('Error insertando rooms:', roomsError);
       } else {
         insertedRooms = roomsData || [];
       }

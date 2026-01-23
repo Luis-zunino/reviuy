@@ -9,10 +9,8 @@ import type { ReviewFormProps } from './types';
 export const ReviewForm = (props: ReviewFormProps) => {
   const {
     isLoading,
-    errors,
     fields,
     replace,
-    control,
     form,
     handleSubmit,
     onSubmit,
@@ -42,8 +40,6 @@ export const ReviewForm = (props: ReviewFormProps) => {
         formsChildren={[
           <FirstForm
             key="firstForm"
-            control={control}
-            errors={errors}
             form={form}
             open={open}
             setOpen={setOpen}
@@ -53,7 +49,7 @@ export const ReviewForm = (props: ReviewFormProps) => {
           />,
           <SecondForm
             key="secondForm"
-            control={control}
+            control={form.control}
             fields={fields}
             replace={replace}
             append={append}
@@ -61,20 +57,17 @@ export const ReviewForm = (props: ReviewFormProps) => {
           />,
           <ThirdForm
             key="thirdForm"
-            control={control}
-            errors={errors}
             form={form}
             open={openRealEstateModal}
             setOpen={setOpenRealEstateModal}
             handleClear={handleClearRealEstate}
             onSelect={onSelectRealEstate}
-            placeholder="Busca el nombre de una Inmobiliaria"
-            label="Inmobiliaria"
             queryValue={queryValueRealEstate}
           />,
         ]}
         form={form}
         isSubmitDisabled={isSubmitDisabled}
+        stepLabels={['General', 'Características', 'Inmobiliaria']}
       />
     </PageWithSidebar>
   );

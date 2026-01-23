@@ -7,7 +7,7 @@ export const FormLabel = (props: FormLabelProps) => {
   return (
     <Label htmlFor={htmlFor} className={className}>
       {label}
-      {isRequired ? <span className="text-red-500 ml-1">*</span> : null}
+      {isRequired ? <span className="text-red-400">*</span> : null}
     </Label>
   );
 };

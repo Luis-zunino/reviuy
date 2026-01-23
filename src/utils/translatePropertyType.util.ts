@@ -11,6 +11,6 @@ export const translatePropertyType = (value?: string | null) => {
     case PropertyType.ROOM:
       return 'Habitación';
     default:
-      return value.charAt(0).toUpperCase() + value.slice(1);
+      return '----';
   }
 };

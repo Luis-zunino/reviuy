@@ -15,30 +15,22 @@ DECLARE
     v_user_id UUID;
     v_window_start TIMESTAMPTZ;
     v_current_count INTEGER;
-    v_cutoff_time TIMESTAMPTZ;
-BEGIN
+ BEGIN
     v_user_id := auth.uid();
-
-    -- Si NO hay usuario autenticado, permitir (rate LIMIT por IP se maneja en edge/middleware)
-    IF v_user_id IS NULL THEN
-        RETURN TRUE;
-    END IF;
 
     -- Calcular ventana de tiempo (redondear a minuto completo)
     v_window_start := date_trunc('minute', NOW());
-    v_cutoff_time := v_window_start - INTERVAL '1 minute' * p_window_minutes;
-
+ 
     -- Query optimizada: usar índice compuesto y evitar SUM()
     -- Solo contar en la ventana actual (reduce filas escaneadas)
     SELECT
-        COALESCE(SUM(request_count), 0) INTO v_current_count
+        COALESCE(request_count, 0) INTO v_current_count
     FROM
         public.rate_limits
     WHERE
         user_id = v_user_id
         AND endpoint = p_endpoint
-        AND window_start >= v_cutoff_time
-        AND window_start <= v_window_start;
+        AND window_start = v_window_start;
 
     -- Verificar límite
     IF v_current_count >= p_max_requests THEN
@@ -694,7 +686,14 @@ VALUES
         NULL
     );
 
-EXCEPTION
+EXCEPTION 
+  WHEN unique_violation THEN
+    RETURN (
+      false,
+      NULL,
+      NULL,
+      'Ya has publicado una reseña para esta propiedad.'
+    );
     WHEN OTHERS THEN
         PERFORM log_security_event(
             'create_review',

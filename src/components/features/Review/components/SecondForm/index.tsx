@@ -30,99 +30,132 @@ export const SecondForm = (props: SecondFormProps) => {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="space-y-3">
-        <FormLabel label="¿Qué tan agradable es la propiedad en invierno?" />
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div className="space-y-3">
+          <FormLabel
+            htmlFor="winter-comfort"
+            label="¿Qué tan agradable es la propiedad en invierno?"
+          />
 
-        <Controller
-          name="winter_comfort"
-          control={control}
-          render={({ field }) => (
-            <RadioGroup
-              required
-              value={field.value || ''}
-              onValueChange={field.onChange}
-              className="flex flex-wrap gap-6"
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="hot" id="winter-hot" />
-                <FormLabel htmlFor="winter-hot" label="Caluroso" />
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="comfortable" id="winter-comfortable" />
-                <FormLabel htmlFor="winter-comfortable" label="Cómodo" />
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="cold" id="winter-cold" />
-                <FormLabel htmlFor="winter-cold" label="Frío" />
-              </div>
-            </RadioGroup>
-          )}
-        />
-      </div>
-      <div className="space-y-3">
-        <FormLabel label="¿Qué tan agradable es la propiedad en verano?" />
-        <Controller
-          name="summer_comfort"
-          control={control}
-          render={({ field }) => (
-            <RadioGroup
-              value={field.value || ''}
-              onValueChange={field.onChange}
-              className="flex flex-wrap gap-6"
-              required
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="hot" id="summer-hot" />
-                <FormLabel htmlFor="summer-hot" label="Caluroso" />
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="comfortable" id="summer-comfortable" />
-                <FormLabel htmlFor="summer-comfortable" label="Cómodo" />
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="cold" id="summer-cold" />
-                <FormLabel htmlFor="summer-cold" label="Frío" />
-              </div>
-            </RadioGroup>
-          )}
-        />
-      </div>
+          <Controller
+            name="winter_comfort"
+            control={control}
+            render={({ field }) => (
+              <RadioGroup
+                required
+                value={field.value || ''}
+                onValueChange={field.onChange}
+                className="flex flex-wrap gap-6"
+                id="winter-comfort"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="cold" id="winter-cold" />
+                  <FormLabel htmlFor="winter-cold" label="Frío" className="text-muted-foreground" />
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="comfortable" id="winter-comfortable" />
+                  <FormLabel
+                    htmlFor="winter-comfortable"
+                    label="Cómodo"
+                    className="text-muted-foreground"
+                  />
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="hot" id="winter-hot" />
+                  <FormLabel
+                    htmlFor="winter-hot"
+                    label="Caluroso"
+                    className="text-muted-foreground"
+                  />
+                </div>
+              </RadioGroup>
+            )}
+          />
+        </div>
+        <div className="space-y-3">
+          <FormLabel label="¿Qué tan agradable es la propiedad en verano?" />
+          <Controller
+            name="summer_comfort"
+            control={control}
+            render={({ field }) => (
+              <RadioGroup
+                value={field.value || ''}
+                onValueChange={field.onChange}
+                className="flex flex-wrap gap-6"
+                required
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="cold" id="summer-cold" />
+                  <FormLabel htmlFor="summer-cold" label="Frío" className="text-muted-foreground" />
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="comfortable" id="summer-comfortable" />
+                  <FormLabel
+                    htmlFor="summer-comfortable"
+                    label="Cómodo"
+                    className="text-muted-foreground"
+                  />
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="hot" id="summer-hot" />
+                  <FormLabel
+                    htmlFor="summer-hot"
+                    label="Caluroso"
+                    className="text-muted-foreground"
+                  />
+                </div>
+              </RadioGroup>
+            )}
+          />
+        </div>
 
-      <div className="space-y-3">
-        <FormLabel label="Nivel de humedad" />
-        <Controller
-          name="humidity"
-          control={control}
-          render={({ field }) => (
-            <RadioGroup
-              required
-              value={field.value || ''}
-              onValueChange={field.onChange}
-              className="flex flex-wrap gap-6"
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="high" id="humidity-high" />
-                <FormLabel htmlFor="humidity-high" label="Alta" />
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="normal" id="humidity-normal" />
-                <FormLabel htmlFor="humidity-normal" label="Normal" />
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="low" id="humidity-low" />
-                <FormLabel htmlFor="humidity-low" label="Baja" />
-              </div>
-            </RadioGroup>
-          )}
-        />
+        <div className="space-y-3">
+          <FormLabel label="Nivel de humedad" />
+          <Controller
+            name="humidity"
+            control={control}
+            render={({ field }) => (
+              <RadioGroup
+                required
+                value={field.value || ''}
+                onValueChange={field.onChange}
+                className="flex flex-wrap gap-6"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="low" id="humidity-low" />
+                  <FormLabel
+                    htmlFor="humidity-low"
+                    label="Baja"
+                    className="text-muted-foreground"
+                  />
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="normal" id="humidity-normal" />
+                  <FormLabel
+                    htmlFor="humidity-normal"
+                    label="Normal"
+                    className="text-muted-foreground"
+                  />
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="high" id="humidity-high" />
+                  <FormLabel
+                    htmlFor="humidity-high"
+                    label="Alta"
+                    className="text-muted-foreground"
+                  />
+                </div>
+              </RadioGroup>
+            )}
+          />
+        </div>
       </div>
-
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <FormLabel label="Habitaciones" />
           <Button type="button" onClick={addRoom} variant="outline" size="sm">
             <Plus className="w-4 h-4 mr-2" />
-            Agregar Habitación
+            Agregar habitación
           </Button>
         </div>
 

@@ -94,7 +94,7 @@ create table
 create table
     if not exists public.rate_limits (
         id UUID primary key default gen_random_uuid (),
-        user_id UUID references auth.users (id) on delete CASCADE,
+        user_id UUID not null references auth.users (id) on delete CASCADE,
         ip_address INET,
         endpoint TEXT not null check (char_length(btrim (endpoint)) > 0),
         request_count INTEGER not null default 1 check (request_count >= 0),

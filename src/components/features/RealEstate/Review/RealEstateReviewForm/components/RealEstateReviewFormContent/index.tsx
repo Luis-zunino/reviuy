@@ -15,12 +15,12 @@ export const RealEstateReviewFormContent = <RR extends RealEstateReviewUpdate>(
   return (
     <>
       <div>
-        <FormLabel htmlFor="title" label="Título de la reseña" isRequired={!isReadOnly} />
+        <FormLabel htmlFor="title" label="Breve descripción" isRequired={!isReadOnly} />
         <Controller
           name={'title' as Path<RR>}
           control={form.control}
           rules={{
-            required: 'El título es obligatorio',
+            required: 'Este campo es necesario',
             validate: (value) => {
               const validation = validateText(String(value) || '');
               return validation.isValid || validation.message;

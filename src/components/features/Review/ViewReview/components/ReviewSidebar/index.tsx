@@ -3,6 +3,8 @@ import { MapPinned, Calendar, Home, DoorClosed } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import type { ReviewSidebarProps } from './types';
+import { PropertyType } from '@/enums';
+import { translatePropertyType } from '@/utils';
 
 export const ReviewSidebar = ({ review }: ReviewSidebarProps) => {
   const addressText = review?.address_text;
@@ -47,20 +49,22 @@ export const ReviewSidebar = ({ review }: ReviewSidebarProps) => {
               <div className="flex flex-col gap-1">
                 <span className="text-xs text-muted-foreground">Tipo de propiedad</span>
                 <span className="text-sm font-medium text-foreground capitalize">
-                  {review?.property_type}
+                  {translatePropertyType(review?.property_type)}
                 </span>
               </div>
             </div>
 
-            <div className="flex items-center gap-3 pt-4">
-              <DoorClosed className="h-4 w-4 text-muted-foreground shrink-0" />
-              <div className="flex flex-col gap-1">
-                <span className="text-xs text-muted-foreground">Nº de apartamento</span>
-                <span className="text-sm font-medium text-foreground capitalize">
-                  {review?.apartment_number || 'N/A'}
-                </span>
+            {review?.property_type !== PropertyType.HOUSE ? (
+              <div className="flex items-center gap-3 pt-4">
+                <DoorClosed className="h-4 w-4 text-muted-foreground shrink-0" />
+                <div className="flex flex-col gap-1">
+                  <span className="text-xs text-muted-foreground">Nº de apartamento</span>
+                  <span className="text-sm font-medium text-foreground capitalize">
+                    {review?.apartment_number || 'N/A'}
+                  </span>
+                </div>
               </div>
-            </div>
+            ) : null}
 
             <div className="flex items-center gap-3 pt-4 border-t border-border">
               <Calendar className="h-4 w-4 text-muted-foreground shrink-0" />

@@ -1,7 +1,6 @@
 import type {
   Control,
   FieldArrayWithId,
-  FieldErrors,
   UseFieldArrayAppend,
   UseFieldArrayRemove,
   UseFieldArrayReplace,
@@ -14,11 +13,8 @@ import { FormReviewSchema } from '../../../constants';
 
 export interface ReviewFormProps {
   isLoading?: boolean;
-  errors: FieldErrors<FormReviewSchema>;
   fields: FieldArrayWithId<FormReviewSchema, 'review_rooms', 'id'>[];
   replace: UseFieldArrayReplace<FormReviewSchema, 'review_rooms'>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  control: Control<FormReviewSchema, any, FormReviewSchema>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   form: UseFormReturn<FormReviewSchema, any, FormReviewSchema>;
   handleSubmit: UseFormHandleSubmit<FormReviewSchema, FormReviewSchema>;

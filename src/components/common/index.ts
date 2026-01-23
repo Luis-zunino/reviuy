@@ -22,3 +22,4 @@ export { ReviewLikesButtons } from './ReviewLikesButtons';
 export { PageWithSidebar } from './PageWithSidebar';
 export * from './PageWithSidebar/components';
 export * from './Emails';
+export * from './Stepper';

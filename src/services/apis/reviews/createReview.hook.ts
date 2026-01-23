@@ -1,7 +1,8 @@
 'use client';
 
-import { createReview, CreateReviewRequest } from './createReview.api';
+import { createReview } from './createReview.api';
 import { useAuthMutation, useVerifyAuthentication } from '../user';
+import { CreateReviewRequest } from './types';
 
 export const useCreateReview = () => {
   const { data: auth } = useVerifyAuthentication();

@@ -304,31 +304,12 @@ END $$;
 -- Uses CONCURRENTLY to avoid locking tables in production
 -- NOTA: CONCURRENTLY + IF NOT EXISTS no funciona bien en transacciones, por eso usamos bloques DO
 -- 1. Uniqueness for Reviews based on OSM ID
-do $$
-BEGIN
-    -- Primero eliminar índice antiguo si existe
-    IF EXISTS (
-        SELECT 1 FROM pg_indexes 
-        WHERE schemaname = 'public' 
-        AND indexname = 'idx_reviews_user_address_osm_unique'
-    ) THEN
-        EXECUTE 'DROP INDEX CONCURRENTLY idx_reviews_user_address_osm_unique';
-        RAISE NOTICE 'Índice antiguo idx_reviews_user_address_osm_unique eliminado';
-    END IF;
-    
-    -- Crear nuevo índice
-    IF NOT EXISTS (
-        SELECT 1 FROM pg_indexes 
-        WHERE schemaname = 'public' 
-        AND indexname = 'idx_reviews_user_address_osm_unique'
-    ) THEN
-        EXECUTE 'CREATE UNIQUE INDEX CONCURRENTLY idx_reviews_user_address_osm_unique ON public.reviews(user_id, address_osm_id) WHERE deleted_at IS NULL';
-        RAISE NOTICE 'Índice idx_reviews_user_address_osm_unique creado';
-    END IF;
-EXCEPTION
-    WHEN OTHERS THEN
-        RAISE WARNING 'Error manejando índice idx_reviews_user_address_osm_unique: %', SQLERRM;
-END $$;
+
+DROP INDEX IF EXISTS idx_reviews_user_address_osm_unique;
+CREATE UNIQUE INDEX idx_reviews_user_address_osm_unique
+ON public.reviews(user_id, address_osm_id)
+WHERE deleted_at IS NULL;
+
 
 -- 2. Uniqueness for Real Estate Reviews table
 do $$

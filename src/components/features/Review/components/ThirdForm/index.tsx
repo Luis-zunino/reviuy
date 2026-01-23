@@ -1,7 +1,6 @@
 import { FormLabel } from '@/components/common/Form';
 import { Textarea } from '@/components/ui/textarea';
 import React from 'react';
-import { Controller } from 'react-hook-form';
 import { validateText } from '@/utils';
 import type { ThirdFormProps } from './types';
 import { RealEstate } from '@/types';
@@ -11,54 +10,17 @@ import { CreateRealEstateModal } from '@/components/features/RealEstate/CreateRe
 import { useThirdForm } from './hooks';
 
 export const ThirdForm = (props: ThirdFormProps) => {
+  const { form, open, setOpen, handleClear, onSelect, queryValue } = props;
   const {
-    control,
-    errors,
-    form,
-    open,
-    setOpen,
-    handleClear,
-    onSelect,
-    placeholder,
-    label,
-    description,
-    queryValue,
-  } = props;
-
+    formState: { errors },
+    watch,
+    register,
+  } = form;
   const { isModalOpen, setIsModalOpen, handleCreateNew, data, isLoading, showModal } = useThirdForm(
     { queryValue }
   );
   return (
     <div className="space-y-6">
-      <div className="space-y-2">
-        <FormLabel
-          htmlFor="real_estate_experience"
-          label="Experiencia con inmobiliaria/propietario"
-        />
-        <Controller
-          name="real_estate_experience"
-          control={control}
-          rules={{
-            validate: (value) => {
-              if (!value) return true;
-              const validation = validateText(value);
-              return validation.isValid || validation.message;
-            },
-          }}
-          render={({ field }) => (
-            <Textarea
-              {...field}
-              value={field.value ?? ''}
-              placeholder="Comparte tu experiencia con la inmobiliaria o propietario..."
-              rows={3}
-              className={errors?.real_estate_experience ? 'border-red-500' : ''}
-            />
-          )}
-        />
-        {errors?.real_estate_experience && (
-          <p className="text-red-500 text-sm">{errors.real_estate_experience.message}</p>
-        )}
-      </div>
       <div className="space-y-2">
         <div className="relative w-full">
           <AsyncSearchSelect<FormReviewSchema, RealEstate>
@@ -70,15 +32,14 @@ export const ThirdForm = (props: ThirdFormProps) => {
             form={form}
             handleClear={handleClear}
             onSelect={onSelect}
-            placeholder={placeholder}
-            label={label}
-            description={description}
+            placeholder="Busca el nombre de una Inmobiliaria"
+            label="Inmobiliaria"
             className={{ container: 'w-full', item: 'min-w-1/2' }}
             emptyComponent={
               <CreateRealEstateModal
                 isOpen={isModalOpen}
                 onOpenChange={setIsModalOpen}
-                defaultValue={form.watch('real_estate_name')}
+                defaultValue={watch('real_estate_name')}
                 handleCreateNew={handleCreateNew}
                 isModal={true}
                 showModal={showModal}
@@ -86,6 +47,30 @@ export const ThirdForm = (props: ThirdFormProps) => {
             }
           />
         </div>
+      </div>
+      <div className="space-y-2">
+        <FormLabel
+          htmlFor="real_estate_experience"
+          label="Experiencia con inmobiliaria/propietario"
+        />
+
+        <Textarea
+          value={watch('real_estate_experience') ?? ''}
+          placeholder="Comparte tu experiencia con la inmobiliaria o propietario..."
+          rows={3}
+          className={errors?.real_estate_experience ? 'border-red-500' : ''}
+          {...register('real_estate_experience', {
+            validate: (value) => {
+              if (!value) return true;
+              const validation = validateText(value);
+              return validation.isValid || validation.message;
+            },
+          })}
+        />
+
+        {errors?.real_estate_experience && (
+          <p className="text-red-500 text-sm">{errors.real_estate_experience.message}</p>
+        )}
       </div>
     </div>
   );

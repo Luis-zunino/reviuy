@@ -1,4 +1,4 @@
-import { CreateReviewData } from '@/services/apis/reviews/createReview.api';
+import { CreateReviewData } from '@/services';
 import { FormReviewSchema } from '../constants';
 import { getAddressOsmId } from '@/utils';
 
@@ -16,9 +16,9 @@ export const formatDataToBackend = (data: FormReviewSchema, userId: string): Cre
     latitude: Number(data.latitude),
     longitude: Number(data.longitude),
     zone_rating: data.zone_rating,
-    winter_comfort: data.winter_comfort,
-    summer_comfort: data.summer_comfort,
-    humidity: data.humidity,
+    winter_comfort: data.winter_comfort?.length ? data.winter_comfort : undefined,
+    summer_comfort: data.summer_comfort?.length ? data.summer_comfort : undefined,
+    humidity: data.humidity?.length ? data.humidity : undefined,
     real_estate_id: data.real_estate_id,
     real_estate_experience: data.real_estate_experience,
     apartment_number: data.apartment_number,

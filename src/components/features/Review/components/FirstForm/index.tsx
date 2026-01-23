@@ -19,9 +19,15 @@ import { PropertyType } from '@/enums';
 import { FormReviewSchema } from '../../constants';
 
 export const FirstForm = (props: FirstFormProps) => {
-  const { control, errors, form, onSelectAddress, ...rest } = props;
-  const lat = form.watch('latitude') ?? 0;
-  const lon = form.watch('longitude') ?? 0;
+  const { form, onSelectAddress, ...rest } = props;
+  const {
+    formState: { errors },
+    control,
+    watch,
+    register,
+  } = form;
+  const lat = watch('latitude') ?? 0;
+  const lon = watch('longitude') ?? 0;
   return (
     <div className="flex flex-col gap-6">
       <div className="space-y-2">
@@ -42,10 +48,10 @@ export const FirstForm = (props: FirstFormProps) => {
       </div>
 
       <div className="space-y-2">
-        <FormLabel htmlFor="title" label="Título de tu reseña" isRequired />
+        <FormLabel htmlFor="title" label="Breve descripción" isRequired />
         <Input
-          {...form.register('title', {
-            required: 'El título es obligatorio',
+          {...register('title', {
+            required: 'Este campo es necesario',
             minLength: {
               value: 10,
               message: 'El título debe tener al menos 10 caracteres',
@@ -56,7 +62,7 @@ export const FirstForm = (props: FirstFormProps) => {
               return validation.isValid || validation.message;
             },
           })}
-          value={form.watch('title') || ''}
+          value={watch('title') || ''}
           placeholder="Ej: Excelente ubicación, departamento muy cómodo"
           className={errors.title ? 'border-red-500' : ''}
         />
@@ -98,12 +104,12 @@ export const FirstForm = (props: FirstFormProps) => {
             )}
           </div>
           <div className="space-y-2">
-            <FormLabel htmlFor="apartment_number" label="Número de apartamento (opcional)" />
+            <FormLabel htmlFor="apartment_number" label="Número de apartamento" />
             <Input
-              {...form.register('apartment_number', {
+              {...register('apartment_number', {
                 maxLength: { value: 10, message: 'El número de apartamento es muy largo' },
               })}
-              value={form.watch('apartment_number') || ''}
+              value={watch('apartment_number') || ''}
               placeholder="Ej: 3A, Piso 2, Apt 12"
             />
             {errors.apartment_number && (
@@ -146,9 +152,9 @@ export const FirstForm = (props: FirstFormProps) => {
         </div>
       </div>
       <div className="space-y-2">
-        <FormLabel htmlFor="description" label="Describe tu experiencia" isRequired />
+        <FormLabel htmlFor="description" label="Cuentanos más" isRequired />
         <Textarea
-          {...form.register('description', {
+          {...register('description', {
             required: true,
             minLength: 20,
             maxLength: 800,
@@ -159,7 +165,7 @@ export const FirstForm = (props: FirstFormProps) => {
           })}
           placeholder="Comparte los detalles de tu experiencia viviendo aquí..."
           rows={4}
-          value={form.watch('description')}
+          value={watch('description')}
           className={errors.description ? 'border-red-500' : ''}
         />
         {errors.description && <p className="text-red-500 text-sm">{errors.description.message}</p>}
