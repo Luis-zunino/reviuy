@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useCreateReview, useUpdateReview, useCheckUserReviewForAddress } from '@/services';
 import type { NominatimEntity, RealEstate } from '@/types';
 import { PagesUrls } from '@/enums';
@@ -19,6 +19,7 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [openRealEstateModal, setOpenRealEstateModal] = useState(false);
+  const { id: reviewId } = useParams<{ id: string }>();
   const isUpdate = Boolean(defaultValues);
 
   const form = useForm<FormReviewSchema>({
@@ -171,16 +172,18 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
   }, [defaultValues, reset]);
 
   useEffect(() => {
-    if (isAuthenticated && userId && existingReview && form.formState.isDirty) {
-      toast.warning('Ya has reseñado esta propiedad', {
-        description: 'Puedes editar tu reseña existente desde tu perfil.',
-        action: {
-          label: 'Ir a la reseña',
-          onClick: () => router.push(PagesUrls.REVIEW_DETAILS.replace(':id', existingReview.id)),
-        },
-      });
-    }
-  }, [existingReview, isAuthenticated, userId]);
+    if (!isAuthenticated || !userId || !existingReview) return;
+
+    if (reviewId && existingReview.id === reviewId) return;
+
+    toast.warning('Ya has reseñado esta propiedad', {
+      description: 'Puedes editar tu reseña existente desde tu perfil.',
+      action: {
+        label: 'Ir a la reseña',
+        onClick: () => router.push(PagesUrls.REVIEW_DETAILS.replace(':id', existingReview.id)),
+      },
+    });
+  }, [existingReview, isAuthenticated, userId, reviewId, router]);
 
   return {
     ...form,

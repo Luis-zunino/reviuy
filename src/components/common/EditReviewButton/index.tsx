@@ -20,7 +20,7 @@ export const EditReviewButton = (props: EditReviewButtonProps) => {
   }
 
   const handleEdit = () => {
-    router.push(`${PagesUrls.EDIT_REVIEW}/${review.id}`);
+    router.push(PagesUrls.EDIT_REVIEW.replace(':id', String(review.id)));
   };
 
   return (
