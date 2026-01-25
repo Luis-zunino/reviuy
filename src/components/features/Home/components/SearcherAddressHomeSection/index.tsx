@@ -15,7 +15,7 @@ export const SearcherAddressHomeSection = () => {
           setOpen={setOpen}
           queryValue={queryValue}
           handleClear={handleClear}
-          name={'address_text'}
+          name="address_text"
           form={form}
           onSelect={onSelect}
           placeholder="Busca una direccion..."

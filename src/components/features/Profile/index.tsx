@@ -21,8 +21,6 @@ import { EmptySection, SkeletonSection } from './components';
 
 export const ProfileComponent = () => {
   const {
-    userId,
-    isAuthenticated,
     signOut,
     reviews,
     loading,

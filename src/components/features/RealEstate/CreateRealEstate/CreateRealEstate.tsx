@@ -27,18 +27,8 @@ export const CreateRealEstate = () => {
               <Input
                 id="name"
                 placeholder="Ej: Inmobiliaria ABC"
-                {...register('name', {
-                  required: 'El nombre es obligatorio',
-                  minLength: {
-                    value: 2,
-                    message: 'El nombre debe tener al menos 2 caracteres',
-                  },
-                  maxLength: {
-                    value: 100,
-                    message: 'El nombre no puede tener más de 100 caracteres',
-                  },
-                })}
-                className={errors.name ? 'border-red-500' : ''}
+                {...register('name')}
+                aria-invalid={Boolean(errors?.name)}
               />
               {errors.name && <p className="text-sm text-red-600">{errors.name.message}</p>}
             </div>

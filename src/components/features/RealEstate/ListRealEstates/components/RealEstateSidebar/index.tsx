@@ -20,11 +20,7 @@ export const RealEstateSidebar: React.FC<RealEstateSidebarProps> = ({
           <h2 className="text-gray-900">Filtros</h2>
         </div>
         <div className="mb-2">
-          <Controller
-            name="real_estate_name"
-            control={form.control}
-            render={({ field }) => <Input {...field} placeholder="Ej: Inmobiliaria ABC" />}
-          />
+          <Input {...form.register('real_estate_name')} placeholder="Ej: Inmobiliaria ABC" />
         </div>
         <div className="mb-6">
           <Label className="block text-gray-700 mb-3">Calificación mínima</Label>
@@ -33,9 +29,13 @@ export const RealEstateSidebar: React.FC<RealEstateSidebarProps> = ({
             control={form.control}
             render={({ field }) => (
               <StarRatingInput
-                value={Number(field.value) || 0}
+                value={Number(field.value)}
                 onChange={field.onChange}
                 size="sm"
+                isError={Boolean(form.formState.errors.rating)}
+                errorMessage={
+                  form.formState.errors.rating ? form.formState.errors.rating.message : undefined
+                }
               />
             )}
           />

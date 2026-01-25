@@ -3,23 +3,31 @@ import type { RealEstateInsert } from '@/types';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { validateText } from '@/utils';
-import type { UseCreateRealEstateModalProps, CreateRealEstateFormData } from './types';
+import {
+  type UseCreateRealEstateModalProps,
+  formCreateRealEstateSchema,
+  FormCreateRealEstateSchema,
+} from './types';
 import { useAuthContext } from '@/components/providers/AuthProvider';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 export const useCreateRealEstateModal = (props: UseCreateRealEstateModalProps) => {
   const { onOpenChange } = props;
   const { userId } = useAuthContext();
 
   const {
-    control,
     reset,
     handleSubmit,
+    register,
     formState: { errors },
-  } = useForm<CreateRealEstateFormData>();
+    watch,
+  } = useForm<FormCreateRealEstateSchema>({
+    resolver: zodResolver(formCreateRealEstateSchema),
+  });
 
   const { mutateAsync, isPending } = useCreateRealEstateHook();
 
-  const onSubmit = async (data: CreateRealEstateFormData) => {
+  const onSubmit = async (data: FormCreateRealEstateSchema) => {
     if (!userId) {
       toast.error('Debes estar autenticado para crear una inmobiliaria');
       return;
@@ -65,5 +73,5 @@ export const useCreateRealEstateModal = (props: UseCreateRealEstateModalProps) =
     handleSubmit(onSubmit)(e);
   };
 
-  return { control, handleFormSubmit, isSubmitting: isPending, errors };
+  return { register, handleFormSubmit, isSubmitting: isPending, errors, watch };
 };

@@ -4,7 +4,7 @@ import { useUpdateReviewForm } from './hooks';
 import { ReviewForm } from '../components/ReviewForm';
 
 export const UpdateReview = () => {
-  const props = useUpdateReviewForm();
+  const { handleSubmit, ...props } = useUpdateReviewForm();
 
-  return <ReviewForm {...props} />;
+  return <ReviewForm handleSubmit={handleSubmit} {...props} />;
 };

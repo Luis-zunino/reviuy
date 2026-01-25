@@ -24,7 +24,7 @@
     "lint:fix": "eslint --fix ."
   },
   "dependencies": {
-    "@hookform/resolvers": "^5.2.2",
+    "@hookform/resolvers": "^3.3.4",
     "@next/bundle-analyzer": "^16.1.1",
     "@radix-ui/react-accordion": "^1.2.11",
     "@radix-ui/react-dialog": "^1.1.15",
@@ -60,7 +60,8 @@
     "resend": "^6.7.0",
     "shadcn": "^3.4.0",
     "sonner": "^2.0.7",
-    "tailwind-merge": "^3.3.1"
+    "tailwind-merge": "^3.3.1",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",

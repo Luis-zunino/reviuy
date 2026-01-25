@@ -44,12 +44,18 @@ export const StarRatingInput: React.FC<StarRatingInputProps> = ({
   className,
   disabled = false,
   showLabel = true,
-  required = false,
+  isError = false,
+  errorMessage,
 }) => {
   const [hover, setHover] = useState(0);
   const config = sizeConfig[size];
   const displayValue = hover || value;
   const currentLabel = ratingLabels[displayValue as keyof typeof ratingLabels] || ratingLabels[0];
+
+  const borderColor = (rating: number) => {
+    if (isError) return 'stroke-red-500 stroke-1';
+    return rating <= displayValue ? 'text-yellow-400' : 'text-muted';
+  };
 
   const handleClick = (rating: number) => {
     if (disabled) return;
@@ -65,58 +71,52 @@ export const StarRatingInput: React.FC<StarRatingInputProps> = ({
   };
 
   return (
-    <div className={cn('flex flex-col gap-1', className)}>
-      <div
-        className="flex items-center gap-1"
-        role="radiogroup"
-        aria-label="Calificación"
-        aria-required={required}
-      >
-        <div className="flex items-center">
-          {[1, 2, 3, 4, 5].map((rating) => (
-            <Button
-              key={rating}
-              type="button"
-              role="radio"
-              variant="ghost"
-              aria-checked={value === rating}
-              aria-label={`${rating} estrella${rating > 1 ? 's' : ''}`}
-              disabled={disabled}
-              onClick={() => handleClick(rating)}
-              onKeyDown={(e) => handleKeyDown(e, rating)}
-              onMouseEnter={() => !disabled && setHover(rating)}
-              onMouseLeave={() => !disabled && setHover(0)}
-              className={cn(
-                'transition-transform focus:outline-none focus:ring-0 rounded p-0 hover:bg-transparent',
-                !disabled && 'hover:scale-110 cursor-pointer',
-                disabled && 'cursor-not-allowed opacity-50'
-              )}
-            >
-              <Star
+    <div>
+      <div className={cn('flex flex-col gap-1', className)}>
+        <div className="flex items-center gap-1" role="radiogroup" aria-label="Calificación">
+          <div className="flex items-center">
+            {[1, 2, 3, 4, 5].map((rating) => (
+              <Button
+                key={rating}
+                type="button"
+                role="radio"
+                variant="ghost"
+                aria-checked={value === rating}
+                aria-label={`${rating} estrella${rating > 1 ? 's' : ''}`}
+                disabled={disabled}
+                onClick={() => handleClick(rating)}
+                onKeyDown={(e) => handleKeyDown(e, rating)}
+                onMouseEnter={() => !disabled && setHover(rating)}
+                onMouseLeave={() => !disabled && setHover(0)}
                 className={cn(
-                  config.star,
-                  'transition-colors',
-                  rating <= displayValue ? 'text-yellow-400' : 'text-muted'
+                  'transition-transform focus:outline-none focus:ring-0 rounded p-0 hover:bg-transparent',
+                  !disabled && 'hover:scale-110 cursor-pointer',
+                  disabled && 'cursor-not-allowed opacity-50'
                 )}
-                fill={rating <= displayValue ? '#ffc107' : '#e4e5e9'}
-                color={rating <= displayValue ? '#ffc107' : '#e4e5e9'}
-                aria-hidden="true"
-              />
-            </Button>
-          ))}
+              >
+                <Star
+                  className={cn(config.star, 'transition-colors', borderColor(rating))}
+                  fill={rating <= displayValue ? '#ffc107' : '#e4e5e9'}
+                  color={rating <= displayValue ? '#ffc107' : '#e4e5e9'}
+                  aria-hidden="true"
+                />
+              </Button>
+            ))}
+          </div>
+
+          {showLabel && (
+            <span className={cn('text-muted-foreground ml-1', config.text)}>
+              {value > 0 ? `${value}/5` : '0/0'}
+            </span>
+          )}
         </div>
 
-        {showLabel && (
-          <span className={cn('text-muted-foreground ml-1', config.text)}>
-            {value > 0 ? `${value}/5` : '0/0'}
-          </span>
-        )}
+        {/* Label descriptivo */}
+        <span className={cn('text-muted-foreground', config.text)} aria-live="polite">
+          {currentLabel}
+        </span>
       </div>
-
-      {/* Label descriptivo */}
-      <span className={cn('text-muted-foreground', config.text)} aria-live="polite">
-        {currentLabel}
-      </span>
+      {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}
     </div>
   );
 };

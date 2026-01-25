@@ -9,9 +9,10 @@ import type { NominatimEntity, RealEstate } from '@/types';
 import { PagesUrls } from '@/enums';
 import type { UseCreateOrUpdateReviewFormProps } from './types';
 import { useAuthContext } from '@/components/providers/AuthProvider';
-import { FormReviewSchema } from '../constants';
+import { formReviewSchema, FormReviewSchema } from '../constants';
 import { formatDataToBackend, getDefaultValues } from '../utils';
 import { getAddressOsmId } from '@/utils';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormProps) => {
   const { defaultValues } = props;
@@ -24,6 +25,7 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
 
   const form = useForm<FormReviewSchema>({
     defaultValues: getDefaultValues(defaultValues),
+    resolver: zodResolver(formReviewSchema),
   });
 
   const { control, reset, formState, watch, setValue } = form;
@@ -32,7 +34,7 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
     userId,
     osmId: getAddressOsmId({ osm_id: osmId, osm_type }),
   });
-  const { fields, append, remove, replace } = useFieldArray({
+  const { fields, append, remove, replace } = useFieldArray<FormReviewSchema, 'review_rooms'>({
     control,
     name: 'review_rooms',
   });

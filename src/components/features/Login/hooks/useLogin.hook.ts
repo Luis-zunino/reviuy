@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import type { LoginFormValues } from './types';
+import { formLoginSchema, type FormLoginSchema } from './types';
 import { useAuthContext } from '@/components/providers/AuthProvider';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 export const useLogin = () => {
   const {
@@ -10,7 +11,9 @@ export const useLogin = () => {
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<LoginFormValues>();
+  } = useForm<FormLoginSchema>({
+    resolver: zodResolver(formLoginSchema),
+  });
 
   const [loading, setLoading] = useState(false);
   const { signInWithEmail, signInWithGoogle } = useAuthContext();
@@ -34,7 +37,7 @@ export const useLogin = () => {
     }
   };
 
-  const onSubmit = async (data: LoginFormValues) => {
+  const onSubmit = async (data: FormLoginSchema) => {
     setLoading(true);
 
     try {

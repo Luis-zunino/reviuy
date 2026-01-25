@@ -8,16 +8,13 @@ import {
 } from '@/components/common';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import type { RealEstateReviewUpdate } from '@/types';
 import { Save } from 'lucide-react';
 import React from 'react';
 import { RealEstateReviewFormContent } from './components/RealEstateReviewFormContent';
 import type { RealEstateReviewFormProps } from './types';
 import { Form } from '@/components/ui/form';
 
-export const RealEstateReviewForm = <RR extends RealEstateReviewUpdate>(
-  props: RealEstateReviewFormProps<RR>
-) => {
+export const RealEstateReviewForm = (props: RealEstateReviewFormProps) => {
   const {
     form,
     handleSubmit,

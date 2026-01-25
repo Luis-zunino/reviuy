@@ -1,10 +1,11 @@
 import type { UseFormReturn } from 'react-hook-form';
-import type { RealEstateReview, RealEstateReviewUpdate } from '@/types';
+import type { RealEstateReview } from '@/types';
 import type { QueryObserverResult, RefetchOptions } from '@tanstack/react-query';
+import { FormRealEstateSchema } from '../../types';
 
-export interface RealEstateReviewFormProps<RR extends RealEstateReviewUpdate> {
-  form: UseFormReturn<RR, undefined, RR>;
-  handleSubmit: (formData: RR) => Promise<void>;
+export interface RealEstateReviewFormProps {
+  form: UseFormReturn<FormRealEstateSchema, undefined, FormRealEstateSchema>;
+  handleSubmit: (formData: FormRealEstateSchema) => Promise<void>;
   isSubmitting: boolean;
   title: string;
   subtitle?: string;

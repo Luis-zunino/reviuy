@@ -45,13 +45,7 @@ export const Login = () => {
               id="email"
               placeholder="tu@email.com"
               className="pl-10"
-              {...register('email', {
-                required: 'Por favor ingresa tu email.',
-                pattern: {
-                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                  message: 'Ingresa un email válido.',
-                },
-              })}
+              {...register('email')}
             />
           </div>
           {errors.email && <div className="text-red-500 text-sm">{errors.email.message}</div>}

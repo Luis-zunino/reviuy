@@ -18,6 +18,7 @@ export const Contact = () => {
     onSubmit,
     isAuthenticated,
     error,
+    watch,
   } = useContactForm();
 
   return (
@@ -30,13 +31,11 @@ export const Contact = () => {
             </Label>
             <Input
               type="email"
-              {...register('email', {
-                required: 'El email es obligatorio',
-                pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'Email inválido' },
-              })}
+              {...register('email')}
               className="mt-1 w-full"
               aria-invalid={errors.email ? 'true' : 'false'}
               placeholder="tu@email.com"
+              value={watch('email')}
             />
             {errors.email && <p className="text-sm text-red-500 mt-1">{errors.email.message}</p>}
           </div>
@@ -45,10 +44,11 @@ export const Contact = () => {
               Nombre <span className="text-xs text-red-500">*</span>
             </Label>
             <Input
-              {...register('name', { required: 'El nombre es obligatorio' })}
+              {...register('name')}
               className="mt-1 w-full block"
               aria-invalid={errors.name ? 'true' : 'false'}
               placeholder="Tu nombre"
+              value={watch('name')}
             />
             {errors.name && <p className="text-sm text-red-500 mt-1">{errors.name.message}</p>}
           </div>
@@ -59,10 +59,7 @@ export const Contact = () => {
             Mensaje <span className="text-xs text-red-500">*</span>
           </Label>
           <Textarea
-            {...register('message', {
-              required: 'El mensaje es obligatorio',
-              minLength: { value: 10, message: 'El mensaje es muy corto' },
-            })}
+            {...register('message')}
             className="mt-1 block w-full h-32"
             aria-invalid={errors.message ? 'true' : 'false'}
             placeholder="Escribe tu mensaje aquí..."

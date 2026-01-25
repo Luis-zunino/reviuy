@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 export const useProfileComponent = () => {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('reviews');
-  const { userId, isAuthenticated, signOut } = useAuthContext();
+  const { userId, signOut } = useAuthContext();
   const { reviews, loading, error, refetch } = useUserReviews();
   const { data: favorites, isLoading: loadingFavorites } = useGetUserFavoriteRealEstates({
     userId,
@@ -17,8 +17,6 @@ export const useProfileComponent = () => {
   });
 
   return {
-    userId,
-    isAuthenticated,
     signOut,
     reviews,
     loading,

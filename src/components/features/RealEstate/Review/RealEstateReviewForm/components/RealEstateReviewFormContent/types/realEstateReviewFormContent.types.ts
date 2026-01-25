@@ -1,7 +1,7 @@
-import type { RealEstateReviewUpdate } from '@/types';
 import type { UseFormReturn } from 'react-hook-form';
+import { FormRealEstateSchema } from '../../../../types';
 
-export interface RealEstateReviewFormContentProps<RR extends RealEstateReviewUpdate> {
-  form: UseFormReturn<RR, undefined, RR>;
+export interface RealEstateReviewFormContentProps {
+  form: UseFormReturn<FormRealEstateSchema, undefined, FormRealEstateSchema>;
   isReadOnly?: boolean;
 }

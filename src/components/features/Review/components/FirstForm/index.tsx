@@ -3,7 +3,6 @@ import { FormLabel } from '@/components/common/Form/FormLabel';
 import { StarRatingInput } from '@/components/common/StarRating';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { validateText } from '@/utils';
 import React from 'react';
 import { Controller } from 'react-hook-form';
 import {
@@ -50,21 +49,10 @@ export const FirstForm = (props: FirstFormProps) => {
       <div className="space-y-2">
         <FormLabel htmlFor="title" label="Breve descripción" isRequired />
         <Input
-          {...register('title', {
-            required: 'Este campo es necesario',
-            minLength: {
-              value: 10,
-              message: 'El título debe tener al menos 10 caracteres',
-            },
-            maxLength: { value: 100, message: 'El título no puede exceder 100 caracteres' },
-            validate: (value) => {
-              const validation = validateText(value || '');
-              return validation.isValid || validation.message;
-            },
-          })}
-          value={watch('title') || ''}
+          {...register('title')}
+          value={watch('title')}
           placeholder="Ej: Excelente ubicación, departamento muy cómodo"
-          className={errors.title ? 'border-red-500' : ''}
+          aria-invalid={Boolean(errors?.title)}
         />
         {errors.title && <p className="text-red-500 text-sm">{errors.title.message}</p>}
       </div>
@@ -75,7 +63,6 @@ export const FirstForm = (props: FirstFormProps) => {
             <Controller
               name="property_type"
               control={control}
-              rules={{ required: 'Selecciona el tipo de propiedad' }}
               render={({ field }) => (
                 <Select
                   onValueChange={(e) => {
@@ -85,7 +72,7 @@ export const FirstForm = (props: FirstFormProps) => {
                   defaultValue={field.value}
                   value={field.value}
                 >
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger className="w-full" aria-invalid={Boolean(errors?.property_type)}>
                     <SelectValue
                       placeholder="Selecciona el tipo de propiedad"
                       defaultValue={field.value}
@@ -106,10 +93,8 @@ export const FirstForm = (props: FirstFormProps) => {
           <div className="space-y-2">
             <FormLabel htmlFor="apartment_number" label="Número de apartamento" />
             <Input
-              {...register('apartment_number', {
-                maxLength: { value: 10, message: 'El número de apartamento es muy largo' },
-              })}
-              value={watch('apartment_number') || ''}
+              {...register('apartment_number')}
+              value={watch('apartment_number')}
               placeholder="Ej: 3A, Piso 2, Apt 12"
             />
             {errors.apartment_number && (
@@ -123,36 +108,27 @@ export const FirstForm = (props: FirstFormProps) => {
             <Controller
               name="rating"
               control={control}
-              rules={{
-                required: 'La calificación es obligatoria',
-                min: { value: 1, message: 'Selecciona al menos 1 estrella' },
-              }}
               render={({ field }) => (
                 <StarRatingInput
-                  value={field.value || 0}
+                  value={field.value}
                   onChange={field.onChange}
-                  required
                   className="flex-row gap-6 items-center"
+                  isError={Boolean(errors.rating)}
+                  errorMessage={errors.rating ? errors.rating.message : undefined}
                 />
               )}
             />
-            {errors.rating && <p className="text-red-500 text-sm">{errors.rating.message}</p>}
           </div>
 
           <div className="space-y-2">
             <FormLabel label="Calificación de la zona" />
             <Controller
               name="zone_rating"
-              rules={{
-                required: 'La calificacion de la zona es requerido',
-                min: { value: 1, message: 'Selecciona al menos 1 estrella' },
-              }}
               control={control}
               render={({ field }) => (
                 <StarRatingInput
                   value={field.value || 0}
                   onChange={field.onChange}
-                  required
                   className="flex-row gap-6 items-center"
                 />
               )}
@@ -163,19 +139,11 @@ export const FirstForm = (props: FirstFormProps) => {
       <div className="space-y-2">
         <FormLabel htmlFor="description" label="Cuentanos más" isRequired />
         <Textarea
-          {...register('description', {
-            required: true,
-            minLength: 20,
-            maxLength: 800,
-            validate: (value: string) => {
-              const validation = validateText(value || '');
-              return validation.isValid ? undefined : validation.message;
-            },
-          })}
+          {...register('description')}
           placeholder="Comparte los detalles de tu experiencia viviendo aquí..."
           rows={4}
           value={watch('description')}
-          className={errors.description ? 'border-red-500' : ''}
+          aria-invalid={Boolean(errors?.description)}
         />
         {errors.description && <p className="text-red-500 text-sm">{errors.description.message}</p>}
       </div>

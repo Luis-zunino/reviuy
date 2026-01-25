@@ -11,7 +11,7 @@ import {
   CommandEmpty,
 } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverAnchor } from '@/components/ui/popover';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { Loader2, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -84,7 +84,8 @@ export const AsyncSearchSelect = <T extends FieldValues, V extends { id: string;
                           const shouldOpen = value.length >= 3 && hasUserTyped;
                           setOpen(shouldOpen);
                         }}
-                        value={field.value ?? ''}
+                        value={field.value}
+                        aria-invalid={Boolean(form.formState.errors[name])}
                       />
                       {isFetching && (
                         <div className="absolute right-3 top-2.5">
@@ -147,11 +148,15 @@ export const AsyncSearchSelect = <T extends FieldValues, V extends { id: string;
                   </PopoverContent>
                 ) : null}
               </Popover>
-              <FormMessage />
             </FormItem>
           );
         }}
       />
+      {form.formState.errors[name] && (
+        <div className="text-sm text-red-500">
+          {form.formState.errors[name]?.message?.toString()}
+        </div>
+      )}
     </div>
   );
 };

@@ -5,8 +5,9 @@ import type { RealEstateInsert } from '@/types';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import type { CreateRealEstateFormData } from './types';
+import { FormCreateRealEstateSchema, formCreateRealEstateSchema } from './types';
 import { useAuthContext } from '@/components/providers/AuthProvider';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 export const useCreateRealEstate = () => {
   const router = useRouter();
@@ -17,11 +18,11 @@ export const useCreateRealEstate = () => {
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<CreateRealEstateFormData>();
+  } = useForm<FormCreateRealEstateSchema>({ resolver: zodResolver(formCreateRealEstateSchema) });
 
   const { mutateAsync, isPending } = useCreateRealEstateHook();
 
-  const onSubmit = async (data: CreateRealEstateFormData) => {
+  const onSubmit = async (data: FormCreateRealEstateSchema) => {
     if (!userId) {
       toast.error('Debes estar autenticado para crear una inmobiliaria');
       return;

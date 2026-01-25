@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAuthContext } from '@/components/providers/AuthProvider';
-import { ContactFormValues } from './types';
+import { FormContactSchema, formContactSchema } from './types';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 export const useContactForm = () => {
   const { isAuthenticated } = useAuthContext();
@@ -10,14 +11,16 @@ export const useContactForm = () => {
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
-  } = useForm<ContactFormValues>({
+    watch,
+  } = useForm<FormContactSchema>({
     defaultValues: { name: '', email: '', message: '' },
+    resolver: zodResolver(formContactSchema),
   });
 
   const [success, setSuccess] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const onSubmit = async (data: ContactFormValues) => {
+  const onSubmit = async (data: FormContactSchema) => {
     setSuccess(null);
     setError(null);
 
@@ -61,5 +64,6 @@ export const useContactForm = () => {
     error,
     onSubmit,
     isAuthenticated,
+    watch,
   };
 };

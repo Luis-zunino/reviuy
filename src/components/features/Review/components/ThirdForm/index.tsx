@@ -58,14 +58,8 @@ export const ThirdForm = (props: ThirdFormProps) => {
           value={watch('real_estate_experience') ?? ''}
           placeholder="Comparte tu experiencia con la inmobiliaria o propietario..."
           rows={3}
-          className={errors?.real_estate_experience ? 'border-red-500' : ''}
-          {...register('real_estate_experience', {
-            validate: (value) => {
-              if (!value) return true;
-              const validation = validateText(value);
-              return validation.isValid || validation.message;
-            },
-          })}
+          aria-invalid={Boolean(errors?.real_estate_experience)}
+          {...register('real_estate_experience')}
         />
 
         {errors?.real_estate_experience && (

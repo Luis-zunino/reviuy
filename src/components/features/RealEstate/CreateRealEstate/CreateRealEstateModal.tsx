@@ -11,15 +11,13 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import React from 'react';
-import { Controller } from 'react-hook-form';
 import { useCreateRealEstateModal } from './hook';
-import { validateText } from '@/utils';
 import type { CreateRealEstateModalProps } from './types';
 import { Building2, Plus } from 'lucide-react';
 
 export const CreateRealEstateModal = (props: CreateRealEstateModalProps) => {
   const { isOpen, onOpenChange, defaultValue, handleCreateNew, isModal, showModal } = props;
-  const { control, handleFormSubmit, isSubmitting, errors } = useCreateRealEstateModal({
+  const { register, handleFormSubmit, isSubmitting, errors, watch } = useCreateRealEstateModal({
     onOpenChange,
   });
 
@@ -57,25 +55,11 @@ export const CreateRealEstateModal = (props: CreateRealEstateModalProps) => {
             <div className="space-y-2">
               <div className="space-y-2">
                 <FormLabel htmlFor="name" label="Nombre de la inmobiliaria" />
-
-                <Controller
-                  name="name"
-                  control={control}
-                  defaultValue={defaultValue}
-                  rules={{
-                    required: 'El nombre es obligatorio',
-                    validate: (value) => {
-                      const validation = validateText(value || '');
-                      return validation.isValid || validation.message;
-                    },
-                  }}
-                  render={({ field }) => (
-                    <Input
-                      {...field}
-                      placeholder="Ej: Inmobiliaria ABC"
-                      className={errors.name ? 'border-red-500' : ''}
-                    />
-                  )}
+                <Input
+                  {...register('name')}
+                  placeholder="Ej: Inmobiliaria ABC"
+                  aria-invalid={Boolean(errors?.name)}
+                  value={watch('name')}
                 />
                 {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
               </div>

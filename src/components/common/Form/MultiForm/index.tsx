@@ -1,13 +1,12 @@
 'use client';
 
-import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { toast } from 'sonner';
 import { Form } from '@/components/ui/form';
 import { FieldValues } from 'react-hook-form';
 import type { MultiFormProps } from './types';
 import { Stepper } from '../../Stepper';
+import { useMultiForm } from './hooks';
 
 export const MultiForm = <T extends FieldValues = FieldValues>(props: MultiFormProps<T>) => {
   const {
@@ -18,30 +17,7 @@ export const MultiForm = <T extends FieldValues = FieldValues>(props: MultiFormP
     showProgressBar = true,
     isSubmitDisabled,
   } = props;
-  const [step, setStep] = useState(0);
-  const totalSteps = formsChildren.length;
-
-  const handleBack = () => {
-    if (step > 0) {
-      setStep(step - 1);
-    }
-  };
-
-  const handleNext = async () => {
-    const isValid = await form.trigger();
-
-    if (!isValid) {
-      toast.error('Por favor completa todos los campos requeridos');
-      return;
-    }
-
-    if (step < totalSteps - 1) {
-      setStep(step + 1);
-    } else {
-      setStep(0);
-      toast.success('Form successfully submitted');
-    }
-  };
+  const { step, totalSteps, handleBack, handleNext } = useMultiForm({ formsChildren, form });
 
   return (
     <Card className="shadow-sm sm:space-y-4">
