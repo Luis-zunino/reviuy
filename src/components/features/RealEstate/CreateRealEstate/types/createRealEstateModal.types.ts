@@ -1,8 +1,11 @@
+import { JSX } from 'react';
+import { Path } from 'react-hook-form';
+import { FormCreateRealEstateSchema } from '../hook/types';
+
 export interface CreateRealEstateModalProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  defaultValue?: string;
-  handleCreateNew: (open: boolean) => void;
-  isModal: boolean;
-  showModal: boolean;
+  showModal?: boolean;
+  triggerComponentModal?: () => JSX.Element;
+  name: Path<FormCreateRealEstateSchema>;
 }

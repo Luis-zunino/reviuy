@@ -11,4 +11,5 @@ export interface PageWithSidebarProps {
   errorTitle?: string;
   errorSubTitle?: string;
   authIsRequired?: boolean;
+  headerAction?: React.ReactNode;
 }

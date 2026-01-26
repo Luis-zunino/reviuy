@@ -7,6 +7,7 @@ import { useAuthContext } from '@/components/providers/AuthProvider';
 import { Loader } from '../Loaders';
 import { ErrorPage, NoAuthenticated } from './components';
 import { BackButton } from '../BackButton';
+
 /**
  * @description Page layout component with a sidebar and main content area.
  * @param param {@link PageWithSidebarProps}
@@ -38,6 +39,7 @@ export const PageWithSidebar: React.FC<PageWithSidebarProps> = ({
   errorTitle = 'Ha ocurrido un error.',
   errorSubTitle = 'Por favor, inténtalo de nuevo.',
   authIsRequired = false,
+  headerAction,
 }) => {
   const { isAuthenticated } = useAuthContext();
 
@@ -63,6 +65,7 @@ export const PageWithSidebar: React.FC<PageWithSidebarProps> = ({
             <h1 className="text-4xl font-bold text-foreground mb-3">{title}</h1>
             <p className="text-muted-foreground text-lg">{description}</p>
           </div>
+          {headerAction ? headerAction : null}
         </div>
       </div>
       <div className="md:max-w-7xl mx-auto py-12 px-4 xl:px-0">

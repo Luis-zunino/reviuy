@@ -13,40 +13,27 @@ import { Input } from '@/components/ui/input';
 import React from 'react';
 import { useCreateRealEstateModal } from './hook';
 import type { CreateRealEstateModalProps } from './types';
-import { Building2, Plus } from 'lucide-react';
 
 export const CreateRealEstateModal = (props: CreateRealEstateModalProps) => {
-  const { isOpen, onOpenChange, defaultValue, handleCreateNew, isModal, showModal } = props;
+  const {
+    name,
+    isOpen,
+    onOpenChange,
+    showModal = false,
+    triggerComponentModal: TriggerModalComponent,
+  } = props;
   const { register, handleFormSubmit, isSubmitting, errors, watch } = useCreateRealEstateModal({
     onOpenChange,
+    name,
   });
 
   return (
     <>
-      {showModal ? (
-        <div className="z-10 mt-1 w-full min-w-87.5 rounded-md bg-white">
-          <div className="p-4 text-center">
-            <Building2 className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-            <p className="text-sm text-gray-600 mb-3">
-              No encontramos la inmobiliaria {defaultValue}
-            </p>
-            <Button
-              type="button"
-              onClick={() => handleCreateNew(isModal)}
-              variant="outline"
-              size="sm"
-              className="w-full"
-              icon={Plus}
-            >
-              Agregar nueva inmobiliaria
-            </Button>
-          </div>
-        </div>
-      ) : null}
+      {showModal && TriggerModalComponent ? <TriggerModalComponent /> : null}
       <Dialog open={isOpen} onOpenChange={(open) => onOpenChange(open)}>
-        <DialogContent>
+        <DialogContent className="w-full md:w-1/2 p-4">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-red-600">
+            <DialogTitle className="flex items-center gap-2">
               Crear una nueva Inmobiliaria
             </DialogTitle>
           </DialogHeader>
@@ -54,14 +41,14 @@ export const CreateRealEstateModal = (props: CreateRealEstateModalProps) => {
           <form onSubmit={handleFormSubmit} className="space-y-6" id="create-real-estate-form">
             <div className="space-y-2">
               <div className="space-y-2">
-                <FormLabel htmlFor="name" label="Nombre de la inmobiliaria" />
+                <FormLabel htmlFor={name} label="Nombre" isRequired />
                 <Input
-                  {...register('name')}
+                  {...register(name)}
                   placeholder="Ej: Inmobiliaria ABC"
-                  aria-invalid={Boolean(errors?.name)}
-                  value={watch('name')}
+                  aria-invalid={Boolean(errors[name])}
+                  value={watch(name)}
                 />
-                {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
+                {errors[name] && <p className="text-red-500 text-sm">{errors[name].message}</p>}
               </div>
             </div>
           </form>

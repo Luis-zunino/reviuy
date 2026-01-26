@@ -12,7 +12,7 @@ import { useAuthContext } from '@/components/providers/AuthProvider';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 export const useCreateRealEstateModal = (props: UseCreateRealEstateModalProps) => {
-  const { onOpenChange } = props;
+  const { onOpenChange, name } = props;
   const { userId } = useAuthContext();
 
   const {
@@ -33,7 +33,7 @@ export const useCreateRealEstateModal = (props: UseCreateRealEstateModalProps) =
       return;
     }
 
-    const validation = validateText(data.name);
+    const validation = validateText(data[name]);
     if (!validation.isValid) {
       toast.error(validation.message || 'El nombre contiene contenido no permitido');
       return;
@@ -41,7 +41,7 @@ export const useCreateRealEstateModal = (props: UseCreateRealEstateModalProps) =
 
     try {
       const realEstateData: RealEstateInsert = {
-        name: data.name,
+        name: data[name],
         created_by: userId,
       };
 

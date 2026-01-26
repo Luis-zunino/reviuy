@@ -24,7 +24,6 @@ export const formatDataToBackend = (data: FormReviewSchema, userId: string): Cre
     apartment_number: data.apartment_number,
     review_rooms: data.review_rooms?.map((room) => {
       return {
-        id: room.id,
         room_type: room.room_type ?? null,
         area_m2: room.area_m2 ?? null,
       };

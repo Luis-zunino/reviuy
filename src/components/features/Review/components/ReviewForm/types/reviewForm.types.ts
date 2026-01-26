@@ -14,9 +14,8 @@ export interface ReviewFormProps {
   isLoading?: boolean;
   fields: FieldArrayWithId<FormReviewSchema, 'review_rooms', 'id'>[];
   replace: UseFieldArrayReplace<FormReviewSchema, 'review_rooms'>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  form: UseFormReturn<FormReviewSchema, any, FormReviewSchema>;
-  handleSubmit: UseFormHandleSubmit<FormReviewSchema, FormReviewSchema>;
+  form: UseFormReturn<FormReviewSchema>;
+  handleSubmit: UseFormHandleSubmit<FormReviewSchema>;
   onSubmit: (data: FormReviewSchema) => void;
   append: UseFieldArrayAppend<FormReviewSchema, 'review_rooms'>;
   remove: UseFieldArrayRemove;

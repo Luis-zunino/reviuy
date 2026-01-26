@@ -1,11 +1,13 @@
 import { useInfiniteRealEstates } from '@/services';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useDebounce } from '@/hooks';
 import { useForm } from 'react-hook-form';
 import { formSchema, FormSearcherRealEstate } from '../components/RealEstateSidebar/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 export const useListRealEstate = () => {
+  const [isCreateRealEstateOpen, setIsCreateRealEstateOpen] = useState(false);
+
   const form = useForm<FormSearcherRealEstate>({
     defaultValues: {
       real_estate_name: '',
@@ -41,5 +43,7 @@ export const useListRealEstate = () => {
     hasNextPage,
     form,
     displayedItems: filteredRealEstates,
+    isCreateRealEstateOpen,
+    setIsCreateRealEstateOpen,
   };
 };

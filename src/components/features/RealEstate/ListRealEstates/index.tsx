@@ -1,12 +1,13 @@
 'use client';
 
-import { Building2 } from 'lucide-react';
+import { Building2, Plus } from 'lucide-react';
 import { StarRatingDisplay, PageWithSidebar, Loader } from '@/components/common';
 import Link from 'next/link';
 import { PagesUrls } from '@/enums';
 import { useListRealEstate } from './hooks';
 import { RealEstateSidebar } from './components';
 import { Button } from '@/components/ui/button';
+import { CreateRealEstateModal } from '../CreateRealEstate';
 
 export const ListRealEstates: React.FC = () => {
   const {
@@ -17,6 +18,8 @@ export const ListRealEstates: React.FC = () => {
     loadMore,
     hasNextPage,
     form,
+    isCreateRealEstateOpen,
+    setIsCreateRealEstateOpen,
   } = useListRealEstate();
 
   return (
@@ -24,6 +27,19 @@ export const ListRealEstates: React.FC = () => {
       title="Inmobiliarias"
       description="Conocé las calificaciones y reseñas de las principales inmobiliarias"
       sidebar={<RealEstateSidebar form={form} handleClearFilters={handleClearFilters} />}
+      headerAction={
+        <Button
+          className="ml-auto mr-12"
+          variant="outline"
+          icon={Plus}
+          onClick={() => {
+            setIsCreateRealEstateOpen(true);
+          }}
+          title="Crear una nueva inmobiliaria"
+        >
+          <span className="hidden md:inline-block">Crear</span>
+        </Button>
+      }
     >
       <div className="mb-4 text-gray-600">
         Mostrando {displayedItems.length}{' '}
@@ -47,6 +63,36 @@ export const ListRealEstates: React.FC = () => {
           <p className="text-gray-600">
             Intenta ajustar tus filtros o realiza una búsqueda diferente
           </p>
+          <div className="relative my-9">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-white px-2 text-gray-500">O</span>
+            </div>
+          </div>
+
+          <CreateRealEstateModal
+            isOpen={isCreateRealEstateOpen}
+            onOpenChange={setIsCreateRealEstateOpen}
+            showModal={true}
+            name="real_estate_name"
+            triggerComponentModal={() => (
+              <div className="z-10 mt-1 w-full rounded-md bg-white">
+                <div className="p-4 text-center">
+                  <Button
+                    type="button"
+                    onClick={() => setIsCreateRealEstateOpen(true)}
+                    variant="outline"
+                    size="sm"
+                    icon={Plus}
+                  >
+                    Agregar nueva inmobiliaria
+                  </Button>
+                </div>
+              </div>
+            )}
+          />
         </div>
       ) : (
         <>
@@ -102,6 +148,11 @@ export const ListRealEstates: React.FC = () => {
           )}
         </>
       )}
+      <CreateRealEstateModal
+        name="real_estate_name"
+        isOpen={isCreateRealEstateOpen}
+        onOpenChange={setIsCreateRealEstateOpen}
+      />
     </PageWithSidebar>
   );
 };

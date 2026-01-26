@@ -42,7 +42,6 @@ export const SecondForm = (props: SecondFormProps) => {
             control={control}
             render={({ field }) => (
               <RadioGroup
-                required
                 value={field.value || ''}
                 onValueChange={field.onChange}
                 className="flex flex-wrap gap-6"
@@ -82,7 +81,6 @@ export const SecondForm = (props: SecondFormProps) => {
                 value={field.value || ''}
                 onValueChange={field.onChange}
                 className="flex flex-wrap gap-6"
-                required
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="cold" id="summer-cold" />
@@ -116,8 +114,7 @@ export const SecondForm = (props: SecondFormProps) => {
             control={control}
             render={({ field }) => (
               <RadioGroup
-                required
-                value={field.value || ''}
+                value={field.value}
                 onValueChange={field.onChange}
                 className="flex flex-wrap gap-6"
               >
@@ -173,15 +170,11 @@ export const SecondForm = (props: SecondFormProps) => {
                     <Controller
                       name={`review_rooms.${index}.room_type`}
                       control={control}
-                      render={({ field }) => {
-                        return (
-                          <Select
-                            onValueChange={field.onChange}
-                            value={field.value ?? undefined}
-                            defaultValue={field.value ?? undefined}
-                          >
+                      render={({ field, fieldState }) => (
+                        <div className="space-y-1">
+                          <Select onValueChange={field.onChange} value={field.value ?? ''}>
                             <SelectTrigger>
-                              <SelectValue placeholder="Selecciona el tipo de propiedad" />
+                              <SelectValue placeholder="Selecciona el tipo de habitación" />
                             </SelectTrigger>
                             <SelectContent>
                               <SelectItem value="bedroom">Dormitorio</SelectItem>
@@ -193,8 +186,12 @@ export const SecondForm = (props: SecondFormProps) => {
                               <SelectItem value="storage">Almacenamiento</SelectItem>
                             </SelectContent>
                           </Select>
-                        );
-                      }}
+
+                          {fieldState.error && (
+                            <p className="text-sm text-red-500">{fieldState.error.message}</p>
+                          )}
+                        </div>
+                      )}
                     />
                   </div>
 
@@ -203,23 +200,22 @@ export const SecondForm = (props: SecondFormProps) => {
                     <Controller
                       name={`review_rooms.${index}.area_m2`}
                       control={control}
-                      rules={{
-                        required: 'El área es requerida',
-                        min: { value: 1, message: 'El área debe ser al menos 1 m²' },
-                      }}
                       render={({ field, fieldState }) => (
-                        <div>
+                        <div className="space-y-1">
                           <Input
                             type="number"
-                            {...field}
-                            value={field.value || ''}
-                            onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                            value={field.value ?? ''}
+                            onChange={(e) =>
+                              field.onChange(
+                                e.target.value === '' ? undefined : Number(e.target.value)
+                              )
+                            }
                             placeholder="Ej: 15"
-                            min="1"
+                            min={1}
                             step="0.1"
                           />
                           {fieldState.error && (
-                            <p className="text-sm text-red-500 mt-1">{fieldState.error.message}</p>
+                            <p className="text-sm text-red-500">{fieldState.error.message}</p>
                           )}
                         </div>
                       )}

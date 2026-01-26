@@ -1,11 +1,39 @@
 import { validateText } from '@/utils';
 import * as z from 'zod';
 
-export const reviewRoomSchema = z.object({
-  id: z.string().optional(),
-  room_type: z.string().optional(),
-  area_m2: z.number().optional(),
-});
+export const reviewRoomSchema = z
+  .object({
+    room_type: z.string().optional(),
+    area_m2: z.number().optional(),
+  })
+  .superRefine((data, ctx) => {
+    const { room_type, area_m2 } = data;
+
+    // Si uno existe, el otro también
+    if (!room_type) {
+      ctx.addIssue({
+        path: ['room_type'],
+        code: z.ZodIssueCode.custom,
+        message: 'Debes indicar el tipo de habitación',
+      });
+    }
+
+    if (area_m2 === undefined) {
+      ctx.addIssue({
+        path: ['area_m2'],
+        code: z.ZodIssueCode.custom,
+        message: 'Debes indicar los metros cuadrados',
+      });
+    }
+
+    if (room_type && area_m2 === 0) {
+      ctx.addIssue({
+        path: ['area_m2'],
+        code: z.ZodIssueCode.custom,
+        message: 'Los metros cuadrados deben ser mayor a 0',
+      });
+    }
+  });
 
 export const formReviewSchema = z.object({
   title: z
@@ -46,7 +74,7 @@ export const formReviewSchema = z.object({
     .min(1, 'Debes indicar el tipo de propiedad'),
   address_text: z.string({ message: 'Este campo es necesario' }).min(1, 'El campo es requerido'),
   osm_id: z.string().min(1, 'El campo es requerido'),
-  osm_type: z.string().min(1, 'El campo es requerido'),
+  osm_type: z.string().optional(),
   latitude: z.string().min(1),
   longitude: z.string().min(1),
   zone_rating: z
@@ -74,11 +102,12 @@ export const formReviewSchema = z.object({
         });
       }
     }),
-  apartment_number: z.preprocess((value) => {
-    if (typeof value !== 'string') return undefined;
-    const trimmed = value.trim();
-    return trimmed === '' ? undefined : trimmed;
-  }, z.string().max(10, 'El número de apartamento es muy largo').optional()),
+  apartment_number: z
+    .string()
+    .trim()
+    .max(10, 'El número de apartamento es muy largo')
+    .optional()
+    .or(z.literal('')),
   review_rooms: z.array(reviewRoomSchema).optional(),
 });
 

@@ -1,5 +1,3 @@
-import { PagesUrls } from '@/enums';
-import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { useDebounce } from '@/hooks';
 import { useSearchRealEstates } from '@/services';
@@ -7,14 +5,6 @@ import { useSearchRealEstates } from '@/services';
 export const useThirdForm = (props: { queryValue?: string }) => {
   const { queryValue } = props;
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const router = useRouter();
-  const handleCreateNew = (isModal?: boolean) => {
-    if (isModal) {
-      setIsModalOpen(true);
-      return;
-    }
-    router.push(PagesUrls.REAL_ESTATE_CREATE);
-  };
 
   const debouncedSearchTerm = useDebounce(queryValue, 300);
   const { data, isLoading } = useSearchRealEstates({
@@ -29,7 +19,6 @@ export const useThirdForm = (props: { queryValue?: string }) => {
   return {
     isModalOpen,
     setIsModalOpen,
-    handleCreateNew,
     data,
     isLoading,
     showModal,
