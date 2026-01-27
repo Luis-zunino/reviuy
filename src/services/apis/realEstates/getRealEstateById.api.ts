@@ -1,5 +1,6 @@
 import { supabaseClient } from '@/lib/supabase-client';
 import { RealEstate } from '@/types/realEstate';
+import { parseSupabaseError } from '@/utils';
 
 export const getRealEstateByIdApi = async (id: string): Promise<RealEstate | null> => {
   const { data, error } = await supabaseClient
@@ -8,9 +9,6 @@ export const getRealEstateByIdApi = async (id: string): Promise<RealEstate | nul
     .eq('id', id)
     .single();
 
-  if (error) {
-    throw new Error('Failed to fetch real estate');
-  }
-
+  if (error) throw parseSupabaseError(error);
   return data;
 };

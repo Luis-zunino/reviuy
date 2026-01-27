@@ -1,22 +1,15 @@
 import { supabaseClient } from '@/lib/supabase-client';
 import { RealEstateInsert, RealEstate } from '@/types/realEstate';
+import { parseSupabaseError } from '@/utils';
 
 export const createRealEstate = async (realEstateData: RealEstateInsert): Promise<RealEstate> => {
-  try {
-    const { data, error } = await supabaseClient
-      .from('real_estates')
-      .insert(realEstateData)
-      .select()
-      .single();
+  const { data, error } = await supabaseClient
+    .from('real_estates')
+    .insert(realEstateData)
+    .select()
+    .single();
 
-    if (error) {
-      console.error('Error creating real estate:', error);
-      throw new Error('Failed to create real estate');
-    }
+  if (error) throw parseSupabaseError(error);
 
-    return data;
-  } catch (error) {
-    console.error('Error in createRealEstate:', error);
-    throw error;
-  }
+  return data;
 };

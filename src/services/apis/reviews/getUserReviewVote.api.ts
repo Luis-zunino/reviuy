@@ -1,6 +1,7 @@
 import { supabaseClient } from '@/lib/supabase-client';
 import { VoteType } from '@/types';
 import type { GetUserReviewVoteParams } from './types';
+import { parseSupabaseError } from '@/utils';
 
 export const getUserReviewVote = async ({
   reviewId,
@@ -15,8 +16,7 @@ export const getUserReviewVote = async ({
     .eq('user_id', userId)
     .maybeSingle();
 
-  if (error || !data) {
-    return null;
-  }
+  if (error) throw parseSupabaseError(error);
+
   return data?.vote_type as VoteType;
 };

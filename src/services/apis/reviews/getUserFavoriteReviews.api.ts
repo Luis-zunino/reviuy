@@ -1,5 +1,6 @@
 import { supabaseClient } from '@/lib/supabase-client';
 import type { Review } from '@/types';
+import { parseSupabaseError } from '@/utils';
 
 export const getUserFavoriteReviews = async (): Promise<Review[]> => {
   const {
@@ -16,9 +17,7 @@ export const getUserFavoriteReviews = async (): Promise<Review[]> => {
     .eq('user_id', user.id)
     .order('created_at', { ascending: false });
 
-  if (error) {
-    throw error;
-  }
+  if (error) throw parseSupabaseError(error);
 
   // Extraer solo los datos de reviews
   return (data

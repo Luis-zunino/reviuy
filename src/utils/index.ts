@@ -6,3 +6,4 @@ export * from './translatePropertyType.util';
 export * from './translateRoomType.util';
 export * from './normalizeNullable.utils';
 export * from './getAddressOsmId.util';
+export * from './supabaseErrorMap.util';

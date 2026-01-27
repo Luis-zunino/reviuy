@@ -5,6 +5,7 @@ import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import type { Review } from '@/types';
 import type { GetReviewsByAddressParams } from './types';
+import { parseSupabaseError } from '@/utils';
 
 const getReviewsByAddress = async ({ osmId }: GetReviewsByAddressParams): Promise<Review[]> => {
   const { data, error } = await supabase
@@ -13,7 +14,7 @@ const getReviewsByAddress = async ({ osmId }: GetReviewsByAddressParams): Promis
     .eq('address_osm_id', osmId)
     .order('created_at', { ascending: false });
 
-  if (error) throw error;
+  if (error) throw parseSupabaseError(error);
   return data;
 };
 

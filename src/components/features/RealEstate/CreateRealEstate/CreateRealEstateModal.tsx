@@ -21,17 +21,19 @@ export const CreateRealEstateModal = (props: CreateRealEstateModalProps) => {
     onOpenChange,
     showModal = false,
     triggerComponentModal: TriggerModalComponent,
+    defaultValues,
   } = props;
   const { register, handleFormSubmit, isSubmitting, errors, watch } = useCreateRealEstateModal({
     onOpenChange,
     name,
+    defaultValues,
   });
 
   return (
     <>
       {showModal && TriggerModalComponent ? <TriggerModalComponent /> : null}
       <Dialog open={isOpen} onOpenChange={(open) => onOpenChange(open)}>
-        <DialogContent className="w-full md:w-1/2 p-4">
+        <DialogContent className="w-full md:w-1/2 p-4" aria-describedby="create-real-estate">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               Crear una nueva Inmobiliaria

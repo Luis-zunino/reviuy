@@ -1,27 +1,20 @@
 import { supabaseClient } from '@/lib/supabase-client';
 import type { RealEstateReview } from '@/types';
+import { parseSupabaseError } from '@/utils';
 
 export const getRealEstateReviewByIdApi = async ({
   reviewId,
 }: {
   reviewId: string;
 }): Promise<RealEstateReview | null> => {
-  try {
-    const { data, error } = await supabaseClient
-      .from('real_estate_reviews')
-      .select('*')
-      .eq('id', reviewId)
-      .order('created_at', { ascending: false })
-      .maybeSingle();
+  const { data, error } = await supabaseClient
+    .from('real_estate_reviews')
+    .select('*')
+    .eq('id', reviewId)
+    .order('created_at', { ascending: false })
+    .maybeSingle();
 
-    if (error) {
-      console.error('Error fetching real estate reviews:', error);
-      throw new Error('Failed to fetch real estate reviews');
-    }
+  if (error) throw parseSupabaseError(error);
 
-    return data;
-  } catch (error) {
-    console.error('Error in getAllRealEstateReviews:', error);
-    throw error;
-  }
+  return data;
 };

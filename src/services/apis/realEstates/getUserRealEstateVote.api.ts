@@ -1,5 +1,6 @@
 import { supabaseClient } from '@/lib/supabase-client';
 import { VoteType } from '@/types';
+import { parseSupabaseError } from '@/utils';
 
 export const getUserRealEstateVote = async ({
   realEstateId,
@@ -17,9 +18,7 @@ export const getUserRealEstateVote = async ({
     .eq('user_id', userId)
     .maybeSingle();
 
-  if (error) {
-    return null;
-  }
+  if (error) throw parseSupabaseError(error);
 
   return data?.vote_type as VoteType | null;
 };

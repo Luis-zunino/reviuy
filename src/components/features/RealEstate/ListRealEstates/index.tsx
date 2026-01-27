@@ -27,19 +27,6 @@ export const ListRealEstates: React.FC = () => {
       title="Inmobiliarias"
       description="Conocé las calificaciones y reseñas de las principales inmobiliarias"
       sidebar={<RealEstateSidebar form={form} handleClearFilters={handleClearFilters} />}
-      headerAction={
-        <Button
-          className="ml-auto mr-12"
-          variant="outline"
-          icon={Plus}
-          onClick={() => {
-            setIsCreateRealEstateOpen(true);
-          }}
-          title="Crear una nueva inmobiliaria"
-        >
-          <span className="hidden md:inline-block">Crear</span>
-        </Button>
-      }
     >
       <div className="mb-4 text-gray-600">
         Mostrando {displayedItems.length}{' '}
@@ -92,6 +79,7 @@ export const ListRealEstates: React.FC = () => {
                 </div>
               </div>
             )}
+            defaultValues={form.watch()}
           />
         </div>
       ) : (
@@ -148,11 +136,6 @@ export const ListRealEstates: React.FC = () => {
           )}
         </>
       )}
-      <CreateRealEstateModal
-        name="real_estate_name"
-        isOpen={isCreateRealEstateOpen}
-        onOpenChange={setIsCreateRealEstateOpen}
-      />
     </PageWithSidebar>
   );
 };

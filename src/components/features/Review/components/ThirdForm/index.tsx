@@ -60,6 +60,7 @@ export const ThirdForm = (props: ThirdFormProps) => {
                     </div>
                   </div>
                 )}
+                defaultValues={{ real_estate_name: watch('real_estate_name') ?? '' }}
               />
             }
           />

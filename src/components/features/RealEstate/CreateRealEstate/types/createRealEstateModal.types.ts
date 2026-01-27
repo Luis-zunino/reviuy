@@ -8,4 +8,5 @@ export interface CreateRealEstateModalProps {
   showModal?: boolean;
   triggerComponentModal?: () => JSX.Element;
   name: Path<FormCreateRealEstateSchema>;
+  defaultValues: FormCreateRealEstateSchema;
 }

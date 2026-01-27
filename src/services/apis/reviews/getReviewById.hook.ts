@@ -5,6 +5,7 @@ import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import type { ReviewWithRelations } from '@/types';
 import type { GetReviewByIdParams } from './types';
+import { parseSupabaseError } from '@/utils';
 
 const getReviewById = async ({ id }: GetReviewByIdParams): Promise<ReviewWithRelations | null> => {
   const { data, error } = await supabase
@@ -13,9 +14,7 @@ const getReviewById = async ({ id }: GetReviewByIdParams): Promise<ReviewWithRel
     .eq('id', id)
     .single();
 
-  if (error) {
-    throw error;
-  }
+  if (error) throw parseSupabaseError(error);
   return data;
 };
 

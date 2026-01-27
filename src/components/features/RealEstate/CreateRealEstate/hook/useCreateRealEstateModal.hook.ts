@@ -2,7 +2,6 @@ import { useCreateRealEstateHook } from '@/services';
 import type { RealEstateInsert } from '@/types';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { validateText } from '@/utils';
 import {
   type UseCreateRealEstateModalProps,
   formCreateRealEstateSchema,
@@ -12,7 +11,7 @@ import { useAuthContext } from '@/components/providers/AuthProvider';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 export const useCreateRealEstateModal = (props: UseCreateRealEstateModalProps) => {
-  const { onOpenChange, name } = props;
+  const { onOpenChange, name, defaultValues } = props;
   const { userId } = useAuthContext();
 
   const {
@@ -22,6 +21,7 @@ export const useCreateRealEstateModal = (props: UseCreateRealEstateModalProps) =
     formState: { errors },
     watch,
   } = useForm<FormCreateRealEstateSchema>({
+    defaultValues,
     resolver: zodResolver(formCreateRealEstateSchema),
   });
 
@@ -33,38 +33,27 @@ export const useCreateRealEstateModal = (props: UseCreateRealEstateModalProps) =
       return;
     }
 
-    const validation = validateText(data[name]);
-    if (!validation.isValid) {
-      toast.error(validation.message || 'El nombre contiene contenido no permitido');
-      return;
-    }
+    const realEstateData: RealEstateInsert = {
+      name: data[name],
+      created_by: userId,
+    };
 
-    try {
-      const realEstateData: RealEstateInsert = {
-        name: data[name],
-        created_by: userId,
-      };
+    const newRealEstate = await mutateAsync(realEstateData, {
+      onSuccess: () => {
+        toast.success('Inmobiliaria creada exitosamente');
+        reset();
+        onOpenChange(false);
+      },
+      onError: (error) => {
+        toast.error(error.name, {
+          description: error.message,
+        });
+        return;
+      },
+    });
 
-      const newRealEstate = await mutateAsync(realEstateData, {
-        onSuccess: () => {
-          toast.success('Inmobiliaria creada exitosamente');
-          reset();
-        },
-        onError: () => {
-          toast.error('Error inesperado', {
-            description: 'No se pudo crear la inmobiliaria. Inténtalo de nuevo.',
-          });
-        },
-      });
-
-      if (!newRealEstate) toast.success('Inmobiliaria creada exitosamente');
-      reset();
-    } catch (error) {
-      console.error('Error creating real estate:', error);
-      toast.error('Error al crear la inmobiliaria. Por favor, inténtalo de nuevo.');
-    } finally {
-      onOpenChange(false);
-    }
+    if (!newRealEstate) toast.success('Inmobiliaria creada exitosamente');
+    reset();
   };
 
   const handleFormSubmit = (e: React.FormEvent) => {

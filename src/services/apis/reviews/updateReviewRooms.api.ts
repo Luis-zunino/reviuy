@@ -1,6 +1,7 @@
 import type { ReviewRoom } from '@/types';
 import { supabaseClient } from '@/lib/supabase-client';
 import { PostgrestError } from '@supabase/supabase-js';
+import { parseSupabaseError } from '@/utils';
 
 export const updateReviewRooms = async (
   reviewId: string,
@@ -11,7 +12,9 @@ export const updateReviewRooms = async (
     .delete()
     .eq('review_id', reviewId);
 
-  if (deleteError) throw deleteError;
+  if (deleteError) {
+    throw parseSupabaseError(deleteError);
+  }
 
   if (rooms.length > 0) {
     const roomsToInsert = rooms.map((room) => ({
@@ -22,7 +25,9 @@ export const updateReviewRooms = async (
 
     const { error: insertError } = await supabaseClient.from('review_rooms').insert(roomsToInsert);
 
-    if (insertError) throw insertError;
+    if (insertError) {
+      throw parseSupabaseError(insertError);
+    }
     return { details: true, message: 'Reseña actualizada exitosamente' };
   }
 

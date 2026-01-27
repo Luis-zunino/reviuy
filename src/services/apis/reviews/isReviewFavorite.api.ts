@@ -1,19 +1,13 @@
 import { supabaseClient } from '@/lib/supabase-client';
 import type { IsReviewFavoriteRequest } from './types/isReviewFavorite.types';
+import { parseSupabaseError } from '@/utils';
 
 export const isReviewFavorite = async ({ reviewId }: IsReviewFavoriteRequest): Promise<boolean> => {
-  try {
-    const { data, error } = await supabaseClient.rpc('is_review_favorite', {
-      p_review_id: reviewId,
-    });
+  const { data, error } = await supabaseClient.rpc('is_review_favorite', {
+    p_review_id: reviewId,
+  });
 
-    if (error) {
-      throw error;
-    }
+  if (error) throw parseSupabaseError(error);
 
-    return data;
-  } catch (error) {
-    console.error('Error checking if review is favorite:', error);
-    return false;
-  }
+  return data;
 };
