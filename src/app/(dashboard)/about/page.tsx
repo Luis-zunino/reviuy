@@ -22,9 +22,7 @@ export default function AboutPage() {
               className="mb-4"
               icon={ArrowLeft}
               iconPosition="left"
-            >
-              Volver al inicio
-            </Button>
+            />
           </Link>
           <h1 className="text-4xl font-bold text-gray-900 mb-2">Sobre Nosotros</h1>
           <p className="text-lg text-gray-600">Conoce más sobre Reviuy y nuestra misión</p>
@@ -162,7 +160,7 @@ export default function AboutPage() {
         </div>
 
         {/* Call to Action */}
-        <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg shadow-lg p-8 text-center text-white">
+        <div className="bg-linear-to-r from-blue-600 to-blue-700 rounded-lg shadow-lg p-8 text-center text-white">
           <h2 className="text-3xl font-bold mb-4">¿Listo para unirte a nuestra comunidad?</h2>
           <p className="text-lg mb-6 text-blue-100">
             Comparte tu experiencia y ayuda a otros a tomar mejores decisiones

@@ -20,17 +20,17 @@ export interface ContentBlock {
 
 export type ContentSection = ContentBlock[];
 
-export interface Article {
-  id: number;
+export interface Tip {
+  id: string;
   title: string;
   excerpt: string;
-  category: ArticleType;
+  category: TipType;
   date: string;
   readTime: string;
   content: ContentSection[];
 }
 
-export enum ArticleType {
+export enum TipType {
   ARTICLE = 'article',
   TIP = 'tip',
   ALL = 'Todos',

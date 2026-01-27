@@ -1,7 +1,11 @@
+import { PagesUrls } from '@/enums';
 import { FAQCategory } from '../enums';
 import type { FAQItem } from '../types';
+import { Button } from '@/components/ui/button';
+import { useRouter } from 'next/navigation';
 
-export const getDoubtsItems = () => {
+export const useGetDoubtsItems = () => {
+  const { push } = useRouter();
   const data: FAQItem[] = [
     {
       id: 1,
@@ -81,6 +85,30 @@ export const getDoubtsItems = () => {
         'Soy una inmobiliaria o el propietario de una vivienda en alquiler. ¿Puedo participar?',
       answer:
         'En la versión inicial de ReviUy, pueden participar las personas que viven o han vivido en las viviendas. En un futuro, el portal incorporará una nueva funcionalidad que permitirá a los caseros e inmobiliarias participar también. Si quieres ponerte en contacto, escríbenos',
+      category: FAQCategory.OTHERS,
+    },
+
+    {
+      id: 15,
+      question: '¿ReviUy brinda asesoramiento o soporte legal?',
+      answer: (
+        <>
+          <p>
+            No. ReviUy no ofrece asesoramiento legal ni representación jurídica. La plataforma tiene
+            como objetivo facilitar información, experiencias y valoraciones sobre inmuebles,
+            propietarios, inmobiliarias y zonas, basándose en la opinión de los usuarios.
+          </p>
+          <p>
+            Sin embargo, entendemos que en algunas situaciones —como conflictos contractuales, dudas
+            legales o reclamos formales— puede ser necesario contar con apoyo profesional.Por ese
+            motivo, podemos recomendar servicios de asesoría legal especializados, con el fin de
+            orientar a los usuarios sobre los pasos a seguir.
+          </p>
+          <Button variant="outline" onClick={() => push(PagesUrls.CONTACT)} className="mt-2">
+            Contactar
+          </Button>
+        </>
+      ),
       category: FAQCategory.OTHERS,
     },
   ];

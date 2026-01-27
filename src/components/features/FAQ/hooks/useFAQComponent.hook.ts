@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { getDoubtsItems } from '../utils';
 import { FAQCategory } from '../enums';
-import { getFAQCategoryLabel } from '../utils/faqCategoryLabels.utils';
+import { getFAQCategoryLabel } from '../constants';
+import { useGetDoubtsItems } from './useGetDoubtsItems.hook';
 
 export const useFAQComponent = () => {
-  const { data: doubtsItems } = getDoubtsItems();
+  const { data: doubtsItems } = useGetDoubtsItems();
   const [openId, setOpenId] = useState<number | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<FAQCategory>(FAQCategory.ALL);
 

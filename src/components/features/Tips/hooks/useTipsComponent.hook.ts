@@ -1,39 +1,39 @@
-import { articles } from '@/services/mocks/articles.mock';
-import { ArticleType } from '@/types';
+import { tips } from '@/services/mocks/tips.mock';
+import { TipType } from '@/types';
 import { useState } from 'react';
 
 export const useTipsComponent = () => {
-  const [selectedCategory, setSelectedCategory] = useState<ArticleType>(ArticleType.ALL);
+  const [selectedCategory, setSelectedCategory] = useState<TipType>(TipType.ALL);
 
-  const categoryCounts = articles.reduce(
+  const categoryCounts = tips.reduce(
     (acc, article) => {
       acc[article.category] = (acc[article.category] ?? 0) + 1;
       return acc;
     },
     {
-      [ArticleType.CONTRACTS]: 0,
-      [ArticleType.FINANCE]: 0,
-      [ArticleType.SECURITY]: 0,
-      [ArticleType.LEGAL]: 0,
-      [ArticleType.TIPS]: 0,
-      [ArticleType.GUIDES]: 0,
-    } as Record<ArticleType, number>
+      [TipType.CONTRACTS]: 0,
+      [TipType.FINANCE]: 0,
+      [TipType.SECURITY]: 0,
+      [TipType.LEGAL]: 0,
+      [TipType.TIPS]: 0,
+      [TipType.GUIDES]: 0,
+    } as Record<TipType, number>
   );
 
   const categories = [
-    { name: ArticleType.ALL, count: articles.length },
-    { name: ArticleType.CONTRACTS, count: categoryCounts[ArticleType.CONTRACTS] },
-    { name: ArticleType.FINANCE, count: categoryCounts[ArticleType.FINANCE] },
-    { name: ArticleType.SECURITY, count: categoryCounts[ArticleType.SECURITY] },
-    { name: ArticleType.LEGAL, count: categoryCounts[ArticleType.LEGAL] },
-    { name: ArticleType.TIPS, count: categoryCounts[ArticleType.TIPS] },
-    { name: ArticleType.GUIDES, count: categoryCounts[ArticleType.GUIDES] },
+    { name: TipType.ALL, count: tips.length },
+    { name: TipType.CONTRACTS, count: categoryCounts[TipType.CONTRACTS] },
+    { name: TipType.FINANCE, count: categoryCounts[TipType.FINANCE] },
+    { name: TipType.SECURITY, count: categoryCounts[TipType.SECURITY] },
+    { name: TipType.LEGAL, count: categoryCounts[TipType.LEGAL] },
+    { name: TipType.TIPS, count: categoryCounts[TipType.TIPS] },
+    { name: TipType.GUIDES, count: categoryCounts[TipType.GUIDES] },
   ];
 
-  const filteredArticles =
-    selectedCategory === ArticleType.ALL
-      ? articles
-      : articles.filter((article) => article.category === selectedCategory);
+  const filteredTips =
+    selectedCategory === TipType.ALL
+      ? tips
+      : tips.filter((article) => article.category === selectedCategory);
 
-  return { categories, filteredArticles, selectedCategory, setSelectedCategory };
+  return { categories, filteredTips, selectedCategory, setSelectedCategory };
 };

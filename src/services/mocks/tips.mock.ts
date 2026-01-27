@@ -1,13 +1,13 @@
-import type { Article } from '@/types';
-import { ArticleType, ContentType } from '@/types';
+import type { Tip } from '@/types';
+import { TipType, ContentType } from '@/types';
 
-export const articles: Article[] = [
+export const tips: Tip[] = [
   {
-    id: 1,
+    id: '2c0c5641-f8bc-421c-93b0-09a5905034b0',
     title: '10 Preguntas clave antes de firmar tu contrato de alquiler',
     excerpt:
       'Aprende qué debes preguntar y verificar antes de firmar cualquier contrato de alquiler para evitar sorpresas desagradables.',
-    category: ArticleType.CONTRACTS,
+    category: TipType.CONTRACTS,
     date: 'Nov 25, 2024',
     readTime: '8 min',
     content: [
@@ -322,11 +322,11 @@ export const articles: Article[] = [
     ],
   },
   {
-    id: 2,
+    id: '23ce24f4-d361-4472-a883-f7145883dbd7',
     title: 'Presupuesto real: ¿Cuánto cuesta realmente alquilar?',
     excerpt:
       'Descubre todos los gastos asociados al alquiler más allá de la renta mensual: seguros, servicios, depósitos y más.',
-    category: ArticleType.FINANCE,
+    category: TipType.FINANCE,
     date: 'Nov 23, 2024',
     readTime: '6 min',
     content: [
@@ -335,7 +335,7 @@ export const articles: Article[] = [
         { type: ContentType.H2, text: 'Introducción' },
         {
           type: ContentType.P,
-          text: 'Cuando buscas una vivienda en alquiler, el precio mensual que ves anunciado es solo la punta del iceberg. Muchos inquilinos primerizos se sorprenden al descubrir que sus gastos reales son significativamente mayores a la cifra que esperaban pagar. En esta guía completa, desglosamos todos los costos asociados con el alquiler para que puedas crear un presupuesto realista y evitar sorpresas financieras.',
+          text: 'Cuando buscas una vivienda en alquiler, el precio mensual que ves anunciado es solo la punta del iceberg. Muchos inquilinos primerizos se sorprenden al descubrir que sus gastos reales son significativamente mayores a la cifra que esperaban pagar. En esta guía, desglosamos todos los costos asociados con el alquiler para que puedas crear un presupuesto realista y evitar sorpresas financieras.',
         },
       ],
       // La Renta Mensual Base
@@ -418,15 +418,15 @@ export const articles: Article[] = [
         },
         {
           type: ContentType.P,
-          text: 'Ejemplo de cálculo inicial: Si la renta es $1,000 mensuales:',
+          text: 'Ejemplo de cálculo inicial: Si la renta es $25,000 mensuales:',
         },
         {
           type: ContentType.UL,
           children: [
-            { type: ContentType.LI, text: 'Depósito de garantía: $2,000' },
-            { type: ContentType.LI, text: 'Primer mes: $1,000' },
-            { type: ContentType.LI, text: 'Último mes: $1,000' },
-            { type: ContentType.LI, text: 'Comisión agencia: $1,000' },
+            { type: ContentType.LI, text: 'Depósito de garantía: $50,000' },
+            { type: ContentType.LI, text: 'Primer mes: $25,000' },
+            { type: ContentType.LI, text: 'Último mes: $25,000' },
+            { type: ContentType.LI, text: 'Comisión agencia: $25,000' },
           ],
         },
         { type: ContentType.P, text: 'Total inicial requerido: $5,000' },
@@ -444,22 +444,21 @@ export const articles: Article[] = [
           children: [
             {
               type: ContentType.LI,
-              text: 'Electricidad: $50-150/mes (depende del uso de aire acondicionado/calefacción)',
+              text: 'Electricidad: $1500-3000/mes (depende del uso de aire acondicionado/calefacción)',
             },
-            { type: ContentType.LI, text: 'Gas: $30-80/mes (calefacción, agua caliente, cocina)' },
-            { type: ContentType.LI, text: 'Agua: $30-60/mes' },
-            { type: ContentType.LI, text: 'Internet y TV por cable: $40-100/mes' },
+            { type: ContentType.LI, text: 'Gas: $1000/mes (calefacción, agua caliente, cocina)' },
+            { type: ContentType.LI, text: 'Agua: $800-1500/mes' },
           ],
         },
         { type: ContentType.H3, text: 'A veces incluidos, a veces no:' },
         {
           type: ContentType.UL,
           children: [
-            { type: ContentType.LI, text: 'Recolección de basura: $10-30/mes' },
-            { type: ContentType.LI, text: 'Calefacción central: $50-200/mes en invierno' },
+            { type: ContentType.LI, text: 'Recolección de basura: $2500-5000/mes' },
+            { type: ContentType.LI, text: 'Calefacción central: $6000-8000/mes en invierno' },
           ],
         },
-        { type: ContentType.P, text: 'Total promedio en servicios: $200-400/mes' },
+        { type: ContentType.P, text: 'Total promedio en servicios: $3000-6000/mes' },
         {
           type: ContentType.P,
           text: 'Consejo de ahorro: Pregunta al inquilino anterior cuánto pagaba mensualmente en servicios. Es la información más precisa que puedes obtener.',
@@ -492,48 +491,7 @@ export const articles: Article[] = [
         },
         {
           type: ContentType.P,
-          text: 'Costo típico: $50-300/mes dependiendo del edificio y amenidades',
-        },
-        {
-          type: ContentType.P,
           text: 'Importante: Verifica si estos gastos están incluidos en la renta o son adicionales. Algunos propietarios los incluyen, otros no.',
-        },
-      ],
-      // Seguros
-      [
-        { type: ContentType.H2, text: 'Seguros' },
-        { type: ContentType.H3, text: 'Seguro de inquilino (altamente recomendado)' },
-        { type: ContentType.P, text: 'Costo: $15-40/mes' },
-        { type: ContentType.P, text: 'Qué cubre:' },
-        {
-          type: ContentType.UL,
-          children: [
-            {
-              type: ContentType.LI,
-              text: 'Tus pertenencias personales (muebles, electrónicos, ropa)',
-            },
-            { type: ContentType.LI, text: 'Responsabilidad civil si causas daños a terceros' },
-            {
-              type: ContentType.LI,
-              text: 'Gastos de vivienda temporal si la propiedad se vuelve inhabitable',
-            },
-            { type: ContentType.LI, text: 'Robo y vandalismo' },
-          ],
-        },
-        {
-          type: ContentType.P,
-          text: '¿Por qué es importante? El seguro del propietario solo cubre el edificio, no tus cosas. Si hay un incendio o robo, sin seguro perderías todo.',
-        },
-        { type: ContentType.H3, text: 'Seguro de vida o fianza (a veces requerido)' },
-        {
-          type: ContentType.UL,
-          children: [
-            {
-              type: ContentType.LI,
-              text: 'Algunos propietarios lo exigen como garantía adicional',
-            },
-            { type: ContentType.LI, text: 'Costo: Variable según tu perfil' },
-          ],
         },
       ],
       // Estacionamiento
@@ -565,7 +523,7 @@ export const articles: Article[] = [
             { type: ContentType.LI, text: 'Mobiliario básico: $1,500-5,000 inicial' },
             {
               type: ContentType.LI,
-              text: 'Electrodomésticos: $1,000-3,000 (si no están incluidos)',
+              text: 'Electrodomésticos: $25,000-3,000 (si no están incluidos)',
             },
             { type: ContentType.LI, text: 'Utensilios y menaje: $300-800' },
           ],
@@ -591,16 +549,15 @@ export const articles: Article[] = [
             { type: ContentType.LI, text: 'Servicio regular: $50-100 cada visita' },
           ],
         },
-        { type: ContentType.H3, text: 'Mantenimiento de Áreas Exteriores' },
+        { type: ContentType.H3, text: 'Mantenimiento de Áreas exteriores' },
         {
           type: ContentType.P,
-          text: 'Si alquilas una casa con jardín: $50-200/mes para jardinería',
+          text: 'Si alquilas una casa con jardín: $4500/mes para jardinería',
         },
         { type: ContentType.H3, text: 'Control de Plagas' },
         {
           type: ContentType.UL,
           children: [
-            { type: ContentType.LI, text: 'Servicio regular: $30-100 por tratamiento' },
             { type: ContentType.LI, text: 'Algunos edificios lo incluyen en gastos comunes' },
           ],
         },
@@ -610,7 +567,7 @@ export const articles: Article[] = [
         { type: ContentType.H2, text: 'Conclusión' },
         {
           type: ContentType.P,
-          text: 'El costo real de alquilar es significativamente mayor al precio de la renta mensual anunciada. Un alquiler de $1,000/mes realmente te costará aproximadamente $1,500-1,600/mes cuando consideras todos los gastos asociados.',
+          text: 'El costo real de alquilar es significativamente mayor al precio de la renta mensual anunciada. Un alquiler de $25,000/mes realmente te costará aproximadamente $3000-6000/mes cuando consideras todos los gastos asociados.',
         },
         { type: ContentType.P, text: 'Puntos clave para recordar:' },
         {
@@ -641,11 +598,11 @@ export const articles: Article[] = [
     ],
   },
   {
-    id: 3,
+    id: '08c7c985-8d2e-4f32-aa4c-71203f42d7ec',
     title: 'Red flags: Señales de alerta en alquileres',
     excerpt:
       'Identifica las banderas rojas que indican posibles estafas o problemas serios con un alquiler o inmobiliaria.',
-    category: ArticleType.SECURITY,
+    category: TipType.SECURITY,
     date: 'Nov 20, 2024',
     readTime: '7 min',
     content: [
@@ -707,7 +664,7 @@ export const articles: Article[] = [
           type: ContentType.P,
           text: 'Qué hacer: NUNCA alquiles sin ver la propiedad en persona o al menos por videollamada en tiempo real donde puedas dirigir la cámara.',
         },
-        { type: ContentType.H3, text: '3. Solicita Pagos por Métodos No Rastreables' },
+        { type: ContentType.H3, text: '3. Solicita pagos por métodos no rastreables' },
         { type: ContentType.P, text: 'Señales de alerta:' },
         {
           type: ContentType.UL,
@@ -749,7 +706,7 @@ export const articles: Article[] = [
           type: ContentType.P,
           text: 'Qué hacer: Exige claridad y documentación. Verifica la identidad del propietario y su derecho legal a alquilar.',
         },
-        { type: ContentType.H3, text: '5. No Quiere Formalizar el Contrato' },
+        { type: ContentType.H3, text: '5. No quiere formalizar el contrato' },
         { type: ContentType.P, text: 'Señales de alerta:' },
         {
           type: ContentType.UL,
@@ -793,7 +750,7 @@ export const articles: Article[] = [
           type: ContentType.P,
           text: 'Qué hacer: Investiga precios de mercado en la zona. Si algo parece demasiado bueno, probablemente no lo sea.',
         },
-        { type: ContentType.H3, text: '7. Estado de Abandono o Deterioro Severo' },
+        { type: ContentType.H3, text: '7. Estado de abandono o deterioro severo' },
         { type: ContentType.P, text: 'Señales de alerta:' },
         {
           type: ContentType.UL,
@@ -814,7 +771,7 @@ export const articles: Article[] = [
           type: ContentType.P,
           text: 'Qué hacer: Documenta todo con fotos. Si hay problemas serios, exige que se reparen ANTES de mudarte o busca otra opción.',
         },
-        { type: ContentType.H3, text: '8. Problemas de Seguridad Evidentes' },
+        { type: ContentType.H3, text: '8. Problemas de seguridad evidentes' },
         { type: ContentType.P, text: 'Señales de alerta:' },
         {
           type: ContentType.UL,
@@ -837,7 +794,7 @@ export const articles: Article[] = [
           type: ContentType.P,
           text: 'Qué hacer: Visita el barrio a diferentes horas. Habla con vecinos sobre seguridad. No comprometas tu seguridad por un buen precio.',
         },
-        { type: ContentType.H3, text: '9. El Propietario Actual o Vecinos Advierten' },
+        { type: ContentType.H3, text: '9. El propietario actual o vecinos advierten' },
         { type: ContentType.P, text: 'Señales de alerta:' },
         {
           type: ContentType.UL,
@@ -864,7 +821,7 @@ export const articles: Article[] = [
         },
         {
           type: ContentType.H3,
-          text: '10. Anuncios con Fotos Profesionales Perfectas vs. Realidad',
+          text: '10. Anuncios con fotos profesionales perfectas vs. realidad',
         },
         { type: ContentType.P, text: 'Señales de alerta:' },
         {
@@ -930,11 +887,11 @@ export const articles: Article[] = [
     ],
   },
   {
-    id: 4,
-    title: 'Derechos y deberes del inquilino: Guía completa',
+    id: '9c10c2ea-4b16-468e-929b-7d9f6395b818',
+    title: 'Derechos y deberes del inquilino',
     excerpt:
       'Todo lo que necesitas saber sobre tus derechos y responsabilidades legales como inquilino en España.',
-    category: ArticleType.TIPS,
+    category: TipType.TIPS,
     date: 'Nov 18, 2024',
     readTime: '10 min',
     content: [
@@ -943,13 +900,13 @@ export const articles: Article[] = [
         { type: ContentType.H2, text: 'Introducción' },
         {
           type: ContentType.P,
-          text: 'Conocer tus derechos y deberes como inquilino es fundamental para protegerte de abusos, evitar conflictos legales y mantener una buena relación con tu propietario. Muchos inquilinos desconocen las protecciones legales que tienen, mientras que otros ignoran sus responsabilidades y terminan en problemas. Esta guía completa te ayudará a entender exactamente cuáles son tus derechos y obligaciones.',
+          text: 'Conocer tus derechos y deberes como inquilino es fundamental para protegerte de abusos, evitar conflictos legales y mantener una buena relación con tu propietario. Muchos inquilinos desconocen las protecciones legales que tienen, mientras que otros ignoran sus responsabilidades y terminan en problemas. Esta guía te ayudará a entender exactamente cuáles son tus derechos y obligaciones.',
         },
       ],
       // Tus Derechos como Inquilino
       [
         { type: ContentType.H2, text: 'Tus Derechos como Inquilino' },
-        { type: ContentType.H3, text: '1. Derecho a un Contrato Escrito' },
+        { type: ContentType.H3, text: '1. Derecho a un contrato escrito' },
         { type: ContentType.P, text: 'Lo que significa:' },
         {
           type: ContentType.UL,
@@ -975,7 +932,7 @@ export const articles: Article[] = [
         },
       ],
       [
-        { type: ContentType.H3, text: '2. Derecho a una Vivienda Habitable' },
+        { type: ContentType.H3, text: '2. Derecho a una vivienda habitable' },
         {
           type: ContentType.P,
           text: 'Lo que significa: La propiedad debe cumplir con estándares mínimos de habitabilidad:',
@@ -1020,7 +977,7 @@ export const articles: Article[] = [
         },
       ],
       [
-        { type: ContentType.H3, text: '3. Derecho a la Privacidad' },
+        { type: ContentType.H3, text: '3. Derecho a la privacidad' },
         { type: ContentType.P, text: 'Lo que significa:' },
         {
           type: ContentType.UL,
@@ -1062,7 +1019,7 @@ export const articles: Article[] = [
         },
       ],
       [
-        { type: ContentType.H3, text: '4. Derecho a No Sufrir Discriminación' },
+        { type: ContentType.H3, text: '4. Derecho a no sufrir discriminación' },
         {
           type: ContentType.P,
           text: 'Lo que significa: El propietario no puede discriminarte por:',
@@ -1094,7 +1051,7 @@ export const articles: Article[] = [
         },
       ],
       [
-        { type: ContentType.H3, text: '5. Derecho a la Devolución del Depósito de Garantía' },
+        { type: ContentType.H3, text: '5. Derecho a la devolución del depósito de garantía' },
         { type: ContentType.P, text: 'Lo que significa:' },
         {
           type: ContentType.UL,
@@ -1163,7 +1120,7 @@ export const articles: Article[] = [
         },
       ],
       [
-        { type: ContentType.H3, text: '7. Derecho a Hacer Reparaciones de Emergencia' },
+        { type: ContentType.H3, text: '7. Derecho a hacer reparaciones de emergencia' },
         {
           type: ContentType.P,
           text: 'Lo que significa: Si hay una emergencia y el propietario no responde, puedes hacer la reparación y deducir el costo de la renta (con reglas específicas). Debes notificar al propietario primero y dar tiempo razonable.',
@@ -1191,7 +1148,7 @@ export const articles: Article[] = [
         },
       ],
       [
-        { type: ContentType.H3, text: '8. Derecho a Organizarte con Otros Inquilinos' },
+        { type: ContentType.H3, text: '8. Derecho a organizarte con otros inquilinos' },
         {
           type: ContentType.P,
           text: 'Lo que significa: Puedes formar asociaciones de inquilinos, discutir condiciones de alquiler con otros inquilinos, y no pueden desalojarte por organizarte.',
@@ -1202,7 +1159,7 @@ export const articles: Article[] = [
         },
       ],
       [
-        { type: ContentType.H3, text: '9. Derecho a Protección contra Desalojo Ilegal' },
+        { type: ContentType.H3, text: '9. Derecho a protección contra desalojo ilegal' },
         { type: ContentType.P, text: 'Lo que significa:' },
         {
           type: ContentType.UL,
@@ -1229,7 +1186,7 @@ export const articles: Article[] = [
         },
       ],
       [
-        { type: ContentType.H3, text: '10. Derecho a Modificaciones por Discapacidad' },
+        { type: ContentType.H3, text: '10. Derecho a modificaciones por discapacidad' },
         {
           type: ContentType.P,
           text: 'Lo que significa: Puedes solicitar modificaciones razonables para discapacidad. El propietario debe permitir instalación de rampas, barras de apoyo, etc. Puedes tener que pagar las modificaciones y restaurar al salir.',
@@ -1241,8 +1198,8 @@ export const articles: Article[] = [
       ],
       // Tus Deberes como Inquilino
       [
-        { type: ContentType.H2, text: 'Tus Deberes como Inquilino' },
-        { type: ContentType.H3, text: '1. Pagar la Renta a Tiempo' },
+        { type: ContentType.H2, text: 'Tus deberes como inquilino' },
+        { type: ContentType.H3, text: '1. Pagar la renta a tiempo' },
         {
           type: ContentType.P,
           text: 'Lo que significa: Debes pagar el monto completo en la fecha acordada. El retraso puede resultar en cargos por mora. El incumplimiento persistente es causa de desalojo.',
@@ -1261,7 +1218,7 @@ export const articles: Article[] = [
         },
       ],
       [
-        { type: ContentType.H3, text: '2. Mantener la Propiedad Limpia y en Buen Estado' },
+        { type: ContentType.H3, text: '2. Mantener la propiedad limpia y en buen estado' },
         {
           type: ContentType.P,
           text: 'Responsabilidad legal: Debes cuidar la propiedad como lo haría una persona razonable. El desgaste normal es aceptable, pero negligencia o daño intencional no.',
@@ -1283,7 +1240,7 @@ export const articles: Article[] = [
         },
       ],
       [
-        { type: ContentType.H3, text: '3. No Realizar Cambios Sin Permiso' },
+        { type: ContentType.H3, text: '3. No realizar cambios sin permiso' },
         {
           type: ContentType.P,
           text: 'Responsabilidad legal: La propiedad no es tuya. Alterarla sin permiso viola el contrato.',
@@ -1298,7 +1255,7 @@ export const articles: Article[] = [
         },
       ],
       [
-        { type: ContentType.H3, text: '4. Seguir las Reglas del Edificio o Comunidad' },
+        { type: ContentType.H3, text: '4. Seguir las reglas del edificio o comunidad' },
         {
           type: ContentType.P,
           text: 'Debes respetar el reglamento interno: horarios de silencio, uso de áreas comunes, normas de convivencia, políticas sobre mascotas, estacionamiento, etc.',
@@ -1309,7 +1266,7 @@ export const articles: Article[] = [
         },
       ],
       [
-        { type: ContentType.H3, text: '5. No Realizar Actividades Ilegales' },
+        { type: ContentType.H3, text: '5. No realizar actividades ilegales' },
         {
           type: ContentType.P,
           text: 'No puedes usar la propiedad para actividades criminales: drogas, actividades ilegales de negocio, almacenar bienes robados, etc.',
@@ -1320,7 +1277,7 @@ export const articles: Article[] = [
         },
       ],
       [
-        { type: ContentType.H3, text: '6. Permitir Acceso para Reparaciones e Inspecciones' },
+        { type: ContentType.H3, text: '6. Permitir acceso para reparaciones e inspecciones' },
         {
           type: ContentType.P,
           text: 'Debes permitir entrada para reparaciones necesarias y facilitar inspecciones razonables. El propietario debe dar aviso apropiado (excepto emergencias).',
@@ -1331,7 +1288,7 @@ export const articles: Article[] = [
         },
       ],
       [
-        { type: ContentType.H3, text: '7. Dar Aviso Apropiado al Terminar el Contrato' },
+        { type: ContentType.H3, text: '7. Dar aviso apropiado al terminar el contrato' },
         {
           type: ContentType.P,
           text: 'Debes notificar con anticipación si no renovarás (usualmente 30-60 días). Avisar tarde puede costarte dinero adicional. El aviso debe ser por escrito.',
@@ -1342,7 +1299,7 @@ export const articles: Article[] = [
         },
       ],
       [
-        { type: ContentType.H3, text: '8. Devolver la Propiedad en Condición Razonable' },
+        { type: ContentType.H3, text: '8. Devolver la propiedad en condición razonable' },
         {
           type: ContentType.P,
           text: 'Debes limpiar la propiedad al salir, reparar cualquier daño más allá del desgaste normal, remover todas tus pertenencias y devolver todas las llaves.',
@@ -1357,18 +1314,18 @@ export const articles: Article[] = [
         },
       ],
       [
-        { type: ContentType.H3, text: '9. Mantener un Seguro Apropiado' },
+        { type: ContentType.H3, text: '9. Mantener un seguro apropiado' },
         {
           type: ContentType.P,
           text: 'Es tu responsabilidad asegurar tus pertenencias. El seguro del propietario NO cubre tus cosas. En algunos lugares es requisito legal tener seguro de inquilino.',
         },
         {
           type: ContentType.P,
-          text: 'Por qué es importante: Protege tus pertenencias (robo, incendio, agua), cubre responsabilidad si causas daño accidental a otros, es económico (generalmente $15-40/mes).',
+          text: 'Por qué es importante: Protege tus pertenencias (robo, incendio, agua), cubre responsabilidad si causas daño accidental a otros, es económico.',
         },
       ],
       [
-        { type: ContentType.H3, text: '10. Comunicar Problemas Oportunamente' },
+        { type: ContentType.H3, text: '10. Comunicar problemas oportunamente' },
         {
           type: ContentType.P,
           text: 'Debes reportar problemas de mantenimiento pronto. No puedes esperar que empeoren y luego culpar al propietario. La comunicación debe ser por escrito cuando sea importante.',
@@ -1380,7 +1337,7 @@ export const articles: Article[] = [
       ],
       // Situaciones Especiales
       [
-        { type: ContentType.H2, text: 'Situaciones Especiales' },
+        { type: ContentType.H2, text: 'Situaciones especiales' },
         { type: ContentType.H3, text: 'Subarrendamiento' },
         {
           type: ContentType.P,
@@ -1403,7 +1360,7 @@ export const articles: Article[] = [
         },
       ],
       [
-        { type: ContentType.H3, text: 'Compañeros de Cuarto' },
+        { type: ContentType.H3, text: 'Compañeros de cuarto' },
         {
           type: ContentType.P,
           text: 'Tus derechos: Depende de si están en el contrato. Si el contrato lo permite, puedes tener roommates.',
@@ -1415,8 +1372,8 @@ export const articles: Article[] = [
       ],
       // Cómo Proteger tus Derechos
       [
-        { type: ContentType.H2, text: 'Cómo Proteger tus Derechos' },
-        { type: ContentType.H3, text: 'Documentación Esencial' },
+        { type: ContentType.H2, text: 'Cómo proteger tus derechos' },
+        { type: ContentType.H3, text: 'Documentación esencial' },
         { type: ContentType.P, text: 'Al mudarte:' },
         {
           type: ContentType.UL,
@@ -1450,7 +1407,7 @@ export const articles: Article[] = [
         },
       ],
       [
-        { type: ContentType.H3, text: 'Comunicación Efectiva' },
+        { type: ContentType.H3, text: 'Comunicación efectiva' },
         {
           type: ContentType.P,
           text: 'Siempre por escrito para asuntos importantes: Email (mantén copias), cartas certificadas (para asuntos serios), apps de mensajería (captura pantalla), portal del propietario (exporta registros).',
@@ -1462,7 +1419,7 @@ export const articles: Article[] = [
       ],
       // Cuándo Buscar Ayuda Legal
       [
-        { type: ContentType.H2, text: 'Cuándo Buscar Ayuda Legal' },
+        { type: ContentType.H2, text: 'Cuándo buscar ayuda legal' },
         { type: ContentType.P, text: 'Situaciones que requieren abogado:' },
         {
           type: ContentType.UL,
@@ -1502,17 +1459,17 @@ export const articles: Article[] = [
         },
         {
           type: ContentType.P,
-          text: 'Recursos adicionales: Consulta las leyes de arrendamiento específicas de tu ciudad o país, ya que pueden variar significativamente de esta guía general.',
+          text: 'Recursos adicionales: Consulta las leyes de arrendamiento específicas de tu ciudad, ya que pueden variar significativamente de esta guía general.',
         },
       ],
     ],
   },
   {
-    id: 5,
+    id: '2664a7b9-cdb0-46b2-9f0e-840c9f610957',
     title: 'Cómo negociar el mejor precio de alquiler',
     excerpt:
       'Estrategias efectivas para negociar y obtener las mejores condiciones en tu contrato de alquiler.',
-    category: ArticleType.TIPS,
+    category: TipType.TIPS,
     date: 'Nov 15, 2024',
     readTime: '5 min',
     content: [
@@ -1526,8 +1483,8 @@ export const articles: Article[] = [
       ],
       // Preparación: Antes de Negociar
       [
-        { type: ContentType.H2, text: 'Preparación: Antes de Negociar' },
-        { type: ContentType.H3, text: '1. Investiga el Mercado' },
+        { type: ContentType.H2, text: 'Preparación: antes de negociar' },
+        { type: ContentType.H3, text: '1. Investiga el mercado' },
         { type: ContentType.P, text: 'Lo que debes saber:' },
         {
           type: ContentType.UL,
@@ -1551,7 +1508,7 @@ export const articles: Article[] = [
         },
       ],
       [
-        { type: ContentType.H3, text: '2. Evalúa tu Posición' },
+        { type: ContentType.H3, text: '2. Evalúa tu posición' },
         { type: ContentType.P, text: 'Eres un candidato más fuerte si:' },
         {
           type: ContentType.UL,
@@ -1573,7 +1530,7 @@ export const articles: Article[] = [
         },
       ],
       [
-        { type: ContentType.H3, text: '3. Define tu Estrategia' },
+        { type: ContentType.H3, text: '3. Define tu estrategia' },
         { type: ContentType.P, text: 'Decide de antemano:' },
         {
           type: ContentType.UL,
@@ -1591,8 +1548,8 @@ export const articles: Article[] = [
       ],
       // Estrategias de Negociación Efectivas
       [
-        { type: ContentType.H2, text: 'Estrategias de Negociación Efectivas' },
-        { type: ContentType.H3, text: 'Estrategia 1: Encuentra y Menciona Defectos' },
+        { type: ContentType.H2, text: 'Estrategias de negociación efectivas' },
+        { type: ContentType.H3, text: 'Estrategia 1: Encuentra y menciona defectos' },
         {
           type: ContentType.P,
           text: 'Cómo funciona: Durante la visita, documenta todo lo que necesita mejora o reparación. Usa estos puntos como palanca de negociación.',
@@ -1611,14 +1568,14 @@ export const articles: Article[] = [
         },
       ],
       [
-        { type: ContentType.H3, text: 'Estrategia 2: Compromiso de Largo Plazo' },
+        { type: ContentType.H3, text: 'Estrategia 2: Compromiso de largo plazo' },
         {
           type: ContentType.P,
           text: 'Cómo funciona: Los propietarios valoran la estabilidad. Ofrecer un contrato más largo puede conseguirte un mejor precio.',
         },
         {
           type: ContentType.P,
-          text: 'Propuesta específica: "Veo que está pidiendo $1,200 mensuales. Si firmo un contrato de 2 años en lugar de 1, ¿podría reducirlo a $1,150? Para usted significa sin preocupaciones por dos años, y para mí un ahorro significativo."',
+          text: 'Propuesta específica: "Veo que está pidiendo $25,200 mensuales. Si firmo un contrato de 2 años en lugar de 1, ¿podría reducirlo a $23,000? Para usted significa sin preocupaciones por dos años, y para mí un ahorro significativo."',
         },
         {
           type: ContentType.P,
@@ -1630,7 +1587,7 @@ export const articles: Article[] = [
         },
       ],
       [
-        { type: ContentType.H3, text: 'Estrategia 3: Ofrecer Pago Adelantado' },
+        { type: ContentType.H3, text: 'Estrategia 3: Ofrecer pago adelantado' },
         {
           type: ContentType.P,
           text: 'Cómo funciona: Si tienes el capital, ofrecer varios meses adelantados es muy atractivo para propietarios.',
@@ -1642,7 +1599,7 @@ export const articles: Article[] = [
         },
         {
           type: ContentType.P,
-          text: 'Opción B - Mejor precio mensual: "Si le pago 3 meses adelantados cada vez, ¿puede bajar la renta mensual de $1,200 a $1,150?"',
+          text: 'Opción B - Mejor precio mensual: "Si le pago 3 meses adelantados cada vez, ¿puede bajar la renta mensual de $25,000 a $23000?"',
         },
         {
           type: ContentType.P,
@@ -1654,7 +1611,7 @@ export const articles: Article[] = [
         },
       ],
       [
-        { type: ContentType.H3, text: 'Estrategia 4: Comparación Directa' },
+        { type: ContentType.H3, text: 'Estrategia 4: Comparación directa' },
         {
           type: ContentType.P,
           text: 'Cómo funciona: Muestra anuncios de propiedades comparables más baratas.',
@@ -1665,7 +1622,7 @@ export const articles: Article[] = [
         },
         {
           type: ContentType.P,
-          text: 'Script: "He estado investigando el mercado y encontré propiedades muy similares en este barrio por $1,000-1,100. Su propiedad está en $1,300. Entiendo que tiene [menciona ventajas], pero ¿podríamos ajustar el precio a algo más cercano al mercado, digamos $1,150?"',
+          text: 'Script: "He estado investigando el mercado y encontré propiedades muy similares en este barrio por $25,000-25,100. Su propiedad está en $25,300. Entiendo que tiene [menciona ventajas], pero ¿podríamos ajustar el precio a algo más cercano al mercado, digamos $25,150?"',
         },
         {
           type: ContentType.P,
@@ -1673,18 +1630,18 @@ export const articles: Article[] = [
         },
       ],
       [
-        { type: ContentType.H3, text: 'Estrategia 5: Negociación Silenciosa' },
+        { type: ContentType.H3, text: 'Estrategia 5: Negociación silenciosa' },
         {
           type: ContentType.P,
           text: 'Cómo funciona: Después de ver la propiedad, simplemente di que te interesa pero el precio está fuera de tu presupuesto. A veces el propietario o agente preguntará cuál es tu presupuesto.',
         },
         {
           type: ContentType.P,
-          text: 'Ejemplo: "Me encanta la propiedad y cumple todo lo que busco. Desafortunadamente está un poco fuera de mi presupuesto. Mi rango es hasta $1,100." Luego SILENCIO. Deja que ellos hablen.',
+          text: 'Ejemplo: "Me encanta la propiedad y cumple todo lo que busco. Desafortunadamente está un poco fuera de mi presupuesto. Mi rango es hasta $23,100." Luego SILENCIO. Deja que ellos hablen.',
         },
         {
           type: ContentType.P,
-          text: 'Posibles respuestas: "Déjame hablar con el propietario", "¿Qué tal si nos encontramos en $1,150?", "Si pagas 6 meses adelantados podemos hacerlo".',
+          text: 'Posibles respuestas: "Déjame hablar con el propietario", "¿Qué tal si nos encontramos en $23,150?", "Si pagas 6 meses adelantados podemos hacerlo".',
         },
         {
           type: ContentType.P,
@@ -1692,7 +1649,7 @@ export const articles: Article[] = [
         },
       ],
       [
-        { type: ContentType.H3, text: 'Estrategia 6: Solicita Mejoras en Lugar de Descuento' },
+        { type: ContentType.H3, text: 'Estrategia 6: Solicita mejoras en lugar de descuento' },
         {
           type: ContentType.P,
           text: 'Cómo funciona: Si no bajan el precio, pide mejoras o inclusiones extras.',
@@ -1707,11 +1664,11 @@ export const articles: Article[] = [
         },
         {
           type: ContentType.P,
-          text: 'Script: "Entiendo que $1,300 es su precio. Si no puede bajarlo, ¿estaría dispuesto a incluir el internet y el estacionamiento en ese precio? Eso me ayudaría mucho con mi presupuesto."',
+          text: 'Script: "Entiendo que $25,300 es su precio. Si no puede bajarlo, ¿estaría dispuesto a incluir el internet y el estacionamiento en ese precio? Eso me ayudaría mucho con mi presupuesto."',
         },
       ],
       [
-        { type: ContentType.H3, text: 'Estrategia 7: Flexibilidad en Fechas de Mudanza' },
+        { type: ContentType.H3, text: 'Estrategia 7: Flexibilidad en fechas de mudanza' },
         {
           type: ContentType.P,
           text: 'Cómo funciona: Ofrece mudarte en una fecha que le convenga al propietario a cambio de mejor precio.',
@@ -1730,7 +1687,7 @@ export const articles: Article[] = [
         },
       ],
       [
-        { type: ContentType.H3, text: 'Estrategia 8: Trae un Co-Firmante o Garantía' },
+        { type: ContentType.H3, text: 'Estrategia 8: Trae un Co-firmante o garantía' },
         {
           type: ContentType.P,
           text: 'Cómo funciona: Si tienes historial crediticio débil, ofrecer un co-firmante fuerte puede mejorar tu posición negociadora.',
@@ -1745,7 +1702,7 @@ export const articles: Article[] = [
         },
       ],
       [
-        { type: ContentType.H3, text: 'Estrategia 9: Agrupa con Otros Inquilinos' },
+        { type: ContentType.H3, text: 'Estrategia 9: Agrupa con otros inquilinos' },
         {
           type: ContentType.P,
           text: 'Cómo funciona: Si tienes roommates, presenta al grupo como un solo paquete confiable.',
@@ -1756,7 +1713,7 @@ export const articles: Article[] = [
         },
       ],
       [
-        { type: ContentType.H3, text: 'Estrategia 10: Momento Oportuno' },
+        { type: ContentType.H3, text: 'Estrategia 10: Momento oportuno' },
         { type: ContentType.P, text: 'Cuándo negociar es más efectivo:' },
         {
           type: ContentType.P,
@@ -1769,8 +1726,8 @@ export const articles: Article[] = [
       ],
       // Tácticas Avanzadas
       [
-        { type: ContentType.H2, text: 'Tácticas Avanzadas' },
-        { type: ContentType.H3, text: 'La Oferta Escrita Formal' },
+        { type: ContentType.H2, text: 'Tácticas avanzadas' },
+        { type: ContentType.H3, text: 'La oferta escrita formal' },
         {
           type: ContentType.P,
           text: 'Cómo funciona: En lugar de negociar verbalmente, presenta una oferta escrita formal.',
@@ -1781,60 +1738,60 @@ export const articles: Article[] = [
         },
       ],
       [
-        { type: ContentType.H3, text: 'La Estrategia del "Ancla Baja"' },
+        { type: ContentType.H3, text: 'La estrategia del "Ancla baja"' },
         {
           type: ContentType.P,
-          text: 'Cómo funciona: Empieza con una oferta significativamente más baja para "anclar" la negociación. Si piden $1,300, ofrece $1,050.',
+          text: 'Cómo funciona: Empieza con una oferta significativamente más baja para "anclar" la negociación. Si piden $25,300, ofrece $23,050.',
         },
         {
           type: ContentType.P,
-          text: 'Psicología: Cuando empiezas bajo, cualquier punto medio parece razonable. Si llegas a $1,150, ambos sienten que "ganaron" algo.',
+          text: 'Psicología: Cuando empiezas bajo, cualquier punto medio parece razonable. Si llegas a $24,150, ambos sienten que "ganaron" algo.',
         },
         { type: ContentType.P, text: 'Advertencia: No exageres o perderás credibilidad.' },
       ],
       [
-        { type: ContentType.H3, text: 'La Opción de "Escalera"' },
+        { type: ContentType.H3, text: 'La opción de "Escalera"' },
         {
           type: ContentType.P,
           text: 'Cómo funciona: Ofrece incrementos graduales con compromisos incrementales.',
         },
         {
           type: ContentType.P,
-          text: 'Propuesta: "¿Qué le parece esto? Año 1: $1,100/mes, Año 2: $1,150/mes, Año 3: $1,200/mes. Usted asegura un inquilino de largo plazo con incrementos predecibles, y yo planifico mi presupuesto con certeza."',
+          text: 'Propuesta: "¿Qué le parece esto? Año 1: $23,100/mes, Año 2: $24,150/mes, Año 3: $25,200/mes. Usted asegura un inquilino de largo plazo con incrementos predecibles, y yo planifico mi presupuesto con certeza."',
         },
       ],
       // Errores Comunes a Evitar
       [
-        { type: ContentType.H2, text: 'Errores Comunes a Evitar' },
+        { type: ContentType.H2, text: 'Errores comunes a evitar' },
         {
           type: ContentType.P,
-          text: 'Error 1: Mostrar Desesperación - Nunca digas: "Esta es mi única opción" o "Necesito mudarme urgentemente"',
+          text: 'Error 1: Mostrar desesperación - Nunca digas: "Esta es mi única opción" o "Necesito mudarme urgentemente"',
         },
         {
           type: ContentType.P,
-          text: 'Error 2: Ser Demasiado Agresivo - Evita ofertas insultantemente bajas o actitud conflictiva',
+          text: 'Error 2: Ser demasiado agresivo - Evita ofertas insultantemente bajas o actitud conflictiva',
         },
         {
           type: ContentType.P,
-          text: 'Error 3: Negociar Sin Información - No negocies sin conocer precios de mercado',
+          text: 'Error 3: Negociar sin información - No negocies sin conocer precios de mercado',
         },
         {
           type: ContentType.P,
-          text: 'Error 4: Aceptar la Primera Contraoferta - Casi siempre hay margen para negociar más',
+          text: 'Error 4: Aceptar la primera contraoferta - Casi siempre hay margen para negociar más',
         },
         {
           type: ContentType.P,
-          text: 'Error 5: Olvidar Pedir Todo por Escrito - Acuerdos verbales no valen nada',
+          text: 'Error 5: Olvidar pedir todo por escrito - Acuerdos verbales no valen nada',
         },
         {
           type: ContentType.P,
-          text: 'Error 6: Negociar Después de Firmar - Todo debe negociarse ANTES de firmar',
+          text: 'Error 6: Negociar después de firmar - Todo debe negociarse ANTES de firmar',
         },
       ],
       // Qué Decir y Qué No Decir
       [
-        { type: ContentType.H2, text: 'Qué Decir y Qué No Decir' },
-        { type: ContentType.H3, text: 'Frases Que Funcionan' },
+        { type: ContentType.H2, text: 'Qué decir y qué no decir' },
+        { type: ContentType.H3, text: 'Frases que funcionan' },
         {
           type: ContentType.UL,
           children: [
@@ -1846,7 +1803,7 @@ export const articles: Article[] = [
             { type: ContentType.LI, text: '"¿Cuál sería su mejor oferta?"' },
           ],
         },
-        { type: ContentType.H3, text: 'Frases Que Debes Evitar' },
+        { type: ContentType.H3, text: 'Frases que debes evitar' },
         {
           type: ContentType.UL,
           children: [
@@ -1860,7 +1817,7 @@ export const articles: Article[] = [
       ],
       // Negociación en Renovación
       [
-        { type: ContentType.H2, text: 'Negociación en Renovación' },
+        { type: ContentType.H2, text: 'Negociación en renovación' },
         { type: ContentType.P, text: 'No olvides que también puedes negociar al renovar.' },
         {
           type: ContentType.P,
@@ -1877,14 +1834,14 @@ export const articles: Article[] = [
       ],
       // Calculadora de Ahorro
       [
-        { type: ContentType.H2, text: 'Calculadora de Ahorro' },
-        { type: ContentType.P, text: 'Si negocias $150 menos por mes:' },
+        { type: ContentType.H2, text: 'Calculadora de ahorro' },
+        { type: ContentType.P, text: 'Si negocias $1500 menos por mes:' },
         {
           type: ContentType.UL,
           children: [
-            { type: ContentType.LI, text: 'Ahorro mensual: $150' },
-            { type: ContentType.LI, text: 'Ahorro anual: $1,800' },
-            { type: ContentType.LI, text: 'Ahorro en 2 años: $3,600' },
+            { type: ContentType.LI, text: 'Ahorro mensual: $1500' },
+            { type: ContentType.LI, text: 'Ahorro anual: $18,000' },
+            { type: ContentType.LI, text: 'Ahorro en 2 años: $36,000' },
           ],
         },
         {
@@ -1894,7 +1851,7 @@ export const articles: Article[] = [
       ],
       // Cuándo Aceptar y Cuándo Retirarse
       [
-        { type: ContentType.H2, text: 'Cuándo Aceptar y Cuándo Retirarse' },
+        { type: ContentType.H2, text: 'Cuándo aceptar y cuándo retirarse' },
         { type: ContentType.P, text: 'Acepta si:' },
         {
           type: ContentType.UL,
@@ -1966,11 +1923,11 @@ export const articles: Article[] = [
     ],
   },
   {
-    id: 6,
+    id: 'ed77c916-c0f1-47b5-82d0-a3d09d08c09a',
     title: 'Visita virtual: qué revisar cuando ves una propiedad',
     excerpt:
       'Lista completa de aspectos técnicos y prácticos que debes inspeccionar cuidadosamente en una visita.',
-    category: ArticleType.GUIDES,
+    category: TipType.GUIDES,
     date: 'Nov 12, 2024',
     readTime: '6 min',
     content: [
@@ -1979,14 +1936,14 @@ export const articles: Article[] = [
         { type: ContentType.H2, text: 'Introducción' },
         {
           type: ContentType.P,
-          text: 'La visita a una propiedad es tu oportunidad de oro para detectar problemas antes de comprometerte. Muchos inquilinos se dejan llevar por la emoción de encontrar un lugar que les gusta y pasan por alto señales de alerta que les costarán caro más adelante. Esta guía te ayudará a realizar una inspección exhaustiva y profesional, asegurándote de que no te pierdes nada importante.',
+          text: 'La visita a una propiedad es tu oportunidad de oro para detectar problemas antes de comprometerte. Muchos inquilinos se dejan llevar por la emoción de encontrar un lugar que les gusta y pasan por alto señales de alerta que les costarán caro más adelante. Esta guía te ayudará a realizar una inspección exhaustiva, asegurándote de que no te pierdes nada importante.',
         },
       ],
       // Antes de la Visita: Preparación
       [
         { type: ContentType.H2, text: 'Antes de la visita: preparación' },
         { type: ContentType.H3, text: 'Qué llevar contigo' },
-        { type: ContentType.P, text: 'Checklist impresa o en tu teléfono: Esta guía completa' },
+        { type: ContentType.P, text: 'Checklist impresa o en tu teléfono: Esta guía' },
         { type: ContentType.P, text: 'Herramientas básicas:' },
         {
           type: ContentType.UL,
@@ -2289,7 +2246,7 @@ export const articles: Article[] = [
         { type: ContentType.P, text: 'Crucial en era del trabajo remoto.' },
         {
           type: ContentType.P,
-          text: 'Averigua: Proveedores disponibles en el edificio/zona, velocidades ofrecidas, costo mensual, ubicación de conexión (¿puedes tener WiFi en toda la propiedad?), fibra óptica disponible (ideal).',
+          text: 'Averigua: Velocidades ofrecidas, ubicación de conexión (¿puedes tener WiFi en toda la propiedad?), fibra óptica disponible (ideal).',
         },
         {
           type: ContentType.P,
@@ -2391,7 +2348,7 @@ export const articles: Article[] = [
         { type: ContentType.H3, text: 'Rechaza o exige reparaciones si ves' },
         {
           type: ContentType.P,
-          text: 'DEALBREAKERS (No alquiles): Moho negro extenso, problemas estructurales graves, sin calefacción funcional, plagas evidentes sin plan de solución, instalación eléctrica peligrosa, fugas de gas.',
+          text: 'FACTORES QUE IMPIDEN UN ACUERDO (No alquiles): Moho negro extenso, problemas estructurales graves, sin calefacción funcional, plagas evidentes sin plan de solución, instalación eléctrica peligrosa, fugas de gas.',
         },
         {
           type: ContentType.P,
@@ -2453,11 +2410,11 @@ export const articles: Article[] = [
     ],
   },
   {
-    id: 7,
+    id: '0f051846-ffc7-409e-8c18-f1af9cd2bb64',
     title: 'Inspecciona bien la propiedad',
     excerpt:
       'Verifica el estado de las instalaciones, humedad, grietas, electricidad y plomería. Visita en diferentes horarios para evaluar el ruido y actividad del barrio.',
-    category: ArticleType.TIPS,
+    category: TipType.TIPS,
     date: 'Nov 18, 2024',
     readTime: '10 min',
     content: [
@@ -2471,8 +2428,8 @@ export const articles: Article[] = [
       ],
       // Por Qué Es Crítico Inspeccionar Bien
       [
-        { type: ContentType.H2, text: 'Por Qué Es Crítico Inspeccionar Bien' },
-        { type: ContentType.H3, text: 'Razones Principales' },
+        { type: ContentType.H2, text: 'Por qué es crítico inspeccionar bien' },
+        { type: ContentType.H3, text: 'Razones principales' },
         {
           type: ContentType.P,
           text: 'Protección financiera: Evitas gastos inesperados en reparaciones, documentas problemas existentes para no perder tu depósito, identificas costos ocultos (altas cuentas de servicios por mal aislamiento).',
@@ -2492,8 +2449,8 @@ export const articles: Article[] = [
       ],
       // Preparación
       [
-        { type: ContentType.H2, text: 'Preparación: Antes de la Inspección' },
-        { type: ContentType.H3, text: 'Qué Llevar' },
+        { type: ContentType.H2, text: 'Preparación: Antes de la inspección' },
+        { type: ContentType.H3, text: 'Qué llevar' },
         { type: ContentType.P, text: 'Herramientas esenciales:' },
         {
           type: ContentType.UL,
@@ -2512,7 +2469,7 @@ export const articles: Article[] = [
         },
       ],
       [
-        { type: ContentType.H3, text: 'Mejor Momento Para Inspeccionar' },
+        { type: ContentType.H3, text: 'Mejor momento para inspeccionar' },
         {
           type: ContentType.P,
           text: 'Hora ideal: Durante el día con luz natural (10am-4pm), día de semana para ver tráfico normal, también visita de noche si es posible, después de lluvia (para detectar filtraciones).',
@@ -2524,8 +2481,8 @@ export const articles: Article[] = [
       ],
       // Inspección de Instalaciones
       [
-        { type: ContentType.H2, text: 'Inspección de Instalaciones: Lo Técnico' },
-        { type: ContentType.H3, text: '1. Sistema Eléctrico' },
+        { type: ContentType.H2, text: 'Inspección de instalaciones: Lo técnico' },
+        { type: ContentType.H3, text: '1. Sistema eléctrico' },
         {
           type: ContentType.P,
           text: 'Panel eléctrico / Caja de fusibles: Ubicación accesible, tipo (interruptores modernos vs fusibles antiguos), etiquetado claro de cada circuito, sin olor a quemado o cables expuestos, capacidad suficiente para tus necesidades.',
@@ -2548,7 +2505,7 @@ export const articles: Article[] = [
         },
       ],
       [
-        { type: ContentType.H3, text: '2. Plomería y Agua' },
+        { type: ContentType.H3, text: '2. Plomería y agua' },
         {
           type: ContentType.P,
           text: 'Test de presión de agua: Abre el grifo de la ducha al máximo, mientras corre abre otro grifo en otra habitación, flush del inodoro. ¿Se mantiene la presión?',
@@ -2575,7 +2532,7 @@ export const articles: Article[] = [
         },
       ],
       [
-        { type: ContentType.H3, text: '3. Humedad y Filtraciones' },
+        { type: ContentType.H3, text: '3. Humedad y filtraciones' },
         {
           type: ContentType.P,
           text: 'Señales visuales de humedad en paredes: Manchas oscuras o decoloración, pintura descascarada o burbujeante, papel tapiz despegándose, manchas blancas cristalizadas, moho visible (puntos negros, verdes o blancos).',
@@ -2602,7 +2559,7 @@ export const articles: Article[] = [
         },
       ],
       [
-        { type: ContentType.H3, text: '4. Electricidad y Cableado' },
+        { type: ContentType.H3, text: '4. Electricidad y cableado' },
         {
           type: ContentType.P,
           text: 'Cables visibles: Cables expuestos sin protección, empalmes caseros sin caja de conexión, cables pelados o deteriorados, extensiones eléctricas permanentes.',
@@ -2621,7 +2578,7 @@ export const articles: Article[] = [
         },
       ],
       [
-        { type: ContentType.H3, text: '5. Grietas Estructurales' },
+        { type: ContentType.H3, text: '5. Grietas estructurales' },
         {
           type: ContentType.P,
           text: 'Grietas normales (aceptables): Líneas muy finas (ancho de cabello), en esquinas de puertas y ventanas, superficiales en yeso o pintura, no crecen con el tiempo, causadas por asentamiento normal.',
@@ -2641,12 +2598,12 @@ export const articles: Article[] = [
       ],
       // Evaluación del Barrio
       [
-        { type: ContentType.H2, text: 'Evaluación del Barrio: Diferentes Horarios' },
+        { type: ContentType.H2, text: 'Evaluación del barrio: Diferentes horarios' },
         {
           type: ContentType.P,
           text: 'Por qué visitar en varios momentos: El barrio puede ser muy diferente según el horario. Una zona tranquila de día puede ser ruidosa de noche, o viceversa.',
         },
-        { type: ContentType.H3, text: 'Horarios Clave Para Evaluar' },
+        { type: ContentType.H3, text: 'Horarios clave para evaluar' },
         {
           type: ContentType.P,
           text: 'Mañana temprano (7-9am): Observa tráfico de hora pico, ruido de vecinos preparándose, disponibilidad de estacionamiento, transporte público (frecuencia, puntualidad), comercios abriendo, actividad del barrio.',
@@ -2665,7 +2622,7 @@ export const articles: Article[] = [
         },
       ],
       [
-        { type: ContentType.H3, text: 'Checklist de Evaluación del Barrio' },
+        { type: ContentType.H3, text: 'Checklist de evaluación del barrio' },
         {
           type: ContentType.P,
           text: 'Ruido: Tráfico (autos, motos, camiones), vecinos (música, conversaciones, niños), comercios (bares, restaurantes), construcción cercana, aviones/trenes/sirenas.',
@@ -2685,8 +2642,8 @@ export const articles: Article[] = [
       ],
       // Documentación
       [
-        { type: ContentType.H2, text: 'Documentación: Tu Mejor Protección' },
-        { type: ContentType.H3, text: 'Por Qué Documentar' },
+        { type: ContentType.H2, text: 'Documentación: Tu mejor protección' },
+        { type: ContentType.H3, text: 'Por qué documentar?' },
         {
           type: ContentType.OL,
           children: [
@@ -2698,7 +2655,7 @@ export const articles: Article[] = [
         },
       ],
       [
-        { type: ContentType.H3, text: 'Qué y Cómo Documentar' },
+        { type: ContentType.H3, text: 'Qué y cómo documentar' },
         {
           type: ContentType.P,
           text: 'Fotografías detalladas: Toma fotos de vista general de cada habitación (4 ángulos), todos los desperfectos (primer plano), electrodomésticos con números de serie visibles, lecturas de medidores (agua, luz, gas), manchas/grietas/humedad, estado de pisos y paredes, ventanas y puertas, instalaciones (grifos, inodoros, ducha), áreas exteriores.',
@@ -2713,7 +2670,7 @@ export const articles: Article[] = [
         },
       ],
       [
-        { type: ContentType.H3, text: 'Organización de Documentación' },
+        { type: ContentType.H3, text: 'Organización de documentación' },
         {
           type: ContentType.P,
           text: 'Carpeta digital: Fotos organizadas por habitación, video completo, lista de problemas en Excel/Google Sheets, copias de comunicaciones con propietario.',
@@ -2725,8 +2682,8 @@ export const articles: Article[] = [
       ],
       // Señales de Alerta
       [
-        { type: ContentType.H2, text: 'Señales de Alerta Durante la Inspección' },
-        { type: ContentType.H3, text: 'Red Flags Absolutos (No Alquiles)' },
+        { type: ContentType.H2, text: 'Señales de alerta durante la inspección' },
+        { type: ContentType.H3, text: 'Red flags absolutos (No alquiles)' },
         {
           type: ContentType.UL,
           children: [
@@ -2734,14 +2691,13 @@ export const articles: Article[] = [
             { type: ContentType.LI, text: 'Olor fuerte a gas' },
             { type: ContentType.LI, text: 'Moho negro extenso' },
             { type: ContentType.LI, text: 'Problemas estructurales graves' },
-            { type: ContentType.LI, text: 'Sin calefacción funcional en clima frío' },
             { type: ContentType.LI, text: 'Plaga de insectos/roedores activa' },
             { type: ContentType.LI, text: 'Sin agua caliente o presión adecuada' },
           ],
         },
       ],
       [
-        { type: ContentType.H3, text: 'Red Flags Negociables (Exige Reparación)' },
+        { type: ContentType.H3, text: 'Red flags negociables (Exige reparación)' },
         {
           type: ContentType.UL,
           children: [
@@ -2756,7 +2712,7 @@ export const articles: Article[] = [
         },
       ],
       [
-        { type: ContentType.H3, text: 'Actitudes Sospechosas del Propietario' },
+        { type: ContentType.H3, text: 'Actitudes sospechosas del propietario' },
         {
           type: ContentType.UL,
           children: [
@@ -2776,10 +2732,10 @@ export const articles: Article[] = [
       // Después de la Inspección
       [
         { type: ContentType.H2, text: 'Después de la Inspección: Siguientes Pasos' },
-        { type: ContentType.H3, text: 'Revisión Inmediata (Dentro de 24 horas)' },
+        { type: ContentType.H3, text: 'Revisión inmediata (Dentro de 24 horas)' },
         {
           type: ContentType.P,
-          text: 'Evalúa tus hallazgos: Revisa fotos y video, organiza lista de problemas por prioridad, calcula costo estimado de problemas, decide si son dealbreakers o negociables.',
+          text: 'Evalúa tus hallazgos: Revisa fotos y video, organiza lista de problemas por prioridad, calcula costo estimado de problemas, decide si son factores decisivos o negociables.',
         },
         {
           type: ContentType.P,
@@ -2799,7 +2755,7 @@ export const articles: Article[] = [
       ],
       // Lista de Verificación Final
       [
-        { type: ContentType.H2, text: 'Lista de Verificación Final' },
+        { type: ContentType.H2, text: 'Lista de verificación final' },
         { type: ContentType.P, text: 'Antes de firmar el contrato, confirma:' },
         {
           type: ContentType.UL,
@@ -2869,428 +2825,11 @@ export const articles: Article[] = [
     ],
   },
   {
-    id: 8,
-    title: 'Negocia el precio',
-    excerpt:
-      'No aceptes la primera oferta. Los propietarios esperan negociación. Si hay problemas menores, úsalos como argumentos para reducir el precio.',
-    category: ArticleType.TIPS,
-    date: 'Nov 18, 2024',
-    readTime: '10 min',
-    content: [
-      // Introducción
-      [
-        { type: ContentType.H2, text: 'Introducción' },
-        {
-          type: ContentType.P,
-          text: 'La mayoría de las personas asume que el precio de alquiler publicado es fijo e inamovible. Este es uno de los errores más costosos que puedes cometer como inquilino. La realidad es que casi todo en el mercado de alquileres es negociable, y los propietarios experimentados esperan cierto nivel de regateo. No negociar puede costarte cientos o incluso miles de dólares durante el período de tu contrato.',
-        },
-      ],
-      // Por Qué Deberías Negociar
-      [
-        { type: ContentType.H2, text: 'Por Qué Deberías Negociar' },
-        { type: ContentType.H3, text: 'Razones para negociar siempre' },
-        {
-          type: ContentType.P,
-          text: 'Beneficio financiero directo: Ahorro mensual que se multiplica durante todo el contrato, reducción de costos iniciales (depósito, primer mes), inclusión de servicios o amenidades.',
-        },
-        {
-          type: ContentType.P,
-          text: 'Establece precedente: Demuestra que no eres un inquilino pasivo, mejor posición para futuras negociaciones (renovaciones), el propietario te tomará más en serio.',
-        },
-        {
-          type: ContentType.P,
-          text: 'Estándar del mercado: Los propietarios suelen publicar precios un 5-15% más altos esperando negociación, agentes inmobiliarios tienen margen de maniobra, no negociar significa que estás subsidiando a otros inquilinos que sí lo hacen.',
-        },
-        {
-          type: ContentType.P,
-          text: 'Detecta actitud del propietario: Un propietario inflexible en precio puede ser inflexible en todo, la negociación te muestra cómo será trabajar con esta persona.',
-        },
-      ],
-      // Cuándo Es El Mejor Momento
-      [
-        { type: ContentType.H2, text: 'Cuándo Es El Mejor Momento Para Negociar' },
-        { type: ContentType.H3, text: 'Situaciones con mayor poder de negociación' },
-        {
-          type: ContentType.P,
-          text: 'Alta oferta: La propiedad lleva más de 30 días sin alquilar, temporada baja, mercado con muchas propiedades disponibles, final de mes, recesión económica o incertidumbre.',
-        },
-        {
-          type: ContentType.P,
-          text: 'Perfil de inquilino fuerte: Excelente historial crediticio, ingresos estables y verificables (3x la renta), referencias impecables, sin mascotas, disposición para contrato largo plazo, capacidad de pagar varios meses adelantados.',
-        },
-        {
-          type: ContentType.P,
-          text: 'Defectos detectados: Problemas menores en la propiedad, electrodomésticos viejos, necesita pintura o reparaciones cosméticas, ubicación menos deseable, sin amenidades que sí tienen otras propiedades.',
-        },
-        { type: ContentType.H3, text: 'Situaciones con menor poder' },
-        {
-          type: ContentType.P,
-          text: 'Difícil negociar: Propiedad recién publicada, múltiples interesados compitiendo, temporada alta, mercado muy competitivo, tu perfil crediticio débil, tienes mascotas en edificio con restricciones.',
-        },
-        {
-          type: ContentType.P,
-          text: 'Importante: Incluso en mercados difíciles, siempre vale la pena intentar. El peor que puede pasar es que digan no.',
-        },
-      ],
-      // Preparación
-      [
-        { type: ContentType.H2, text: 'Preparación: Antes de Negociar' },
-        { type: ContentType.H3, text: 'Investiga el mercado' },
-        {
-          type: ContentType.P,
-          text: 'Precios comparables: Busca 5-10 propiedades similares en la zona, mismo tamaño y amenidades, anota rango de precios, calcula precio promedio.',
-        },
-        {
-          type: ContentType.P,
-          text: 'Tiempo en mercado: ¿Cuánto tiempo lleva publicada? ¿Ha bajado el precio? ¿Hay muchas propiedades vacías en el edificio?',
-        },
-        {
-          type: ContentType.P,
-          text: 'Condiciones del mercado: ¿Es un mercado de propietarios o inquilinos? Tendencias recientes, factores económicos locales.',
-        },
-        {
-          type: ContentType.P,
-          text: 'Herramientas útiles: Portales inmobiliarios, Google Maps, grupos de Facebook del barrio, hablar con vecinos.',
-        },
-        { type: ContentType.H3, text: 'Define tu estrategia' },
-        {
-          type: ContentType.P,
-          text: 'Tu presupuesto máximo real: No lo reveles inmediatamente, deja margen de negociación.',
-        },
-        {
-          type: ContentType.P,
-          text: 'Tu oferta inicial: Generalmente 10-20% menos que el precio pedido, debe ser justificable.',
-        },
-        {
-          type: ContentType.P,
-          text: 'Tu punto medio aceptable: Dónde estarías contento cerrando el trato.',
-        },
-        {
-          type: ContentType.P,
-          text: 'Alternativas: Si no pueden bajar precio, ¿qué más aceptarías? Inclusión de servicios, mejoras, estacionamiento.',
-        },
-        {
-          type: ContentType.P,
-          text: 'Tu BATNA: ¿Cuál es tu plan B si no llegas a acuerdo? Tener opciones te da poder.',
-        },
-      ],
-      // 10 Estrategias
-      [
-        { type: ContentType.H2, text: 'Estrategias de Negociación Específicas' },
-        { type: ContentType.H3, text: 'Estrategia 1: Usar Defectos Como Palanca' },
-        {
-          type: ContentType.P,
-          text: 'Durante tu inspección, detectaste varios problemas. Úsalos como argumentos para reducir precio. Menciona problemas específicos (cocina, baño, ventanas, alfombra) y propón un precio que refleje el estado actual.',
-        },
-        {
-          type: ContentType.P,
-          text: 'Por qué funciona: Planteas argumentos objetivos, documentaste los problemas con fotos, das razón lógica para la reducción.',
-        },
-      ],
-      [
-        { type: ContentType.H3, text: 'Estrategia 2: Comparación de Mercado' },
-        {
-          type: ContentType.P,
-          text: 'Trae evidencia de propiedades comparables más baratas. Muestra ejemplos concretos: direcciones, precios, características similares. Demuestra que el precio está por encima del promedio del mercado.',
-        },
-        {
-          type: ContentType.P,
-          text: 'Preparación: Imprime o muestra screenshots, asegúrate que sean verdaderamente comparables, ten al menos 3-5 ejemplos.',
-        },
-      ],
-      [
-        { type: ContentType.H3, text: 'Estrategia 3: Compromiso de Largo Plazo' },
-        {
-          type: ContentType.P,
-          text: 'Ofrece firmar contrato más largo a cambio de mejor precio. Para el propietario significa: ingreso garantizado por 2 años completos, sin gastos de búsqueda, sin período de vacante, sin riesgo de rotación.',
-        },
-        {
-          type: ContentType.P,
-          text: 'Variantes: 18 meses con renovación, cláusula de aumento predecible, sin aumentos durante todo el período.',
-        },
-      ],
-      [
-        { type: ContentType.H3, text: 'Estrategia 4: Pago Adelantado' },
-        {
-          type: ContentType.P,
-          text: 'Si tienes el capital, ofrece pagar varios meses adelantados. Esto les da flujo de caja inmediato, cero riesgo de impago, tranquilidad financiera.',
-        },
-        {
-          type: ContentType.P,
-          text: 'Opciones: 3 meses por 5% descuento, 6 meses por 8% descuento, 12 meses por 10% descuento.',
-        },
-        {
-          type: ContentType.P,
-          text: 'ADVERTENCIA: Solo hazlo si confías completamente en el propietario, verifica que es el dueño legítimo, todo por escrito, no comprometas tu fondo de emergencia.',
-        },
-      ],
-      [
-        { type: ContentType.H3, text: 'Estrategia 5: Solicitar Inclusiones Extras' },
-        {
-          type: ContentType.P,
-          text: 'Si no pueden bajar precio, pide que incluyan extras que te ahorran dinero: Internet, estacionamiento, gastos comunes, cable básico, lavadora/secadora sin costo extra.',
-        },
-        {
-          type: ContentType.P,
-          text: 'Calcula el valor: Si incluyen internet ($50) + estacionamiento ($75), es efectivamente como reducir la renta.',
-        },
-      ],
-      [
-        { type: ContentType.H3, text: 'Estrategia 6: Timing Estratégico' },
-        {
-          type: ContentType.P,
-          text: 'Ofrece flexibilidad en fechas a cambio de mejor precio. Si la propiedad ha estado disponible semanas, puedes mudarte inmediatamente y ahorrarles otro mes de vacante.',
-        },
-      ],
-      [
-        { type: ContentType.H3, text: 'Estrategia 7: Perfil de Bajo Riesgo' },
-        {
-          type: ContentType.P,
-          text: 'Presenta tu perfil como inquilino ideal: crédito excelente, ingresos estables, referencias impecables, sin mascotas, no fumas, profesional responsable. Los mejores inquilinos merecen las mejores tarifas.',
-        },
-      ],
-      [
-        { type: ContentType.H3, text: 'Estrategia 8: Negociación Silenciosa (Ancla Baja)' },
-        {
-          type: ContentType.P,
-          text: 'Establece un "ancla" baja para que cualquier punto medio parezca razonable. Ejemplo: Propietario pide $1,300 → Ofreces $1,050 → Contraoferta $1,250 → Tú $1,100 → Final $1,150-1,200.',
-        },
-        {
-          type: ContentType.P,
-          text: 'Psicología: Cuando empiezas muy bajo, el punto medio parece un compromiso razonable para ambos.',
-        },
-      ],
-      [
-        { type: ContentType.H3, text: 'Estrategia 9: Paquete de Beneficios Múltiples' },
-        {
-          type: ContentType.P,
-          text: 'Ofrece varios beneficios juntos: precio reducido + contrato largo + pago adelantado + mudanza inmediata + perfil excelente. Esta combinación crea una propuesta irresistible de alto valor total.',
-        },
-      ],
-      [
-        { type: ContentType.H3, text: 'Estrategia 10: Solicitud de "Mejor Oferta"' },
-        {
-          type: ContentType.P,
-          text: 'Deja que ellos hagan la primera concesión. Pregunta: "¿Hay alguna flexibilidad en el precio? ¿Cuál sería su mejor oferta?" Luego SILENCIO. Deja que ellos hablen primero. Muchas veces revelarán que hay margen.',
-        },
-      ],
-      // Qué Decir y Qué NO Decir
-      [
-        { type: ContentType.H2, text: 'Qué Decir y Qué NO Decir' },
-        { type: ContentType.H3, text: 'Frases Efectivas' },
-        {
-          type: ContentType.UL,
-          children: [
-            { type: ContentType.LI, text: 'Me encanta la propiedad, pero mi presupuesto es...' },
-            {
-              type: ContentType.LI,
-              text: 'He visto propiedades similares por menos, ¿hay flexibilidad?',
-            },
-            { type: ContentType.LI, text: '¿Qué incluye exactamente ese precio?' },
-            { type: ContentType.LI, text: 'Si me comprometo a [X], ¿podríamos hablar del precio?' },
-            { type: ContentType.LI, text: '¿Cuál sería su mejor oferta?' },
-            {
-              type: ContentType.LI,
-              text: 'Soy un inquilino de bajo riesgo, ¿consideran tarifas preferenciales?',
-            },
-          ],
-        },
-        { type: ContentType.H3, text: 'Frases Que Debes Evitar' },
-        {
-          type: ContentType.UL,
-          children: [
-            { type: ContentType.LI, text: 'Pagaré lo que sea (perdiste toda negociación)' },
-            { type: ContentType.LI, text: 'No tengo otras opciones (no tienes poder)' },
-            { type: ContentType.LI, text: 'Esta es mi propiedad soñada (desesperación)' },
-            { type: ContentType.LI, text: 'Puedo pagar más si... (nunca ofrezcas más)' },
-            { type: ContentType.LI, text: 'Mi presupuesto máximo es... (nunca reveles tu tope)' },
-          ],
-        },
-        { type: ContentType.H3, text: 'Tono y Actitud' },
-        {
-          type: ContentType.P,
-          text: 'Correcto: Profesional y respetuoso, basado en datos, solución ganar-ganar, confiado pero no arrogante, amigable pero firme.',
-        },
-        {
-          type: ContentType.P,
-          text: 'Incorrecto: Agresivo, despectivo, demasiado emocional, suplicante, deshonesto.',
-        },
-      ],
-      // Manejo de Objeciones
-      [
-        { type: ContentType.H2, text: 'Manejo de Objeciones' },
-        {
-          type: ContentType.P,
-          text: '"El precio no es negociable": Respuesta: Entiendo, pero he notado que la propiedad lleva X tiempo disponible, y propiedades similares se alquilan por menos. ¿Están seguros que no hay flexibilidad? Alternativamente, ¿qué tal si incluyen [servicio/mejora]?',
-        },
-        {
-          type: ContentType.P,
-          text: '"Ya bajamos el precio anteriormente": Respuesta: Aprecio eso, muestra flexibilidad. ¿Hay posibilidad de un ajuste adicional pequeño, quizás 5%?',
-        },
-        {
-          type: ContentType.P,
-          text: '"Tenemos otros interesados": Respuesta: Entiendo, pero estoy aquí ahora, listo para comprometerme. Un inquilino seguro hoy vale más que potenciales mañana.',
-        },
-        {
-          type: ContentType.P,
-          text: '"La propiedad lo vale": Respuesta: No dudo que es buena propiedad. Mi pregunta es sobre el valor relativo al mercado actual. Basándome en comparables, el precio está X% arriba del promedio.',
-        },
-      ],
-      // Negociación en Renovación
-      [
-        { type: ContentType.H2, text: 'Negociación en Renovación' },
-        {
-          type: ContentType.P,
-          text: 'No olvides que también puedes negociar al renovar. Como inquilino actual tienes poder: has sido responsable, has cuidado la propiedad, el propietario evita costos de buscar nuevo inquilino.',
-        },
-        {
-          type: ContentType.P,
-          text: 'Costos que el propietario evita: 1-2 meses de vacante, publicidad, tiempo de inspecciones, limpieza, riesgo de inquilino desconocido. Total: $2,000-5,000.',
-        },
-      ],
-      // Documentación
-      [
-        { type: ContentType.H2, text: 'Documentación de Acuerdos' },
-        {
-          type: ContentType.P,
-          text: 'CRÍTICO: TODO por escrito. Documenta acuerdo de precio, inclusiones extras, condiciones especiales.',
-        },
-        {
-          type: ContentType.P,
-          text: 'Envía email de confirmación detallando: propiedad, términos financieros, inclusiones, reparaciones, pago inicial. Solicita confirmación por escrito.',
-        },
-        {
-          type: ContentType.P,
-          text: 'Por qué es esencial: Evita malentendidos, protección legal, claridad para ambas partes, base para el contrato formal.',
-        },
-      ],
-      // Cuándo Aceptar y Retirarte
-      [
-        { type: ContentType.H2, text: 'Cuándo Aceptar y Cuándo Retirarte' },
-        { type: ContentType.H3, text: 'Acepta cuando' },
-        {
-          type: ContentType.UL,
-          children: [
-            { type: ContentType.LI, text: 'Has conseguido alguna concesión significativa' },
-            { type: ContentType.LI, text: 'El precio final está dentro de tu presupuesto' },
-            { type: ContentType.LI, text: 'Los términos son justos y están por escrito' },
-            { type: ContentType.LI, text: 'La propiedad cumple tus necesidades' },
-            { type: ContentType.LI, text: 'El propietario ha sido razonable y profesional' },
-            { type: ContentType.LI, text: 'Has investigado y es buen valor' },
-          ],
-        },
-        { type: ContentType.H3, text: 'Retírate cuando' },
-        {
-          type: ContentType.UL,
-          children: [
-            {
-              type: ContentType.LI,
-              text: 'El propietario es completamente inflexible y el precio es excesivo',
-            },
-            { type: ContentType.LI, text: 'Se niega a poner acuerdos por escrito' },
-            { type: ContentType.LI, text: 'Muestra múltiples red flags de comportamiento' },
-            { type: ContentType.LI, text: 'El trato parece demasiado bueno (posible estafa)' },
-            { type: ContentType.LI, text: 'Tienes mejor opción en otro lugar' },
-            { type: ContentType.LI, text: 'Tu intuición dice que algo está mal' },
-          ],
-        },
-        {
-          type: ContentType.P,
-          text: 'Recuerda: Caminar hacia otro lado es poder. Si no estás dispuesto a irte, no tienes poder de negociación.',
-        },
-      ],
-      // Cálculo del Impacto
-      [
-        { type: ContentType.H2, text: 'Cálculo del Impacto Financiero' },
-        {
-          type: ContentType.P,
-          text: 'Ejemplo real: Precio pedido $1,300/mes → Precio negociado $1,175/mes → Ahorro mensual $125.',
-        },
-        {
-          type: ContentType.P,
-          text: 'Impacto financiero: Ahorro en 1 año: $1,500. Ahorro en 2 años: $3,000. Plus internet incluido ($50/mes): $600/año adicionales. Total ahorrado en 2 años: $4,200.',
-        },
-        {
-          type: ContentType.P,
-          text: 'Tiempo invertido en negociar: 2-3 horas. Retorno por hora: $1,400.',
-        },
-      ],
-      // Errores Comunes
-      [
-        { type: ContentType.H2, text: 'Errores Comunes a Evitar' },
-        {
-          type: ContentType.UL,
-          children: [
-            {
-              type: ContentType.LI,
-              text: 'Error 1: No intentar negociar → Pagas de más garantizado',
-            },
-            {
-              type: ContentType.LI,
-              text: 'Error 2: Aceptar primera contraoferta → Dejas dinero en la mesa',
-            },
-            {
-              type: ContentType.LI,
-              text: 'Error 3: Revelar tu máximo presupuesto → El propietario no bajará de ese número',
-            },
-            {
-              type: ContentType.LI,
-              text: 'Error 4: Negociar sin investigar mercado → No tienes argumentos sólidos',
-            },
-            {
-              type: ContentType.LI,
-              text: 'Error 5: Confiar en promesas verbales → Sin escritura, no tiene validez legal',
-            },
-            {
-              type: ContentType.LI,
-              text: 'Error 6: Ser agresivo o grosero → El propietario se cierra',
-            },
-            { type: ContentType.LI, text: 'Error 7: Mostrar desesperación → Pierdes todo poder' },
-            {
-              type: ContentType.LI,
-              text: 'Error 8: No tener plan B → No puedes caminar, ellos lo saben',
-            },
-          ],
-        },
-      ],
-      // Conclusión
-      [
-        { type: ContentType.H2, text: 'Conclusión' },
-        {
-          type: ContentType.P,
-          text: 'Negociar el precio de alquiler no solo es aceptable, es esperado en el mercado inmobiliario. Los propietarios inteligentes respetan a inquilinos que negocian profesionalmente porque demuestra inteligencia financiera y que serán inquilinos responsables.',
-        },
-        { type: ContentType.P, text: 'Principios clave:' },
-        {
-          type: ContentType.OL,
-          children: [
-            { type: ContentType.LI, text: 'Siempre negocia: El peor caso es que digan no' },
-            { type: ContentType.LI, text: 'Investiga primero: Datos = poder' },
-            { type: ContentType.LI, text: 'Sé profesional: Respeto genera respeto' },
-            { type: ContentType.LI, text: 'Usa múltiples estrategias: Combina tácticas' },
-            { type: ContentType.LI, text: 'Todo por escrito: Protégete legalmente' },
-            { type: ContentType.LI, text: 'Está dispuesto a caminar: Tu mejor poder' },
-            { type: ContentType.LI, text: 'Piensa largo plazo: El ahorro se multiplica' },
-            { type: ContentType.LI, text: 'Busca ganar-ganar: Colaboración > confrontación' },
-          ],
-        },
-        {
-          type: ContentType.P,
-          text: 'El dinero que no negocies hoy es dinero que pierdes cada mes del contrato. Una conversación de 30 minutos puede ahorrarte miles de dólares.',
-        },
-        {
-          type: ContentType.P,
-          text: 'No tengas miedo de negociar. Los propietarios que se ofenden por negociación profesional probablemente no sean buenos propietarios de todos modos. Encuentra alguien que valore tener un buen inquilino y esté dispuesto a trabajar contigo para llegar a términos justos para ambos.',
-        },
-      ],
-    ],
-  },
-  {
-    id: 9,
+    id: '55eead24-9a22-46c6-b64c-de0a1b4ce91e',
     title: 'Lee el contrato cuidadosamente',
     excerpt:
       'Entiende todos los términos, cláusulas de finalización, quién paga servicios, y qué se considera daño normal vs. daño que debes pagar.',
-    category: ArticleType.LEGAL,
+    category: TipType.LEGAL,
     date: 'Nov 18, 2024',
     readTime: '10 min',
     content: [
@@ -3299,16 +2838,16 @@ export const articles: Article[] = [
         { type: ContentType.H2, text: 'Introducción' },
         {
           type: ContentType.P,
-          text: 'Firmar un contrato de alquiler sin leerlo completamente es como jugar a la ruleta rusa con tu dinero y derechos. Muchos inquilinos se arrepienten amargamente de no haber prestado atención a cláusulas que parecían "letra pequeña" pero que resultaron ser extremadamente costosas o restrictivas. Un contrato de alquiler es un documento legal vinculante que puede afectar tu vida durante meses o años. Esta guía te enseñará exactamente qué buscar, qué cuestionar, y cómo protegerte antes de firmar.',
+          text: 'Firmar un contrato de alquiler sin leerlo completamente es como jugar a la ruleta rusa con tu dinero y derechos. Muchos inquilinos se arrepienten amargamente de no haber prestado atención a cláusulas que parecían "letra pequeña" pero que resultaron ser extremadamente costosas o restrictivas. Un contrato de alquiler es un documento legal vinculante que puede afectar tu vida durante meses o años.',
         },
       ],
       // Por Qué Es Crítico
       [
-        { type: ContentType.H2, text: 'Por Qué Es Crítico Leer CADA Palabra' },
+        { type: ContentType.H2, text: 'Por qué es crítico leer CADA palabra' },
         { type: ContentType.H3, text: 'Consecuencias de no leer el contrato' },
         {
           type: ContentType.P,
-          text: 'Financieras: Cláusulas de penalización por terminación anticipada ($1,000-3,000), responsabilidades de pago no esperadas, pérdida de depósito por violaciones desconocidas, aumentos automáticos, cargos ocultos.',
+          text: 'Financieras: Cláusulas de penalización por terminación anticipada ($25,000-75,000), responsabilidades de pago no esperadas, pérdida de depósito por violaciones desconocidas, aumentos automáticos, cargos ocultos.',
         },
         {
           type: ContentType.P,
@@ -3320,7 +2859,7 @@ export const articles: Article[] = [
         },
         {
           type: ContentType.P,
-          text: 'Historia real: "Firmé sin leer. No sabía que si rompía el contrato debía pagar el alquiler restante de TODO el año ($12,000). Cuando me ofrecieron un trabajo en otra ciudad, quedé atrapado."',
+          text: 'Historia real: "Firmé sin leer. No sabía que si rompía el contrato debía pagar el alquiler restante de TODO el año ($150,000). Cuando me ofrecieron un trabajo en otra ciudad, quedé atrapado."',
         },
       ],
       // Preparación
@@ -3828,11 +3367,11 @@ export const articles: Article[] = [
     ],
   },
   {
-    id: 10,
+    id: '75d83400-eb6a-4884-9c79-199b780e2cc1',
     title: 'Habla con vecinos',
     excerpt:
       'Pregunta a los vecinos sobre el propietario, la calidad del barrio, problemas comunes en el edificio y la confiabilidad del servicio de mantenimiento.',
-    category: ArticleType.TIPS,
+    category: TipType.TIPS,
     date: 'Nov 18, 2024',
     readTime: '10 min',
     content: [
@@ -4290,11 +3829,11 @@ export const articles: Article[] = [
     ],
   },
   {
-    id: 11,
+    id: '9c2535da-120a-48d8-b1b2-5bbe254925f4',
     title: 'Verifica servicios e impuestos',
     excerpt:
       'Confirma qué servicios (agua, gas, internet) están incluidos. Pregunta por deudas de impuestos o expensas que el próximo inquilino podría heredar.',
-    category: ArticleType.TIPS,
+    category: TipType.TIPS,
     date: 'Nov 18, 2024',
     readTime: '10 min',
     content: [
@@ -4535,7 +4074,7 @@ export const articles: Article[] = [
         { type: ContentType.H3, text: 'Regla práctica' },
         {
           type: ContentType.P,
-          text: 'Servicios típicamente agregan 15-30% al costo de la renta base. Ejemplo: Renta $1,000 + Servicios $150-300 = Total real $1,150-1,300. Si tu presupuesto es $1,000 todo incluido, debes buscar rentas de máximo $700-850.',
+          text: 'Servicios típicamente agregan 15-30% al costo de la renta base. Ejemplo: Renta $25,000 + Servicios $150-300 = Total real $1,150-1,300. Si tu presupuesto es $25,000 todo incluido, debes buscar rentas de máximo $700-850.',
         },
       ],
       // Red Flags Críticos
@@ -4834,11 +4373,11 @@ export const articles: Article[] = [
     ],
   },
   {
-    id: 12,
+    id: 'c3eca73b-0b5e-4ecb-8676-dfb317e683fc',
     title: 'Solicita referencias',
     excerpt:
       'Pide referencias de otros inquilinos que alquilaron la propiedad. Pregunta sobre la responsabilidad del dueño para mantenimiento y reparos.',
-    category: ArticleType.CONTRACTS,
+    category: TipType.CONTRACTS,
     date: 'Nov 18, 2024',
     readTime: '10 min',
     content: [

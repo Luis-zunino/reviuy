@@ -8,8 +8,7 @@ import { PageWithSidebar } from '@/components/common';
 import { TipsSidebar } from './components/TipsSidebar';
 
 export const TipsPageComponent = () => {
-  const { categories, filteredArticles, selectedCategory, setSelectedCategory } =
-    useTipsComponent();
+  const { categories, filteredTips, selectedCategory, setSelectedCategory } = useTipsComponent();
 
   return (
     <PageWithSidebar
@@ -24,10 +23,10 @@ export const TipsPageComponent = () => {
       }
     >
       <div className="flex flex-col gap-2">
-        {filteredArticles.map((article) => (
+        {filteredTips.map((tip) => (
           <Link
-            key={article.id}
-            href={PagesUrls.TIPS_DETAILS?.replace(':id', article?.id.toString())}
+            key={tip.id}
+            href={PagesUrls.TIPS_DETAILS?.replace(':id', tip?.id.toString())}
             className="hover:shadow-lg transition-shadow"
           >
             <article className="bg-white rounded-lg border border-border overflow-hidden hover:shadow-lg transition-shadow grid grid-cols-1 md:grid-cols-2">
@@ -35,24 +34,24 @@ export const TipsPageComponent = () => {
                 <div>
                   <div className="flex items-center gap-3 mb-3">
                     <span className="inline-block px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full">
-                      {article.category}
+                      {tip.category}
                     </span>
-                    <span className="text-xs text-muted-foreground">{article.readTime}</span>
+                    <span className="text-xs text-muted-foreground">{tip.readTime}</span>
                   </div>
                   <h2 className="text-xl font-bold text-foreground mb-2 group-hover:text-blue-600">
-                    {article.title}
+                    {tip.title}
                   </h2>
-                  <p className="text-muted-foreground text-sm mb-4">{article.excerpt}</p>
+                  <p className="text-muted-foreground text-sm mb-4">{tip.excerpt}</p>
                 </div>
                 <div className="flex items-center justify-between text-sm text-muted-foreground">
                   <div className="flex items-center gap-4">
                     <div className="flex items-center gap-1">
                       <Calendar className="w-4 h-4" />
-                      {article.date}
+                      {tip.date}
                     </div>
                     <div className="flex items-center gap-1">
                       <User className="w-4 h-4" />
-                      {article.category}
+                      {tip.category}
                     </div>
                   </div>
                   <ArrowRight className="w-4 h-4 text-blue-600 group-hover:translate-x-1 transition-transform" />

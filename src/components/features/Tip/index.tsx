@@ -100,12 +100,12 @@ export const TipComponent = () => {
   const { tip } = useTip();
 
   return (
-    <PageWithSidebar title={tip.title} description="">
+    <PageWithSidebar title={tip?.title ?? ''} description="" isError={!tip}>
       <div className="prose prose-lg max-w-none px-4 md:px-10">
-        {Array.isArray(tip.content) ? (
+        {Array.isArray(tip?.content) ? (
           tip.content.map((section, index) => renderContentSection(section, index))
         ) : (
-          <div className="whitespace-pre-wrap">{tip.content}</div>
+          <div className="whitespace-pre-wrap">{tip?.content}</div>
         )}
       </div>
     </PageWithSidebar>
