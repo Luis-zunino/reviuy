@@ -52,7 +52,7 @@ export const NavBar = () => {
             </Link>
           </div>
           <div className="flex gap-2 items-center">
-            <Link href={PagesUrls.REVIEW_CREATE} className={cn(sharedStyles, 'hidden')}>
+            <Link href={PagesUrls.REVIEW_CREATE} className={cn(sharedStyles, 'hidden md:flex')}>
               <FilePenLine className="w-4 h-4" />
               Escribir reseña
             </Link>
