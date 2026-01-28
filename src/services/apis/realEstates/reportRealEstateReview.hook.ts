@@ -16,10 +16,6 @@ export const useReportRealEstateReview = () => {
         toast.error(error || 'Error al enviar el reporte');
       }
     },
-    onError: (error) => {
-      console.error('Error al reportar reseña:', error);
-      toast.error('Error inesperado al enviar el reporte');
-    },
   });
 };
 

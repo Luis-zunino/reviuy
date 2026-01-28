@@ -1,2 +1,2 @@
-export { useDebounce } from './useDebounce';
-export { useUserReviews } from './useUserReviews';
+export { useDebounce } from './useDebounce.hook';
+export { useUserReviews } from './useUserReviews.hook';

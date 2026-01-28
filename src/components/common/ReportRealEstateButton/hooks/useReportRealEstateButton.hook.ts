@@ -1,4 +1,8 @@
-import { useHasUserReportedRealEstate, useReportRealEstate } from '@/services';
+import {
+  useHasUserReportedRealEstate,
+  useReportRealEstate,
+  useSendReportRealEstateMessage,
+} from '@/services';
 import React, { useState } from 'react';
 import { validateText } from '@/utils';
 import { toast } from 'sonner';
@@ -11,6 +15,7 @@ export const useReportRealEstateButton = (props: UseReportRealEstateButtonProps)
   const [description, setDescription] = useState('');
 
   const { mutateAsync, isPending } = useReportRealEstate();
+  const { mutateAsync: sendMessage } = useSendReportRealEstateMessage();
   const { data: hasReported } = useHasUserReportedRealEstate(realEstate.id);
 
   const reportReasons = [
@@ -38,19 +43,25 @@ export const useReportRealEstateButton = (props: UseReportRealEstateButtonProps)
       }
     }
 
-    try {
-      await mutateAsync({
+    await mutateAsync(
+      {
         real_estate_id: realEstate.id,
         reason: selectedReason,
         description: description.trim() || undefined,
-      });
-
-      setIsOpen(false);
-      setSelectedReason('');
-      setDescription('');
-    } catch (error) {
-      console.error('Error al reportar:', error);
-    }
+      },
+      {
+        onSuccess: async () => {
+          setIsOpen(false);
+          setSelectedReason('');
+          setDescription('');
+          await sendMessage({
+            reason: selectedReason,
+            message: description,
+            realEstateName: realEstate.name,
+          });
+        },
+      }
+    );
   };
 
   const handleCancel = () => {

@@ -9,17 +9,8 @@ import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
 
 export const Contact = () => {
-  const {
-    register,
-    handleSubmit,
-    errors,
-    isSubmitting,
-    success,
-    onSubmit,
-    isAuthenticated,
-    error,
-    watch,
-  } = useContactForm();
+  const { register, handleSubmit, errors, isSubmitting, onSubmit, isAuthenticated, watch } =
+    useContactForm();
 
   return (
     <Card className="py-10 px-4 flex flex-1">
@@ -81,9 +72,6 @@ export const Contact = () => {
             {isSubmitting ? 'Enviando...' : 'Enviar'}
           </Button>
         </div>
-
-        {success && <p className="text-sm text-muted-foreground">{success}</p>}
-        {error && <p className="text-sm text-red-600">{error}</p>}
       </form>
     </Card>
   );

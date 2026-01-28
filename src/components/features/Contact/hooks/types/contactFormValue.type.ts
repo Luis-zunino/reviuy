@@ -1,3 +1,4 @@
+import { EMAIL_REGEX } from '@/constants';
 import * as z from 'zod';
 
 export const formContactSchema = z.object({
@@ -6,7 +7,7 @@ export const formContactSchema = z.object({
     .string({ message: 'Por favor ingresa tu email.' })
     .min(1, { message: 'El campo es obligatorio.' })
     .email({ message: 'Ingresa un email válido.' })
-    .regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, { message: 'Ingresa un email válido.' }),
+    .regex(EMAIL_REGEX, { message: 'Ingresa un email válido.' }),
   message: z.string({ message: 'Este campo es necesario' }).min(10, 'El mensaje es muy corto'),
 });
 
