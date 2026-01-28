@@ -1,6 +1,7 @@
 import { useMutation, UseMutationResult } from '@tanstack/react-query';
 import type { UseAuthMutationConfig } from './types';
 import { useVerifyAuthentication } from './verifyAuthentication.hook';
+import { toast } from 'sonner';
 
 export const useAuthMutation = <TData, TError = Error, TVariables = unknown>(
   config: UseAuthMutationConfig<TData, TError, TVariables>
@@ -13,7 +14,8 @@ export const useAuthMutation = <TData, TError = Error, TVariables = unknown>(
   const { data, error } = useVerifyAuthentication();
   const authenticatedMutationFn = async (variables: TVariables): Promise<TData> => {
     if (error || !data?.userId) {
-      throw new Error(authErrorMessage) as TError;
+      toast.warning(authErrorMessage);
+      throw new Error(authErrorMessage);
     }
 
     return mutationFn({

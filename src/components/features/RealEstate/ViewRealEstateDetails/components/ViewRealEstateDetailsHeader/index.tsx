@@ -23,7 +23,7 @@ export const ViewRealEstateDetailsHeader = (props: ViewRealEstateDetailsHeaderPr
     refetchRealEstateVote,
     isLoading,
     isLoadingVote,
-    push,
+    handleOnCreateReview,
   } = useViewRealEstateDetailsHeader();
 
   return (
@@ -49,9 +49,7 @@ export const ViewRealEstateDetailsHeader = (props: ViewRealEstateDetailsHeaderPr
                 {realEstate ? <ReportRealEstateButton realEstate={realEstate} showText /> : null}
                 {!hasRealEstateReview ? (
                   <Button
-                    onClick={() =>
-                      push(PagesUrls.REAL_ESTATE_CREATE_REVIEW.replace(':id', realEstateId))
-                    }
+                    onClick={handleOnCreateReview}
                     className="max-w-min"
                     size="sm"
                     icon={NotebookPen}

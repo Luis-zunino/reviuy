@@ -42,19 +42,25 @@ export const useReportReviewButton = (props: UseReportReviewButtonProps) => {
       }
     }
 
-    try {
-      await mutateAsync({
+    await mutateAsync(
+      {
         review_id: review.id,
         reason: selectedReason,
         description: description.trim() || undefined,
-      });
-
-      setIsOpen(false);
-      setSelectedReason('');
-      setDescription('');
-    } catch (error) {
-      console.error('Error al reportar:', error);
-    }
+      },
+      {
+        onSuccess: ({ message, success, error }) => {
+          if (success) {
+            toast.success(message || 'Reporte enviado exitosamente');
+          } else {
+            toast.error(error || 'Error al enviar el reporte');
+          }
+          setIsOpen(false);
+          setSelectedReason('');
+          setDescription('');
+        },
+      }
+    );
   };
 
   const handleCancel = () => {

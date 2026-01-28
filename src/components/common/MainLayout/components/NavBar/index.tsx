@@ -13,7 +13,6 @@ import {
   Contact,
 } from 'lucide-react';
 import { PagesUrls } from '@/enums';
-import { Button } from '@/components/ui/button';
 import { Logo } from './components/Logo';
 import { useNavBar } from './hooks';
 import {
@@ -24,7 +23,7 @@ import {
 import { NavBarItem } from './components/NavBarItem';
 
 export const NavBar = () => {
-  const { isAuthenticated, opacity, signOut } = useNavBar();
+  const { isAuthenticated, opacity, signOut, sharedStyles } = useNavBar();
 
   return (
     <nav
@@ -39,43 +38,28 @@ export const NavBar = () => {
         <div className="flex justify-between items-center h-16">
           <Logo />
           <div className="hidden md:flex items-center gap-6">
-            <Link
-              href={PagesUrls.REAL_ESTATE}
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors text-gray-700 hover:text-gray-900`}
-            >
+            <Link href={PagesUrls.REAL_ESTATE} className={sharedStyles}>
               Inmobiliarias
             </Link>
 
-            <Link
-              href={PagesUrls.TIPS}
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors text-gray-700 hover:text-gray-900`}
-            >
+            <Link href={PagesUrls.TIPS} className={sharedStyles}>
               Tips
             </Link>
 
-            <Link
-              href={PagesUrls.FAQ}
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors text-gray-700 hover:text-gray-900`}
-            >
+            <Link href={PagesUrls.FAQ} className={sharedStyles}>
               FAQ
             </Link>
           </div>
           <div className="flex gap-2 items-center">
-            <Link
-              href={PagesUrls.REVIEW_CREATE}
-              className="hidden md:flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-600 transition-colors h-8"
-            >
+            <Link href={PagesUrls.REVIEW_CREATE} className={sharedStyles}>
               <FilePenLine className="w-4 h-4" />
               Escribir reseña
             </Link>
             <DropdownMenu modal={false}>
               <DropdownMenuTrigger asChild className="h-8 hover:cursor-pointer">
-                <Button
-                  variant="ghost"
-                  className="min-h-8 items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-600 transition-colors h-8"
-                >
+                <Link href="#" className={sharedStyles}>
                   <Menu className="w-6 h-6" />
-                </Button>
+                </Link>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
                 <NavBarItem pageUrl={PagesUrls.HOME} Icon={Home} label="Inicio" />

@@ -11,14 +11,6 @@ export const deleteReview = async ({
   reviewId,
   userId,
 }: DeleteReviewRequest): Promise<DeleteReviewResponse> => {
-  if (!userId) {
-    return {
-      success: false,
-      message: 'Debes iniciar sesión para eliminar una reseña',
-      error: 'Usuario no autenticado',
-    };
-  }
-
   const { data: review, error: fetchError } = await supabaseClient
     .from('reviews')
     .select('id, user_id, title')

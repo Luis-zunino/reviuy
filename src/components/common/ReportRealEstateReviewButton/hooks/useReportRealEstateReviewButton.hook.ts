@@ -53,15 +53,20 @@ export const useReportRealEstateReviewButton = (props: UseReportRealEstateReview
         description: description.trim(),
       },
       {
-        onSuccess: async () => {
-          await sendMessage({
-            reason: selectedReason,
-            message: description,
-            realEstateReviewUuid: review.id,
-          });
-          setIsOpen(false);
-          setSelectedReason('');
-          setDescription('');
+        onSuccess: async ({ success, message, error }) => {
+          if (success) {
+            toast.success(message || 'Reporte enviado exitosamente');
+            await sendMessage({
+              reason: selectedReason,
+              message: description,
+              realEstateReviewUuid: review.id,
+            });
+            setIsOpen(false);
+            setSelectedReason('');
+            setDescription('');
+          } else {
+            toast.error(error || 'Error al enviar el reporte');
+          }
         },
       }
     );

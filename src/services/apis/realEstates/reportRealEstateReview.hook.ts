@@ -2,20 +2,12 @@ import {
   hasUserReportedRealEstateReview,
   reportRealEstateReview,
 } from './reportRealEstateReview.api';
-import { toast } from 'sonner';
 import { useAuthMutation } from '../user';
 import { useQuery } from '@tanstack/react-query';
 
 export const useReportRealEstateReview = () => {
   return useAuthMutation({
     mutationFn: reportRealEstateReview,
-    onSuccess: ({ success, message, error }) => {
-      if (success) {
-        toast.success(message || 'Reporte enviado exitosamente');
-      } else {
-        toast.error(error || 'Error al enviar el reporte');
-      }
-    },
   });
 };
 

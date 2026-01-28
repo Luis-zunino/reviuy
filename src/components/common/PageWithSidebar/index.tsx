@@ -68,7 +68,7 @@ export const PageWithSidebar: React.FC<PageWithSidebarProps> = ({
           {headerAction ? headerAction : null}
         </div>
       </div>
-      <div className="md:max-w-7xl mx-auto py-12 px-4 xl:px-0">
+      <div className="sm:max-w-7xl mx-auto py-12 px-4 xl:px-0">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 w-full">
           {sidebar ? (
             <div className="lg:col-span-1">

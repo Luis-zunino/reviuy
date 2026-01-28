@@ -1,21 +1,12 @@
 'use client';
 
-import { useMutation } from '@tanstack/react-query';
 import { createRealEstate } from './createRealEstate.api';
-import { verifyAuthentication } from '../user/verifyAuthentication.api';
-import type { RealEstateInsert } from '@/types/realEstate';
+import { useAuthMutation } from '../user';
 
 export const useCreateRealEstateHook = () => {
-  return useMutation({
+  return useAuthMutation({
     mutationKey: ['create-real-estate'],
-    mutationFn: async (realEstateData: RealEstateInsert) => {
-      const authCheck = await verifyAuthentication();
-
-      if (authCheck.error) {
-        throw new Error('Debes iniciar sesión para crear una inmobiliaria');
-      }
-
-      return createRealEstate(realEstateData);
-    },
+    authErrorMessage: 'Debes iniciar sesión para crear una inmobiliaria',
+    mutationFn: createRealEstate,
   });
 };

@@ -29,7 +29,7 @@ export const useCreateRealEstateModal = (props: UseCreateRealEstateModalProps) =
 
   const onSubmit = async (data: FormCreateRealEstateSchema) => {
     if (!userId) {
-      toast.error('Debes estar autenticado para crear una inmobiliaria');
+      toast.warning('Debes estar autenticado para crear una inmobiliaria');
       return;
     }
 

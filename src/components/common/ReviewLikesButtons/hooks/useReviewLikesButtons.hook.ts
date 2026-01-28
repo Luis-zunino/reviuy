@@ -1,16 +1,14 @@
-import { PagesUrls } from '@/enums';
 import { useGetReviewVote, useVoteReview } from '@/services';
 import { VoteType } from '@/types';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import type { ReviewLikesButtonsProps } from '../types';
 import type { AddVoteParams } from './types';
 import { useAuthContext } from '@/components/providers/AuthProvider';
+import { toast } from 'sonner';
 
 export const useReviewLikesButtons = (props: ReviewLikesButtonsProps) => {
   const { id, likes: initialLikes, dislikes: initialDislikes } = props;
   const { userId } = useAuthContext();
-  const { push } = useRouter();
 
   const { mutateAsync, isPending: isVoting, isError } = useVoteReview();
   const { data, isLoading, refetch } = useGetReviewVote({
@@ -23,7 +21,10 @@ export const useReviewLikesButtons = (props: ReviewLikesButtonsProps) => {
   const [optimisticDislikes, setOptimisticDislikes] = useState(initialDislikes);
 
   const addVote = async ({ id, voteType }: AddVoteParams) => {
-    if (!userId) push(PagesUrls.LOGIN);
+    if (!userId) {
+      toast.warning('Necesitas iniciar sesión para votar');
+      return;
+    }
 
     setClickedButton(voteType);
     setTimeout(() => setClickedButton(null), 300);
@@ -50,10 +51,28 @@ export const useReviewLikesButtons = (props: ReviewLikesButtonsProps) => {
         setOptimisticDislikes((prev) => prev + 1);
       }
     }
+    toast.loading('Calificando reseña...', {
+      id: 'vote-review',
+    });
+    await mutateAsync(
+      { reviewId: id, voteType },
+      {
+        onSuccess: () => {
+          toast.dismiss('vote-review');
+          toast.success('Voto registrado exitosamente');
+        },
 
-    await mutateAsync({ reviewId: id, voteType });
+        onError: () => {
+          toast.dismiss('vote-review');
+          toast.error('Error inesperado', {
+            description: 'No se pudo actualizar la reseña. Inténtalo de nuevo.',
+          });
+        },
+      }
+    );
 
     if (isError) {
+      toast.dismiss('vote-review');
       setOptimisticLikes(previousLikes);
       setOptimisticDislikes(previousDislikes);
     }

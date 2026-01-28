@@ -4,7 +4,6 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { supabaseClient } from '@/lib/supabase-client';
 import type { AuthContextType, AuthProviderProps } from './types';
 import { getSession } from '@/services/apis/user/getSession.api';
-import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { PagesUrls } from '@/enums';
 import { AppSession } from '@/services/apis/user/types';
@@ -98,11 +97,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setSession(sessionResult);
       setUserId(session?.user?.id ?? null);
       setLoading(false);
-
-      // Manejar eventos específicos
-      if (event === 'SIGNED_OUT') {
-        toast.success('Usuario desautenticado');
-      }
     });
 
     return () => subscription.unsubscribe();

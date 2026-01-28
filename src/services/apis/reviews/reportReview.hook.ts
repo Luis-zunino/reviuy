@@ -1,5 +1,4 @@
 import { hasUserReportedReview, reportReview } from './reportReview.api';
-import { toast } from 'sonner';
 import { useAuthMutation } from '../user';
 import { useQuery } from '@tanstack/react-query';
 
@@ -9,17 +8,6 @@ import { useQuery } from '@tanstack/react-query';
 export const useReportReview = () => {
   return useAuthMutation({
     mutationFn: reportReview,
-    onSuccess: ({ success, message, error }) => {
-      if (success) {
-        toast.success(message || 'Reporte enviado exitosamente');
-      } else {
-        toast.error(error || 'Error al enviar el reporte');
-      }
-    },
-    onError: (error) => {
-      console.error('Error al reportar review:', error);
-      toast.error('Error inesperado al enviar el reporte');
-    },
   });
 };
 

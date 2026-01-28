@@ -5,10 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Heart } from 'lucide-react';
 import { useToggleFavoriteReview } from '@/services/apis/reviews/useToggleFavoriteReview.hook';
 import { useIsReviewFavorite } from '@/services/apis/reviews/useIsReviewFavorite.hook';
-import { useRouter } from 'next/navigation';
-import { PagesUrls } from '@/enums';
 import type { FavoriteReviewButtonProps } from './types';
 import { useAuthContext } from '@/components/providers/AuthProvider';
+import { toast } from 'sonner';
 
 export const FavoriteReviewButton: React.FC<FavoriteReviewButtonProps> = ({
   reviewId,
@@ -17,7 +16,6 @@ export const FavoriteReviewButton: React.FC<FavoriteReviewButtonProps> = ({
   onClick,
 }) => {
   const { userId } = useAuthContext();
-  const router = useRouter();
   const { data: isFavorite, isLoading } = useIsReviewFavorite({ reviewId, userId });
   const { mutateAsync, isPending } = useToggleFavoriteReview();
 
@@ -25,15 +23,11 @@ export const FavoriteReviewButton: React.FC<FavoriteReviewButtonProps> = ({
     onClick?.(e);
 
     if (!userId) {
-      router.push(PagesUrls.LOGIN);
+      toast.warning('Debes iniciar sesión para realizar esta acción');
       return;
     }
 
-    try {
-      await mutateAsync({ reviewId });
-    } catch (error) {
-      console.error('Error toggling favorite review:', error);
-    }
+    await mutateAsync({ reviewId });
   };
 
   const isActive = isFavorite === true;

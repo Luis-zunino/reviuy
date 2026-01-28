@@ -27,7 +27,7 @@ export const useGetDoubtsItems = () => {
       category: FAQCategory.REAL_ESTATE,
       question: '¿Cómo sé si una inmobiliaria es confiable?',
       answer:
-        'Todas las inmobiliarias en nuestra plataforma tienen calificaciones y opiniones de usuarios reales. Revisa el historial y las opiniones antes de contactar.',
+        'Todas las inmobiliarias en nuestra plataforma tienen calificaciones y opiniones de usuarios. Revisa el historial y las opiniones antes de contactar.',
     },
     {
       id: 4,
@@ -41,7 +41,7 @@ export const useGetDoubtsItems = () => {
       category: FAQCategory.REVIEWS,
       question: '¿Cómo puedo dejar una opinión?',
       answer:
-        'Después de alquilar una propiedad, puedes dejar una opinión con tu experiencia. Las opiniones verificadas ayudan a otros usuarios a tomar decisiones.',
+        'Después de alquilar una propiedad, puedes dejar una opinión con tu experiencia. Las opiniones ayudan a otros usuarios a tomar decisiones.',
     },
 
     {
@@ -84,7 +84,7 @@ export const useGetDoubtsItems = () => {
       question:
         'Soy una inmobiliaria o el propietario de una vivienda en alquiler. ¿Puedo participar?',
       answer:
-        'En la versión inicial de ReviUy, pueden participar las personas que viven o han vivido en las viviendas. En un futuro, el portal incorporará una nueva funcionalidad que permitirá a los caseros e inmobiliarias participar también. Si quieres ponerte en contacto, escríbenos',
+        'En la versión inicial de ReviUy, pueden participar las personas que viven o han vivido en las viviendas. En un futuro, el portal incorporará una nueva funcionalidad que permitirá a los propetarios e inmobiliarias participar también. Si quieres ponerte en contacto, escríbenos',
       category: FAQCategory.OTHERS,
     },
 

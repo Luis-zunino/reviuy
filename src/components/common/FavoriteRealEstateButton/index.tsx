@@ -5,10 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Heart } from 'lucide-react';
 import { useToggleFavoriteRealEstate } from '@/services/apis/realEstates/toggleFavoriteRealEstate.hook';
 import { useIsRealEstateFavorite } from '@/services/apis/realEstates/isRealEstateFavorite.hook';
-import { useRouter } from 'next/navigation';
-import { PagesUrls } from '@/enums';
 import type { FavoriteRealEstateButtonProps } from './types';
 import { useAuthContext } from '@/components/providers/AuthProvider';
+import { toast } from 'sonner';
 
 export const FavoriteRealEstateButton: React.FC<FavoriteRealEstateButtonProps> = ({
   realEstateId,
@@ -16,21 +15,16 @@ export const FavoriteRealEstateButton: React.FC<FavoriteRealEstateButtonProps> =
   className = '',
 }) => {
   const { userId } = useAuthContext();
-  const router = useRouter();
   const { data: isFavorite, isLoading } = useIsRealEstateFavorite({ realEstateId, userId });
   const toggleFavoriteMutation = useToggleFavoriteRealEstate();
 
   const handleToggleFavorite = async () => {
     if (!userId) {
-      router.push(PagesUrls.LOGIN);
+      toast.warning('Debes iniciar sesión para realizar esta acción');
       return;
     }
 
-    try {
-      await toggleFavoriteMutation.mutateAsync({ realEstateId });
-    } catch (error) {
-      console.error('Error toggling favorite:', error);
-    }
+    await toggleFavoriteMutation.mutateAsync({ realEstateId });
   };
 
   const isActive = isFavorite === true;

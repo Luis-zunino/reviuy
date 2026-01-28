@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Loader2, ThumbsUp, ThumbsDown } from 'lucide-react';
-import { useVoteRealEstateReview } from '@/services';
+import { useRealEstateReviewVoteButtons } from './hooks';
 import { VoteType } from '@/types';
 import { cn } from '@/lib/utils';
 import type { RealEstateReviewVoteButtonsProps } from './types';
@@ -17,28 +17,12 @@ export const RealEstateReviewVoteButtons: React.FC<RealEstateReviewVoteButtonsPr
   className = '',
   refetchRealEstateReview,
 }) => {
-  const { mutateAsync, isPending } = useVoteRealEstateReview();
-  const [clickedButton, setClickedButton] = useState<VoteType | null>(null);
-
-  const handleVote = async (voteType: VoteType) => {
-    setClickedButton(voteType);
-    setTimeout(() => setClickedButton(null), 300);
-
-    await mutateAsync({ reviewId, voteType });
-
-    // Refetch inmediato de las queries para obtener los datos actualizados del servidor
-    return refetchRealEstateReview?.();
-  };
-
-  const getLikeTooltip = () => {
-    if (userVote === VoteType.LIKE) return 'Ya votaste útil';
-    return 'Marcar como útil';
-  };
-
-  const getDislikeTooltip = () => {
-    if (userVote === VoteType.DISLIKE) return 'Ya votaste no útil';
-    return 'Marcar como no útil';
-  };
+  const { handleVote, isPending, clickedButton, getLikeTooltip, getDislikeTooltip } =
+    useRealEstateReviewVoteButtons({
+      reviewId,
+      userVote,
+      refetchRealEstateReview,
+    });
 
   return (
     <TooltipProvider delayDuration={300}>

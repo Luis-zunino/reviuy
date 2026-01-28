@@ -1,18 +1,18 @@
 'use client';
 
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { deleteReview } from './deleteReview.api';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { PagesUrls } from '@/enums';
 import type { UseDeleteReviewOptions } from './types';
-import { useVerifyAuthentication } from '../user';
+import { useAuthMutation, useVerifyAuthentication } from '../user';
 
 export const useDeleteReview = (options?: UseDeleteReviewOptions) => {
   const queryClient = useQueryClient();
   const router = useRouter();
   const { data } = useVerifyAuthentication();
-  return useMutation({
+  return useAuthMutation({
     mutationFn: (reviewId: string) => deleteReview({ reviewId, userId: data?.userId }),
 
     onMutate: async (reviewId: string) => {

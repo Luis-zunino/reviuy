@@ -50,15 +50,20 @@ export const useReportRealEstateButton = (props: UseReportRealEstateButtonProps)
         description: description.trim() || undefined,
       },
       {
-        onSuccess: async () => {
-          setIsOpen(false);
-          setSelectedReason('');
-          setDescription('');
-          await sendMessage({
-            reason: selectedReason,
-            message: description,
-            realEstateName: realEstate.name,
-          });
+        onSuccess: async ({ success, message, error }) => {
+          if (success) {
+            toast.success(message || 'Reporte enviado exitosamente');
+            setIsOpen(false);
+            setSelectedReason('');
+            setDescription('');
+            await sendMessage({
+              reason: selectedReason,
+              message: description,
+              realEstateName: realEstate.name,
+            });
+          } else {
+            toast.error(error || 'Error al enviar el reporte');
+          }
         },
       }
     );

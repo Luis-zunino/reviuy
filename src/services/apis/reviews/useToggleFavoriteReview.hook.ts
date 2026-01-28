@@ -1,11 +1,12 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { toggleFavoriteReview } from './toggleFavoriteReview.api';
 import { toast } from 'sonner';
+import { useAuthMutation } from '../user';
 
 export const useToggleFavoriteReview = () => {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  return useAuthMutation({
     mutationFn: toggleFavoriteReview,
     onSuccess: (data) => {
       if (data?.success) {
