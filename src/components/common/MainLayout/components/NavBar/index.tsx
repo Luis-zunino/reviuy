@@ -21,9 +21,10 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { NavBarItem } from './components/NavBarItem';
+import { cn } from '@/lib/utils';
 
 export const NavBar = () => {
-  const { isAuthenticated, opacity, signOut, sharedStyles } = useNavBar();
+  const { isAuthenticated, opacity, signOut, sharedStyles, isOpen, setIsOpen } = useNavBar();
 
   return (
     <nav
@@ -51,17 +52,23 @@ export const NavBar = () => {
             </Link>
           </div>
           <div className="flex gap-2 items-center">
-            <Link href={PagesUrls.REVIEW_CREATE} className={sharedStyles}>
+            <Link href={PagesUrls.REVIEW_CREATE} className={cn(sharedStyles, 'hidden')}>
               <FilePenLine className="w-4 h-4" />
               Escribir reseña
             </Link>
-            <DropdownMenu modal={false}>
+            <DropdownMenu modal={false} open={isOpen} onOpenChange={setIsOpen}>
               <DropdownMenuTrigger asChild className="h-8 hover:cursor-pointer">
                 <Link href="#" className={sharedStyles}>
                   <Menu className="w-6 h-6" />
                 </Link>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuContent
+                align="end"
+                className="w-48"
+                onClick={() => {
+                  setIsOpen(false);
+                }}
+              >
                 <NavBarItem pageUrl={PagesUrls.HOME} Icon={Home} label="Inicio" />
                 <NavBarItem
                   pageUrl={PagesUrls.REAL_ESTATE}
