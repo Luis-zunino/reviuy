@@ -15,26 +15,12 @@ import { FormControl, FormField, FormItem, FormLabel } from '@/components/ui/for
 import { Loader2, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { AsyncSearchSelectProps } from './types';
 
-export interface AsyncSearchSelectProps<
+export const AsyncSearchSelect = <
   T extends FieldValues,
-  V extends { id: string; name: string },
-> {
-  label?: string;
-  name: Path<T>;
-  form: UseFormReturn<T>;
-  options?: V[];
-  isFetching?: boolean;
-  handleClear: () => void;
-  open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  onSelect: (item: V) => void;
-  placeholder: string;
-  description?: string;
-  emptyComponent?: React.ReactNode;
-  className?: { container?: string; item?: string };
-}
-export const AsyncSearchSelect = <T extends FieldValues, V extends { id: string; name: string }>(
+  V extends { id?: string | null; name?: string | null },
+>(
   props: AsyncSearchSelectProps<T, V>
 ) => {
   const {
@@ -70,7 +56,7 @@ export const AsyncSearchSelect = <T extends FieldValues, V extends { id: string;
               <Popover open={open} onOpenChange={setOpen}>
                 <PopoverAnchor asChild>
                   <FormControl>
-                    <div className="relative">
+                    <div className={cn('relative', className?.inputContainer)}>
                       <Input
                         {...field}
                         placeholder={placeholder}
@@ -86,6 +72,7 @@ export const AsyncSearchSelect = <T extends FieldValues, V extends { id: string;
                         }}
                         value={field.value}
                         aria-invalid={Boolean(form.formState.errors[name])}
+                        className={className?.input}
                       />
                       {isFetching && (
                         <div className="absolute right-3 top-2.5">

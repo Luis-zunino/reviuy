@@ -4,13 +4,13 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { TabsContent } from '@/components/ui/tabs';
 import { PagesUrls } from '@/enums';
-import { RealEstateReview } from '@/types';
+import { RealEstateReviewWithVotes } from '@/types';
 import { Calendar, Eye, MessageSquare, Pencil, ThumbsDown, ThumbsUp } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 
 export interface RealEstateReviewTabContentProps {
-  realEstateReview?: RealEstateReview[] | null;
+  realEstateReview?: RealEstateReviewWithVotes[] | null;
   realEstateId: string;
   userId: string;
 }
@@ -48,7 +48,7 @@ export const RealEstateReviewTabContent = (props: RealEstateReviewTabContentProp
                         <div className="flex-1 min-w-0">
                           <h4 className="font-medium text-gray-900 mb-1 truncate">{rer.title}</h4>
                           <p className="text-gray-600 mb-2 truncate">{rer.description}</p>
-                          <StarRatingDisplay rating={rer.rating} />
+                          <StarRatingDisplay rating={rer.rating ?? 0} />
                         </div>
                         <div className="grid grid-cols-1 gap-2 ml-auto">
                           <Button
@@ -58,7 +58,7 @@ export const RealEstateReviewTabContent = (props: RealEstateReviewTabContentProp
                                 PagesUrls.REAL_ESTATE_VIEW_REVIEW.replace(
                                   ':id',
                                   realEstateId
-                                ).replace(':reviewId', rer.id)
+                                ).replace(':reviewId', rer.id ?? '')
                               )
                             }
                             size="sm"
@@ -74,7 +74,7 @@ export const RealEstateReviewTabContent = (props: RealEstateReviewTabContentProp
                                   PagesUrls.REAL_ESTATE_UPDATE_REVIEW.replace(
                                     ':id',
                                     realEstateId
-                                  ).replace(':reviewId', rer.id)
+                                  ).replace(':reviewId', rer.id ?? '')
                                 )
                               }
                               icon={Pencil}
@@ -89,7 +89,7 @@ export const RealEstateReviewTabContent = (props: RealEstateReviewTabContentProp
                       <div className="flex items-center gap-2 justify-between">
                         <div className="flex items-center gap-1 text-sm text-gray-500">
                           <Calendar className="h-4 w-4" />
-                          {new Date(rer.created_at).toLocaleDateString()}
+                          {new Date(rer.created_at ?? '').toLocaleDateString()}
                         </div>
                         <div className="flex items-center gap-2 text-sm text-gray-500">
                           <span className="flex items-center gap-1">

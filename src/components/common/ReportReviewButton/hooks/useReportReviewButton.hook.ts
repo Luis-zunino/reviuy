@@ -7,13 +7,13 @@ import { useAuthContext } from '@/components/providers/AuthProvider';
 
 export const useReportReviewButton = (props: UseReportReviewButtonProps) => {
   const { review } = props;
-  const { userId } = useAuthContext();
+  const { isOwner } = useAuthContext();
   const [isOpen, setIsOpen] = useState(false);
   const [selectedReason, setSelectedReason] = useState('');
   const [description, setDescription] = useState('');
 
   const { mutateAsync, isPending } = useReportReview();
-  const { data: hasReported } = useHasUserReportedReview(review.id);
+  const { data: hasReported } = useHasUserReportedReview(review.id ?? '');
 
   const reportReasons = [
     { value: 'spam', label: 'Spam o contenido promocional no solicitado' },
@@ -24,8 +24,6 @@ export const useReportReviewButton = (props: UseReportReviewButtonProps) => {
     { value: 'copyright', label: 'Violación de derechos de autor' },
     { value: 'other', label: 'Otro motivo' },
   ];
-
-  const isOwner = userId && review?.user_id && userId === review.user_id;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,14 +42,14 @@ export const useReportReviewButton = (props: UseReportReviewButtonProps) => {
 
     await mutateAsync(
       {
-        review_id: review.id,
+        review_id: review.id ?? '',
         reason: selectedReason,
         description: description.trim() || undefined,
       },
       {
         onSuccess: ({ message, success, error }) => {
           if (success) {
-            toast.success(message || 'Reporte enviado exitosamente');
+            toast.success(message || 'Reporte enviado');
           } else {
             toast.error(error || 'Error al enviar el reporte');
           }
@@ -79,7 +77,7 @@ export const useReportReviewButton = (props: UseReportReviewButtonProps) => {
     setDescription,
     handleCancel,
     isPending,
-    showReportedButton: !isOwner,
+    showReportedButton: !isOwner(review?.user_id),
     hasReported,
     reportReasons,
   };

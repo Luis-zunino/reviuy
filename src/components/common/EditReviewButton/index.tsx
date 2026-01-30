@@ -10,12 +10,10 @@ import { useAuthContext } from '@/components/providers/AuthProvider';
 
 export const EditReviewButton = (props: EditReviewButtonProps) => {
   const { review, showText = false, variant = 'ghost', size = 'sm' } = props;
-  const { userId, isAuthenticated } = useAuthContext();
+  const { isOwner } = useAuthContext();
   const router = useRouter();
 
-  const isOwner = isAuthenticated && userId && review.user_id && userId === review.user_id;
-
-  if (!isOwner) {
+  if (!isOwner(review.user_id)) {
     return null;
   }
 

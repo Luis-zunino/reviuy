@@ -11,6 +11,9 @@ export const getDefaultValues = (
 
   return {
     ...normalizedValues,
+    title: normalizedValues.title ?? '',
+    rating: normalizedValues.rating ?? 0,
+    description: normalizedValues.description ?? '',
     property_type: normalizedValues.property_type ?? PropertyType.HOUSE,
     apartment_number: normalizedValues.apartment_number ?? '',
     osm_id: normalizedValues.address_osm_id ?? '',

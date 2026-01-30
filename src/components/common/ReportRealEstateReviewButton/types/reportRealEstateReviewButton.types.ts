@@ -1,6 +1,6 @@
-import type { RealEstateReview } from '@/types';
+import type { RealEstateReviewWithVotes } from '@/types';
 import type { BaseButtonProps } from '../../types';
 
 export interface ReportRealEstateReviewButtonProps extends BaseButtonProps {
-  review?: RealEstateReview | null;
+  review?: RealEstateReviewWithVotes | null;
 }

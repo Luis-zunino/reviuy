@@ -4,7 +4,7 @@ import * as z from 'zod';
 export const reviewRoomSchema = z
   .object({
     room_type: z.string().optional(),
-    area_m2: z.number().optional(),
+    area_m2: z.number('Debes indicar los metros cuadrados').optional(),
   })
   .superRefine((data, ctx) => {
     const { room_type, area_m2 } = data;
@@ -18,7 +18,7 @@ export const reviewRoomSchema = z
       });
     }
 
-    if (area_m2 === undefined) {
+    if (area_m2 === undefined || area_m2 === null) {
       ctx.addIssue({
         path: ['area_m2'],
         code: z.ZodIssueCode.custom,

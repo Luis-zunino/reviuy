@@ -50,7 +50,7 @@ export const FirstForm = (props: FirstFormProps) => {
         <FormLabel htmlFor="title" label="Breve descripción" isRequired />
         <Input
           {...register('title')}
-          value={watch('title')}
+          value={watch('title') ?? ''}
           placeholder="Ej: Excelente ubicación, departamento muy cómodo"
           aria-invalid={Boolean(errors?.title)}
         />
@@ -94,7 +94,7 @@ export const FirstForm = (props: FirstFormProps) => {
             <FormLabel htmlFor="apartment_number" label="Número de apartamento" />
             <Input
               {...register('apartment_number')}
-              value={watch('apartment_number')}
+              value={watch('apartment_number') ?? ''}
               placeholder="Ej: 3A, Piso 2, Apt 12"
             />
             {errors.apartment_number && (

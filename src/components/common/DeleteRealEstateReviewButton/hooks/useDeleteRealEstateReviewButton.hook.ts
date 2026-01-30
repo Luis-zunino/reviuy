@@ -1,38 +1,59 @@
-import { PagesUrls } from '@/enums';
 import { useDeleteRealEstateReview } from '@/services';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { UseDeleteRealEstateReviewButtonProps } from '../types';
 import { useAuthContext } from '@/components/providers/AuthProvider';
+import { toast } from 'sonner';
 
 export const useDeleteRealEstateReviewButton = ({
   review,
-  onDeleteSuccess,
 }: UseDeleteRealEstateReviewButtonProps) => {
   const router = useRouter();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const { isOwner } = useAuthContext();
 
-  const { mutateAsync, isPending } = useDeleteRealEstateReview({
-    onSuccess: () => {
-      setShowDeleteDialog(false);
-      if (onDeleteSuccess) {
-        onDeleteSuccess();
-      }
-      router.push(PagesUrls.HOME);
-    },
-  });
+  const { mutateAsync, isPending } = useDeleteRealEstateReview();
 
-  const handleDeleteClick = () => {
+  const handleOpenDeleteModal = () => {
     setShowDeleteDialog(true);
   };
 
   const handleConfirmDelete = async () => {
-    await mutateAsync({ reviewId: review.id });
+    toast.loading('Eliminando reseña...', {
+      id: `delete-${review.id}`,
+    });
+
+    await mutateAsync(
+      { reviewId: review.id ?? undefined },
+      {
+        onSuccess: (data) => {
+          toast.dismiss(`delete-${review.id}`);
+
+          if (data.success) {
+            toast.success('Reseña eliminada', {
+              description: data.message,
+            });
+            router.back();
+          } else {
+            toast.error('Error al eliminar', {
+              description: data.message || 'No se pudo eliminar la reseña',
+            });
+          }
+        },
+
+        onError: () => {
+          toast.dismiss(`delete-${review.id}`);
+
+          toast.error('Error inesperado', {
+            description: 'No se pudo eliminar la reseña. Inténtalo de nuevo.',
+          });
+        },
+      }
+    );
   };
 
   return {
-    handleDeleteClick,
+    handleOpenDeleteModal,
     handleConfirmDelete,
     showDeleteDialog,
     setShowDeleteDialog,

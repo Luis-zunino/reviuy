@@ -1,4 +1,4 @@
-import type { Review } from '@/types';
+import type { ReviewWithVotes } from '@/types';
 import type { BaseButtonProps } from '../../types';
 
 // Tipo que incluye los campos mínimos necesarios para eliminar una reseña
@@ -9,6 +9,5 @@ export type ReviewForDelete = {
 };
 
 export interface DeleteReviewButtonProps extends BaseButtonProps {
-  review: Review | ReviewForDelete;
-  onDeleteSuccess?: () => void;
+  review: ReviewWithVotes | ReviewForDelete;
 }

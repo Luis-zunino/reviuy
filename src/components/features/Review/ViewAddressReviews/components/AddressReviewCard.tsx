@@ -12,14 +12,14 @@ import type { AddressReviewCardProps } from './types';
 
 export const AddressReviewCard = ({ review }: AddressReviewCardProps) => {
   const router = useRouter();
-  const recommended = review.rating >= 3.5;
+  const recommended = (review.rating ?? 0) >= 3.5;
 
   const daysSinceCreated = Math.floor(
-    (new Date().getTime() - new Date(review.created_at).getTime()) / (1000 * 60 * 60 * 24)
+    (new Date().getTime() - new Date(review.created_at ?? '').getTime()) / (1000 * 60 * 60 * 24)
   );
 
   const handleViewMore = () => {
-    router.push(`${PagesUrls.REVIEW_DETAILS.replace(':id', review.id)}`);
+    router.push(`${PagesUrls.REVIEW_DETAILS.replace(':id', review.id ?? '')}`);
   };
 
   return (
@@ -50,7 +50,7 @@ export const AddressReviewCard = ({ review }: AddressReviewCardProps) => {
             {review.description}
           </p>
         </div>
-        <StarRatingDisplay rating={review.rating} />
+        <StarRatingDisplay rating={review.rating ?? 0} />
         <Separator className="shrink-0" />
         <div className="flex justify-between align-middle w-full shrink-0">
           <div className="flex items-center gap-1">

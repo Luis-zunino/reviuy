@@ -20,7 +20,7 @@ export const useViewRealEstateDetails = () => {
 
     if (validReviews.length === 0) return 0;
 
-    const sum = validReviews.reduce((acc, review) => acc + review.rating, 0);
+    const sum = validReviews.reduce((acc, review) => acc + (review.rating ?? 0), 0);
     const average = sum / validReviews.length;
 
     return Math.round(average * 10) / 10;

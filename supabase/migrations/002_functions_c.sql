@@ -30,8 +30,8 @@ IF p_name IS NULL OR p_name = '' THEN
 END IF;
 
 -- Insertar la inmobiliaria
-INSERT INTO public.real_estates (name, description, created_by, likes, dislikes)
-    VALUES (p_name, p_description, v_user_id, 0, 0)
+INSERT INTO public.real_estates (name, description, created_by)
+    VALUES (p_name, p_description, v_user_id)
 RETURNING
     id INTO v_real_estate_id;
 
@@ -48,77 +48,7 @@ END;
 
 $$;
 
--- Función para votar inmobiliarias
--- Función trigger: actualizar contadores de votos de inmobiliarias a partir de real_estate_votes
-create or replace function update_real_estate_votes_counters () RETURNS TRIGGER as $$
-DECLARE
-    v_real_estate_id UUID;
-    v_vote_type TEXT;
-BEGIN
-    IF (TG_OP = 'INSERT') THEN
-        v_real_estate_id := NEW.real_estate_id;
-        v_vote_type := NEW.vote_type;
-
-        IF v_vote_type NOT IN ('like','dislike') THEN
-            RAISE EXCEPTION 'Invalid vote type';
-        END IF;
-
-        UPDATE public.real_estates
-        SET likes = CASE WHEN v_vote_type = 'like' THEN likes + 1 ELSE likes END,
-            dislikes = CASE WHEN v_vote_type = 'dislike' THEN dislikes + 1 ELSE dislikes END,
-            updated_at = NOW()
-        WHERE id = v_real_estate_id;
-
-        RETURN NEW;
-
-    ELSIF (TG_OP = 'DELETE') THEN
-        v_real_estate_id := OLD.real_estate_id;
-        v_vote_type := OLD.vote_type;
-
-        IF v_vote_type NOT IN ('like','dislike') THEN
-            RAISE EXCEPTION 'Invalid vote type';
-        END IF;
-
-        UPDATE public.real_estates
-        SET likes = CASE WHEN v_vote_type = 'like' THEN GREATEST(0, likes - 1) ELSE likes END,
-            dislikes = CASE WHEN v_vote_type = 'dislike' THEN GREATEST(0, dislikes - 1) ELSE dislikes END,
-            updated_at = NOW()
-        WHERE id = v_real_estate_id;
-
-        RETURN OLD;
-
-    ELSIF (TG_OP = 'UPDATE') THEN
-        -- Si cambia el tipo de voto, ajustar ambos contadores
-        IF OLD.vote_type = NEW.vote_type THEN
-            RETURN NEW;
-        END IF;
-
-        IF OLD.vote_type NOT IN ('like','dislike') OR NEW.vote_type NOT IN ('like','dislike') THEN
-            RAISE EXCEPTION 'Invalid vote type';
-        END IF;
-
-        v_real_estate_id := NEW.real_estate_id;
-
-        -- Restar antiguo
-        UPDATE public.real_estates
-        SET likes = CASE WHEN OLD.vote_type = 'like' THEN GREATEST(0, likes - 1) ELSE likes END,
-            dislikes = CASE WHEN OLD.vote_type = 'dislike' THEN GREATEST(0, dislikes - 1) ELSE dislikes END,
-            updated_at = NOW()
-        WHERE id = v_real_estate_id;
-
-        -- Sumar nuevo
-        UPDATE public.real_estates
-        SET likes = CASE WHEN NEW.vote_type = 'like' THEN likes + 1 ELSE likes END,
-            dislikes = CASE WHEN NEW.vote_type = 'dislike' THEN dislikes + 1 ELSE dislikes END,
-            updated_at = NOW()
-        WHERE id = v_real_estate_id;
-
-        RETURN NEW;
-    END IF;
-
-    RETURN COALESCE(NEW, OLD);
-END;
-$$ LANGUAGE plpgsql;
+-- Función para votar inmobiliarias (simplificada - contadores se calculan con SELECT)
 
 create or replace function vote_real_estate (p_real_estate_id uuid, p_vote_type text) RETURNS json LANGUAGE plpgsql SECURITY DEFINER
 set
@@ -139,100 +69,33 @@ BEGIN
         RETURN json_build_object('success', FALSE, 'error', 'Tipo de voto inválido');
     END IF;
     -- Verificar si ya existe un voto
-    SELECT
-        vote_type INTO v_existing_vote
-    FROM
-        public.real_estate_votes
-    WHERE
-        real_estate_id = p_real_estate_id
-        AND user_id = v_user_id;
+    SELECT vote_type INTO v_existing_vote
+    FROM public.real_estate_votes
+    WHERE real_estate_id = p_real_estate_id
+      AND user_id = v_user_id;
     -- Si el voto es el mismo, eliminarlo (toggle)
     IF v_existing_vote = p_vote_type THEN
         DELETE FROM public.real_estate_votes
         WHERE real_estate_id = p_real_estate_id
-            AND user_id = v_user_id;
-        -- Decrementar el contador correspondiente
-        IF v_existing_vote = 'like' THEN
-            UPDATE
-                public.real_estates
-            SET
-                likes = GREATEST (0, likes - 1)
-            WHERE
-                id = p_real_estate_id;
-        ELSE
-            UPDATE
-                public.real_estates
-            SET
-                dislikes = GREATEST (0, dislikes - 1)
-            WHERE
-                id = p_real_estate_id;
-        END IF;
-        RETURN json_build_object('success', TRUE, 'message', 'Voto eliminado exitosamente');
+          AND user_id = v_user_id;
+        
+        RETURN json_build_object('success', TRUE, 'message', 'Voto eliminado exitosamente', 'action', 'removed');
     END IF;
-    -- Si existe un voto diferente, actualizar contadores 
+    -- Si existe un voto diferente, actualizarlo
     IF v_existing_vote IS NOT NULL THEN
-        -- Decrementar el voto anterior 
-        IF v_existing_vote = 'like' THEN
-            UPDATE
-                public.real_estates
-            SET
-                likes = GREATEST (0, likes - 1)
-            WHERE
-                id = p_real_estate_id;
-        ELSE
-            UPDATE
-                public.real_estates
-            SET
-                dislikes = GREATEST (0, dislikes - 1)
-            WHERE
-                id = p_real_estate_id;
-        END IF;
-        -- Incrementar el nuevo voto 
-        IF p_vote_type = 'like' THEN
-        UPDATE
-            public.real_estates
-        SET
-            likes = likes + 1
-        WHERE
-            id = p_real_estate_id;
-    ELSE
-        UPDATE
-            public.real_estates
-        SET
-            dislikes = dislikes + 1
-        WHERE
-            id = p_real_estate_id;
+        UPDATE public.real_estate_votes
+        SET vote_type = p_vote_type,
+            updated_at = NOW()
+        WHERE real_estate_id = p_real_estate_id
+          AND user_id = v_user_id;
+        
+        RETURN json_build_object('success', TRUE, 'message', 'Voto actualizado exitosamente', 'action', 'updated');
     END IF;
-    -- Actualizar el voto
-    UPDATE
-        public.real_estate_votes
-    SET
-        vote_type = p_vote_type
-    WHERE
-        real_estate_id = p_real_estate_id
-        AND user_id = v_user_id;
-ELSE
-    -- Es un voto nuevo, solo incrementar 
-    IF p_vote_type = 'like' THEN
-        UPDATE
-            public.real_estates
-        SET
-            likes = likes + 1
-        WHERE
-            id = p_real_estate_id;
-    ELSE
-        UPDATE
-            public.real_estates
-        SET
-            dislikes = dislikes + 1
-        WHERE
-            id = p_real_estate_id;
-    END IF;
-    -- Insertar el nuevo voto
-    INSERT INTO public.real_estate_votes (real_estate_id, user_id, vote_type)
-        VALUES (p_real_estate_id, v_user_id, p_vote_type);
-END IF;
-    RETURN json_build_object('success', TRUE, 'message', 'Voto registrado exitosamente');
+    -- Es un voto nuevo, insertarlo
+    INSERT INTO public.real_estate_votes(real_estate_id, user_id, vote_type)
+    VALUES (p_real_estate_id, v_user_id, p_vote_type);
+
+    RETURN json_build_object('success', TRUE, 'message', 'Voto registrado exitosamente', 'action', 'created');
 EXCEPTION
     WHEN OTHERS THEN
         RETURN json_build_object('success', FALSE, 'error', 'Error al registrar el voto: ' || SQLERRM);
@@ -661,10 +524,6 @@ alter function public.report_review (uuid, text, text)
 set
   search_path = public;
 
-alter function public.update_review_votes ()
-set
-  search_path = public;
-
 alter function public.vote_real_estate (uuid, text)
 set
   search_path = public;
@@ -674,10 +533,6 @@ set
   search_path = public;
 
 alter function public.has_user_reported_review (uuid)
-set
-  search_path = public;
-
-alter function public.update_real_estate_review_votes ()
 set
   search_path = public;
 
@@ -728,3 +583,102 @@ set
 alter function public.is_real_estate_favorite (uuid)
 set
   search_path = public;
+
+-- =============================================================================
+-- FUNCIONES PARA CONTADORES DINÁMICOS DE VOTOS DE REAL_ESTATES
+-- =============================================================================
+-- Función para obtener contadores de likes/dislikes en tiempo real
+create or replace function public.get_real_estate_vote_counts(p_real_estate_id uuid)
+returns table(likes_count bigint, dislikes_count bigint)
+language plpgsql
+stable
+security definer
+set search_path = public
+as $$
+begin
+    return query
+    select
+        coalesce(sum(case when vote_type = 'like' then 1 else 0 end), 0) as likes_count,
+        coalesce(sum(case when vote_type = 'dislike' then 1 else 0 end), 0) as dislikes_count
+    from public.real_estate_votes
+    where real_estate_id = p_real_estate_id;
+end;
+$$;
+
+-- Función para refrescar la vista materializada de contadores
+create or replace function public.refresh_real_estate_vote_stats()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+    refresh materialized view concurrently public.real_estate_vote_stats;
+    return null;
+end;
+$$;
+
+-- =============================================================================
+-- FUNCIONES PARA CONTADORES DINÁMICOS DE VOTOS DE REVIEWS
+-- =============================================================================
+-- Función para obtener contadores de likes/dislikes de reviews en tiempo real
+create or replace function public.get_review_vote_counts(p_review_id uuid)
+returns table(likes_count bigint, dislikes_count bigint)
+language plpgsql
+stable
+security definer
+set search_path = public
+as $$
+begin
+    return query
+    select
+        coalesce(sum(case when vote_type = 'like' then 1 else 0 end), 0) as likes_count,
+        coalesce(sum(case when vote_type = 'dislike' then 1 else 0 end), 0) as dislikes_count
+    from public.review_votes
+    where review_id = p_review_id;
+end;
+$$;
+
+-- Función para refrescar la vista materializada de contadores de reviews
+create or replace function public.refresh_review_vote_stats()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+    refresh materialized view concurrently public.review_vote_stats;
+    return null;
+end;
+$$;
+
+-- Función para obtener contadores de votos de real_estate_reviews en tiempo real
+create or replace function public.get_real_estate_review_vote_counts(p_real_estate_review_id uuid)
+returns table(likes_count bigint, dislikes_count bigint)
+language plpgsql
+stable
+security definer
+set search_path = public
+as $$
+begin
+    return query
+    select
+        coalesce(sum(case when vote_type = 'like' then 1 else 0 end), 0) as likes_count,
+        coalesce(sum(case when vote_type = 'dislike' then 1 else 0 end), 0) as dislikes_count
+    from public.real_estate_review_votes
+    where real_estate_review_id = p_real_estate_review_id;
+end;
+$$;
+
+-- Función para refrescar la vista materializada de contadores de real_estate_reviews
+create or replace function public.refresh_real_estate_review_vote_stats()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+    refresh materialized view concurrently public.real_estate_review_vote_stats;
+    return null;
+end;
+$$;

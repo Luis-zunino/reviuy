@@ -1,8 +1,8 @@
 import { supabaseClient } from '@/lib/supabase-client';
-import type { Review } from '@/types';
+import type { ReviewWithVotes } from '@/types';
 import { parseSupabaseError } from '@/utils';
 
-export const getUserFavoriteReviews = async (): Promise<Review[]> => {
+export const getUserFavoriteReviews = async (): Promise<ReviewWithVotes[]> => {
   const {
     data: { user },
   } = await supabaseClient.auth.getUser();
@@ -30,13 +30,13 @@ export const getUserFavoriteReviews = async (): Promise<Review[]> => {
           description: string;
           rating: number;
           zone_rating: number | null;
-          likes: number;
-          dislikes: number;
+          likes?: number | null;
+          dislikes?: number | null;
           created_at: string;
           updated_at: string;
           user_id: string;
         };
       }) => item.reviews
     )
-    .filter(Boolean) || []) as Review[];
+    .filter(Boolean) || []) as ReviewWithVotes[];
 };

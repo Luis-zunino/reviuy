@@ -40,7 +40,7 @@ export const useCreateRealEstateModal = (props: UseCreateRealEstateModalProps) =
 
     const newRealEstate = await mutateAsync(realEstateData, {
       onSuccess: () => {
-        toast.success('Inmobiliaria creada exitosamente');
+        toast.success('Inmobiliaria creada');
         reset();
         onOpenChange(false);
       },
@@ -52,7 +52,7 @@ export const useCreateRealEstateModal = (props: UseCreateRealEstateModalProps) =
       },
     });
 
-    if (!newRealEstate) toast.success('Inmobiliaria creada exitosamente');
+    if (!newRealEstate) toast.success('Inmobiliaria creada');
     reset();
   };
 

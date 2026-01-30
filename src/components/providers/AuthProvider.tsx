@@ -34,7 +34,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [loading, setLoading] = useState(true);
   const { push } = useRouter();
 
-  const isOwner = (userIdToCheck?: string): boolean => {
+  const isOwner = (userIdToCheck?: string | null): boolean => {
     if (!userId) return false;
     if (!userIdToCheck) return false;
     return userId === userIdToCheck;

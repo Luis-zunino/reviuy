@@ -3,15 +3,10 @@ import type { RealEstateReviewInsert } from '@/types';
 import type { CreateRealEstateReviewResponse } from './types';
 import { parseSupabaseError } from '@/utils';
 
-export interface CreateRealEstateReviewRequest {
-  createRealEstateReviewData: RealEstateReviewInsert;
-  userId?: string | null;
-}
-export const createRealEstateReview = async ({
-  createRealEstateReviewData,
-  userId,
-}: CreateRealEstateReviewRequest): Promise<CreateRealEstateReviewResponse> => {
-  if (!userId) {
+export const createRealEstateReview = async (
+  dataForm: RealEstateReviewInsert & { user_id?: string }
+): Promise<CreateRealEstateReviewResponse> => {
+  if (!dataForm.user_id) {
     return {
       success: false,
       message: 'Debes iniciar sesión para crear una reseña',
@@ -20,14 +15,14 @@ export const createRealEstateReview = async ({
   }
   const { error, data } = await supabaseClient
     .from('real_estate_reviews')
-    .insert([createRealEstateReviewData])
+    .insert([dataForm])
     .select()
     .single();
   if (error) throw parseSupabaseError(error);
 
   return {
     success: true,
-    message: 'Reseña creada exitosamente',
+    message: 'Reseña creada',
     data,
   };
 };

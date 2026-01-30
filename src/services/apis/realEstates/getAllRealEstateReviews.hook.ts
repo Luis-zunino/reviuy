@@ -1,6 +1,6 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { getAllRealEstateReviewsApi } from './getAllRealEstateReviews.api';
-import type { RealEstateReview } from '@/types';
+import type { RealEstateReviewWithVotes } from '@/types';
 import { REAL_ESTATE_REVIEWS } from '@/services/constants';
 
 export const useGetAllRealEstateReviews = ({
@@ -9,7 +9,7 @@ export const useGetAllRealEstateReviews = ({
 }: {
   id: string;
   limit?: number;
-}): UseQueryResult<RealEstateReview[] | null> => {
+}): UseQueryResult<RealEstateReviewWithVotes[] | null> => {
   return useQuery({
     queryKey: [REAL_ESTATE_REVIEWS.getAllRealEstateReviews, limit],
     queryFn: () => getAllRealEstateReviewsApi({ id, limit }),

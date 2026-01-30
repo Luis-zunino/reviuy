@@ -1,5 +1,5 @@
-import type { RealEstate } from '@/types';
+import type { RealEstateWitheVotes } from '@/types';
 
 export interface UseReportRealEstateButtonProps {
-  realEstate: RealEstate;
+  realEstate: RealEstateWitheVotes;
 }

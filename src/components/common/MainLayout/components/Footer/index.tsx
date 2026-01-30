@@ -6,7 +6,7 @@ export const Footer = () => {
   return (
     <footer className="flex flex-col justify-between w-full bg-black lg:px-44 lg:py-24 p-6 text-white">
       <div className="flex lg:flex-row gap-8 lg:justify-between flex-col lg:text-left text-center lg:mt-0 mt-8">
-        <div className="lg:w-[280px]">
+        <div className="lg:w-70">
           <h4 className="font-extrabold text-base lg:text-2xl lg:block mb-4">
             Encontrá tu lugar ideal con reseñas reales
           </h4>

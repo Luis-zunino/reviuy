@@ -1,82 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { supabaseClient } from '@/lib/supabase-client';
-import type { Review } from '@/types';
-import { useAuthContext } from '@/components/providers/AuthProvider';
+import { useGetReviewByUserId } from '@/services';
 
 export const useUserReviews = () => {
-  const { userId, isAuthenticated } = useAuthContext();
-  const [reviews, setReviews] = useState<Review[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!isAuthenticated || !userId) {
-        setReviews([]);
-        return;
-      }
-
-      setLoading(true);
-      setError(null);
-
-      try {
-        const { data, error: fetchError } = await supabaseClient
-          .from('reviews')
-          .select('*')
-          .eq('user_id', userId)
-          .order('created_at', { ascending: false });
-
-        if (fetchError) {
-          throw fetchError;
-        }
-
-        setReviews(data ?? []);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error desconocido');
-        setReviews([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [userId, isAuthenticated]);
-
-  const refetchReviews = async () => {
-    if (!isAuthenticated || !userId) {
-      setReviews([]);
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      const { data, error: fetchError } = await supabaseClient
-        .from('reviews')
-        .select('*')
-        .eq('user_id', userId)
-        .order('created_at', { ascending: false });
-
-      if (fetchError) {
-        throw fetchError;
-      }
-
-      setReviews(data || []);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error desconocido');
-      setReviews([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { data: reviews, error, isLoading, refetch } = useGetReviewByUserId();
 
   return {
     reviews,
-    loading,
+    loading: isLoading,
     error,
-    refetch: refetchReviews,
+    refetch,
   };
 };

@@ -15,7 +15,7 @@ export const reportRealEstateReview = async (
 
   return {
     success: true,
-    message: 'Reporte enviado exitosamente',
+    message: 'Reporte enviado',
   };
 };
 

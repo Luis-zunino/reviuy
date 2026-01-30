@@ -19,7 +19,7 @@ export const RealEstateReviewFormContent = (props: RealEstateReviewFormContentPr
         <FormLabel htmlFor="title" label="Breve descripción" isRequired={!isReadOnly} />
         <Input
           {...register('title')}
-          value={watch('title')}
+          value={watch('title') ?? ''}
           id="title"
           placeholder="Ej: Excelente atención y profesionalismo"
           className="mt-1"
@@ -40,7 +40,7 @@ export const RealEstateReviewFormContent = (props: RealEstateReviewFormContentPr
 
         <Textarea
           {...register('description')}
-          value={watch('description')}
+          value={watch('description') ?? ''}
           id="description"
           placeholder="Ej: Excelente atención y profesionalismo"
           className="mt-1"

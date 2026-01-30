@@ -9,8 +9,8 @@ import { parseSupabaseError } from '@/utils';
 
 const getReviewById = async ({ id }: GetReviewByIdParams): Promise<ReviewWithRelations | null> => {
   const { data, error } = await supabase
-    .from('reviews')
-    .select('*,review_rooms:review_rooms(*),real_estates:real_estates(*)')
+    .from('reviews_with_votes')
+    .select('*,review_rooms:review_rooms(*),real_estates:real_estates_with_votes(*)')
     .eq('id', id)
     .single();
 

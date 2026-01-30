@@ -1,10 +1,10 @@
 import { supabaseClient } from '@/lib/supabase-client';
-import { RealEstate } from '@/types/realEstate';
+import { RealEstateWitheVotes } from '@/types/realEstate';
 import { parseSupabaseError } from '@/utils';
 
-export const getRealEstateByIdApi = async (id: string): Promise<RealEstate | null> => {
+export const getRealEstateByIdApi = async (id: string): Promise<RealEstateWitheVotes | null> => {
   const { data, error } = await supabaseClient
-    .from('real_estates')
+    .from('real_estates_with_votes')
     .select('*')
     .eq('id', id)
     .single();

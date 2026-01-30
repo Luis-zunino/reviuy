@@ -12,5 +12,4 @@ export interface CreateReviewData extends ReviewInsert {
 
 export interface CreateReviewRequest {
   data: CreateReviewData;
-  userId?: string | null;
 }

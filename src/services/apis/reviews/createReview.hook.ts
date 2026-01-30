@@ -1,15 +1,12 @@
 'use client';
 
 import { createReview } from './createReview.api';
-import { useAuthMutation, useVerifyAuthentication } from '../user';
-import { CreateReviewRequest } from './types';
+import { useAuthMutation } from '../user';
 
 export const useCreateReview = () => {
-  const { data: auth } = useVerifyAuthentication();
-
   return useAuthMutation({
     authErrorMessage: 'Debes iniciar sesión para actualizar reseñas',
-    mutationFn: ({ data }: CreateReviewRequest) => createReview({ data, userId: auth?.userId }),
+    mutationFn: createReview,
     mutationOptions: { mutationKey: ['create-review'] },
   });
 };

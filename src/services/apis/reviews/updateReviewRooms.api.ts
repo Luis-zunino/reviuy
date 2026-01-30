@@ -28,8 +28,8 @@ export const updateReviewRooms = async (
     if (insertError) {
       throw parseSupabaseError(insertError);
     }
-    return { details: true, message: 'Reseña actualizada exitosamente' };
+    return { details: true, message: 'Reseña actualizada' };
   }
 
-  return { details: true, message: 'Reseña actualizada exitosamente' };
+  return { details: true, message: 'Reseña actualizada' };
 };

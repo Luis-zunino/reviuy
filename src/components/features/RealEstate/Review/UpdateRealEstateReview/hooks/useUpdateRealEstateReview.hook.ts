@@ -31,10 +31,16 @@ export const useUpdateRealEstateReview = () => {
       return;
     }
     mutateAsync(
-      { ...formData, id: reviewId },
+      {
+        ...formData,
+        title: formData.title ?? '',
+        description: formData.description ?? '',
+        id: reviewId,
+      },
       {
         onSuccess: () => {
-          toast.success('Reseña actualizada exitosamente');
+          toast.success('Reseña actualizada');
+          router.back();
         },
         onError: (error) => {
           toast.error('Error al actualizar la reseña');
@@ -46,7 +52,15 @@ export const useUpdateRealEstateReview = () => {
 
   useEffect(() => {
     if (!data) return;
-    form.reset(data, { keepDirty: false });
+    form.reset(
+      {
+        ...data,
+        title: data.title ?? '',
+        description: data.description ?? '',
+        rating: data.rating ?? 0,
+      },
+      { keepDirty: false }
+    );
   }, [data]);
 
   return {

@@ -1,14 +1,14 @@
 import { supabaseClient } from '@/lib/supabase-client';
-import { RealEstate } from '@/types/realEstate';
+import { RealEstateWitheVotes } from '@/types/realEstate';
 import type { SearchRealEstatesParams } from './types';
 import { parseSupabaseError } from '@/utils';
 
 export const searchRealEstates = async ({
   query,
   limit = 10,
-}: SearchRealEstatesParams): Promise<RealEstate[]> => {
+}: SearchRealEstatesParams): Promise<RealEstateWitheVotes[]> => {
   const { data, error } = await supabaseClient
-    .from('real_estates')
+    .from('real_estates_with_votes')
     .select('*')
     .ilike('name', `%${query}%`)
     .limit(limit)

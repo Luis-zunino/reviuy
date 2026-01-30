@@ -10,10 +10,6 @@ export const useToggleFavoriteReview = () => {
     mutationFn: toggleFavoriteReview,
     onSuccess: (data) => {
       if (data?.success) {
-        toast.success(data.isFavorite ? 'Agregado a favoritos' : 'Eliminado de favoritos', {
-          description: data.message,
-        });
-
         // Invalidar queries relacionadas
         queryClient.invalidateQueries({ queryKey: ['reviews'] });
         queryClient.invalidateQueries({ queryKey: ['favoriteReviews'] });

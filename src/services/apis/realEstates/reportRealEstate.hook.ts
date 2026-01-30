@@ -8,7 +8,7 @@ export const useReportRealEstate = () => {
   });
 };
 
-export const useHasUserReportedRealEstate = (realEstateId: string) => {
+export const useHasUserReportedRealEstate = (realEstateId?: string) => {
   return useQuery({
     queryKey: ['has-user-reported-real-estate', realEstateId],
     queryFn: () => hasUserReportedRealEstate(realEstateId),

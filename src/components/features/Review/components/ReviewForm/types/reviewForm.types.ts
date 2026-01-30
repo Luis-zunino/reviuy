@@ -6,7 +6,7 @@ import type {
   UseFormHandleSubmit,
   UseFormReturn,
 } from 'react-hook-form';
-import type { NominatimEntity, RealEstate } from '@/types';
+import type { NominatimEntity, RealEstateWitheVotes } from '@/types';
 import { Dispatch, SetStateAction } from 'react';
 import { FormReviewSchema } from '../../../constants';
 
@@ -28,6 +28,6 @@ export interface ReviewFormProps {
   openRealEstateModal: boolean;
   setOpenRealEstateModal: Dispatch<SetStateAction<boolean>>;
   handleClearRealEstate: () => void;
-  onSelectRealEstate: (item: RealEstate) => void;
+  onSelectRealEstate: (item: RealEstateWitheVotes) => void;
   queryValueRealEstate?: string;
 }

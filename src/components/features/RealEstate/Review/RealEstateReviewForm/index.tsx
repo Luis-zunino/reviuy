@@ -64,9 +64,9 @@ export const RealEstateReviewForm = (props: RealEstateReviewFormProps) => {
             <div className="flex gap-4 pt-4 justify-end">
               {review && isReadOnly ? (
                 <RealEstateReviewVoteButtons
-                  reviewId={review.id}
-                  likes={review.likes}
-                  dislikes={review.dislikes}
+                  reviewId={review.id ?? ''}
+                  likes={review.likes ?? 0}
+                  dislikes={review.dislikes ?? 0}
                   refetchRealEstateReview={refetchRealEstateReview}
                 />
               ) : null}

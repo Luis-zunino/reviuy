@@ -51,19 +51,11 @@ export const useReviewLikesButtons = (props: ReviewLikesButtonsProps) => {
         setOptimisticDislikes((prev) => prev + 1);
       }
     }
-    toast.loading('Calificando reseña...', {
-      id: 'vote-review',
-    });
+
     await mutateAsync(
       { reviewId: id, voteType },
       {
-        onSuccess: () => {
-          toast.dismiss('vote-review');
-          toast.success('Voto registrado exitosamente');
-        },
-
         onError: () => {
-          toast.dismiss('vote-review');
           toast.error('Error inesperado', {
             description: 'No se pudo actualizar la reseña. Inténtalo de nuevo.',
           });
@@ -72,11 +64,10 @@ export const useReviewLikesButtons = (props: ReviewLikesButtonsProps) => {
     );
 
     if (isError) {
-      toast.dismiss('vote-review');
       setOptimisticLikes(previousLikes);
       setOptimisticDislikes(previousDislikes);
     }
-    refetch();
+    await refetch();
   };
 
   const getLikeTooltip = () => {

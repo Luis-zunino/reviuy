@@ -34,17 +34,18 @@ export const MultiForm = <T extends FieldValues = FieldValues>(props: MultiFormP
               return step === index ? formsChildren[index] : null;
             })}
             <div className="flex justify-between">
-              <Button
-                type="button"
-                className="font-medium"
-                size="sm"
-                onClick={handleBack}
-                disabled={step === 0}
-                aria-label="Ir al paso anterior"
-              >
-                Atrás
-              </Button>
-              <div className="flex items-center gap-2">
+              {step !== 0 ? (
+                <Button
+                  type="button"
+                  className="font-medium"
+                  size="sm"
+                  onClick={handleBack}
+                  aria-label="Ir al paso anterior"
+                >
+                  Atrás
+                </Button>
+              ) : null}
+              <div className="flex items-center gap-2 flex-1 justify-end">
                 <Button
                   disabled={!form.formState.isValid || isSubmitDisabled}
                   type="submit"
@@ -54,16 +55,17 @@ export const MultiForm = <T extends FieldValues = FieldValues>(props: MultiFormP
                 >
                   Guardar
                 </Button>
-                <Button
-                  type="button"
-                  className="font-medium"
-                  size="sm"
-                  onClick={handleNext}
-                  disabled={step === totalSteps - 1}
-                  aria-label="Ir al siguiente paso"
-                >
-                  Siguiente
-                </Button>
+                {step !== totalSteps - 1 ? (
+                  <Button
+                    type="button"
+                    className="font-medium"
+                    size="sm"
+                    onClick={handleNext}
+                    aria-label="Ir al siguiente paso"
+                  >
+                    Siguiente
+                  </Button>
+                ) : null}
               </div>
             </div>
           </form>

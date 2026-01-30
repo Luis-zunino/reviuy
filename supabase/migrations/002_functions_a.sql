@@ -233,111 +233,8 @@ COMMENT on FUNCTION log_security_event is 'Función básica de logging. Puede se
 -- =============================================================================
 -- FUNCIONES PARA SISTEMA DE REVIEWS
 -- =============================================================================
--- Función para actualizar contadores de votos de reviews
-create or replace function update_review_votes () RETURNS TRIGGER as $$
-DECLARE
-    v_review_id UUID;
-    v_vote_type TEXT;
-BEGIN
-    IF (TG_OP = 'INSERT') THEN
-        -- Validar tipo de voto en INSERT
-        IF NEW.vote_type NOT IN ('like', 'dislike') THEN
-            RAISE EXCEPTION 'Invalid vote type';
-        END IF;
-        v_review_id := NEW.review_id;
-        v_vote_type := NEW.vote_type;
-
-        -- Row-level locking para evitar race condition
-        -- SELECT...FOR UPDATE bloquea la fila hasta que se completa la transacción
-UPDATE
-    public.reviews
-SET
-    likes = CASE
-        WHEN v_vote_type = 'like' THEN likes + 1
-        ELSE likes
-    END,
-    dislikes = CASE
-        WHEN v_vote_type = 'dislike' THEN dislikes + 1
-        ELSE dislikes
-    END,
-    updated_at = NOW()
-WHERE
-    id = v_review_id;
-
-ELSIF (TG_OP = 'DELETE') THEN
-    -- Validar tipo de voto en DELETE
-    IF OLD.vote_type NOT IN ('like', 'dislike') THEN
-        RAISE EXCEPTION 'Invalid vote type';
-    END IF;
-    v_review_id := OLD.review_id;
-    v_vote_type := OLD.vote_type;
-
-        -- Row-level locking
-UPDATE
-    public.reviews
-SET
-    likes = CASE
-        WHEN v_vote_type = 'like' THEN GREATEST(0, likes - 1)
-        ELSE likes
-    END,
-    dislikes = CASE
-        WHEN v_vote_type = 'dislike' THEN GREATEST(0, dislikes - 1)
-        ELSE dislikes
-    END,
-    updated_at = NOW()
-WHERE
-    id = v_review_id;
-
-ELSIF (TG_OP = 'UPDATE') THEN
-    -- Validar cambio de tipo de voto en UPDATE
-    IF NEW.vote_type NOT IN ('like', 'dislike') OR OLD.vote_type NOT IN ('like', 'dislike') THEN
-        RAISE EXCEPTION 'Invalid vote type';
-    END IF;
-    -- Restar el voto antiguo
-    v_review_id := OLD.review_id;
-    v_vote_type := OLD.vote_type;
-
-UPDATE
-    public.reviews
-SET
-    likes = CASE
-        WHEN v_vote_type = 'like' THEN GREATEST(0, likes - 1)
-        ELSE likes
-    END,
-    dislikes = CASE
-        WHEN v_vote_type = 'dislike' THEN GREATEST(0, dislikes - 1)
-        ELSE dislikes
-    END,
-    updated_at = NOW()
-WHERE
-    id = v_review_id;
-
-        -- Sumar el nuevo voto
-        v_review_id := NEW.review_id;
-        v_vote_type := NEW.vote_type;
-
-UPDATE
-    public.reviews
-SET
-    likes = CASE
-        WHEN v_vote_type = 'like' THEN likes + 1
-        ELSE likes
-    END,
-    dislikes = CASE
-        WHEN v_vote_type = 'dislike' THEN dislikes + 1
-        ELSE dislikes
-    END,
-    updated_at = NOW()
-WHERE
-    id = v_review_id;
-
-END IF;
-
-RETURN COALESCE(NEW, OLD);
-
-END;
-
-$$ LANGUAGE plpgsql;
+-- Los contadores de likes/dislikes se calculan dinámicamente usando vistas materializadas
+DROP FUNCTION IF EXISTS update_review_votes() CASCADE;
 
 -- Función para actualizar contadores de inmobiliarias
 create or replace function update_real_estate_counters () RETURNS TRIGGER as $$
@@ -765,8 +662,8 @@ BEGIN
         r.title,
         r.created_at,
         r.rating,
-        r.likes,
-        r.dislikes,
+        COALESCE(stats.likes, 0),
+        COALESCE(stats.dislikes, 0),
         (r.user_id = current_user_id),
         (
             SELECT COUNT(*)
@@ -776,6 +673,7 @@ BEGIN
         NULL
     INTO result
     FROM public.reviews r
+    LEFT JOIN public.review_vote_stats stats ON r.id = stats.review_id
     WHERE r.id = review_id_param;
 
     IF NOT FOUND THEN

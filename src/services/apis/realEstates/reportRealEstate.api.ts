@@ -15,11 +15,12 @@ export const reportRealEstate = async (
 
   return {
     success: true,
-    message: 'Reporte enviado exitosamente',
+    message: 'Reporte enviado',
   };
 };
 
-export const hasUserReportedRealEstate = async (realEstateId: string): Promise<boolean> => {
+export const hasUserReportedRealEstate = async (realEstateId?: string): Promise<boolean> => {
+  if (!realEstateId) return false;
   const { data, error } = await supabaseClient.rpc('has_user_reported_real_estate', {
     p_real_estate_id: realEstateId,
   });

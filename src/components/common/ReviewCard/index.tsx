@@ -15,7 +15,7 @@ import Link from 'next/link';
 import type { ReviewCardProps } from './types';
 
 export const ReviewCard = ({ review }: ReviewCardProps) => {
-  const reviewUrl = PagesUrls.REVIEW_DETAILS.replace(':id', review.id);
+  const reviewUrl = PagesUrls.REVIEW_DETAILS.replace(':id', review.id ?? '');
 
   return (
     <Card
@@ -38,7 +38,7 @@ export const ReviewCard = ({ review }: ReviewCardProps) => {
             </div>
 
             <div onClick={(e) => e.preventDefault()}>
-              <FavoriteReviewButton reviewId={review.id} />
+              <FavoriteReviewButton reviewId={review.id ?? ''} />
             </div>
           </div>
         </CardHeader>
@@ -49,7 +49,7 @@ export const ReviewCard = ({ review }: ReviewCardProps) => {
             <div className="flex flex-col gap-2">
               <span className="shrink-0">Lugar:</span>
               <StarRatingDisplay
-                rating={review.rating}
+                rating={review.rating ?? 0}
                 aria-label={`Calificación del lugar: ${review.rating} estrellas`}
               />
             </div>

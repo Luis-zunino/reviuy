@@ -30,10 +30,16 @@ export const useCreateRealEstateReview = () => {
       return;
     }
     mutateAsync(
-      { ...formData, real_estate_id: realEstateId, user_id: userId },
+      {
+        ...formData,
+        title: formData.title ?? '',
+        description: formData.description ?? '',
+        real_estate_id: realEstateId,
+        user_id: userId,
+      },
       {
         onSuccess: () => {
-          toast.success('Reseña creada exitosamente');
+          toast.success('Reseña creada');
           router.push(`${PagesUrls.REAL_ESTATE}${realEstateId}`);
         },
         onError: (error) => {

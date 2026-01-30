@@ -55,11 +55,11 @@ export const useReportRealEstateReviewButton = (props: UseReportRealEstateReview
       {
         onSuccess: async ({ success, message, error }) => {
           if (success) {
-            toast.success(message || 'Reporte enviado exitosamente');
+            toast.success(message || 'Reporte enviado');
             await sendMessage({
               reason: selectedReason,
               message: description,
-              realEstateReviewUuid: review.id,
+              realEstateReviewUuid: review.id ?? '',
             });
             setIsOpen(false);
             setSelectedReason('');
@@ -88,7 +88,7 @@ export const useReportRealEstateReviewButton = (props: UseReportRealEstateReview
     setDescription,
     handleCancel,
     isPending,
-    showReportedButton: !isOwner(review?.user_id),
+    showReportedButton: !isOwner(review?.user_id ?? undefined),
     hasReported,
     reportReasons,
   };

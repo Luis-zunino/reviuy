@@ -7,4 +7,5 @@ export const REVIEW_KEYS = {
   getReviewsByRealEstateId: 'getReviewsByRealEstateId',
   getUserReviewVote: 'getUserReviewVote',
   checkUserReviewForAddress: 'checkUserReviewForAddress',
+  getReviewByUserId: 'getReviewByUserId',
 };

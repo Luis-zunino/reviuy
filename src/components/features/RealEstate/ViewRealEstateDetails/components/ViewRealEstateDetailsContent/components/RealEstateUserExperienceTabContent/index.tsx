@@ -4,14 +4,14 @@ import { TabDetailsSkeleton } from '../../../TabDetailsSkeleton';
 import { Card, CardContent } from '@/components/ui/card';
 import { Calendar, Eye, MapPin, ThumbsDown, ThumbsUp } from 'lucide-react';
 import { StarRatingDisplay } from '@/components/common';
-import { Review } from '@/types';
+import { ReviewWithVotes } from '@/types';
 import { Button } from '@/components/ui/button';
 import { PagesUrls } from '@/enums';
 import { useRouter } from 'next/navigation';
 import { Separator } from '@/components/ui/separator';
 
 export interface RealEstateUserExperienceTabContentProps {
-  reviews: Review[];
+  reviews: ReviewWithVotes[];
   isLoadingReviews: boolean;
 }
 export const RealEstateUserExperienceTabContent = (
@@ -39,7 +39,7 @@ export const RealEstateUserExperienceTabContent = (
                           {review.real_estate_experience}
                         </h4>
                         <p className="text-gray-600 mb-2 truncate">{review.title}</p>
-                        <StarRatingDisplay rating={review.rating} />
+                        <StarRatingDisplay rating={review.rating ?? 0} />
                         <div className="flex items-center gap-2">
                           <MapPin className="h-4 w-4" color="gray" />
                           <p className="text-gray-600 truncate"> {review.address_text}</p>
@@ -48,7 +48,7 @@ export const RealEstateUserExperienceTabContent = (
                       <Button
                         variant="seeMore"
                         onClick={() =>
-                          router.push(PagesUrls.REVIEW_DETAILS.replace(':id', review.id))
+                          router.push(PagesUrls.REVIEW_DETAILS.replace(':id', review.id ?? ''))
                         }
                         icon={Eye}
                         size="sm"
@@ -60,7 +60,7 @@ export const RealEstateUserExperienceTabContent = (
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex items-center gap-1 text-sm text-gray-500">
                         <Calendar className="h-4 w-4" />
-                        {new Date(review.created_at).toLocaleDateString()}
+                        {new Date(review.created_at ?? '').toLocaleDateString()}
                       </div>
 
                       <div className="flex items-center gap-2 text-sm text-gray-500">

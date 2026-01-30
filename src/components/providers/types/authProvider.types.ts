@@ -8,7 +8,7 @@ export interface AuthContextType {
   signOut: () => Promise<void>;
   signInWithEmail: (email: string) => Promise<void>;
   signInWithGoogle: () => Promise<void>;
-  isOwner: (userId?: string) => boolean;
+  isOwner: (userId?: string | null) => boolean;
 }
 
 export interface AuthProviderProps {

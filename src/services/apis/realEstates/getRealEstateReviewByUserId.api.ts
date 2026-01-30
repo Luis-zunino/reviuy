@@ -1,5 +1,5 @@
 import { supabaseClient } from '@/lib/supabase-client';
-import type { RealEstateReview } from '@/types';
+import type { RealEstateReviewWithVotes } from '@/types';
 import { parseSupabaseError } from '@/utils';
 
 export const getRealEstateReviewByUserIdApi = async ({
@@ -8,9 +8,9 @@ export const getRealEstateReviewByUserIdApi = async ({
 }: {
   userId: string;
   realEstateId: string;
-}): Promise<RealEstateReview | null> => {
+}): Promise<RealEstateReviewWithVotes | null> => {
   const { data, error } = await supabaseClient
-    .from('real_estate_reviews')
+    .from('real_estate_reviews_with_votes')
     .select('*')
     .eq('user_id', userId)
     .eq('real_estate_id', realEstateId)

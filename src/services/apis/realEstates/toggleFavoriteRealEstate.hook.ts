@@ -10,10 +10,6 @@ export const useToggleFavoriteRealEstate = () => {
     mutationFn: toggleFavoriteRealEstate,
     onSuccess: (data) => {
       if (data.success) {
-        toast.success(data.is_favorite ? 'Agregado a favoritos' : 'Eliminado de favoritos', {
-          description: data.message,
-        });
-
         // Invalidar queries relacionadas
         queryClient.invalidateQueries({ queryKey: ['realEstate'] });
         queryClient.invalidateQueries({ queryKey: ['favoriteRealEstates'] });

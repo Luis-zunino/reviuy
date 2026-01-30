@@ -62,3 +62,24 @@ grant execute on FUNCTION report_real_estate (UUID, TEXT, TEXT) to authenticated
 grant execute on FUNCTION has_user_reported_real_estate (UUID) to authenticated;
 
 grant execute on FUNCTION public.has_user_reported_real_estate_review (UUID) to authenticated;
+
+-- Permisos para funciones y vistas de contadores de votos
+grant execute on FUNCTION public.get_real_estate_vote_counts (UUID) to authenticated, anon;
+
+grant select on public.real_estate_vote_stats to authenticated, anon;
+
+grant select on public.real_estates_with_votes to authenticated, anon;
+
+-- Permisos para funciones y vistas de contadores de votos de reviews
+grant execute on FUNCTION public.get_review_vote_counts (UUID) to authenticated, anon;
+
+grant select on public.review_vote_stats to authenticated, anon;
+
+grant select on public.reviews_with_votes to authenticated, anon;
+
+-- Permisos para funciones y vistas de contadores de votos de real_estate_reviews
+grant execute on FUNCTION public.get_real_estate_review_vote_counts (UUID) to authenticated, anon;
+
+grant select on public.real_estate_review_vote_stats to authenticated, anon;
+
+grant select on public.real_estate_reviews_with_votes to authenticated, anon;

@@ -1,6 +1,6 @@
 import { useAuthContext } from '@/components/providers/AuthProvider';
 import { useVoteRealEstateReview } from '@/services';
-import { RealEstateReview, VoteType } from '@/types';
+import { RealEstateReviewWithVotes, VoteType } from '@/types';
 import { QueryObserverResult, RefetchOptions } from '@tanstack/react-query';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -11,7 +11,7 @@ export interface RealEstateReviewVoteButtonsProps {
   refetchRealEstateReview:
     | ((
         options?: RefetchOptions | undefined
-      ) => Promise<QueryObserverResult<RealEstateReview | null, Error>>)
+      ) => Promise<QueryObserverResult<RealEstateReviewWithVotes | null, Error>>)
     | undefined;
 }
 
@@ -28,20 +28,15 @@ export const useRealEstateReviewVoteButtons = (props: RealEstateReviewVoteButton
     }
     setClickedButton(voteType);
     setTimeout(() => setClickedButton(null), 300);
-    toast.loading('Calificando reseña...', {
-      id: 'vote-real-estate-review',
-    });
+
     await mutateAsync(
       { reviewId, voteType },
       {
         onSuccess: () => {
-          toast.dismiss('vote-real-estate-review');
-          toast.success('Voto registrado exitosamente');
           return refetchRealEstateReview?.();
         },
 
         onError: () => {
-          toast.dismiss('vote-real-estate-review');
           toast.error('Error inesperado', {
             description: 'No se pudo actualizar la reseña. Inténtalo de nuevo.',
           });

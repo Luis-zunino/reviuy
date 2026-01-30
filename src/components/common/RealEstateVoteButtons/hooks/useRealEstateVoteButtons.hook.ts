@@ -23,20 +23,15 @@ export const useRealEstateVoteButtons = (props: RealEstateVoteButtonsProps) => {
     }
     setClickedButton(voteType);
     setTimeout(() => setClickedButton(null), 300);
-    toast.loading('Calificando inmobiliaria...', {
-      id: 'vote-real-estate',
-    });
+
     return await mutateAsync(
       { realEstateId, voteType },
       {
         onSuccess: async () => {
-          toast.dismiss('vote-real-estate');
-          toast.success('Voto registrado exitosamente');
           return await refetchRealEstate();
         },
 
         onError: () => {
-          toast.dismiss('vote-real-estate');
           toast.error('Error inesperado', {
             description: 'No se pudo actualizar la inmobiliaria. Inténtalo de nuevo.',
           });

@@ -122,9 +122,9 @@ where
 -- ÍNDICES PARA SISTEMA DE REVIEWS
 -- =============================================================================
 -- Índices para review_votes
-create index IF not exists idx_review_votes_review_id on public.review_votes (review_id);
+-- Índice compuesto para optimizar consultas por review, usuario y tipo de voto
+create index IF not exists idx_review_votes_composite on public.review_votes (review_id, user_id, vote_type);
 
-create index IF not exists idx_review_votes_user_id on public.review_votes (user_id);
 
 -- Índices para review_reports
 create index IF not exists idx_review_reports_review_id on public.review_reports (review_id);
@@ -159,9 +159,9 @@ create index IF not exists idx_real_estate_reviews_rating on public.real_estate_
 create index IF not exists idx_real_estate_reviews_real_estate_rating on public.real_estate_reviews (real_estate_id, rating);
 
 -- Índices para real_estate_review_votes
-create index IF not exists idx_real_estate_review_votes_review_id on public.real_estate_review_votes (real_estate_review_id);
+-- Índice compuesto para optimizar consultas por review, usuario y tipo de voto
+create index IF not exists idx_real_estate_review_votes_composite on public.real_estate_review_votes (real_estate_review_id, user_id, vote_type);
 
-create index IF not exists idx_real_estate_review_votes_user_id on public.real_estate_review_votes (user_id);
 
 -- Índices para real_estate_review_reports
 create index IF not exists idx_real_estate_review_reports_review_id on public.real_estate_review_reports (real_estate_review_id);
@@ -190,8 +190,9 @@ create index IF not exists idx_real_estate_reports_real_estate_id on public.real
 
 create index IF not exists idx_real_estate_reports_reported_by on public.real_estate_reports (reported_by_user_id);
 
--- Índice compuesto para búsquedas de voto único por usuario y propiedad
-create index IF not exists idx_real_estate_votes_composite on public.real_estate_votes (real_estate_id, user_id);
+-- Índice compuesto para búsquedas de voto único por usuario y propiedad (usado por vote_real_estate)
+-- Incluye vote_type para cubrir las consultas de conteo sin tener que acceder a la tabla
+create index IF not exists idx_real_estate_votes_composite on public.real_estate_votes (real_estate_id, user_id, vote_type);
 
 -- Índices para mejorar el rendimiento
 create index IF not exists idx_real_estate_favorites_real_estate_id on public.real_estate_favorites (real_estate_id);
@@ -408,23 +409,6 @@ EXCEPTION
         RAISE WARNING 'Error creando índice idx_real_estate_reviews_re_created: %', SQLERRM;
 END $$;
 
--- Índice para contar votos por tipo en una propiedad
-do $$
-BEGIN
-    IF NOT EXISTS (
-        SELECT 1 FROM pg_indexes 
-        WHERE schemaname = 'public' 
-        AND indexname = 'idx_real_estate_votes_type'
-    ) THEN
-        EXECUTE 'CREATE INDEX CONCURRENTLY idx_real_estate_votes_type ON public.real_estate_votes(real_estate_id, vote_type)';
-        RAISE NOTICE 'Índice idx_real_estate_votes_type creado';
-    ELSE
-        RAISE NOTICE 'Índice idx_real_estate_votes_type ya existe';
-    END IF;
-EXCEPTION
-    WHEN OTHERS THEN
-        RAISE WARNING 'Error creando índice idx_real_estate_votes_type: %', SQLERRM;
-END $$;
 
 -- Índice para búsquedas en reported_by_user_id
 do $$

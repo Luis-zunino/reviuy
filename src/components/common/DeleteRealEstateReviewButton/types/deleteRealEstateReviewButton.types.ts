@@ -1,4 +1,4 @@
-import type { RealEstateReview } from '@/types';
+import type { RealEstateReviewWithVotes } from '@/types';
 import type { BaseButtonProps } from '../../types';
 
 // Tipo que incluye los campos mínimos necesarios para eliminar una reseña
@@ -9,6 +9,5 @@ export type RealEstateReviewForDelete = {
 };
 
 export interface DeleteRealEstateReviewButtonProps extends BaseButtonProps {
-  review: RealEstateReview | RealEstateReviewForDelete;
-  onDeleteSuccess?: () => void;
+  review: RealEstateReviewWithVotes | RealEstateReviewForDelete;
 }

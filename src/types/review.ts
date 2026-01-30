@@ -1,25 +1,56 @@
-import { RealEstate } from './realEstate';
+import { RealEstate, RealEstateWitheVotes } from './realEstate';
 import { Database } from './supabase';
 
-// Tipos base (como los tienes)
+/* ============================================================================
+ * Tipos base (filas de tablas / vistas)
+ * ============================================================================
+ */
+
+// Tabla reviews
 export type Review = Database['public']['Tables']['reviews']['Row'];
+
+// Vista con votos agregados
+export type ReviewWithVotes = Database['public']['Views']['reviews_with_votes']['Row'];
+
+// Tabla review_rooms
 export type ReviewRoom = Database['public']['Tables']['review_rooms']['Row'];
 
-// Tipo para crear (insert)
+/* ============================================================================
+ * Tipos para mutaciones (insert / update)
+ * ============================================================================
+ */
+
 export type ReviewInsert = Database['public']['Tables']['reviews']['Insert'];
+
+export type ReviewUpdate = Database['public']['Tables']['reviews']['Update'];
+
 export type ReviewRoomInsert = Database['public']['Tables']['review_rooms']['Insert'];
 
-// Tipo para actualizar (update)
-export type ReviewUpdate = Database['public']['Tables']['reviews']['Update'];
 export type ReviewRoomUpdate = Database['public']['Tables']['review_rooms']['Update'];
 
-// Tipo con relaciones
-export type ReviewWithRoomsAndRealEstates = ReviewUpdate & {
+/* ============================================================================
+ * Tipos con relaciones (SELECT)
+ * ============================================================================
+ */
+
+// Review + rooms + real estate
+export type ReviewWithRoomsAndRealEstates = Review & {
   review_rooms: ReviewRoom[];
-  real_estates?: RealEstate;
+  real_estates: RealEstate | null;
 };
 
-export type ReviewWithRelations = Review & {
-  review_rooms: ReviewRoomUpdate[];
-  real_estates: RealEstate | null;
+// Review (vista con votos) + rooms + real estate con votos
+export type ReviewWithRelations = ReviewWithVotes & {
+  review_rooms: ReviewRoom[];
+  real_estates: RealEstateWitheVotes | null;
+};
+
+/* ============================================================================
+ * Tipos auxiliares (opcionales, por claridad)
+ * ============================================================================
+ */
+
+// Si en algún punto querés dejar explícito el rating nullable
+export type ReviewWithNullableRating = Omit<Review, 'rating'> & {
+  rating: number | null;
 };

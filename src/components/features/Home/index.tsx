@@ -13,20 +13,18 @@ export const Home = () => {
               </span>
             </div>
 
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-foreground mb-8 leading-[1.1]">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-foreground mb-8 leading-[1.1]">
               Encontrá tu lugar ideal con <br className="hidden md:block" />
               <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-600 to-purple-600 animate-gradient">
                 reseñas reales
               </span>
             </h1>
-
-            <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto leading-relaxed mb-8">
+            <SearcherAddressHomeSection />
+            <p className="text-xl md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed my-8">
               La primera plataforma donde podés conocer la experiencia de otros inquilinos antes de
               alquilar.
             </p>
           </div>
-
-          <SearcherAddressHomeSection />
         </div>
       </section>
 

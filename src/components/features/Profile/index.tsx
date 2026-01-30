@@ -75,7 +75,7 @@ export const ProfileComponent = () => {
           <TabsList className="grid w-full grid-cols-1 md:grid-cols-3 mb-6 gap-2">
             <TabsTrigger value="reviews" className="flex items-center gap-2">
               <MessageSquare className="h-4 w-4" />
-              Mis Reseñas ({reviews.length ?? 0})
+              Mis Reseñas ({reviews?.length ?? 0})
             </TabsTrigger>
             <TabsTrigger value="favoriteReviews" className="flex items-center gap-2">
               <Star className="h-4 w-4" />
@@ -91,13 +91,13 @@ export const ProfileComponent = () => {
             <section>
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-semibold">Mis reseñas publicadas</h2>
-                <Button onClick={refetch} variant="outline" size="sm">
+                <Button onClick={() => refetch()} variant="outline" size="sm">
                   <RefreshCw className="h-4 w-4 mr-2" />
                   <span className="hidden md:flex">Actualizar</span>
                 </Button>
               </div>
 
-              {reviews.length === 0 ? (
+              {reviews?.length === 0 ? (
                 <EmptySection
                   title="No has publicado ninguna reseña aún."
                   link={PagesUrls.REVIEW_CREATE}
@@ -106,7 +106,7 @@ export const ProfileComponent = () => {
                 />
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {reviews.map((review) => (
+                  {reviews?.map((review) => (
                     <ReviewCard review={review} key={review.id} />
                   ))}
                 </div>
@@ -166,7 +166,7 @@ export const ProfileComponent = () => {
                             <Building2 className="h-5 w-5 text-blue-600" />
                             {realEstate.name}
                           </CardTitle>
-                          <FavoriteRealEstateButton realEstateId={realEstate.id} />
+                          <FavoriteRealEstateButton realEstateId={realEstate.id ?? ''} />
                         </div>
                       </CardHeader>
                       <CardContent className="space-y-3">

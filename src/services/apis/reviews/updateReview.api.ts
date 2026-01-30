@@ -7,7 +7,7 @@ import { parseSupabaseError } from '@/utils';
 export const updateReview = async ({
   reviewId,
   updateData,
-  userId,
+  user_id,
 }: UpdateReviewApiRequest): Promise<UpdateReviewResponse> => {
   const { data: review, error: fetchError } = await supabaseClient
     .from('reviews')
@@ -23,7 +23,7 @@ export const updateReview = async ({
     };
   }
 
-  if (review.user_id !== userId) {
+  if (review.user_id !== user_id) {
     return {
       success: false,
       message: 'No tienes permisos para actualizar esta reseña',
@@ -58,7 +58,7 @@ export const updateReview = async ({
 
   const { data: completeReview, error: reviewWithRoomsError } = await supabaseClient
     .from('reviews')
-    .select(`*,review_rooms (*)`)
+    .select(`*,review_rooms (*), real_estates(*)`)
     .eq('id', reviewId)
     .single();
 
@@ -71,7 +71,7 @@ export const updateReview = async ({
 
   return {
     success: true,
-    message: `Reseña actualizada exitosamente${roomsUpdated ? ' (incluyendo habitaciones)' : ''}`,
+    message: `Reseña actualizada${roomsUpdated ? ' (incluyendo habitaciones)' : ''}`,
     data: reviewWithRooms,
   };
 };

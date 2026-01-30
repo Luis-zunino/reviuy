@@ -6,31 +6,22 @@ import { Trash2 } from 'lucide-react';
 import { DeleteReviewDialog } from '@/components/common';
 import { useDeleteReview } from '@/services/apis/reviews';
 import { useRouter } from 'next/navigation';
-import { PagesUrls } from '@/enums';
 import type { DeleteReviewButtonProps } from './types';
 import { useAuthContext } from '@/components/providers/AuthProvider';
+import { toast } from 'sonner';
 
 export const DeleteReviewButton: React.FC<DeleteReviewButtonProps> = ({
   review,
-  onDeleteSuccess,
   showText = false,
   variant = 'ghost',
   size = 'sm',
   className = '',
 }) => {
-  const route = useRouter();
+  const router = useRouter();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const { isOwner } = useAuthContext();
 
-  const { mutateAsync, isPending } = useDeleteReview({
-    onSuccess: () => {
-      setShowDeleteDialog(false);
-      if (onDeleteSuccess) {
-        onDeleteSuccess();
-      }
-      route.push(PagesUrls.HOME);
-    },
-  });
+  const { mutateAsync, isPending } = useDeleteReview();
 
   // Si no es el propietario o no hay user_id, no mostrar el componente
   if (!isOwner(review.user_id) || !review.user_id) {
@@ -41,8 +32,36 @@ export const DeleteReviewButton: React.FC<DeleteReviewButtonProps> = ({
     setShowDeleteDialog(true);
   };
 
-  const handleConfirmDelete = () => {
-    mutateAsync(review.id);
+  const handleConfirmDelete = async () => {
+    if (!review.id) return null;
+    toast.loading('Eliminando reseña...', {
+      id: `delete-${review.id}`,
+    });
+    await mutateAsync(
+      { reviewId: review.id },
+      {
+        onSuccess: (data) => {
+          toast.dismiss(`delete-${review.id}`);
+          if (data.success) {
+            toast.success('Reseña eliminada', {
+              description: data.message,
+            });
+            router.back();
+            setShowDeleteDialog(false);
+          } else {
+            toast.error('Error al eliminar', {
+              description: data.message || 'No se pudo eliminar la reseña',
+            });
+          }
+        },
+        onError: () => {
+          toast.dismiss(`delete-${review.id}`);
+          toast.error('Error inesperado', {
+            description: 'No se pudo eliminar la reseña. Inténtalo de nuevo.',
+          });
+        },
+      }
+    );
   };
 
   return (

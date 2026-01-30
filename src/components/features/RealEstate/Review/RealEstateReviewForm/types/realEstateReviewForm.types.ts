@@ -1,5 +1,5 @@
 import type { UseFormReturn } from 'react-hook-form';
-import type { RealEstateReview } from '@/types';
+import type { RealEstateReviewWithVotes } from '@/types';
 import type { QueryObserverResult, RefetchOptions } from '@tanstack/react-query';
 import { FormRealEstateSchema } from '../../types';
 
@@ -12,8 +12,8 @@ export interface RealEstateReviewFormProps {
   isLoading: boolean;
   error: boolean;
   isReadOnly?: boolean;
-  review?: RealEstateReview | null;
+  review?: RealEstateReviewWithVotes | null;
   refetchRealEstateReview?: (
     options?: RefetchOptions | undefined
-  ) => Promise<QueryObserverResult<RealEstateReview | null, Error>>;
+  ) => Promise<QueryObserverResult<RealEstateReviewWithVotes | null, Error>>;
 }

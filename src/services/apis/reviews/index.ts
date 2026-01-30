@@ -1,4 +1,3 @@
-export { useGetLatestReviews } from './getLatestReviews.hook';
 export { useGetReviewById } from './getReviewById.hook';
 export { useGetReviewsByAddress } from './getReviewsByAddress.hook';
 export { useDeleteReview } from './deleteReview.hook';
@@ -7,6 +6,7 @@ export { useReportReview, useHasUserReportedReview } from './reportReview.hook';
 export { useGetReviewsByRealEstateId } from './getReviewsByRealEstateId.hook';
 export { useVoteReview } from './voteReview.hook';
 export { useCreateReview } from './createReview.hook';
+export { useGetReviewByUserId } from './getReviewsByUserId.hook';
 export * from './useToggleFavoriteReview.hook';
 export * from './useIsReviewFavorite.hook';
 export * from './useGetUserFavoriteReviews.hook';

@@ -16,7 +16,7 @@ export const useReportRealEstateButton = (props: UseReportRealEstateButtonProps)
 
   const { mutateAsync, isPending } = useReportRealEstate();
   const { mutateAsync: sendMessage } = useSendReportRealEstateMessage();
-  const { data: hasReported } = useHasUserReportedRealEstate(realEstate.id);
+  const { data: hasReported } = useHasUserReportedRealEstate(realEstate.id ?? undefined);
 
   const reportReasons = [
     { value: 'fraud', label: 'Posible fraude o estafa' },
@@ -45,21 +45,21 @@ export const useReportRealEstateButton = (props: UseReportRealEstateButtonProps)
 
     await mutateAsync(
       {
-        real_estate_id: realEstate.id,
+        real_estate_id: realEstate.id ?? '',
         reason: selectedReason,
         description: description.trim() || undefined,
       },
       {
         onSuccess: async ({ success, message, error }) => {
           if (success) {
-            toast.success(message || 'Reporte enviado exitosamente');
+            toast.success(message || 'Reporte enviado');
             setIsOpen(false);
             setSelectedReason('');
             setDescription('');
             await sendMessage({
               reason: selectedReason,
               message: description,
-              realEstateName: realEstate.name,
+              realEstateName: realEstate.name ?? '',
             });
           } else {
             toast.error(error || 'Error al enviar el reporte');

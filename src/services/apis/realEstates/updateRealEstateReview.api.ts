@@ -4,10 +4,9 @@ import type { UpdateRealEstateReviewResponse } from './types';
 import { parseSupabaseError } from '@/utils';
 
 export const updateRealEstateReview = async (
-  updateRealEstateReviewData: RealEstateReviewUpdate,
-  userId?: string | null
+  updateRealEstateReviewData: RealEstateReviewUpdate & { user_id?: string }
 ): Promise<UpdateRealEstateReviewResponse> => {
-  if (!userId) {
+  if (!updateRealEstateReviewData.user_id) {
     return {
       success: false,
       message: 'Debes iniciar sesión para actualizar una reseña de una inmobiliaria',
@@ -25,7 +24,7 @@ export const updateRealEstateReview = async (
     .from('real_estate_reviews')
     .update(updateRealEstateReviewData)
     .eq('id', updateRealEstateReviewData.id)
-    .eq('user_id', userId)
+    .eq('user_id', updateRealEstateReviewData.user_id)
     .select()
     .single();
 
@@ -33,7 +32,7 @@ export const updateRealEstateReview = async (
 
   return {
     success: true,
-    message: 'Reseña creada exitosamente',
+    message: 'Reseña creada',
     data,
   };
 };

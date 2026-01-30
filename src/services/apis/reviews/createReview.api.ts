@@ -5,9 +5,9 @@ import { parseSupabaseError } from '@/utils';
 
 export const createReview = async ({
   data,
-  userId,
-}: CreateReviewRequest): Promise<CreateReviewResponse> => {
-  if (!userId) {
+  user_id,
+}: CreateReviewRequest & { user_id: string }): Promise<CreateReviewResponse> => {
+  if (!user_id) {
     return {
       success: false,
       message: 'Debes iniciar sesión para crear una reseña',
@@ -21,7 +21,7 @@ export const createReview = async ({
     .from('reviews')
     .insert({
       ...reviewData,
-      user_id: userId,
+      user_id,
     })
     .select()
     .single();
@@ -58,7 +58,7 @@ export const createReview = async ({
   return {
     success: true,
     message:
-      'Reseña creada exitosamente' +
+      'Reseña creada' +
       (insertedRooms.length > 0 ? ' con ' + insertedRooms.length + ' habitaciones' : ''),
     data: {
       ...insertedReview,

@@ -1,5 +1,5 @@
-import type { Review } from '@/types';
+import type { ReviewWithVotes } from '@/types';
 
 export interface AddressReviewCardProps {
-  review: Review;
+  review: ReviewWithVotes;
 }

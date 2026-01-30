@@ -18,8 +18,6 @@ create table
             rating >= 0
             and rating <= 5
         ),
-        likes INTEGER not null default 0 check (likes >= 0),
-        dislikes INTEGER not null default 0 check (dislikes >= 0),
         created_by UUID references auth.users (id) on delete set null,
         created_at TIMESTAMPTZ not null default now (),
         updated_at TIMESTAMPTZ not null default now () check (updated_at >= created_at),
@@ -57,8 +55,6 @@ create table
         winter_comfort TEXT check (winter_comfort in ('hot', 'comfortable', 'cold')),
         summer_comfort TEXT check (summer_comfort in ('hot', 'comfortable', 'cold')),
         humidity TEXT check (humidity in ('high', 'normal', 'low')),
-        likes INTEGER not null default 0 check (likes >= 0),
-        dislikes INTEGER not null default 0 check (dislikes >= 0),
         created_at TIMESTAMPTZ not null default now (),
         updated_at TIMESTAMPTZ not null default now () check (updated_at >= created_at),
         apartment_number VARCHAR(10),
@@ -186,9 +182,6 @@ create table
             rating >= 1
             and rating <= 5
         ),
-        -- Contadores
-        likes INTEGER not null default 0 check (likes >= 0),
-        dislikes INTEGER not null default 0 check (dislikes >= 0),
         -- Timestamps
         created_at TIMESTAMPTZ not null default now (),
         updated_at TIMESTAMPTZ not null default now () check (updated_at >= created_at),
@@ -288,11 +281,7 @@ COMMENT on column public.real_estates.review_count is 'Cantidad de reseñas en r
 
 COMMENT on column public.real_estates.rating is 'Promedio de rating (0..5) desde real_estate_reviews; mantenido por trigger. Minimo 0.00. Máximo 5.00.';
 
-COMMENT on column public.real_estates.likes is 'Cantidad de likes agregados por usuarios; derivado de real_estate_votes.';
-
-COMMENT on column public.real_estates.dislikes is 'Cantidad de dislikes agregados por usuarios; derivado de real_estate_votes.';
-
-COMMENT on column public.real_estates.created_by is 'Usuario que creó la inmobiliaria (FK a auth.users).';
+COMMENT on column public.real_estates.created_by is 'Usuario que creó la inmobiliaria (FK a auth.users). Likes y dislikes se calculan dinámicamente desde real_estate_votes usando vistas materializadas.';
 
 COMMENT on column public.real_estates.created_at is 'Fecha de creación.';
 
@@ -332,10 +321,6 @@ COMMENT on column public.reviews.winter_comfort is 'Confort térmico en invierno
 COMMENT on column public.reviews.summer_comfort is 'Confort térmico en verano (hot|comfortable|cold).';
 
 COMMENT on column public.reviews.humidity is 'Humedad percibida (high|normal|low).';
-
-COMMENT on column public.reviews.likes is 'Contador derivado por votos; mantenido por triggers.';
-
-COMMENT on column public.reviews.dislikes is 'Contador derivado por votos; mantenido por triggers.';
 
 COMMENT on column public.reviews.created_at is 'Fecha de creación.';
 
@@ -471,7 +456,7 @@ COMMENT on column public.review_audit.change_type is 'Tipo de cambio (create|upd
 COMMENT on column public.review_audit.created_at is 'Fecha del evento de auditoría.';
 
 -- public.real_estate_reviews
-COMMENT on table public.real_estate_reviews is 'Reseñas sobre inmobiliarias (no propiedades). Unicidad: por usuario solo 1 reseña por inmobiliaria (excluye soft-deletes).';
+COMMENT on table public.real_estate_reviews is 'Reseñas sobre inmobiliarias (no propiedades). Unicidad: por usuario solo 1 reseña por inmobiliaria (excluye soft-deletes). Likes y dislikes se calculan dinámicamente desde real_estate_review_votes usando vistas materializadas.';
 
 COMMENT on column public.real_estate_reviews.id is 'Identificador único (UUID).';
 
@@ -484,10 +469,6 @@ COMMENT on column public.real_estate_reviews.title is 'Título de la reseña de 
 COMMENT on column public.real_estate_reviews.description is 'Contenido de la reseña de inmobiliaria. Máximo 400 caracteres.';
 
 COMMENT on column public.real_estate_reviews.rating is 'Calificación (1..5) de la inmobiliaria.';
-
-COMMENT on column public.real_estate_reviews.likes is 'Likes recibidos (derivado por votos).';
-
-COMMENT on column public.real_estate_reviews.dislikes is 'Dislikes recibidos (derivado por votos).';
 
 COMMENT on column public.real_estate_reviews.created_at is 'Fecha de creación.';
 
@@ -551,7 +532,7 @@ COMMENT on column public.real_estate_reports.created_at is 'Fecha de creación d
 COMMENT on column public.real_estate_reports.updated_at is 'Fecha de última actualización del reporte.';
 
 -- public.real_estate_votes
-COMMENT on table public.real_estate_votes is 'Votos (like/dislike) sobre inmobiliarias.';
+COMMENT on table public.real_estate_votes is 'Votos (like/dislike) sobre inmobiliarias. Los contadores agregados se calculan mediante vistas materializadas.';
 
 COMMENT on column public.real_estate_votes.id is 'Identificador único (UUID).';
 
@@ -563,7 +544,7 @@ COMMENT on column public.real_estate_votes.vote_type is 'Tipo de voto (like|disl
 
 COMMENT on column public.real_estate_votes.created_at is 'Fecha del voto.';
 
-COMMENT on column public.real_estate_votes.updated_at is 'Fecha de última actualización.';
+COMMENT on column public.real_estate_votes.updated_at is 'Fecha de última actualización (cuando cambia de like a dislike o viceversa).';
 
 -- public.real_estate_favorites
 COMMENT on table public.real_estate_favorites is 'Favoritos de inmobiliarias por usuario.';
@@ -586,3 +567,135 @@ COMMENT on column public.review_favorites.review_id is 'Reseña marcada como fav
 COMMENT on column public.review_favorites.user_id is 'Usuario que marca como favorito (FK).';
 
 COMMENT on column public.review_favorites.created_at is 'Fecha de creación del favorito.';
+
+-- =============================================================================
+-- VISTAS MATERIALIZADAS PARA CONTADORES DINÁMICOS
+-- =============================================================================
+-- Vista materializada para cachear contadores de votos de real_estates
+-- Eliminar vista si existe para recrearla limpiamente
+drop materialized view if exists public.real_estate_vote_stats cascade;
+
+create materialized view public.real_estate_vote_stats as
+select
+    re.id as real_estate_id,
+    coalesce(sum(case when rev.vote_type = 'like' then 1 else 0 end), 0)::integer as likes,
+    coalesce(sum(case when rev.vote_type = 'dislike' then 1 else 0 end), 0)::integer as dislikes,
+    count(rev.id)::integer as total_votes
+from public.real_estates re
+left join public.real_estate_votes rev 
+    on re.id = rev.real_estate_id
+where re.deleted_at is null
+group by re.id;
+
+-- Índice único en la vista materializada (necesario antes del REFRESH CONCURRENTLY)
+create unique index idx_real_estate_vote_stats_real_estate_id 
+    on public.real_estate_vote_stats(real_estate_id);
+
+-- Vista para facilitar consultas de real_estates con contadores
+create or replace view public.real_estates_with_votes as
+select
+    re.*,
+    coalesce(stats.likes, 0) as likes,
+    coalesce(stats.dislikes, 0) as dislikes,
+    coalesce(stats.total_votes, 0) as total_votes
+from public.real_estates re
+left join public.real_estate_vote_stats stats on re.id = stats.real_estate_id
+where re.deleted_at is null;
+
+-- Comentarios para documentación
+comment on materialized view public.real_estate_vote_stats is 
+    'Vista materializada que cachea los contadores de likes/dislikes para real_estates. Se actualiza automáticamente con cada cambio en real_estate_votes.';
+
+comment on view public.real_estates_with_votes is 
+    'Vista que combina real_estates con sus contadores de votos calculados dinámicamente. Usar esta vista en lugar de consultar real_estates directamente cuando se necesiten los contadores.';
+
+-- Refrescar la vista materializada por primera vez
+refresh materialized view public.real_estate_vote_stats;
+
+-- =============================================================================
+-- VISTAS MATERIALIZADAS PARA CONTADORES DINÁMICOS DE REVIEWS
+-- =============================================================================
+-- Vista materializada para cachear contadores de votos de reviews
+-- Eliminar vista si existe para recrearla limpiamente
+drop materialized view if exists public.review_vote_stats cascade;
+
+create materialized view public.review_vote_stats as
+select
+    r.id as review_id,
+    coalesce(sum(case when rv.vote_type = 'like' then 1 else 0 end), 0)::integer as likes,
+    coalesce(sum(case when rv.vote_type = 'dislike' then 1 else 0 end), 0)::integer as dislikes,
+    count(rv.id)::integer as total_votes
+from public.reviews r
+left join public.review_votes rv 
+    on r.id = rv.review_id
+where r.deleted_at is null
+group by r.id;
+
+-- Índice único en la vista materializada (necesario antes del REFRESH CONCURRENTLY)
+create unique index idx_review_vote_stats_review_id 
+    on public.review_vote_stats(review_id);
+
+-- Vista para facilitar consultas de reviews con contadores
+create or replace view public.reviews_with_votes as
+select
+    r.*,
+    coalesce(stats.likes, 0) as likes,
+    coalesce(stats.dislikes, 0) as dislikes,
+    coalesce(stats.total_votes, 0) as total_votes
+from public.reviews r
+left join public.review_vote_stats stats on r.id = stats.review_id
+where r.deleted_at is null;
+
+-- Comentarios para documentación
+comment on materialized view public.review_vote_stats is 
+    'Vista materializada que cachea los contadores de likes/dislikes para reviews. Se actualiza automáticamente con cada cambio en review_votes.';
+
+comment on view public.reviews_with_votes is 
+    'Vista que combina reviews con sus contadores de votos calculados dinámicamente. Usar esta vista en lugar de consultar reviews directamente cuando se necesiten los contadores.';
+
+-- Refrescar la vista materializada por primera vez
+refresh materialized view public.review_vote_stats;
+
+-- =============================================================================
+-- VISTAS MATERIALIZADAS PARA CONTADORES DINÁMICOS DE REAL ESTATE REVIEWS
+-- =============================================================================
+-- Vista materializada para cachear contadores de votos de real_estate_reviews
+-- Eliminar vista si existe para recrearla limpiamente
+drop materialized view if exists public.real_estate_review_vote_stats cascade;
+
+create materialized view public.real_estate_review_vote_stats as
+select
+    rer.id as real_estate_review_id,
+    coalesce(sum(case when rerv.vote_type = 'like' then 1 else 0 end), 0)::integer as likes,
+    coalesce(sum(case when rerv.vote_type = 'dislike' then 1 else 0 end), 0)::integer as dislikes,
+    count(rerv.id)::integer as total_votes
+from public.real_estate_reviews rer
+left join public.real_estate_review_votes rerv 
+    on rer.id = rerv.real_estate_review_id
+where rer.deleted_at is null
+group by rer.id;
+
+-- Índice único en la vista materializada (necesario antes del REFRESH CONCURRENTLY)
+create unique index idx_real_estate_review_vote_stats_review_id 
+    on public.real_estate_review_vote_stats(real_estate_review_id);
+
+-- Vista para facilitar consultas de real_estate_reviews con contadores
+create or replace view public.real_estate_reviews_with_votes as
+select
+    rer.*,
+    coalesce(stats.likes, 0) as likes,
+    coalesce(stats.dislikes, 0) as dislikes,
+    coalesce(stats.total_votes, 0) as total_votes
+from public.real_estate_reviews rer
+left join public.real_estate_review_vote_stats stats on rer.id = stats.real_estate_review_id
+where rer.deleted_at is null;
+
+-- Comentarios para documentación
+comment on materialized view public.real_estate_review_vote_stats is 
+    'Vista materializada que cachea los contadores de likes/dislikes para real_estate_reviews. Se actualiza automáticamente con cada cambio en real_estate_review_votes.';
+
+comment on view public.real_estate_reviews_with_votes is 
+    'Vista que combina real_estate_reviews con sus contadores de votos calculados dinámicamente. Usar esta vista en lugar de consultar real_estate_reviews directamente cuando se necesiten los contadores.';
+
+-- Refrescar la vista materializada por primera vez
+refresh materialized view public.real_estate_review_vote_stats;

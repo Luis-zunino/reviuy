@@ -1,12 +1,12 @@
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MessageSquare } from 'lucide-react';
 import React, { useState } from 'react';
-import { RealEstateReview, Review } from '@/types';
+import { RealEstateReviewWithVotes, ReviewWithVotes } from '@/types';
 import { RealEstateReviewTabContent, RealEstateUserExperienceTabContent } from './components';
 
 export interface ViewRealEstateDetailsContentProps {
-  reviews: Review[];
-  realEstateReview?: RealEstateReview[] | null;
+  reviews: ReviewWithVotes[];
+  realEstateReview?: RealEstateReviewWithVotes[] | null;
   isLoadingReviews: boolean;
   realEstateId: string;
   userId: string;

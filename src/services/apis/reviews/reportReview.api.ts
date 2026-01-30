@@ -19,7 +19,7 @@ export const reportReview = async (
   // Asumiendo que la RPC function retorna el formato esperado
   return {
     success: true,
-    message: 'Reporte enviado exitosamente',
+    message: 'Reporte enviado',
   };
 };
 

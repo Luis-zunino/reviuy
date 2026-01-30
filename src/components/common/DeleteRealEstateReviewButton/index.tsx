@@ -9,19 +9,18 @@ import { useDeleteRealEstateReviewButton } from './hooks';
 
 export const DeleteRealEstateReviewButton: React.FC<DeleteRealEstateReviewButtonProps> = ({
   review,
-  onDeleteSuccess,
   showText = false,
   size = 'sm',
   className = '',
 }) => {
   const {
-    handleDeleteClick,
+    handleOpenDeleteModal,
     handleConfirmDelete,
     showDeleteDialog,
     setShowDeleteDialog,
     isPending,
     isOwner,
-  } = useDeleteRealEstateReviewButton({ review, onDeleteSuccess });
+  } = useDeleteRealEstateReviewButton({ review });
 
   if (!isOwner || !review.user_id) {
     return null;
@@ -31,8 +30,9 @@ export const DeleteRealEstateReviewButton: React.FC<DeleteRealEstateReviewButton
     <>
       <Button
         variant="destructive"
+        type="button"
         size={size}
-        onClick={handleDeleteClick}
+        onClick={handleOpenDeleteModal}
         className={className}
         disabled={isPending}
         icon={Trash2}

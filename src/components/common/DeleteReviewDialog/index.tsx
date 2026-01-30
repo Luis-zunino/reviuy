@@ -26,7 +26,7 @@ export const DeleteReviewDialog: React.FC<DeleteReviewDialogProps> = ({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-red-600">
             <AlertTriangle className="h-5 w-5" />
-            Eliminar Reseña
+            Eliminar reseña
           </DialogTitle>
           <DialogDescription className="pt-2">
             ¿Estás seguro de que deseas eliminar esta reseña?
@@ -58,6 +58,7 @@ export const DeleteReviewDialog: React.FC<DeleteReviewDialogProps> = ({
           </Button>
           <Button
             variant="destructive"
+            type="button"
             onClick={onConfirm}
             disabled={isDeleting}
             className="bg-red-600 hover:bg-red-700"
@@ -65,7 +66,7 @@ export const DeleteReviewDialog: React.FC<DeleteReviewDialogProps> = ({
             iconPosition="left"
             title={isDeleting ? 'Eliminando' : 'Eliminar'}
           >
-            {isDeleting ? 'Eliminando...' : 'Eliminar Reseña'}
+            {isDeleting ? 'Eliminando...' : 'Eliminar reseña'}
           </Button>
         </DialogFooter>
       </DialogContent>

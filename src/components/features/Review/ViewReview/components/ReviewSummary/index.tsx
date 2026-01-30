@@ -23,7 +23,7 @@ import {
 } from '@/utils';
 
 export const ReviewSummary = ({ review }: ReviewSummaryProps) => {
-  const recommended = review.rating >= 3.5;
+  const recommended = (review.rating ?? 0) >= 3.5;
 
   return (
     <div className="space-y-6">
@@ -47,7 +47,7 @@ export const ReviewSummary = ({ review }: ReviewSummaryProps) => {
           )}
         </Badge>
         <div className="flex gap-2 ml-auto">
-          <FavoriteReviewButton reviewId={review.id} showText />
+          <FavoriteReviewButton reviewId={review.id ?? ''} showText />
           <EditReviewButton review={review} showText />
           <ReportReviewButton review={review} showText />
           <DeleteReviewButton review={review} showText />
@@ -144,7 +144,10 @@ export const ReviewSummary = ({ review }: ReviewSummaryProps) => {
                   <span className="text-sm font-semibold text-foreground">Nombre</span>
                   <div className="flex items-center gap-3">
                     <Link
-                      href={PagesUrls.REAL_ESTATE_VIEW.replace(':id', review?.real_estates?.id)}
+                      href={PagesUrls.REAL_ESTATE_VIEW.replace(
+                        ':id',
+                        review?.real_estates?.id ?? ''
+                      )}
                       className="flex gap-2 justify-center"
                     >
                       <p className="text-base capitalize text-muted-foreground">
@@ -170,7 +173,11 @@ export const ReviewSummary = ({ review }: ReviewSummaryProps) => {
 
       <Card className="shadow-sm border-border/50">
         <CardContent className="p-6">
-          <ReviewLikesButtons id={review.id} likes={review?.likes} dislikes={review?.dislikes} />
+          <ReviewLikesButtons
+            id={review.id ?? ''}
+            likes={review?.likes ?? 0}
+            dislikes={review?.dislikes ?? 0}
+          />
         </CardContent>
       </Card>
     </div>

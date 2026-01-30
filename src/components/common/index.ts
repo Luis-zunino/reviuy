@@ -22,3 +22,4 @@ export { PageWithSidebar } from './PageWithSidebar';
 export * from './PageWithSidebar/components';
 export * from './Emails';
 export * from './Stepper';
+export * from './AsyncSearchSelect';

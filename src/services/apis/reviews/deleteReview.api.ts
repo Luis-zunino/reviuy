@@ -3,14 +3,20 @@ import { DeleteReviewResponse } from './types';
 import { parseSupabaseError } from '@/utils';
 
 export interface DeleteReviewRequest {
-  reviewId: string;
-  userId?: string | null;
+  reviewId?: string;
+  user_id?: string | null;
 }
 
 export const deleteReview = async ({
   reviewId,
-  userId,
+  user_id,
 }: DeleteReviewRequest): Promise<DeleteReviewResponse> => {
+  if (!reviewId)
+    return {
+      success: false,
+      message: 'No hay reviewId',
+      error: 'Reseña no encontrada',
+    };
   const { data: review, error: fetchError } = await supabaseClient
     .from('reviews')
     .select('id, user_id, title')
@@ -27,7 +33,7 @@ export const deleteReview = async ({
     };
   }
 
-  if (review.user_id !== userId) {
+  if (review.user_id !== user_id) {
     return {
       success: false,
       message: 'No tienes permisos para eliminar esta reseña',
@@ -39,12 +45,12 @@ export const deleteReview = async ({
     .from('reviews')
     .delete()
     .eq('id', reviewId)
-    .eq('user_id', userId);
+    .eq('user_id', user_id);
 
   if (deleteError) throw parseSupabaseError(deleteError);
 
   return {
     success: true,
-    message: 'Reseña eliminada exitosamente',
+    message: 'Reseña eliminada',
   };
 };

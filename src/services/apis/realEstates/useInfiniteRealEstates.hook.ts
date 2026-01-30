@@ -1,5 +1,5 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { RealEstate } from '@/types';
+import { RealEstateWitheVotes } from '@/types';
 import { getAllRealEstatesPaginated } from './getAllRealEstatesPaginated.api';
 
 const DEFAULT_LIMIT = 10;
@@ -9,7 +9,7 @@ export interface UseInfiniteRealEstatesParams {
   rating?: number | null;
 }
 export type RealEstatesPage = {
-  data: RealEstate[];
+  data: RealEstateWitheVotes[];
   nextOffset: number | null;
 };
 

@@ -5,7 +5,7 @@ import { useFieldArray, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { useParams, useRouter } from 'next/navigation';
 import { useCreateReview, useUpdateReview, useCheckUserReviewForAddress } from '@/services';
-import type { NominatimEntity, RealEstate } from '@/types';
+import type { NominatimEntity, RealEstateWitheVotes } from '@/types';
 import { PagesUrls } from '@/enums';
 import type { UseCreateOrUpdateReviewFormProps } from './types';
 import { useAuthContext } from '@/components/providers/AuthProvider';
@@ -69,7 +69,7 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
   };
 
   const onSubmit = async (formData: FormReviewSchema) => {
-    if (!isOwner(defaultValues?.user_id) && isUpdate) {
+    if (!isOwner(defaultValues?.user_id ?? '') && isUpdate) {
       toast.error('No tienes permisos para editar esta reseña');
       router.push(PagesUrls.HOME);
       return;
@@ -101,7 +101,7 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
               return;
             }
             toast.dismiss(loadingToast);
-            toast.success('Reseña actualizada exitosamente');
+            toast.success('Reseña actualizada');
             router.push(PagesUrls.REVIEW_DETAILS.replace(':id', data?.id ?? ''));
           },
           onError: () => {
@@ -123,7 +123,7 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
               });
               return;
             }
-            toast.success('¡Reseña publicada exitosamente!', {
+            toast.success('¡Reseña publicada!', {
               description: 'Tu experiencia ha sido compartida con la comunidad',
             });
 
@@ -146,8 +146,8 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
     setOpenRealEstateModal(false);
   };
 
-  const onSelectRealEstate = (item: RealEstate) => {
-    setValue('real_estate_id', item.id, {
+  const onSelectRealEstate = (item: RealEstateWitheVotes) => {
+    setValue('real_estate_id', item.id ?? '', {
       shouldValidate: true,
     });
     setValue('real_estate_name', String(item.name), {
@@ -158,7 +158,7 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
   };
 
   useEffect(() => {
-    if (defaultValues && !isOwner(defaultValues.user_id)) {
+    if (defaultValues && !isOwner(defaultValues.user_id ?? '')) {
       router.push(PagesUrls.HOME);
 
       const timer = setTimeout(() => {
@@ -198,7 +198,7 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
     append,
     remove,
     replace,
-    isOwner: isOwner(defaultValues?.user_id),
+    isOwner: isOwner(defaultValues?.user_id ?? ''),
     watch,
     isSubmitDisabled: Boolean(existingReview && defaultValues && !form.formState.isValid),
     open,

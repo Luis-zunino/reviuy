@@ -20,13 +20,16 @@ update on public.review_rooms for EACH row execute FUNCTION update_updated_at_co
 -- =============================================================================
 -- TRIGGERS PARA SISTEMA DE REVIEWS
 -- =============================================================================
--- Triggers para votos
+-- Triggers para votos - ACTUALIZADO: Ahora refresca vista materializada
 drop trigger IF exists review_votes_trigger on public.review_votes;
 
-create trigger review_votes_trigger after INSERT
-or DELETE
+-- Trigger para refrescar vista materializada de contadores de votos de reviews
+drop trigger IF exists trg_refresh_review_vote_stats on public.review_votes;
+
+create trigger trg_refresh_review_vote_stats after insert
 or
-update on public.review_votes for EACH row execute FUNCTION update_review_votes ();
+update
+or delete on public.review_votes for each statement execute function public.refresh_review_vote_stats ();
 
 -- Triggers para contadores de inmobiliarias
 drop trigger IF exists update_real_estate_counters_trigger on public.reviews;
@@ -59,10 +62,13 @@ update on public.real_estate_reviews for EACH row execute FUNCTION update_update
 -- Trigger para votos de reseñas de inmobiliarias
 drop trigger IF exists real_estate_review_votes_trigger on public.real_estate_review_votes;
 
-create trigger real_estate_review_votes_trigger after INSERT
-or DELETE
+-- Trigger para refrescar vista materializada de contadores de votos de real_estate_reviews
+drop trigger IF exists trg_refresh_real_estate_review_vote_stats on public.real_estate_review_votes;
+
+create trigger trg_refresh_real_estate_review_vote_stats after insert
 or
-update on public.real_estate_review_votes for EACH row execute FUNCTION update_real_estate_review_votes ();
+update
+or delete on public.real_estate_review_votes for each statement execute function public.refresh_real_estate_review_vote_stats ();
 
 -- Trigger para actualizar rating de inmobiliaria cuando cambian sus reseñas
 drop trigger IF exists update_real_estate_rating_trigger on public.real_estate_reviews;
@@ -95,7 +101,10 @@ update on public.real_estate_votes for EACH row execute FUNCTION update_updated_
 -- Trigger para contadores de votos de inmobiliarias
 drop trigger IF exists real_estate_votes_counters_trigger on public.real_estate_votes;
 
-create trigger real_estate_votes_counters_trigger after INSERT
-or DELETE
+-- Trigger para refrescar vista materializada de contadores de votos
+drop trigger IF exists trg_refresh_real_estate_vote_stats on public.real_estate_votes;
+
+create trigger trg_refresh_real_estate_vote_stats after insert
 or
-update on public.real_estate_votes for EACH row execute FUNCTION update_real_estate_votes_counters ();
+update
+or delete on public.real_estate_votes for each statement execute function public.refresh_real_estate_vote_stats ();

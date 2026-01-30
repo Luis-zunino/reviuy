@@ -2,7 +2,7 @@ import { FormLabel } from '@/components/common/Form';
 import { Textarea } from '@/components/ui/textarea';
 import React from 'react';
 import type { ThirdFormProps } from './types';
-import { RealEstate } from '@/types';
+import { RealEstateWitheVotes } from '@/types';
 import { AsyncSearchSelect } from '@/components/common/AsyncSearchSelect';
 import { FormReviewSchema } from '../../constants';
 import { CreateRealEstateModal } from '@/components/features/RealEstate/CreateRealEstate/CreateRealEstateModal';
@@ -22,7 +22,7 @@ export const ThirdForm = (props: ThirdFormProps) => {
     <div className="space-y-6">
       <div className="space-y-2">
         <div className="relative w-full">
-          <AsyncSearchSelect<FormReviewSchema, RealEstate>
+          <AsyncSearchSelect<FormReviewSchema, RealEstateWitheVotes>
             name="real_estate_name"
             options={data}
             isFetching={isLoading}

@@ -3,10 +3,10 @@ import type { DeleteRealEstateReviewParams, DeleteRealEstateReviewResponse } fro
 import { parseSupabaseError } from '@/utils';
 
 export const deleteRealEstateReview = async (
-  params: DeleteRealEstateReviewParams
+  params: DeleteRealEstateReviewParams & { user_id: string }
 ): Promise<DeleteRealEstateReviewResponse> => {
   // Extraer reviewId del parámetro (puede ser string o objeto)
-  const { reviewId, user } = params;
+  const { reviewId, user_id } = params;
 
   if (!reviewId) {
     return {
@@ -16,7 +16,7 @@ export const deleteRealEstateReview = async (
     };
   }
 
-  if (!user) {
+  if (!user_id) {
     return {
       success: false,
       message: 'Debes iniciar sesión para eliminar una reseña',
@@ -40,7 +40,7 @@ export const deleteRealEstateReview = async (
     };
   }
 
-  if (realEstateReview.user_id !== user.id) {
+  if (realEstateReview.user_id !== user_id) {
     return {
       success: false,
       message: 'No tienes permisos para eliminar esta reseña',
@@ -52,12 +52,12 @@ export const deleteRealEstateReview = async (
     .from('real_estate_reviews')
     .delete()
     .eq('id', reviewId)
-    .eq('user_id', user.id);
+    .eq('user_id', user_id);
 
   if (deleteError) throw parseSupabaseError(deleteError);
 
   return {
     success: true,
-    message: 'Reseña eliminada exitosamente',
+    message: 'Reseña eliminada',
   };
 };

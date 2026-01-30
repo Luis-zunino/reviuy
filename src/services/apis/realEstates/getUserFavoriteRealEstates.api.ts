@@ -1,8 +1,8 @@
 import { supabaseClient } from '@/lib/supabase-client';
-import type { RealEstate } from '@/types';
+import type { RealEstateWitheVotes } from '@/types';
 import { parseSupabaseError } from '@/utils';
 
-export const getUserFavoriteRealEstates = async (): Promise<RealEstate[]> => {
+export const getUserFavoriteRealEstates = async (): Promise<RealEstateWitheVotes[]> => {
   const {
     data: { user },
   } = await supabaseClient.auth.getUser();
@@ -16,7 +16,7 @@ export const getUserFavoriteRealEstates = async (): Promise<RealEstate[]> => {
     .select(
       `
         real_estate_id,
-        real_estates (
+        real_estates:real_estates_with_votes (
           id,
           name,
           created_at,
@@ -35,13 +35,13 @@ export const getUserFavoriteRealEstates = async (): Promise<RealEstate[]> => {
       (item: {
         real_estate_id: string;
         real_estates: {
-          id: string;
-          name: string;
-          created_at: string;
-          likes: number;
-          dislikes: number;
+          id?: string | null;
+          name?: string | null;
+          created_at: string | null;
+          likes?: number | null;
+          dislikes?: number | null;
         };
       }) => item.real_estates
     )
-    .filter(Boolean) || []) as RealEstate[];
+    .filter(Boolean) || []) as RealEstateWitheVotes[];
 };
