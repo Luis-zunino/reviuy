@@ -14,6 +14,45 @@ import { PagesUrls } from '@/enums';
 import Link from 'next/link';
 import type { ReviewCardProps } from './types';
 
+/**
+ * Tarjeta de visualización de reseña.
+ *
+ * Muestra información resumida de una reseña incluyendo:
+ * - Título y descripción
+ * - Dirección y ubicación
+ * - Calificación con estrellas
+ * - Fecha de creación
+ * - Botón de favoritos
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <ReviewCard review={{
+ *   id: '123',
+ *   title: 'Excelente departamento',
+ *   description: 'Muy buena ubicación...',
+ *   rating: 5,
+ *   address_text: 'Av. Corrientes 1234',
+ *   created_at: '2024-01-15'
+ * }} />
+ * ```
+ *
+ * @param {ReviewCardProps} props - Propiedades del componente
+ * @param {Review} props.review - Objeto de reseña con toda su información
+ * @param {string} props.review.id - ID único de la reseña
+ * @param {string} props.review.title - Título de la reseña
+ * @param {string} props.review.description - Descripción detallada
+ * @param {number} props.review.rating - Calificación (1-5)
+ * @param {string} props.review.address_text - Dirección textual
+ * @param {string} props.review.created_at - Fecha de creación (ISO string)
+ *
+ * @returns {JSX.Element} Tarjeta de reseña renderizada
+ *
+ * @remarks
+ * - La tarjeta completa es clickeable y navega a los detalles
+ * - Incluye efectos hover para mejorar UX
+ * - El botón de favoritos no propaga el evento de click
+ */
 export const ReviewCard = ({ review }: ReviewCardProps) => {
   const reviewUrl = PagesUrls.REVIEW_DETAILS.replace(':id', review.id ?? '');
 

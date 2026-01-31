@@ -1,4 +1,3 @@
-export * from './createRealEstate.api';
 export * from './getRealEstateById.hook';
 export * from './createRealEstateReview.hook';
 export * from './getAllRealEstateReviews.hook';

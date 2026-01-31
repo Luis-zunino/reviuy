@@ -6,3 +6,9 @@ export interface UpdateRealEstateReviewResponse {
   error?: string;
   data?: RealEstateReview;
 }
+
+export interface RealEstateReviewUpdate {
+  id: string;
+  rating?: number;
+  comment?: string;
+}

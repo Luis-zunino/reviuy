@@ -1,6 +1,6 @@
-import { supabaseClient } from '@/lib/supabase-client';
-import { RealEstateInsert, RealEstate } from '@/types/realEstate';
-import { parseSupabaseError } from '@/utils';
+import { supabaseClient } from '@/lib/supabase';
+import { handleSupabaseError } from '@/lib/errors';
+import { RealEstateInsert, RealEstate } from '@/types/real-estate';
 
 export const createRealEstate = async (
   realEstateData: RealEstateInsert & {
@@ -16,7 +16,7 @@ export const createRealEstate = async (
     .select()
     .single();
 
-  if (error) throw parseSupabaseError(error);
+  if (error) throw handleSupabaseError(error);
 
   return data;
 };

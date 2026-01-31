@@ -8,7 +8,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { FormRealEstateSchema, formRealEstateSchema } from '../../types';
+import { FormRealEstateSchema, formRealEstateSchema } from '@/schemas';
 
 export const useUpdateRealEstateReview = () => {
   const { reviewId } = useParams<{ realEstateId: string; reviewId: string }>();

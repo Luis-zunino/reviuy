@@ -1,5 +1,5 @@
 import { ReviewWithRelations } from '@/types';
-import { FormReviewSchema } from '../constants';
+import { FormReviewSchema } from '@/schemas';
 import { normalizeNullable } from '@/utils';
 import { PropertyType } from '@/enums';
 
@@ -20,7 +20,7 @@ export const getDefaultValues = (
     osm_type: '',
     address_text: normalizedValues.address_text ?? '',
     latitude: String(normalizedValues.latitude ?? ''),
-    longitude: String(normalizedValues.longitude ?? 0),
+    longitude: String(normalizedValues.longitude ?? ''),
     zone_rating: normalizedValues.zone_rating ?? 0,
     winter_comfort: normalizedValues.winter_comfort ?? '',
     summer_comfort: normalizedValues.summer_comfort ?? '',

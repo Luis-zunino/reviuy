@@ -9,6 +9,42 @@ import { cn } from '@/lib/utils';
 import type { RealEstateVoteButtonsProps } from './types';
 import { useRealEstateVoteButtons } from './hooks';
 
+/**
+ * Componente de botones de votación para propiedades inmobiliarias.
+ *
+ * Permite a los usuarios votar a favor (thumbs up) o en contra (thumbs down)
+ * de una inmobiliaria en base a su experiencia.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <RealEstateVoteButtons
+ *   realEstateId="real-estate-456"
+ *   likes={120}
+ *   dislikes={15}
+ *   userVote="like"
+ *   refetchRealEstate={refetch}
+ * />
+ * ```
+ *
+ * @param {RealEstateVoteButtonsProps} props - Propiedades del componente
+ * @param {string} props.realEstateId - ID único de la inmobiliaria
+ * @param {number} props.likes - Número de votos positivos
+ * @param {number} props.dislikes - Número de votos negativos
+ * @param {VoteType} [props.userVote] - Voto actual del usuario ('like' | 'dislike' | null)
+ * @param {string} [props.className=''] - Clases CSS adicionales
+ * @param {() => void} [props.refetchRealEstate] - Función para refrescar datos después de votar
+ * @param {boolean} [props.isLoading=false] - Estado de carga
+ *
+ * @returns {JSX.Element} Botones de votación renderizados
+ *
+ * @fires voteRealEstateAction - Server Action con rate limiting
+ *
+ * @remarks
+ * - Rate limit: 10 votos cada 10 segundos
+ * - Tooltips dinámicos según estado del voto
+ * - Indicador visual del voto activo del usuario
+ */
 export const RealEstateVoteButtons: React.FC<RealEstateVoteButtonsProps> = ({
   realEstateId,
   likes,

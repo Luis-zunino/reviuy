@@ -3,8 +3,8 @@
 import { REVIEW_KEYS } from '@/services/constants';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import type { ReviewWithVotes } from '@/types';
-import { parseSupabaseError } from '@/utils';
-import { supabaseClient } from '@/lib/supabase-client';
+import { handleSupabaseError } from '@/lib/errors';
+import { supabaseClient } from '@/lib/supabase';
 import { useVerifyAuthentication } from '../user';
 
 export interface GetReviewByUserIdParams {
@@ -20,7 +20,7 @@ const getReviewByUserId = async ({
     .eq('user_id', userId ?? '')
     .order('created_at', { ascending: false });
 
-  if (fetchError) throw parseSupabaseError(fetchError);
+  if (fetchError) throw handleSupabaseError(fetchError);
   return data;
 };
 

@@ -1,6 +1,6 @@
-import { supabaseClient } from '@/lib/supabase-client';
-import { RealEstateWitheVotes } from '@/types/realEstate';
-import { parseSupabaseError } from '@/utils';
+import { supabaseClient } from '@/lib/supabase';
+import { RealEstateWitheVotes } from '@/types/real-estate';
+import { handleSupabaseError } from '@/lib/errors';
 
 export const getRealEstateByIdApi = async (id: string): Promise<RealEstateWitheVotes | null> => {
   const { data, error } = await supabaseClient
@@ -9,6 +9,6 @@ export const getRealEstateByIdApi = async (id: string): Promise<RealEstateWitheV
     .eq('id', id)
     .single();
 
-  if (error) throw parseSupabaseError(error);
+  if (error) throw handleSupabaseError(error);
   return data;
 };

@@ -1,6 +1,6 @@
-import { supabaseClient } from '@/lib/supabase-client';
+import { supabaseClient } from '@/lib/supabase';
 import type { CheckUserReviewForAddressParams, CheckUserReviewForAddressResponse } from './types';
-import { parseSupabaseError } from '@/utils';
+import { handleSupabaseError } from '@/lib/errors';
 
 export const checkUserReviewForAddressApi = async ({
   userId,
@@ -13,6 +13,6 @@ export const checkUserReviewForAddressApi = async ({
     .eq('address_osm_id', osmId ?? '')
     .maybeSingle();
 
-  if (error) throw parseSupabaseError(error);
+  if (error) throw handleSupabaseError(error);
   return data;
 };

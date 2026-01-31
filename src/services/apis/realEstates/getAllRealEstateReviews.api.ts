@@ -1,6 +1,6 @@
-import { supabaseClient } from '@/lib/supabase-client';
+import { supabaseClient } from '@/lib/supabase';
 import type { RealEstateReviewWithVotes } from '@/types';
-import { parseSupabaseError } from '@/utils';
+import { handleSupabaseError } from '@/lib/errors';
 
 export const getAllRealEstateReviewsApi = async ({
   id,
@@ -21,7 +21,7 @@ export const getAllRealEstateReviewsApi = async ({
 
   const { data, error } = await query;
 
-  if (error) throw parseSupabaseError(error);
+  if (error) throw handleSupabaseError(error);
 
   return data || [];
 };

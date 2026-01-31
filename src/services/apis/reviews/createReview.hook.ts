@@ -1,12 +1,12 @@
 'use client';
 
-import { createReview } from './createReview.api';
+import { createReviewAction } from '@/app/_actions/review.actions';
 import { useAuthMutation } from '../user';
 
 export const useCreateReview = () => {
   return useAuthMutation({
-    authErrorMessage: 'Debes iniciar sesión para actualizar reseñas',
-    mutationFn: createReview,
+    authErrorMessage: 'Debes iniciar sesión para crear reseñas',
+    mutationFn: createReviewAction,
     mutationOptions: { mutationKey: ['create-review'] },
   });
 };

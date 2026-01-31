@@ -4,7 +4,7 @@ import React from 'react';
 import type { ThirdFormProps } from './types';
 import { RealEstateWitheVotes } from '@/types';
 import { AsyncSearchSelect } from '@/components/common/AsyncSearchSelect';
-import { FormReviewSchema } from '../../constants';
+import { FormReviewSchema } from '@/schemas';
 import { CreateRealEstateModal } from '@/components/features/RealEstate/CreateRealEstate/CreateRealEstateModal';
 import { useThirdForm } from './hooks';
 import { Building2, Plus } from 'lucide-react';

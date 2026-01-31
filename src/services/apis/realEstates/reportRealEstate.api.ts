@@ -1,6 +1,6 @@
-import { supabaseClient } from '@/lib/supabase-client';
+import { supabaseClient } from '@/lib/supabase';
 import type { ReportRealEstateRequest, ReportRealEstateResponse } from './types';
-import { parseSupabaseError } from '@/utils';
+import { handleSupabaseError } from '@/lib/errors';
 
 export const reportRealEstate = async (
   data: ReportRealEstateRequest
@@ -11,7 +11,7 @@ export const reportRealEstate = async (
     p_description: data.description,
   });
 
-  if (error) throw parseSupabaseError(error);
+  if (error) throw handleSupabaseError(error);
 
   return {
     success: true,
@@ -25,7 +25,7 @@ export const hasUserReportedRealEstate = async (realEstateId?: string): Promise<
     p_real_estate_id: realEstateId,
   });
 
-  if (error) throw parseSupabaseError(error);
+  if (error) throw handleSupabaseError(error);
 
   return data;
 };

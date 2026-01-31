@@ -1,11 +1,17 @@
 'use client';
 
-import { updateReview } from './updateReview.api';
+import { updateReviewAction } from '@/app/_actions/review.actions';
 import { useAuthMutation } from '../user';
 
 export const useUpdateReview = () => {
   return useAuthMutation({
-    mutationFn: updateReview,
+    mutationFn: ({
+      reviewId,
+      updateData,
+    }: {
+      reviewId: string;
+      updateData: Parameters<typeof updateReviewAction>[1];
+    }) => updateReviewAction(reviewId, updateData),
     authErrorMessage: 'Debes iniciar sesión para actualizar reseñas',
     mutationOptions: { mutationKey: ['update-review'] },
   });

@@ -4,16 +4,7 @@ import { FavoriteRealEstateButton, PageWithSidebar, ReviewCard } from '@/compone
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  RefreshCw,
-  Plus,
-  Heart,
-  MessageSquare,
-  Building2,
-  Star,
-  LogOut,
-  Search,
-} from 'lucide-react';
+import { RefreshCw, Plus, Building2, Search } from 'lucide-react';
 import { PagesUrls } from '@/enums';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useProfileComponent } from './hooks';
@@ -21,9 +12,8 @@ import { EmptySection, SkeletonSection } from './components';
 
 export const ProfileComponent = () => {
   const {
-    signOut,
     reviews,
-    loading,
+    loadingReviews,
     error,
     refetch,
     favorites,
@@ -36,58 +26,34 @@ export const ProfileComponent = () => {
   } = useProfileComponent();
 
   return (
-    <PageWithSidebar
-      isLoading={loading}
-      isError={Boolean(error)}
-      errorTitle="Hubo un problema al cargar tu perfil"
-      errorSubTitle=""
-      authIsRequired={true}
-      title="Mi perfil"
-      description="Gestiona tus reseñas y favoritos"
-    >
-      <div className=" mx-auto p-6">
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              <Button
-                onClick={() => router.push(PagesUrls.REVIEW_CREATE)}
-                className="flex items-center gap-2"
-                icon={Plus}
-              >
-                Crear reseña
-              </Button>
-              <Button
-                onClick={() => {
-                  void signOut();
-                }}
-                variant="outline"
-                className="flex items-center gap-2 text-red-600 border-red-200 hover:bg-red-50"
-                icon={LogOut}
-                title="Cerrar sesión"
-              >
-                <span className="hidden md:flex">Cerrar sesión</span>
-              </Button>
-            </CardTitle>
-          </CardHeader>
-        </Card>
-
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full flex flex-col gap-8">
-          <TabsList className="grid w-full grid-cols-1 md:grid-cols-3 mb-6 gap-2">
-            <TabsTrigger value="reviews" className="flex items-center gap-2">
-              <MessageSquare className="h-4 w-4" />
-              Mis Reseñas ({reviews?.length ?? 0})
-            </TabsTrigger>
-            <TabsTrigger value="favoriteReviews" className="flex items-center gap-2">
-              <Star className="h-4 w-4" />
-              Reseñas Favoritas ({favoriteReviews?.length ?? 0})
-            </TabsTrigger>
-            <TabsTrigger value="favoriteRealEstates" className="flex items-center gap-2">
-              <Heart className="h-4 w-4" />
-              Inmobiliarias ({favorites?.length ?? 0})
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="reviews" className="mt-6">
+    <Tabs value={activeTab} onValueChange={setActiveTab}>
+      <PageWithSidebar
+        isLoading={loadingReviews}
+        isError={Boolean(error)}
+        errorTitle="Hubo un problema al cargar tu perfil"
+        errorSubTitle=""
+        authIsRequired={true}
+        title="Mi perfil"
+        description="Gestiona tus reseñas y favoritos"
+        sidebar={
+          <div className="h-24 lg:h-72">
+            <h3 className="font-bold text-foreground mb-6">Categorías</h3>
+            <TabsList className="grid w-full grid-cols-1 gap-2">
+              <TabsTrigger value="reviews" className="flex justify-between">
+                <p> Mis Reseñas</p> ({reviews?.length ?? 0})
+              </TabsTrigger>
+              <TabsTrigger value="favoriteReviews" className="flex justify-between">
+                <p>Reseñas Favoritas</p>({favoriteReviews?.length ?? 0})
+              </TabsTrigger>
+              <TabsTrigger value="favoriteRealEstates" className="flex justify-between">
+                <p>Inmobiliarias</p>({favorites?.length ?? 0})
+              </TabsTrigger>
+            </TabsList>
+          </div>
+        }
+      >
+        <div className="mx-auto w-full flex flex-col gap-8">
+          <TabsContent value="reviews">
             <section>
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-semibold">Mis reseñas publicadas</h2>
@@ -105,7 +71,7 @@ export const ProfileComponent = () => {
                   description="Crear tu primera reseña"
                 />
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                   {reviews?.map((review) => (
                     <ReviewCard review={review} key={review.id} />
                   ))}
@@ -114,7 +80,7 @@ export const ProfileComponent = () => {
             </section>
           </TabsContent>
 
-          <TabsContent value="favoriteReviews" className="mt-6">
+          <TabsContent value="favoriteReviews">
             <section>
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-semibold">Reseñas favoritas</h2>
@@ -130,7 +96,7 @@ export const ProfileComponent = () => {
                   description="Explorar reseñas"
                 />
               ) : (
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                   {favoriteReviews.map((review) => (
                     <div key={review.id}>
                       <ReviewCard review={review} />
@@ -141,7 +107,7 @@ export const ProfileComponent = () => {
             </section>
           </TabsContent>
 
-          <TabsContent value="favoriteRealEstates" className="mt-6">
+          <TabsContent value="favoriteRealEstates">
             <section>
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-semibold">Inmobiliarias favoritas</h2>
@@ -157,7 +123,7 @@ export const ProfileComponent = () => {
                   description="Explorar inmobiliarias"
                 />
               ) : (
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                   {favorites.map((realEstate) => (
                     <Card key={realEstate.id} className="hover:shadow-lg transition-shadow">
                       <CardHeader className="pb-3">
@@ -186,8 +152,8 @@ export const ProfileComponent = () => {
               )}
             </section>
           </TabsContent>
-        </Tabs>
-      </div>
-    </PageWithSidebar>
+        </div>
+      </PageWithSidebar>
+    </Tabs>
   );
 };

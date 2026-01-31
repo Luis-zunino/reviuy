@@ -1,5 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { toggleFavoriteRealEstate } from './toggleFavoriteRealEstate.api';
+import { toggleFavoriteRealEstateAction } from '@/app/_actions/real-estate-interactions.actions';
 import { toast } from 'sonner';
 import { useAuthMutation } from '../user';
 
@@ -7,7 +7,7 @@ export const useToggleFavoriteRealEstate = () => {
   const queryClient = useQueryClient();
 
   return useAuthMutation({
-    mutationFn: toggleFavoriteRealEstate,
+    mutationFn: ({ realEstateId }: any) => toggleFavoriteRealEstateAction(realEstateId),
     onSuccess: (data) => {
       if (data.success) {
         // Invalidar queries relacionadas

@@ -1,7 +1,7 @@
 import type { UseFormReturn } from 'react-hook-form';
 import type { RealEstateReviewWithVotes } from '@/types';
 import type { QueryObserverResult, RefetchOptions } from '@tanstack/react-query';
-import { FormRealEstateSchema } from '../../types';
+import { FormRealEstateSchema } from '@/schemas';
 
 export interface RealEstateReviewFormProps {
   form: UseFormReturn<FormRealEstateSchema, undefined, FormRealEstateSchema>;

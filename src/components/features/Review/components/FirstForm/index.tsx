@@ -15,7 +15,7 @@ import {
 import { LazyMapComponent } from '@/components/common';
 import type { FirstFormProps } from './types';
 import { PropertyType } from '@/enums';
-import { FormReviewSchema } from '../../constants';
+import { FormReviewSchema } from '@/schemas';
 
 export const FirstForm = (props: FirstFormProps) => {
   const { form, onSelectAddress, ...rest } = props;
@@ -121,7 +121,7 @@ export const FirstForm = (props: FirstFormProps) => {
           </div>
 
           <div className="space-y-2">
-            <FormLabel label="Calificación de la zona" />
+            <FormLabel label="Calificación de la zona" isRequired />
             <Controller
               name="zone_rating"
               control={control}
@@ -130,6 +130,8 @@ export const FirstForm = (props: FirstFormProps) => {
                   value={field.value || 0}
                   onChange={field.onChange}
                   className="flex-row gap-6 items-center"
+                  isError={Boolean(errors.zone_rating)}
+                  errorMessage={errors.zone_rating ? errors.zone_rating.message : undefined}
                 />
               )}
             />

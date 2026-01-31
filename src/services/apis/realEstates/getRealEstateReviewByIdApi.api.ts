@@ -1,6 +1,6 @@
-import { supabaseClient } from '@/lib/supabase-client';
+import { supabaseClient } from '@/lib/supabase';
 import type { RealEstateReviewWithVotes } from '@/types';
-import { parseSupabaseError } from '@/utils';
+import { handleSupabaseError } from '@/lib/errors';
 
 export interface GetRealEstateReviewByIdApiProps {
   reviewId: string;
@@ -14,7 +14,7 @@ export const getRealEstateReviewByIdApi = async ({
     .eq('id', reviewId)
     .order('created_at', { ascending: false })
     .maybeSingle();
-  if (error) throw parseSupabaseError(error);
+  if (error) throw handleSupabaseError(error);
 
   return data;
 };

@@ -1,5 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { toggleFavoriteReview } from './toggleFavoriteReview.api';
+import { toggleFavoriteReviewAction } from '@/app/_actions/review-interactions.actions';
 import { toast } from 'sonner';
 import { useAuthMutation } from '../user';
 
@@ -7,7 +7,7 @@ export const useToggleFavoriteReview = () => {
   const queryClient = useQueryClient();
 
   return useAuthMutation({
-    mutationFn: toggleFavoriteReview,
+    mutationFn: ({ reviewId }: { reviewId: string }) => toggleFavoriteReviewAction(reviewId),
     onSuccess: (data) => {
       if (data?.success) {
         // Invalidar queries relacionadas

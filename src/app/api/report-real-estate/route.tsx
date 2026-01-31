@@ -3,7 +3,17 @@ import {
   ReportRealEstateTemplate,
   ReportRealEstateTemplateProps,
 } from '@/components/common/Emails';
-import { getAuthenticatedUser, sendEmail } from '../utils';
+import { getAuthenticatedUser, sendEmail } from '../_utils';
+
+export async function GET() {
+  return NextResponse.json(
+    {
+      error: 'Method not allowed',
+      message: 'This endpoint only accepts POST requests',
+    },
+    { status: 405 }
+  );
+}
 
 export async function POST(req: Request) {
   try {

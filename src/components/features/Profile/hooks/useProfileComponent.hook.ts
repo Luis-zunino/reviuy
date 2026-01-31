@@ -1,14 +1,17 @@
 import { useState } from 'react';
 import { useAuthContext } from '@/components/providers/AuthProvider';
-import { useUserReviews } from '@/hooks';
-import { useGetUserFavoriteRealEstates, useGetUserFavoriteReviews } from '@/services';
+import {
+  useGetReviewByUserId,
+  useGetUserFavoriteRealEstates,
+  useGetUserFavoriteReviews,
+} from '@/services';
 import { useRouter } from 'next/navigation';
 
 export const useProfileComponent = () => {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('reviews');
-  const { userId, signOut } = useAuthContext();
-  const { reviews, loading, error, refetch } = useUserReviews();
+  const { userId } = useAuthContext();
+  const { data: reviews, isLoading: loadingReviews, error, refetch } = useGetReviewByUserId();
   const { data: favorites, isLoading: loadingFavorites } = useGetUserFavoriteRealEstates({
     userId,
   });
@@ -17,9 +20,8 @@ export const useProfileComponent = () => {
   });
 
   return {
-    signOut,
     reviews,
-    loading,
+    loadingReviews,
     error,
     refetch,
     favorites,
