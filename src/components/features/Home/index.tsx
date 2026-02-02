@@ -4,6 +4,7 @@ import { Tips, SearcherAddressHomeSection, CreateReviewHomeSection } from './com
 export const Home = () => {
   return (
     <div className="flex flex-col gap-6 ">
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-screen h-100 opacity-20 bg-linear-to-r from-blue-400 via-purple-400 to-pink-400 blur-3xl -z-10 rounded-full" />
       <section className="relative py-20 md:py-32 overflow-hidden">
         <div className="mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-4xl mx-auto mb-12">
