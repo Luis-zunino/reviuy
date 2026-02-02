@@ -1,12 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { getUserFavoriteReviews } from './getUserFavoriteReviews.api';
-export interface UseGetUserFavoriteReviewsProps {
-  userId: string | null;
-}
-export const useGetUserFavoriteReviews = ({ userId }: UseGetUserFavoriteReviewsProps) => {
+
+export const useGetUserFavoriteReviews = () => {
   return useQuery({
-    queryKey: ['favoriteReviews', userId],
+    queryKey: ['favoriteReviews'],
     queryFn: getUserFavoriteReviews,
-    enabled: !!userId,
   });
 };

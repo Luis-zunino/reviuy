@@ -1,7 +1,7 @@
-import { supabaseClient } from '@/lib/supabase-client';
-import { RealEstateWitheVotes } from '@/types/realEstate';
+import { supabaseClient } from '@/lib/supabase';
+import { RealEstateWitheVotes } from '@/types/real-estate';
 import { GetRealEstatesPageParams } from './types/getRealEstatesPage.types';
-import { parseSupabaseError } from '@/utils';
+import { handleSupabaseError } from '@/lib/errors';
 
 export const getAllRealEstatesPaginated = async ({
   limit = 10,
@@ -27,7 +27,7 @@ export const getAllRealEstatesPaginated = async ({
 
   const { data, error } = await query.order('created_at', { ascending: false }).range(start, end);
 
-  if (error) throw parseSupabaseError(error);
+  if (error) throw handleSupabaseError(error);
 
   const items: RealEstateWitheVotes[] = data || [];
   const nextOffset = items.length < limit ? null : offset + items.length;

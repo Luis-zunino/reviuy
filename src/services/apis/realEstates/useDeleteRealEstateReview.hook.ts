@@ -1,14 +1,14 @@
 'use client';
 
-import { deleteRealEstateReview } from './deleteRealEstateReview.api';
+import { deleteRealEstateReviewAction } from '@/app/_actions/real-estate-review.actions';
 import { useAuthMutation } from '@/services';
 
 export const useDeleteRealEstateReview = () => {
   return useAuthMutation<
-    Awaited<ReturnType<typeof deleteRealEstateReview>>,
+    Awaited<ReturnType<typeof deleteRealEstateReviewAction>>,
     Error,
-    { reviewId?: string }
+    { reviewId: string }
   >({
-    mutationFn: deleteRealEstateReview,
+    mutationFn: ({ reviewId }: { reviewId: string }) => deleteRealEstateReviewAction(reviewId),
   });
 };

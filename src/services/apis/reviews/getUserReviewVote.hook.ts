@@ -6,11 +6,10 @@ import type { GetUserReviewVoteParams } from './types';
 
 export const useGetReviewVote = ({
   reviewId,
-  userId,
 }: GetUserReviewVoteParams): UseQueryResult<VoteType | null> => {
   return useQuery({
-    queryKey: [REVIEW_KEYS.getUserReviewVote, reviewId, userId],
-    queryFn: () => getUserReviewVote({ reviewId, userId: userId || '' }),
-    enabled: !!userId && !!reviewId,
+    queryKey: [REVIEW_KEYS.getUserReviewVote, reviewId],
+    queryFn: () => getUserReviewVote({ reviewId }),
+    enabled: !!reviewId,
   });
 };

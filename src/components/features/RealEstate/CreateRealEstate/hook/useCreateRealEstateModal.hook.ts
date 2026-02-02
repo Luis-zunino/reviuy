@@ -1,12 +1,8 @@
 import { useCreateRealEstateHook } from '@/services';
-import type { RealEstateInsert } from '@/types';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import {
-  type UseCreateRealEstateModalProps,
-  formCreateRealEstateSchema,
-  FormCreateRealEstateSchema,
-} from './types';
+import type { UseCreateRealEstateModalProps } from './types';
+import { formCreateRealEstateSchema, FormCreateRealEstateSchema } from '@/schemas';
 import { useAuthContext } from '@/components/providers/AuthProvider';
 import { zodResolver } from '@hookform/resolvers/zod';
 
@@ -33,9 +29,8 @@ export const useCreateRealEstateModal = (props: UseCreateRealEstateModalProps) =
       return;
     }
 
-    const realEstateData: RealEstateInsert = {
-      name: data[name],
-      created_by: userId,
+    const realEstateData = {
+      real_estate_name: data[name],
     };
 
     const newRealEstate = await mutateAsync(realEstateData, {

@@ -1,5 +1,5 @@
-import { supabaseClient } from '@/lib/supabase-client';
-import { parseSupabaseError } from '@/utils';
+import { supabaseClient } from '@/lib/supabase';
+import { handleSupabaseError } from '@/lib/errors';
 
 export const isRealEstateFavorite = async ({
   realEstateId,
@@ -10,7 +10,7 @@ export const isRealEstateFavorite = async ({
     p_real_estate_id: realEstateId,
   });
 
-  if (error) throw parseSupabaseError(error);
+  if (error) throw handleSupabaseError(error);
 
   return Boolean(data);
 };

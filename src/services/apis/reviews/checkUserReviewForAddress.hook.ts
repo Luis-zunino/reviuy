@@ -7,8 +7,8 @@ export const useCheckUserReviewForAddress = (
   props: CheckUserReviewForAddressParams
 ): UseQueryResult<CheckUserReviewForAddressResponse | null> => {
   return useQuery({
-    queryKey: [REVIEW_KEYS.checkUserReviewForAddress, props.osmId, props.userId],
-    enabled: Boolean(props.userId) && Boolean(props.osmId),
+    queryKey: [REVIEW_KEYS.checkUserReviewForAddress, props.osmId],
+    enabled: Boolean(props.osmId),
     queryFn: () => checkUserReviewForAddressApi(props),
   });
 };

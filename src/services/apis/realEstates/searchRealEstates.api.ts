@@ -1,7 +1,7 @@
-import { supabaseClient } from '@/lib/supabase-client';
-import { RealEstateWitheVotes } from '@/types/realEstate';
+import { supabaseClient } from '@/lib/supabase';
+import { RealEstateWitheVotes } from '@/types/real-estate';
 import type { SearchRealEstatesParams } from './types';
-import { parseSupabaseError } from '@/utils';
+import { handleSupabaseError } from '@/lib/errors';
 
 export const searchRealEstates = async ({
   query,
@@ -14,7 +14,7 @@ export const searchRealEstates = async ({
     .limit(limit)
     .order('name');
 
-  if (error) throw parseSupabaseError(error);
+  if (error) throw handleSupabaseError(error);
 
   return data || [];
 };

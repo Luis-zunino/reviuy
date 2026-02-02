@@ -1,6 +1,6 @@
-import { supabaseClient } from '@/lib/supabase-client';
-import { CreateReviewReportRequest, CreateReviewReportResponse } from '@/types/reportReview.type';
-import { parseSupabaseError } from '@/utils';
+import { supabaseClient } from '@/lib/supabase';
+import { CreateReviewReportRequest, CreateReviewReportResponse } from '@/types/report-review';
+import { handleSupabaseError } from '@/lib/errors';
 
 /**
  * Reporta una review por contenido inapropiado
@@ -14,7 +14,7 @@ export const reportReview = async (
     p_description: data.description,
   });
 
-  if (error) throw parseSupabaseError(error);
+  if (error) throw handleSupabaseError(error);
 
   // Asumiendo que la RPC function retorna el formato esperado
   return {
@@ -28,7 +28,7 @@ export const hasUserReportedReview = async (reviewId: string): Promise<boolean> 
     p_review_id: reviewId,
   });
 
-  if (error) throw parseSupabaseError(error);
+  if (error) throw handleSupabaseError(error);
 
   return data;
 };

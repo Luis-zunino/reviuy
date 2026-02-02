@@ -1,5 +1,5 @@
 import { Path } from 'react-hook-form';
-import { FormCreateRealEstateSchema } from './useCreateRealEstate.types';
+import { FormCreateRealEstateSchema } from '@/schemas';
 
 export interface UseCreateRealEstateModalProps {
   onOpenChange: (open: boolean) => void;

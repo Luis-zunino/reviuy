@@ -1,7 +1,9 @@
-export { VoteType } from './voteType';
+export { VoteType } from './vote-type';
 export type * from './review';
-export type { ReviewVotes } from './reviewVotes.type';
-export type { NominatimEntity, NominatimByOsmId } from './nominatimEntity';
-export type { RealEstate, RealEstateInsert, RealEstateUpdate } from './realEstate';
-export * from './realEstate';
-export * from './article.type';
+export type { ReviewVotes } from './review-votes';
+export type { NominatimEntity, NominatimByOsmId } from './nominatim';
+export type { RealEstate, RealEstateInsert, RealEstateUpdate } from './real-estate';
+export * from './real-estate';
+export * from './article';
+export * from './report-review';
+export * from './supabase';

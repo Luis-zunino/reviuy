@@ -1,7 +1,7 @@
 import type { MutateOptions, UseMutationOptions } from '@tanstack/react-query';
 
 export type UseAuthMutationConfig<TData, TError, TVariables> = {
-  mutationFn: (variables: TVariables & { user_id: string }) => Promise<TData>;
+  mutationFn: (variables: TVariables) => Promise<TData>;
   authErrorMessage?: string;
   mutationOptions?:
     | MutateOptions<TData, TError, TVariables>

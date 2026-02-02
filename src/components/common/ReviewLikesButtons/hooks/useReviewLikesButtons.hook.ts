@@ -13,7 +13,6 @@ export const useReviewLikesButtons = (props: ReviewLikesButtonsProps) => {
   const { mutateAsync, isPending: isVoting, isError } = useVoteReview();
   const { data, isLoading, refetch } = useGetReviewVote({
     reviewId: id,
-    userId: userId || '',
   });
   const [clickedButton, setClickedButton] = useState<VoteType | null>(null);
 

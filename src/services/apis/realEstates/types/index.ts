@@ -10,3 +10,4 @@ export * from './createRealEstateReview.hook.types';
 export * from './reportRealEstate.types';
 export * from './voteRealEstate.types';
 export * from './voteRealEstateReview.types';
+export * from './getAllRealEstateReviews.type';

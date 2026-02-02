@@ -1,6 +1,6 @@
 import { JSX } from 'react';
 import { Path } from 'react-hook-form';
-import { FormCreateRealEstateSchema } from '../hook/types';
+import { FormCreateRealEstateSchema } from '@/schemas';
 
 export interface CreateRealEstateModalProps {
   isOpen: boolean;

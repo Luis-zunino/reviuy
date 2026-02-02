@@ -1,33 +1,45 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState } from 'react';
-import { supabaseClient } from '@/lib/supabase-client';
-import type { AuthContextType, AuthProviderProps } from './types';
+import { useEffect, useState } from 'react';
+import { supabaseClient } from '@/lib/supabase';
+import type { AuthProviderProps } from './types';
 import { getSession } from '@/services/apis/user/getSession.api';
 import { useRouter } from 'next/navigation';
 import { PagesUrls } from '@/enums';
 import { AppSession } from '@/services/apis/user/types';
 import { sessionMapped } from '@/utils';
+import { AuthContext } from './constants';
 
-const AuthContext = createContext<AuthContextType>({
-  userId: null,
-  session: null,
-  loading: true,
-  isAuthenticated: false,
-  signOut: () => Promise.resolve(),
-  signInWithEmail: () => Promise.resolve(),
-  signInWithGoogle: () => Promise.resolve(),
-  isOwner: () => false,
-});
-
-export const useAuthContext = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuthContext must be used within an AuthProvider');
-  }
-  return context;
-};
-
+/**
+ * Proveedor de autenticación para la aplicación.
+ *
+ * Maneja el estado de autenticación del usuario, sesiones de Supabase,
+ * y proporciona funciones de login/logout a través de Context API.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * // En el layout raíz
+ * <AuthProvider>
+ *   <YourApp />
+ * </AuthProvider>
+ * ```
+ *
+ * @example
+ * ```tsx
+ * // Consumir en componentes hijos
+ * const { userId, session, signInWithGoogle, signOut } = useAuthContext();
+ * ```
+ *
+ * @param {AuthProviderProps} props - Propiedades del componente
+ * @param {React.ReactNode} props.children - Componentes hijos que tendrán acceso al contexto de autenticación
+ *
+ * @returns {JSX.Element} Proveedor de contexto de autenticación
+ *
+ * @fires AuthContext - Proporciona userId, session, loading, isAuthenticated, signOut, signInWithEmail, signInWithGoogle, isOwner
+ *
+ * @see {@link useAuthContext} Hook para consumir el contexto
+ */
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [userId, setUserId] = useState<string | null>(null);
   const [session, setSession] = useState<AppSession | null>(null);
@@ -115,3 +127,5 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
+
+export * from './hooks';

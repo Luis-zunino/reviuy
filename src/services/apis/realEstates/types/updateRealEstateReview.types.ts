@@ -6,3 +6,10 @@ export interface UpdateRealEstateReviewResponse {
   error?: string;
   data?: RealEstateReview;
 }
+
+export interface UseRealEstateReviewUpdate {
+  id: string;
+  title: string;
+  rating: number;
+  description: string;
+}

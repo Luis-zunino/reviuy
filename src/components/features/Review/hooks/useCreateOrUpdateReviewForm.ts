@@ -9,7 +9,7 @@ import type { NominatimEntity, RealEstateWitheVotes } from '@/types';
 import { PagesUrls } from '@/enums';
 import type { UseCreateOrUpdateReviewFormProps } from './types';
 import { useAuthContext } from '@/components/providers/AuthProvider';
-import { formReviewSchema, FormReviewSchema } from '../constants';
+import { formReviewSchema, FormReviewSchema } from '@/schemas';
 import { formatDataToBackend, getDefaultValues } from '../utils';
 import { getAddressOsmId } from '@/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -31,7 +31,6 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
   const { control, reset, formState, watch, setValue } = form;
   const { address_text, osm_id: osmId, osm_type, real_estate_name } = watch();
   const { data: existingReview } = useCheckUserReviewForAddress({
-    userId,
     osmId: getAddressOsmId({ osm_id: osmId, osm_type }),
   });
   const { fields, append, remove, replace } = useFieldArray<FormReviewSchema, 'review_rooms'>({
@@ -57,11 +56,11 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
       shouldValidate: true,
     });
 
-    setValue('latitude', item.lat, {
+    setValue('latitude', String(item.lat), {
       shouldValidate: true,
     });
 
-    setValue('longitude', item.lon, {
+    setValue('longitude', String(item.lon), {
       shouldValidate: true,
     });
 
@@ -84,7 +83,7 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
       isUpdate ? 'Actualizando tu reseña...' : 'Publicando tu reseña...',
       { id: `${isUpdate ? 'update' : 'create'}-review` }
     );
-    const data = formatDataToBackend(formData, userId);
+    const data = formatDataToBackend(formData);
 
     if (defaultValues && defaultValues.id) {
       mutationUpdate(
@@ -112,30 +111,27 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
         }
       );
     } else {
-      mutationCreate(
-        { data },
-        {
-          onSuccess: ({ data, success }) => {
-            toast.dismiss(loadingToast);
-            if (!success) {
-              toast.error('Error inesperado', {
-                description: 'No se pudo crear la reseña. Inténtalo de nuevo.',
-              });
-              return;
-            }
-            toast.success('¡Reseña publicada!', {
-              description: 'Tu experiencia ha sido compartida con la comunidad',
-            });
-
-            router.push(PagesUrls.REVIEW_DETAILS.replace(':id', data?.id ?? ''));
-          },
-          onError: () => {
+      mutationCreate(data, {
+        onSuccess: ({ data, success }) => {
+          toast.dismiss(loadingToast);
+          if (!success) {
             toast.error('Error inesperado', {
               description: 'No se pudo crear la reseña. Inténtalo de nuevo.',
             });
-          },
-        }
-      );
+            return;
+          }
+          toast.success('¡Reseña publicada!', {
+            description: 'Tu experiencia ha sido compartida con la comunidad',
+          });
+
+          router.push(PagesUrls.REVIEW_DETAILS.replace(':id', data?.id ?? ''));
+        },
+        onError: () => {
+          toast.error('Error inesperado', {
+            description: 'No se pudo crear la reseña. Inténtalo de nuevo.',
+          });
+        },
+      });
     }
   };
 

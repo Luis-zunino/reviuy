@@ -1,20 +1,19 @@
-import { CreateReviewData } from '@/services';
-import { FormReviewSchema } from '../constants';
+import { CreateReviewData } from '@/app/_actions/types/review.types';
+import { FormReviewSchema } from '@/schemas';
 import { getAddressOsmId } from '@/utils';
 
-export const formatDataToBackend = (data: FormReviewSchema, userId: string): CreateReviewData => {
+export const formatDataToBackend = (data: FormReviewSchema): CreateReviewData => {
   const addressOsmId = getAddressOsmId({ osm_type: data.osm_type, osm_id: data.osm_id });
 
   return {
-    user_id: userId,
     title: data.title,
     description: data.description,
     rating: data.rating,
     address_osm_id: addressOsmId,
     property_type: data.property_type,
     address_text: data.address_text,
-    latitude: Number(data.latitude),
-    longitude: Number(data.longitude),
+    latitude: typeof data.latitude === 'string' ? Number(data.latitude) : data.latitude,
+    longitude: typeof data.longitude === 'string' ? Number(data.longitude) : data.longitude,
     zone_rating: data.zone_rating,
     winter_comfort: data.winter_comfort?.length ? data.winter_comfort : undefined,
     summer_comfort: data.summer_comfort?.length ? data.summer_comfort : undefined,

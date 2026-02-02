@@ -16,7 +16,7 @@ export const FavoriteReviewButton: React.FC<FavoriteReviewButtonProps> = ({
   onClick,
 }) => {
   const { userId } = useAuthContext();
-  const { data: isFavorite, isLoading } = useIsReviewFavorite({ reviewId, userId });
+  const { data: isFavorite, isLoading } = useIsReviewFavorite({ reviewId });
   const { mutateAsync, isPending } = useToggleFavoriteReview();
 
   const handleToggleFavorite = async (e: React.MouseEvent) => {

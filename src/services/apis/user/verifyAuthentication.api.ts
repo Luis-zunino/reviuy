@@ -1,4 +1,4 @@
-import { supabaseClient } from '@/lib/supabase-client';
+import { supabaseClient } from '@/lib/supabase';
 import { AuthError } from '@supabase/supabase-js';
 
 export interface VerifyAuthenticationResponse {

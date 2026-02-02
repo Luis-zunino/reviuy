@@ -2,21 +2,21 @@
 
 import { REVIEW_KEYS } from '@/services/constants';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
-import { supabase } from '@/lib/supabase';
+import { supabaseClient } from '@/lib/supabase';
+import { handleSupabaseError } from '@/lib/errors';
 import type { ReviewWithVotes } from '@/types';
 import type { GetReviewsByAddressParams } from './types';
-import { parseSupabaseError } from '@/utils';
 
 const getReviewsByAddress = async ({
   osmId,
 }: GetReviewsByAddressParams): Promise<ReviewWithVotes[]> => {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseClient
     .from('reviews_with_votes')
     .select(`*`)
     .eq('address_osm_id', osmId)
     .order('created_at', { ascending: false });
 
-  if (error) throw parseSupabaseError(error);
+  if (error) throw handleSupabaseError(error);
   return data;
 };
 

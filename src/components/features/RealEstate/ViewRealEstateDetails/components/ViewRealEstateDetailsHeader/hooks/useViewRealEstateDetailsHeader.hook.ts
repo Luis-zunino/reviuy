@@ -9,7 +9,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 export const useViewRealEstateDetailsHeader = () => {
-  const { userId, isAuthenticated } = useAuthContext();
+  const { isAuthenticated } = useAuthContext();
   const { realEstateId } = useParams<{ realEstateId: string }>();
   const { push } = useRouter();
 
@@ -19,7 +19,6 @@ export const useViewRealEstateDetailsHeader = () => {
     isLoading,
   } = useGetRealEstateById(realEstateId);
   const { data: hasRealEstateReview } = useGetRealEstateReviewByUserId({
-    userId: userId ?? '',
     realEstateId,
   });
 
@@ -29,7 +28,6 @@ export const useViewRealEstateDetailsHeader = () => {
     isLoading: isLoadingVote,
   } = useGetUserRealEstateVote({
     realEstateId,
-    userId: userId ?? '',
   });
 
   const handleOnCreateReview = () => {

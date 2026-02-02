@@ -28,13 +28,17 @@ export const DeleteReviewDialog: React.FC<DeleteReviewDialogProps> = ({
             <AlertTriangle className="h-5 w-5" />
             Eliminar reseña
           </DialogTitle>
-          <DialogDescription className="pt-2">
-            ¿Estás seguro de que deseas eliminar esta reseña?
-            {reviewTitle && (
-              <div className="mt-2 p-3 bg-gray-50 rounded-md border-l-4 border-red-400">
-                <p className="font-medium text-gray-900">&ldquo;{reviewTitle}&rdquo;</p>
-              </div>
-            )}
+          <DialogDescription asChild>
+            <div className="pt-2">
+              <p className="text-sm text-muted-foreground">
+                ¿Estás seguro de que deseas eliminar esta reseña?
+              </p>
+              {reviewTitle && (
+                <div className="mt-2 p-3 bg-gray-50 rounded-md border-l-4 border-red-400">
+                  <p className="font-medium text-gray-900">&ldquo;{reviewTitle}&rdquo;</p>
+                </div>
+              )}
+            </div>
           </DialogDescription>
         </DialogHeader>
 

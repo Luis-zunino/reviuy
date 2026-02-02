@@ -19,12 +19,14 @@ export const useDeleteRealEstateReviewButton = ({
   };
 
   const handleConfirmDelete = async () => {
+    if (!review.id) return;
+
     toast.loading('Eliminando reseña...', {
       id: `delete-${review.id}`,
     });
 
     await mutateAsync(
-      { reviewId: review.id ?? undefined },
+      { reviewId: review.id },
       {
         onSuccess: (data) => {
           toast.dismiss(`delete-${review.id}`);

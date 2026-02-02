@@ -1,11 +1,11 @@
 'use client';
 
-import { deleteReview } from './deleteReview.api';
+import { deleteReviewAction } from '@/app/_actions/review.actions';
 
 import { useAuthMutation } from '../user';
 
 export const useDeleteReview = () => {
   return useAuthMutation({
-    mutationFn: deleteReview,
+    mutationFn: ({ reviewId }: { reviewId: string }) => deleteReviewAction(reviewId),
   });
 };

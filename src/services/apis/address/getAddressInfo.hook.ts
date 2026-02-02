@@ -1,5 +1,5 @@
 import { REVIEW_KEYS } from '@/services/constants';
-import { NominatimByOsmId } from '@/types/nominatimEntity';
+import { NominatimByOsmId } from '@/types/nominatim';
 import { useQuery } from '@tanstack/react-query';
 import type { UseGetAddressInfoProps } from './types';
 

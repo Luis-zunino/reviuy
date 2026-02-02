@@ -1,10 +1,10 @@
 import type { UseFormReturn } from 'react-hook-form';
 import type { NominatimEntity } from '@/types';
 import { Dispatch, SetStateAction } from 'react';
-import { FormReviewSchema } from '../../../constants';
+import { FormReviewSchema } from '@/schemas';
 
 export interface FirstFormProps {
-  form: UseFormReturn<FormReviewSchema, any, FormReviewSchema>;
+  form: UseFormReturn<FormReviewSchema, undefined, FormReviewSchema>;
   open: boolean;
   queryValue: string;
   setOpen: Dispatch<SetStateAction<boolean>>;

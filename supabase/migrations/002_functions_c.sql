@@ -254,6 +254,103 @@ END;
 $$;
 
 -- =============================================================================
+-- FUNCIÓN PARA SABER EL VOTO DEL USUARIO SOBRE UNA REAL ESTATE
+--=============================================================================
+create function get_user_real_estate_vote(p_real_estate_id uuid)
+returns text
+language sql
+as $$
+  select vote_type
+  from real_estate_votes
+  where real_estate_id = p_real_estate_id
+    and user_id = auth.uid()
+  limit 1;
+$$;
+
+-- =============================================================================
+-- FUNCIÓN PARA SABER LAS REVIEWS DEL USUARIO
+--=============================================================================
+create or replace function public.get_reviews_by_current_user()
+returns setof reviews_with_votes
+language sql
+security definer
+as $$
+  select *
+  from reviews_with_votes
+  where user_id = auth.uid()
+  order by created_at desc;
+$$;
+
+-- =============================================================================
+-- FUNCIÓN PARA SABER LOs FAVORITOS DEL USUARIO
+--=============================================================================
+create or replace function public.get_favorite_reviews_by_current_user()
+returns setof reviews_with_votes
+language sql
+security definer
+as $$
+  select rwv.*
+  from review_favorites rf
+  join reviews_with_votes rwv on rwv.id = rf.review_id
+  where rf.user_id = auth.uid()
+  order by rf.created_at desc;
+$$;
+
+-- =============================================================================
+-- FUNCIÓN PARA SABER EL VOTO DEL USUARIO SOBRE UNA REVIEW
+--=============================================================================
+create or replace function public.get_user_review_vote(
+  p_review_id uuid
+)
+returns text
+language sql
+stable
+security invoker
+as $$
+  select vote_type
+  from public.review_votes
+  where review_id = p_review_id
+    and user_id = auth.uid()
+  limit 1;
+$$;
+
+-- =============================================================================
+-- FUNCIÓN PARA SABER SI EL USUARIO TIENE UNA REVIEW SEGUN LA ADDRESS
+--=============================================================================
+create or replace function public.check_user_review_for_address(
+  p_osm_id text
+)
+returns uuid
+language sql
+stable
+security invoker
+as $$
+  select id
+  from public.reviews
+  where user_id = auth.uid()
+    and address_osm_id = p_osm_id
+  limit 1;
+$$;
+
+-- =============================================================================
+-- FUNCIÓN PARA SABER LA REVIEW DE UNA REAL ESTATE POR USUARIO
+--=============================================================================
+create or replace function public.get_real_estate_review_by_user(
+  p_real_estate_id uuid
+)
+returns setof public.real_estate_reviews_with_votes
+language sql
+security invoker
+set search_path = public
+as $$
+  select *
+  from public.real_estate_reviews_with_votes
+  where user_id = auth.uid()
+    and real_estate_id = p_real_estate_id
+  limit 1;
+$$;
+
+-- =============================================================================
 -- FUNCIÓN PARA AGREGAR / QUITAR FAVORITO DE RESEÑA (TOGGLE)
 --=============================================================================
 create or replace function toggle_favorite_review (p_review_id uuid) RETURNS json LANGUAGE plpgsql SECURITY DEFINER
@@ -584,6 +681,9 @@ alter function public.is_real_estate_favorite (uuid)
 set
   search_path = public;
 
+alter function public.get_user_real_estate_vote (uuid)
+set
+  search_path = public;
 -- =============================================================================
 -- FUNCIONES PARA CONTADORES DINÁMICOS DE VOTOS DE REAL_ESTATES
 -- =============================================================================

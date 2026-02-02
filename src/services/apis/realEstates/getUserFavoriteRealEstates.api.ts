@@ -1,6 +1,6 @@
-import { supabaseClient } from '@/lib/supabase-client';
+import { supabaseClient } from '@/lib/supabase';
 import type { RealEstateWitheVotes } from '@/types';
-import { parseSupabaseError } from '@/utils';
+import { handleSupabaseError } from '@/lib/errors';
 
 export const getUserFavoriteRealEstates = async (): Promise<RealEstateWitheVotes[]> => {
   const {
@@ -28,7 +28,7 @@ export const getUserFavoriteRealEstates = async (): Promise<RealEstateWitheVotes
     .eq('user_id', user.id)
     .order('created_at', { ascending: false });
 
-  if (error) throw parseSupabaseError(error);
+  if (error) throw handleSupabaseError(error);
   // Extraer solo los datos de real_estates
   return (data
     ?.map(

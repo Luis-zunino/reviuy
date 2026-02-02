@@ -1,4 +1,4 @@
-import { supabaseClient } from '@/lib/supabase-client';
+import { supabaseClient } from '@/lib/supabase';
 import { UseGetSession } from './types';
 import { sessionMapped } from '@/utils';
 

@@ -20,7 +20,6 @@ export const useAuthMutation = <TData, TError = Error, TVariables = unknown>(
 
     return mutationFn({
       ...variables,
-      user_id: data?.userId,
     });
   };
 

@@ -592,7 +592,7 @@ create unique index idx_real_estate_vote_stats_real_estate_id
     on public.real_estate_vote_stats(real_estate_id);
 
 -- Vista para facilitar consultas de real_estates con contadores
-create or replace view public.real_estates_with_votes as
+create or replace view public.real_estates_with_votes with (security_invoker = on) as
 select
     re.*,
     coalesce(stats.likes, 0) as likes,
@@ -679,8 +679,9 @@ group by rer.id;
 create unique index idx_real_estate_review_vote_stats_review_id 
     on public.real_estate_review_vote_stats(real_estate_review_id);
 
+drop view if exists public.real_estate_reviews_with_votes;
 -- Vista para facilitar consultas de real_estate_reviews con contadores
-create or replace view public.real_estate_reviews_with_votes as
+create view public.real_estate_reviews_with_votes with (security_invoker = on) as
 select
     rer.*,
     coalesce(stats.likes, 0) as likes,

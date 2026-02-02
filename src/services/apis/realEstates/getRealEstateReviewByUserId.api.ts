@@ -1,22 +1,18 @@
-import { supabaseClient } from '@/lib/supabase-client';
+import { supabaseClient } from '@/lib/supabase';
 import type { RealEstateReviewWithVotes } from '@/types';
-import { parseSupabaseError } from '@/utils';
+import { handleSupabaseError } from '@/lib/errors';
 
 export const getRealEstateReviewByUserIdApi = async ({
-  userId,
   realEstateId,
 }: {
-  userId: string;
   realEstateId: string;
 }): Promise<RealEstateReviewWithVotes | null> => {
-  const { data, error } = await supabaseClient
-    .from('real_estate_reviews_with_votes')
-    .select('*')
-    .eq('user_id', userId)
-    .eq('real_estate_id', realEstateId)
-    .maybeSingle();
+  const { data, error } = await supabaseClient.rpc('get_real_estate_review_by_user', {
+    p_real_estate_id: realEstateId,
+  });
 
-  if (error) throw parseSupabaseError(error);
+  if (error) throw handleSupabaseError(error);
 
-  return data;
+  // RPC devuelve array
+  return data?.[0] ?? null;
 };

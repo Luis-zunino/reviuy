@@ -1,12 +1,12 @@
 'use client';
 
 import { useAuthMutation } from '../user';
-import { createRealEstateReview } from './createRealEstateReview.api';
+import { createRealEstateReviewAction } from '@/app/_actions/real-estate-review.actions';
 
 export const useCreateRealEstateReviewHook = () => {
   return useAuthMutation({
     authErrorMessage: 'Debes iniciar sesión para crear una reseña de una inmobiliaria',
-    mutationFn: createRealEstateReview,
+    mutationFn: createRealEstateReviewAction,
     mutationOptions: { mutationKey: ['create-real-estate-review'] },
   });
 };
