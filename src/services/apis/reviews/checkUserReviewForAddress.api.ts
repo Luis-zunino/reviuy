@@ -3,16 +3,15 @@ import type { CheckUserReviewForAddressParams, CheckUserReviewForAddressResponse
 import { handleSupabaseError } from '@/lib/errors';
 
 export const checkUserReviewForAddressApi = async ({
-  userId,
   osmId,
 }: CheckUserReviewForAddressParams): Promise<CheckUserReviewForAddressResponse | null> => {
-  const { data, error } = await supabaseClient
-    .from('reviews')
-    .select('id')
-    .eq('user_id', userId ?? '')
-    .eq('address_osm_id', osmId ?? '')
-    .maybeSingle();
+  if (!osmId) return null;
+
+  const { data, error } = await supabaseClient.rpc('check_user_review_for_address', {
+    p_osm_id: osmId,
+  });
 
   if (error) throw handleSupabaseError(error);
-  return data;
+
+  return data ? { id: data } : null;
 };

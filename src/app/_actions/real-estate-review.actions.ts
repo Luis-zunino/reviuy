@@ -23,10 +23,7 @@ export async function createRealEstateReviewAction(input: unknown) {
   }
 
   // 🔥 RATE LIMIT
-  const allowed = await withRateLimit(`create-re-review:${user.id}`, 'write');
-  if (!allowed) {
-    throw createError('RATE_LIMIT');
-  }
+  await withRateLimit(`create-re-review:${user.id}`, 'write');
 
   // Validar input
   let validatedData;
@@ -78,10 +75,7 @@ export async function updateRealEstateReviewAction(reviewId: string, updateData:
   }
 
   // 🔥 RATE LIMIT
-  const allowed = await withRateLimit(`update-re-review:${user.id}`, 'write');
-  if (!allowed) {
-    throw createError('RATE_LIMIT');
-  }
+  await withRateLimit(`update-re-review:${user.id}`, 'write');
 
   // Validar input
   let validatedData;
@@ -130,10 +124,7 @@ export async function deleteRealEstateReviewAction(reviewId: string) {
   }
 
   // 🔥 RATE LIMIT
-  const allowed = await withRateLimit(`delete-re-review:${user.id}`, 'write');
-  if (!allowed) {
-    throw createError('RATE_LIMIT');
-  }
+  await withRateLimit(`delete-re-review:${user.id}`, 'write');
 
   // Verificar ownership
   const { data: review, error: fetchError } = await supabase

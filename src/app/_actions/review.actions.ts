@@ -24,10 +24,7 @@ export async function createReviewAction(input: unknown) {
   }
 
   // 🔥 RATE LIMIT
-  const allowed = await withRateLimit(`create-review:${user.id}`, 'write');
-  if (!allowed) {
-    throw createError('RATE_LIMIT');
-  }
+  await withRateLimit(`create-review:${user.id}`, 'write');
 
   // Normalizar y validar input
   const rawData =
@@ -110,10 +107,7 @@ export async function updateReviewAction(reviewId: string, updateData: unknown) 
   }
 
   // 🔥 RATE LIMIT
-  const allowed = await withRateLimit(`update-review:${user.id}`, 'write');
-  if (!allowed) {
-    throw createError('RATE_LIMIT');
-  }
+  await withRateLimit(`update-review:${user.id}`, 'write');
 
   // Validar input con schema de backend
   let validatedData;
@@ -208,10 +202,7 @@ export async function deleteReviewAction(reviewId: string) {
   }
 
   // 🔥 RATE LIMIT
-  const allowed = await withRateLimit(`delete-review:${user.id}`, 'write');
-  if (!allowed) {
-    throw createError('RATE_LIMIT');
-  }
+  await withRateLimit(`delete-review:${user.id}`, 'write');
 
   // Verificar ownership
   const { data: review, error: fetchError } = await supabase

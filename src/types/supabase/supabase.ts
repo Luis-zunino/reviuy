@@ -973,6 +973,10 @@ export type Database = {
         };
         Returns: boolean;
       };
+      check_user_review_for_address: {
+        Args: { p_osm_id: string };
+        Returns: string;
+      };
       cleanup_rate_limits: { Args: never; Returns: undefined };
       create_real_estate: {
         Args: { p_description?: string; p_name: string };
@@ -1024,6 +1028,63 @@ export type Database = {
           user_id: string;
         }[];
       };
+      get_favorite_reviews_by_current_user: {
+        Args: never;
+        Returns: {
+          address_osm_id: string | null;
+          address_text: string | null;
+          apartment_number: string | null;
+          created_at: string | null;
+          deleted_at: string | null;
+          description: string | null;
+          dislikes: number | null;
+          humidity: string | null;
+          id: string | null;
+          latitude: number | null;
+          likes: number | null;
+          longitude: number | null;
+          property_type: string | null;
+          rating: number | null;
+          real_estate_experience: string | null;
+          real_estate_id: string | null;
+          summer_comfort: string | null;
+          title: string | null;
+          total_votes: number | null;
+          updated_at: string | null;
+          user_id: string | null;
+          winter_comfort: string | null;
+          zone_rating: number | null;
+        }[];
+        SetofOptions: {
+          from: '*';
+          to: 'reviews_with_votes';
+          isOneToOne: false;
+          isSetofReturn: true;
+        };
+      };
+      get_real_estate_review_by_user: {
+        Args: { p_real_estate_id: string };
+        Returns: {
+          created_at: string | null;
+          deleted_at: string | null;
+          description: string | null;
+          dislikes: number | null;
+          id: string | null;
+          likes: number | null;
+          rating: number | null;
+          real_estate_id: string | null;
+          title: string | null;
+          total_votes: number | null;
+          updated_at: string | null;
+          user_id: string | null;
+        }[];
+        SetofOptions: {
+          from: '*';
+          to: 'real_estate_reviews_with_votes';
+          isOneToOne: false;
+          isSetofReturn: true;
+        };
+      };
       get_real_estate_review_vote_counts: {
         Args: { p_real_estate_review_id: string };
         Returns: {
@@ -1055,6 +1116,45 @@ export type Database = {
           likes_count: number;
         }[];
       };
+      get_reviews_by_current_user: {
+        Args: never;
+        Returns: {
+          address_osm_id: string | null;
+          address_text: string | null;
+          apartment_number: string | null;
+          created_at: string | null;
+          deleted_at: string | null;
+          description: string | null;
+          dislikes: number | null;
+          humidity: string | null;
+          id: string | null;
+          latitude: number | null;
+          likes: number | null;
+          longitude: number | null;
+          property_type: string | null;
+          rating: number | null;
+          real_estate_experience: string | null;
+          real_estate_id: string | null;
+          summer_comfort: string | null;
+          title: string | null;
+          total_votes: number | null;
+          updated_at: string | null;
+          user_id: string | null;
+          winter_comfort: string | null;
+          zone_rating: number | null;
+        }[];
+        SetofOptions: {
+          from: '*';
+          to: 'reviews_with_votes';
+          isOneToOne: false;
+          isSetofReturn: true;
+        };
+      };
+      get_user_real_estate_vote: {
+        Args: { p_real_estate_id: string };
+        Returns: string;
+      };
+      get_user_review_vote: { Args: { p_review_id: string }; Returns: string };
       has_user_reported_real_estate: {
         Args: { p_real_estate_id: string };
         Returns: boolean;

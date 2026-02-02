@@ -20,10 +20,7 @@ export async function voteReviewAction(reviewId: string, voteType: VoteType) {
   }
 
   // 🔥 RATE LIMIT
-  const allowed = await withRateLimit(`vote-review:${user.id}`, 'vote');
-  if (!allowed) {
-    throw createError('RATE_LIMIT');
-  }
+  await withRateLimit(`vote-review:${user.id}`, 'vote');
 
   const { data, error } = await supabase.rpc('vote_review', {
     p_review_id: reviewId,
@@ -53,10 +50,7 @@ export async function toggleFavoriteReviewAction(reviewId: string) {
   }
 
   // 🔥 RATE LIMIT
-  const allowed = await withRateLimit(`favorite-review:${user.id}`, 'vote');
-  if (!allowed) {
-    throw createError('RATE_LIMIT');
-  }
+  await withRateLimit(`favorite-review:${user.id}`, 'vote');
 
   const { data, error } = await supabase.rpc('toggle_favorite_review', {
     p_review_id: reviewId,

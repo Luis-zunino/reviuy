@@ -3,13 +3,12 @@ import { isReviewFavorite } from './isReviewFavorite.api';
 
 export interface UseIsReviewFavoriteProps {
   reviewId: string;
-  userId: string | null;
 }
-export const useIsReviewFavorite = ({ reviewId, userId }: UseIsReviewFavoriteProps) => {
+export const useIsReviewFavorite = ({ reviewId }: UseIsReviewFavoriteProps) => {
   return useQuery({
-    queryKey: ['isFavoriteReview', reviewId, userId],
+    queryKey: ['isFavoriteReview', reviewId],
     queryFn: () => isReviewFavorite({ reviewId }),
-    enabled: !!userId && !!reviewId,
+    enabled: !!reviewId,
     staleTime: 0,
   });
 };

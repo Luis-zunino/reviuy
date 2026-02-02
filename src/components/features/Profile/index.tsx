@@ -38,15 +38,15 @@ export const ProfileComponent = () => {
         sidebar={
           <div className="h-24 lg:h-72">
             <h3 className="font-bold text-foreground mb-6">Categorías</h3>
-            <TabsList className="grid w-full grid-cols-1 gap-2">
-              <TabsTrigger value="reviews" className="flex justify-between">
-                <p> Mis Reseñas</p> ({reviews?.length ?? 0})
+            <TabsList className="grid w-full grid-cols-3 lg:grid-cols-1 gap-2">
+              <TabsTrigger value="reviews" className="flex justify-center">
+                Mis reseñas
               </TabsTrigger>
-              <TabsTrigger value="favoriteReviews" className="flex justify-between">
-                <p>Reseñas Favoritas</p>({favoriteReviews?.length ?? 0})
+              <TabsTrigger value="favoriteReviews" className="flex justify-center">
+                Favoritas
               </TabsTrigger>
-              <TabsTrigger value="favoriteRealEstates" className="flex justify-between">
-                <p>Inmobiliarias</p>({favorites?.length ?? 0})
+              <TabsTrigger value="favoriteRealEstates" className="flex justify-center">
+                Inmobiliarias
               </TabsTrigger>
             </TabsList>
           </div>

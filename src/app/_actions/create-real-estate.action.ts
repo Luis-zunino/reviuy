@@ -19,11 +19,7 @@ export async function createRealEstateAction(input: unknown) {
   }
 
   // 🔥 RATE LIMIT
-  const allowed = await withRateLimit(`create-real-estate:${user.id}`, 'write');
-
-  if (!allowed) {
-    throw createError('RATE_LIMIT');
-  }
+  await withRateLimit(`create-real-estate:${user.id}`, 'write');
 
   // Validar input
   let validatedData;

@@ -1,10 +1,10 @@
 import { voteRealEstateAction } from '@/app/_actions/real-estate-interactions.actions';
 import { useAuthMutation } from '../user';
-import { VoteType } from '@/types';
+import { VoteRealEstateParams } from './types';
 
 export const useVoteRealEstate = () => {
   return useAuthMutation({
-    mutationFn: ({ realEstateId, voteType }: { realEstateId: string; voteType: VoteType }) =>
+    mutationFn: ({ realEstateId, voteType }: VoteRealEstateParams) =>
       voteRealEstateAction(realEstateId, voteType),
   });
 };

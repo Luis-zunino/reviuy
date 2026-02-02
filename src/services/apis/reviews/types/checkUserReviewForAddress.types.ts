@@ -1,5 +1,4 @@
 export interface CheckUserReviewForAddressParams {
-  userId?: string | null;
   osmId?: string;
 }
 

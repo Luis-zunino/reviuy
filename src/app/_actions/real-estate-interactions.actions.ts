@@ -16,10 +16,7 @@ export async function voteRealEstateAction(realEstateId: string, voteType: VoteT
   }
 
   // 🔥 RATE LIMIT
-  const allowed = await withRateLimit(`vote-real-estate:${user.id}`, 'vote');
-  if (!allowed) {
-    throw createError('RATE_LIMIT');
-  }
+  await withRateLimit(`vote-real-estate:${user.id}`, 'vote');
 
   const { data, error } = await supabase.rpc('vote_real_estate', {
     p_real_estate_id: realEstateId,
@@ -45,10 +42,7 @@ export async function voteRealEstateReviewAction(reviewId: string, voteType: Vot
   }
 
   // 🔥 RATE LIMIT
-  const allowed = await withRateLimit(`vote-re-review:${user.id}`, 'vote');
-  if (!allowed) {
-    throw createError('RATE_LIMIT');
-  }
+  await withRateLimit(`vote-re-review:${user.id}`, 'vote');
 
   const { data, error } = await supabase.rpc('vote_real_estate_review', {
     p_real_estate_review_id: reviewId,
@@ -74,10 +68,7 @@ export async function toggleFavoriteRealEstateAction(realEstateId: string) {
   }
 
   // 🔥 RATE LIMIT
-  const allowed = await withRateLimit(`favorite-real-estate:${user.id}`, 'vote');
-  if (!allowed) {
-    throw createError('RATE_LIMIT');
-  }
+  await withRateLimit(`favorite-real-estate:${user.id}`, 'vote');
 
   const { data, error } = await supabase.rpc('toggle_favorite_real_estate', {
     p_real_estate_id: realEstateId,

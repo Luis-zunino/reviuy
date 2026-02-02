@@ -7,8 +7,9 @@ export interface UpdateRealEstateReviewResponse {
   data?: RealEstateReview;
 }
 
-export interface RealEstateReviewUpdate {
+export interface UseRealEstateReviewUpdate {
   id: string;
-  rating?: number;
-  comment?: string;
+  title: string;
+  rating: number;
+  description: string;
 }

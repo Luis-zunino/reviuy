@@ -3,13 +3,12 @@ import { isRealEstateFavorite } from './isRealEstateFavorite.api';
 
 export interface UseIsRealEstateFavoriteProps {
   realEstateId: string;
-  userId: string | null;
 }
-export const useIsRealEstateFavorite = ({ realEstateId, userId }: UseIsRealEstateFavoriteProps) => {
+export const useIsRealEstateFavorite = ({ realEstateId }: UseIsRealEstateFavoriteProps) => {
   return useQuery({
-    queryKey: ['isFavorite', realEstateId, userId],
+    queryKey: ['isFavorite', realEstateId],
     queryFn: () => isRealEstateFavorite({ realEstateId }),
-    enabled: !!userId && !!realEstateId,
+    enabled: !!realEstateId,
     staleTime: 0,
   });
 };

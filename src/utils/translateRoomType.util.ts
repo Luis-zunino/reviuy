@@ -16,7 +16,9 @@ export const translateRoomType = (value?: RoomType | null) => {
       return 'Estudio';
     case RoomType.LIVING_ROOM:
       return 'Sala de estar';
+    case RoomType.STORAGE:
+      return 'Almacenamiento';
     default:
-      return value.charAt(0).toUpperCase() + value.slice(1);
+      return '-----';
   }
 };

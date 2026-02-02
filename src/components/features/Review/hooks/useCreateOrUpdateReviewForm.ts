@@ -31,7 +31,6 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
   const { control, reset, formState, watch, setValue } = form;
   const { address_text, osm_id: osmId, osm_type, real_estate_name } = watch();
   const { data: existingReview } = useCheckUserReviewForAddress({
-    userId,
     osmId: getAddressOsmId({ osm_id: osmId, osm_type }),
   });
   const { fields, append, remove, replace } = useFieldArray<FormReviewSchema, 'review_rooms'>({
