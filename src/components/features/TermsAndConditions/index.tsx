@@ -67,8 +67,9 @@ export const TermsAndConditionsComponent = () => {
             </p>
             <p className="text-gray-700 leading-relaxed mt-2">
               No seremos responsables por ataques de fraude informático de terceros (como
-              &quot phishing &quot) que utilicen nuestra marca de forma no autorizada. El uso de la plataforma
-              y el acceso a enlaces externos corre por cuenta y riesgo exclusivo del usuario.
+              &quot;phishing&quot;) que utilicen nuestra marca de forma no autorizada. El uso de la
+              plataforma y el acceso a enlaces externos corre por cuenta y riesgo exclusivo del
+              usuario.
             </p>
           </section>
         </div>
