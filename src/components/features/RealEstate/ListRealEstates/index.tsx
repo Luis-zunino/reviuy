@@ -100,7 +100,9 @@ export const ListRealEstates: React.FC = () => {
                         <div className="flex items-center gap-3">
                           <StarRatingDisplay
                             rating={
-                              realEstate.rating ? parseFloat(realEstate.rating.toString()) : 0
+                              realEstate.rating
+                                ? Number.parseFloat(realEstate.rating.toString())
+                                : 0
                             }
                           />
                         </div>

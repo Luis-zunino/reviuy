@@ -5,7 +5,7 @@ export const Home = () => {
   return (
     <div className="flex flex-col gap-6 ">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-screen h-100 opacity-20 bg-linear-to-r from-blue-400 via-purple-400 to-pink-400 blur-3xl -z-10 rounded-full" />
-      <section className="relative py-20 md:py-32 overflow-hidden">
+      <section className="relative pt-5 md:py-5 lg:py-32 overflow-hidden">
         <div className="mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-4xl mx-auto mb-12">
             <div className="inline-flex items-center rounded-full border px-3 py-1 text-sm font-medium transition-colors focus:outline-none border-transparent bg-secondary/50 text-secondary-foreground hover:bg-secondary/80 mb-8 backdrop-blur-sm">
@@ -21,7 +21,7 @@ export const Home = () => {
               </span>
             </h1>
             <SearcherAddressHomeSection />
-            <p className="text-xl md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed my-8">
+            <p className="hidden sm:block text-xl md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed my-8">
               La primera plataforma donde podés conocer la experiencia de otros inquilinos antes de
               alquilar.
             </p>

@@ -1,29 +1,13 @@
-import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { PagesUrls } from '@/enums';
 import React from 'react';
+import { PageWithSidebar } from '@/components/common';
 
 export const GoodPracticesComponent = () => {
   return (
-    <div className="min-h-screen bg-blue-50 py-8 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <PageWithSidebar
+      title="Buenas prácticas"
+      description="Guía para mantener una comunidad respetuosa y útil"
+    >
       <div className="mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <Link href={PagesUrls.HOME}>
-            <Button
-              variant="outline"
-              size="sm"
-              className="mb-4"
-              icon={ArrowLeft}
-              iconPosition="left"
-            >
-              Volver al inicio
-            </Button>
-          </Link>
-          <h1 className="text-3xl font-bold text-gray-900">Buenas prácticas</h1>
-          <p className="text-gray-600 mt-2">Guía para mantener una comunidad respetuosa y útil</p>
-        </div>
-
         <div className="bg-white rounded-lg shadow-sm p-8 space-y-6">
           <section>
             <p className="text-gray-700 leading-relaxed">
@@ -199,6 +183,6 @@ export const GoodPracticesComponent = () => {
           </section>
         </div>
       </div>
-    </div>
+    </PageWithSidebar>
   );
 };
