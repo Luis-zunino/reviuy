@@ -7,6 +7,8 @@ export const searchRealEstates = async ({
   query,
   limit = 10,
 }: SearchRealEstatesParams): Promise<RealEstateWitheVotes[]> => {
+  if (!query || query.length < 3) return [];
+
   const { data, error } = await supabaseClient
     .from('real_estates_with_votes')
     .select('*')

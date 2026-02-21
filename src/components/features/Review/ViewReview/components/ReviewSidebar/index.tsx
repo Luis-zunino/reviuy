@@ -1,7 +1,6 @@
-import { LazyMapComponent, StarRatingDisplay } from '@/components/common';
+import { FeedBackBadge, LazyMapComponent, StarRatingDisplay } from '@/components/common';
 import { MapPinned, Calendar, Home, DoorClosed } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import type { ReviewSidebarProps } from './types';
 import { PropertyType } from '@/enums';
 import { translatePropertyType } from '@/utils';
@@ -13,14 +12,7 @@ export const ReviewSidebar = ({ review }: ReviewSidebarProps) => {
   return (
     <div className="space-y-6">
       <div className="lg:hidden">
-        <Badge
-          variant={recommended ? 'default' : 'destructive'}
-          className={`w-full justify-center py-3 text-sm font-semibold uppercase tracking-wide ${
-            recommended ? 'bg-success hover:bg-success/90 text-success-foreground' : ''
-          }`}
-        >
-          {recommended ? '✓ Lo recomiendo' : '✗ No lo recomiendo'}
-        </Badge>
+        <FeedBackBadge recommended={recommended} />
       </div>
 
       <div className="lg:sticky lg:top-6 space-y-6">

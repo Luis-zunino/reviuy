@@ -1,6 +1,6 @@
 'use client';
 
-import { SquareArrowRight, ThumbsDown, ThumbsUp } from 'lucide-react';
+import { SquareArrowRight } from 'lucide-react';
 import {
   DeleteReviewButton,
   EditReviewButton,
@@ -8,6 +8,7 @@ import {
   FavoriteReviewButton,
   ReviewLikesButtons,
   StarRatingDisplay,
+  FeedBackBadge,
 } from '@/components/common';
 import type { ReviewSummaryProps } from './types';
 import { PagesUrls, RoomType } from '@/enums';
@@ -34,17 +35,7 @@ export const ReviewSummary = ({ review }: ReviewSummaryProps) => {
             recommended ? 'bg-success hover:bg-success/90 text-success-foreground' : ''
           }`}
         >
-          {recommended ? (
-            <>
-              <ThumbsUp className="h-4 w-4" />
-              Lo recomiendo
-            </>
-          ) : (
-            <>
-              <ThumbsDown className="h-4 w-4" />
-              No lo recomiendo
-            </>
-          )}
+          {recommended ? <FeedBackBadge recommended={recommended} /> : null}
         </Badge>
         <div className="flex gap-2 ml-auto">
           <FavoriteReviewButton reviewId={review.id ?? ''} showText />

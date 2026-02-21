@@ -29,7 +29,7 @@ create table
 create table
     if not exists public.reviews (
         id UUID primary key default gen_random_uuid (),
-        user_id UUID not null references auth.users (id) on delete CASCADE,
+        user_id UUID references auth.users (id) on delete set null,
         real_estate_id UUID references public.real_estates (id) on delete set null,
         title VARCHAR(200) not null check (char_length(btrim (title)) > 0),
         description VARCHAR(800) not null check (char_length(btrim (description)) > 0),
@@ -174,7 +174,7 @@ create table
     if not exists public.real_estate_reviews (
         id UUID primary key default gen_random_uuid (),
         real_estate_id UUID not null references public.real_estates (id) on delete CASCADE,
-        user_id UUID not null references auth.users (id) on delete CASCADE,
+        user_id UUID references auth.users (id) on delete set null,
         -- Contenido de la reseña sobre la inmobiliaria
         title VARCHAR(200) not null check (char_length(btrim (title)) > 0),
         description VARCHAR(400) not null check (char_length(btrim (description)) > 0),

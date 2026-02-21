@@ -17,7 +17,7 @@ export const getAllRealEstatesPaginated = async ({
 
   let query = supabaseClient.from('real_estates_with_votes').select('*', { count: 'exact' });
 
-  if (search) {
+  if (search && search.length >= 3) {
     query = query.ilike('name', `%${search}%`);
   }
 

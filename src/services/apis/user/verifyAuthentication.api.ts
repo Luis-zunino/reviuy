@@ -1,4 +1,6 @@
-import { supabaseClient } from '@/lib/supabase';
+'use server';
+
+import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { AuthError } from '@supabase/supabase-js';
 
 export interface VerifyAuthenticationResponse {
@@ -6,7 +8,9 @@ export interface VerifyAuthenticationResponse {
   error: AuthError | null;
 }
 export const verifyAuthentication = async (): Promise<VerifyAuthenticationResponse> => {
-  const { data, error } = await supabaseClient.auth.getUser();
+  const supabase = await createSupabaseServerClient();
+
+  const { data, error } = await supabase.auth.getUser();
 
   return { userId: data.user?.id ?? null, error };
 };

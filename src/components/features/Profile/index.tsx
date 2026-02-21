@@ -9,6 +9,7 @@ import { PagesUrls } from '@/enums';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useProfileComponent } from './hooks';
 import { EmptySection, SkeletonSection } from './components';
+import { DeleteAccountSection } from './components/DeleteAccountSection';
 
 export const ProfileComponent = () => {
   const {
@@ -47,6 +48,9 @@ export const ProfileComponent = () => {
               </TabsTrigger>
               <TabsTrigger value="favoriteRealEstates" className="flex justify-center">
                 Inmobiliarias
+              </TabsTrigger>
+              <TabsTrigger value="config" className="flex justify-center">
+                Configuración
               </TabsTrigger>
             </TabsList>
           </div>
@@ -150,6 +154,12 @@ export const ProfileComponent = () => {
                   ))}
                 </div>
               )}
+            </section>
+          </TabsContent>
+
+          <TabsContent value="config">
+            <section>
+              <DeleteAccountSection />
             </section>
           </TabsContent>
         </div>

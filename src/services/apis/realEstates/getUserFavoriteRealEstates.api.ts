@@ -1,13 +1,11 @@
 import { supabaseClient } from '@/lib/supabase';
 import type { RealEstateWitheVotes } from '@/types';
 import { handleSupabaseError } from '@/lib/errors';
+import { verifyAuthentication } from '../user/verifyAuthentication.api';
 
 export const getUserFavoriteRealEstates = async (): Promise<RealEstateWitheVotes[]> => {
-  const {
-    data: { user },
-  } = await supabaseClient.auth.getUser();
-
-  if (!user) {
+  const { userId } = await verifyAuthentication();
+  if (!userId) {
     throw new Error('Usuario no autenticado');
   }
 
@@ -25,7 +23,7 @@ export const getUserFavoriteRealEstates = async (): Promise<RealEstateWitheVotes
         )
       `
     )
-    .eq('user_id', user.id)
+    .eq('user_id', userId)
     .order('created_at', { ascending: false });
 
   if (error) throw handleSupabaseError(error);
