@@ -1,14 +1,10 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
 import { PagesUrls } from '@/enums';
 import { tips } from '@/services/mocks/tips.mock';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 
 export const Tips = () => {
-  const router = useRouter();
-
   return (
     <section className="py-16 px-4 lg:mx-40 flex flex-col gap-6">
       <div className="flex flex-col align-center text-center justify-center mt-6 mb-14 ">
@@ -50,14 +46,13 @@ export const Tips = () => {
           </Link>
         </div>
       </div>
-      <Button
+      <Link
         title="Publicaciones del blog de Reviu"
-        onClick={() => router.push(PagesUrls.TIPS)}
-        variant="seeMore"
+        href={PagesUrls.TIPS}
         className="max-w-fit mx-auto"
       >
         Ver todos
-      </Button>
+      </Link>
     </section>
   );
 };

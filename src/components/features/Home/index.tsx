@@ -1,5 +1,5 @@
 import { Search, Star, Users } from 'lucide-react';
-import { Tips, SearcherAddressHomeSection, CreateReviewHomeSection } from './components';
+import { CreateReviewHomeSection, SearcherAddressHomeSection, Tips } from './components';
 
 export const Home = () => {
   return (
