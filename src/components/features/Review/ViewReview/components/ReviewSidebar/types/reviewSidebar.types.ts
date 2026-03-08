@@ -1,5 +1,5 @@
-import type { ReviewWithRelations } from '@/types';
+import type { ReviewPublicWithRelations } from '@/types';
 
 export interface ReviewSidebarProps {
-  review?: ReviewWithRelations;
+  review?: ReviewPublicWithRelations;
 }

@@ -28,7 +28,7 @@ import { AuthContext } from './constants';
  * @example
  * ```tsx
  * // Consumir en componentes hijos
- * const { userId, session, signInWithGoogle, signOut } = useAuthContext();
+ * const { signInWithGoogle, signOut } = useAuthContext();
  * ```
  *
  * @param {AuthProviderProps} props - Propiedades del componente
@@ -36,21 +36,14 @@ import { AuthContext } from './constants';
  *
  * @returns {JSX.Element} Proveedor de contexto de autenticación
  *
- * @fires AuthContext - Proporciona userId, session, loading, isAuthenticated, signOut, signInWithEmail, signInWithGoogle, isOwner
+ * @fires AuthContext - Proporciona loading, isAuthenticated, signOut, signInWithEmail, signInWithGoogle
  *
  * @see {@link useAuthContext} Hook para consumir el contexto
  */
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [userId, setUserId] = useState<string | null>(null);
   const [session, setSession] = useState<AppSession | null>(null);
   const [loading, setLoading] = useState(true);
   const { push } = useRouter();
-
-  const isOwner = (userIdToCheck?: string | null): boolean => {
-    if (!userId) return false;
-    if (!userIdToCheck) return false;
-    return userId === userIdToCheck;
-  };
 
   const signInWithGoogle = async () => {
     setLoading(true);
@@ -95,7 +88,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       const { session } = await getSession();
 
       setSession(session);
-      setUserId(session?.userId ?? null);
       setLoading(false);
     };
 
@@ -107,7 +99,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       const sessionResult = sessionMapped(session);
 
       setSession(sessionResult);
-      setUserId(session?.user?.id ?? null);
       setLoading(false);
     });
 
@@ -115,14 +106,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }, []);
 
   const value = {
-    userId,
-    session,
     loading,
     isAuthenticated: !!session,
     signInWithEmail,
     signOut,
     signInWithGoogle,
-    isOwner,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

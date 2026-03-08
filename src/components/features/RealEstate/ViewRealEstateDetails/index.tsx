@@ -13,7 +13,6 @@ export const ViewRealEstateDetails = () => {
     realEstateId,
     isLoadingReviews,
     reviews,
-    userId,
     averageRating,
   } = useViewRealEstateDetails();
 
@@ -58,7 +57,6 @@ export const ViewRealEstateDetails = () => {
             reviews={reviews}
             isLoadingReviews={isLoadingReviews}
             realEstateId={realEstateId}
-            userId={userId}
           />
         ) : null}
       </div>

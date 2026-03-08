@@ -8,7 +8,7 @@
     "start": "next start",
     "type-check": "tsc --noEmit --pretty",
     "migrations": "npx supabase db push",
-    "supabase:typeLocal": "npx supabase gen types typescript --local > src/types/supabase.ts",
+    "supabase:typeLocal": "npx supabase gen types typescript --local > src/types/supabase/supabase.ts",
     "supabase:start": "npx supabase start",
     "supabase:stop": "npx supabase stop",
     "supabase:status": "npx supabase status",

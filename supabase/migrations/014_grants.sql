@@ -34,7 +34,10 @@ grant execute on FUNCTION public.create_review (
     integer,
     text,
     text,
-    text
+    text,
+    text,
+    text,
+    jsonb
 ) to authenticated;
 
 grant execute on FUNCTION delete_review_safe (UUID) to authenticated;

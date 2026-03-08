@@ -2,8 +2,8 @@ import { Metadata } from 'next';
 import { Home } from '@/components/features/Home';
 
 export const metadata: Metadata = {
-  title: 'Inicio | Reviuy',
-  description: 'Bienvenido a Reviuy, la plataforma para evaluar y encontrar tu próximo hogar.',
+  title: 'Inicio | ReviUy',
+  description: 'Bienvenido a ReviUy, la plataforma para evaluar y encontrar tu próximo hogar.',
 };
 
 export default function HomePage() {

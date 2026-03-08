@@ -6,14 +6,12 @@ import { PencilIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 import type { EditReviewButtonProps } from './types';
-import { useAuthContext } from '@/components/providers/AuthProvider';
 
 export const EditReviewButton = (props: EditReviewButtonProps) => {
   const { review, showText = false, variant = 'ghost', size = 'sm' } = props;
-  const { isOwner } = useAuthContext();
   const router = useRouter();
 
-  if (!isOwner(review.user_id)) {
+  if (!review.is_mine) {
     return null;
   }
 

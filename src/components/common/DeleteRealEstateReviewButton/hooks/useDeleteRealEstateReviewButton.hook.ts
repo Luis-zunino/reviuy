@@ -2,7 +2,6 @@ import { useDeleteRealEstateReview } from '@/services';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { UseDeleteRealEstateReviewButtonProps } from '../types';
-import { useAuthContext } from '@/components/providers/AuthProvider';
 import { toast } from 'sonner';
 
 export const useDeleteRealEstateReviewButton = ({
@@ -10,7 +9,6 @@ export const useDeleteRealEstateReviewButton = ({
 }: UseDeleteRealEstateReviewButtonProps) => {
   const router = useRouter();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const { isOwner } = useAuthContext();
 
   const { mutateAsync, isPending } = useDeleteRealEstateReview();
 
@@ -60,6 +58,6 @@ export const useDeleteRealEstateReviewButton = ({
     showDeleteDialog,
     setShowDeleteDialog,
     isPending,
-    isOwner: isOwner(review.user_id),
+    isOwner: review.is_mine,
   };
 };

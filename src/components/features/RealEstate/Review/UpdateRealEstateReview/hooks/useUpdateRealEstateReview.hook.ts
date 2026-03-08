@@ -1,7 +1,5 @@
 'use client';
 
-import { useAuthContext } from '@/components/providers/AuthProvider';
-import { PagesUrls } from '@/enums';
 import { useUpdateRealEstateReviewHook, useGetRealEstateReviewById } from '@/services';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useParams, useRouter } from 'next/navigation';
@@ -13,7 +11,6 @@ import { FormRealEstateSchema, formRealEstateSchema } from '@/schemas';
 export const useUpdateRealEstateReview = () => {
   const { reviewId } = useParams<{ realEstateId: string; reviewId: string }>();
   const router = useRouter();
-  const { userId } = useAuthContext();
 
   const { data } = useGetRealEstateReviewById({ reviewId });
   const form = useForm<FormRealEstateSchema>({ resolver: zodResolver(formRealEstateSchema) });
@@ -25,11 +22,6 @@ export const useUpdateRealEstateReview = () => {
       return;
     }
 
-    if (!userId) {
-      toast.error('Debes estar logueado para crear una reseña');
-      router.push(PagesUrls.LOGIN);
-      return;
-    }
     mutateAsync(
       {
         ...formData,

@@ -1,13 +1,13 @@
-import { ReviewWithRelations } from '@/types';
+import { ReviewPublicWithRelations } from '@/types';
 import { FormReviewSchema } from '@/schemas';
 import { normalizeNullable } from '@/utils';
 import { PropertyType } from '@/enums';
 
 export const getDefaultValues = (
-  defaultValues?: ReviewWithRelations | null
+  defaultValues?: ReviewPublicWithRelations | null
 ): FormReviewSchema | undefined => {
   if (!defaultValues) return undefined;
-  const normalizedValues = normalizeNullable<ReviewWithRelations>(defaultValues);
+  const normalizedValues = normalizeNullable<ReviewPublicWithRelations>(defaultValues);
 
   return {
     ...normalizedValues,

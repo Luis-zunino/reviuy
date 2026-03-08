@@ -1,4 +1,4 @@
-# 🏠 Reviuy - Plataforma de Reseñas de Alquileres
+# 🏠 ReviUy - Plataforma de Reseñas de Alquileres
 
 Plataforma web completa para reseñar y evaluar direcciones, apartamentos y casas de alquiler en Uruguay. Sistema integral con autenticación, base de datos, mapas interactivos, gestión de usuarios y sistema completo de consejos para arrendatarios.
 
@@ -396,7 +396,6 @@ reviuy/
 │   │   │   │   └── types/
 │   │   │   ├── RealEstateVoteButtons/  # Sistema de votación
 │   │   │   ├── ReviewLikesButtons/     # Votación de reseñas
-│   │   │   ├── BackButton/             # Navegación
 │   │   │   ├── ReviewCard/             # Tarjeta de reseña
 │   │   │   ├── FavoriteReviewButton/   # Botón de favoritos
 │   │   │   ├── StarRating/             # Componente de estrellas

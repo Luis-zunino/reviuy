@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 import React from 'react';
 
 export const metadata: Metadata = {
-  title: 'Consejos y Tips | Reviuy',
+  title: 'Consejos y Tips | ReviUy',
   description: 'Descubre consejos útiles para alquilar y evaluar propiedades.',
 };
 

@@ -4,19 +4,17 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { TabsContent } from '@/components/ui/tabs';
 import { PagesUrls } from '@/enums';
-import { RealEstateReviewWithVotes } from '@/types';
+import { RealEstateReviewWithVotesPublic } from '@/types';
 import { Calendar, Eye, MessageSquare, Pencil, ThumbsDown, ThumbsUp } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import React from 'react';
 
 export interface RealEstateReviewTabContentProps {
-  realEstateReview?: RealEstateReviewWithVotes[] | null;
+  realEstateReview?: RealEstateReviewWithVotesPublic[] | null;
   realEstateId: string;
-  userId: string;
 }
 
 export const RealEstateReviewTabContent = (props: RealEstateReviewTabContentProps) => {
-  const { realEstateReview, realEstateId, userId } = props;
+  const { realEstateReview, realEstateId } = props;
   const { push } = useRouter();
   return (
     <TabsContent value="realEstateReview" className="mt-6">
@@ -38,7 +36,6 @@ export const RealEstateReviewTabContent = (props: RealEstateReviewTabContentProp
             ) : (
               <div className="space-y-4">
                 {realEstateReview?.map((rer) => {
-                  const isOwner = userId === rer.user_id;
                   return (
                     <div
                       key={rer.id}
@@ -66,7 +63,7 @@ export const RealEstateReviewTabContent = (props: RealEstateReviewTabContentProp
                           >
                             <span className="hidden md:inline">Ver</span>
                           </Button>
-                          {isOwner ? (
+                          {rer.is_mine ? (
                             <Button
                               variant="outline"
                               onClick={() =>

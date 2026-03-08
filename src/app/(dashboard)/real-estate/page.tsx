@@ -2,8 +2,8 @@ import { ListRealEstates } from '@/components/features/RealEstate';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Propiedades | Reviuy',
-  description: 'Administra tus propiedades en Reviuy.',
+  title: 'Propiedades | ReviUy',
+  description: 'Administra tus propiedades en ReviUy.',
 };
 
 const RealEstatesPage = () => {

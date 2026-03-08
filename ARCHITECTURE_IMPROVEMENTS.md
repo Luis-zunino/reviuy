@@ -322,6 +322,39 @@ $ yarn build
 - Los hooks siguen funcionando igual
 - Solo cambia la capa de Server Actions (servidor)
 
+## 🧭 Corroboración del Tipo de Arquitectura (05/03/2026)
+
+### Clasificación principal
+
+El proyecto implementa una **arquitectura de monolito modular (Modular Monolith)** con enfoque **híbrido por features + capas técnicas**.
+
+### Qué significa en este proyecto
+
+- **Monolito**: todo vive en una sola codebase y se despliega como una app Next.js.
+- **Modular**: separación clara por dominios/funcionalidades (`Review`, `RealEstate`, `Profile`, etc.).
+- **Capas técnicas compartidas**: `lib`, `services`, `schemas`, `types`, `utils`.
+- **BFF interno con Next.js**:
+  - **Server Actions** en `src/app/_actions/` para mutaciones y lógica de negocio de servidor.
+  - **Route Handlers** en `src/app/api/` para endpoints puntuales (por ejemplo contacto y reportes).
+- **Backend como servicio (BaaS)** con Supabase:
+  - DB/Auth/RLS en PostgreSQL.
+  - Migraciones en `supabase/migrations/`.
+
+### Evidencia técnica revisada
+
+- `src/components/features/` organizado por vertical slices de negocio.
+- `src/services/apis/` con hooks de acceso a datos y orquestación de cliente.
+- `src/app/_actions/review.actions.ts` y acciones relacionadas con validación + rate limiting + reglas de autorización.
+- `src/lib/supabase/server.ts` y `src/lib/supabase/client.ts` como capa de infraestructura compartida.
+- `src/app/api/contact/route.tsx` y endpoints de reportes para casos API específicos.
+- `supabase/migrations/*.sql` con RLS, funciones, triggers e índices.
+
+### Conclusión
+
+La arquitectura actual puede describirse como:
+
+**"Monolito modular full-stack con App Router, patrón BFF interno (Server Actions + Route Handlers) y Supabase como BaaS"**.
+
 ---
 
 **Implementado por:** GitHub Copilot  

@@ -1,4 +1,3 @@
-import React from 'react';
 import { PageWithSidebar } from '@/components/common';
 
 export const GoodPracticesComponent = () => {
@@ -11,7 +10,7 @@ export const GoodPracticesComponent = () => {
         <div className="bg-white rounded-lg shadow-sm p-8 space-y-6">
           <section>
             <p className="text-gray-700 leading-relaxed">
-              Te damos la bienvenida a la plataforma Reviuy. En esta plataforma estás invitado a
+              Te damos la bienvenida a la plataforma ReviUy. En esta plataforma estás invitado a
               dejar comentarios y compartir opiniones con el resto de la comunidad sobre tu
               experiencia viviendo de alquiler. Por ello, es importante que conozcas las reglas que
               consideramos necesarias para garantizar una buena convivencia dentro de nuestra
@@ -78,7 +77,7 @@ export const GoodPracticesComponent = () => {
               ¿Qué comentarios están prohibidos?
             </h2>
             <p className="text-gray-700 leading-relaxed mb-4">
-              El objetivo de Reviuy es que todos los usuarios puedan compartir sus experiencias
+              El objetivo de ReviUy es que todos los usuarios puedan compartir sus experiencias
               sobre el período en el que han vivido de alquiler, tanto buenas como malas. Para
               evitar un mal uso de la plataforma, a continuación detallamos los tipos de comentarios
               prohibidos:
@@ -166,7 +165,7 @@ export const GoodPracticesComponent = () => {
           <section>
             <h2 className="text-xl font-semibold text-gray-900 mb-3">Moderación de contenido</h2>
             <p className="text-gray-700 leading-relaxed">
-              El equipo de Reviuy se reserva el derecho de moderar, editar o eliminar cualquier
+              El equipo de ReviUy se reserva el derecho de moderar, editar o eliminar cualquier
               contenido que viole estas buenas prácticas. En casos graves o reiterados, podremos
               suspender o cancelar cuentas de usuario. Estas normas pueden ser modificadas en
               cualquier momento, y los cambios serán notificados a los usuarios de forma explícita.
@@ -177,7 +176,7 @@ export const GoodPracticesComponent = () => {
             <h2 className="text-xl font-semibold text-gray-900 mb-3">¿Tienes dudas?</h2>
             <p className="text-gray-700 leading-relaxed">
               Si tienes preguntas sobre estas buenas prácticas o necesitas reportar contenido
-              inapropiado, no dudes en contactarnos. Estamos comprometidos en mantener Reviuy como
+              inapropiado, no dudes en contactarnos. Estamos comprometidos en mantener ReviUy como
               una comunidad segura y útil para todos.
             </p>
           </section>

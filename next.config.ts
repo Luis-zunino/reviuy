@@ -12,10 +12,25 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'firebasestorage.googleapis.com',
       },
+      {
+        // Supabase Storage CDN
+        protocol: 'https',
+        hostname: '*.supabase.co',
+      },
+      {
+        // Google OAuth avatares
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+      },
     ],
     formats: ['image/avif', 'image/webp'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    qualities: [75, 85, 90, 95], // Calidades permitidas
+    // Minimizar Layout Shift con placeholders
+    minimumCacheTTL: 60,
+    // Deshabilitar optimización en desarrollo para faster reloads
+    unoptimized: process.env.NODE_ENV === 'development' ? false : false,
   },
 
   // Optimizaciones de rendimiento
@@ -31,6 +46,10 @@ const nextConfig: NextConfig = {
           {
             key: 'X-DNS-Prefetch-Control',
             value: 'on',
+          },
+          {
+            key: 'Strict-Transport-Security',
+            value: 'max-age=31536000; includeSubDomains; preload',
           },
           {
             key: 'X-Frame-Options',
@@ -75,8 +94,10 @@ const nextConfig: NextConfig = {
                     object-src 'none';
                     base-uri 'self';
                     frame-ancestors 'none';
-                    `.replace(/\s{2,}/g, ' ').trim(),
-          }
+                    `
+              .replace(/\s{2,}/g, ' ')
+              .trim(),
+          },
         ],
       },
       {
@@ -125,7 +146,7 @@ const nextConfig: NextConfig = {
         destination: PagesUrls.HOME,
         permanent: true,
       },
-    ]
+    ];
   },
   transpilePackages: ['@supabase/supabase-js', '@supabase/ssr'],
 };

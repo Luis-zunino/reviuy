@@ -186,7 +186,21 @@ export type Database = {
             foreignKeyName: 'real_estate_review_reports_real_estate_review_id_fkey';
             columns: ['real_estate_review_id'];
             isOneToOne: false;
+            referencedRelation: 'real_estate_reviews_public';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'real_estate_review_reports_real_estate_review_id_fkey';
+            columns: ['real_estate_review_id'];
+            isOneToOne: false;
             referencedRelation: 'real_estate_reviews_with_votes';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'real_estate_review_reports_real_estate_review_id_fkey';
+            columns: ['real_estate_review_id'];
+            isOneToOne: false;
+            referencedRelation: 'real_estate_reviews_with_votes_public';
             referencedColumns: ['id'];
           },
         ];
@@ -238,7 +252,21 @@ export type Database = {
             foreignKeyName: 'real_estate_review_votes_real_estate_review_id_fkey';
             columns: ['real_estate_review_id'];
             isOneToOne: false;
+            referencedRelation: 'real_estate_reviews_public';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'real_estate_review_votes_real_estate_review_id_fkey';
+            columns: ['real_estate_review_id'];
+            isOneToOne: false;
             referencedRelation: 'real_estate_reviews_with_votes';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'real_estate_review_votes_real_estate_review_id_fkey';
+            columns: ['real_estate_review_id'];
+            isOneToOne: false;
+            referencedRelation: 'real_estate_reviews_with_votes_public';
             referencedColumns: ['id'];
           },
         ];
@@ -433,7 +461,21 @@ export type Database = {
             foreignKeyName: 'review_audit_review_id_fkey';
             columns: ['review_id'];
             isOneToOne: false;
+            referencedRelation: 'reviews_public';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'review_audit_review_id_fkey';
+            columns: ['review_id'];
+            isOneToOne: false;
             referencedRelation: 'reviews_with_votes';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'review_audit_review_id_fkey';
+            columns: ['review_id'];
+            isOneToOne: false;
+            referencedRelation: 'reviews_with_votes_public';
             referencedColumns: ['id'];
           },
         ];
@@ -488,7 +530,21 @@ export type Database = {
             foreignKeyName: 'review_deletions_review_id_fkey';
             columns: ['review_id'];
             isOneToOne: false;
+            referencedRelation: 'reviews_public';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'review_deletions_review_id_fkey';
+            columns: ['review_id'];
+            isOneToOne: false;
             referencedRelation: 'reviews_with_votes';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'review_deletions_review_id_fkey';
+            columns: ['review_id'];
+            isOneToOne: false;
+            referencedRelation: 'reviews_with_votes_public';
             referencedColumns: ['id'];
           },
         ];
@@ -531,7 +587,21 @@ export type Database = {
             foreignKeyName: 'review_favorites_review_id_fkey';
             columns: ['review_id'];
             isOneToOne: false;
+            referencedRelation: 'reviews_public';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'review_favorites_review_id_fkey';
+            columns: ['review_id'];
+            isOneToOne: false;
             referencedRelation: 'reviews_with_votes';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'review_favorites_review_id_fkey';
+            columns: ['review_id'];
+            isOneToOne: false;
+            referencedRelation: 'reviews_with_votes_public';
             referencedColumns: ['id'];
           },
         ];
@@ -586,7 +656,21 @@ export type Database = {
             foreignKeyName: 'review_reports_review_id_fkey';
             columns: ['review_id'];
             isOneToOne: false;
+            referencedRelation: 'reviews_public';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'review_reports_review_id_fkey';
+            columns: ['review_id'];
+            isOneToOne: false;
             referencedRelation: 'reviews_with_votes';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'review_reports_review_id_fkey';
+            columns: ['review_id'];
+            isOneToOne: false;
+            referencedRelation: 'reviews_with_votes_public';
             referencedColumns: ['id'];
           },
         ];
@@ -635,7 +719,21 @@ export type Database = {
             foreignKeyName: 'review_rooms_review_id_fkey';
             columns: ['review_id'];
             isOneToOne: false;
+            referencedRelation: 'reviews_public';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'review_rooms_review_id_fkey';
+            columns: ['review_id'];
+            isOneToOne: false;
             referencedRelation: 'reviews_with_votes';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'review_rooms_review_id_fkey';
+            columns: ['review_id'];
+            isOneToOne: false;
+            referencedRelation: 'reviews_with_votes_public';
             referencedColumns: ['id'];
           },
         ];
@@ -681,7 +779,21 @@ export type Database = {
             foreignKeyName: 'review_votes_review_id_fkey';
             columns: ['review_id'];
             isOneToOne: false;
+            referencedRelation: 'reviews_public';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'review_votes_review_id_fkey';
+            columns: ['review_id'];
+            isOneToOne: false;
             referencedRelation: 'reviews_with_votes';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'review_votes_review_id_fkey';
+            columns: ['review_id'];
+            isOneToOne: false;
+            referencedRelation: 'reviews_with_votes_public';
             referencedColumns: ['id'];
           },
         ];
@@ -838,6 +950,61 @@ export type Database = {
         };
         Relationships: [];
       };
+      real_estate_reviews_public: {
+        Row: {
+          created_at: string | null;
+          description: string | null;
+          id: string | null;
+          is_mine: boolean | null;
+          rating: number | null;
+          real_estate_id: string | null;
+          title: string | null;
+          updated_at: string | null;
+        };
+        Insert: {
+          created_at?: string | null;
+          description?: string | null;
+          id?: string | null;
+          is_mine?: never;
+          rating?: number | null;
+          real_estate_id?: string | null;
+          title?: string | null;
+          updated_at?: string | null;
+        };
+        Update: {
+          created_at?: string | null;
+          description?: string | null;
+          id?: string | null;
+          is_mine?: never;
+          rating?: number | null;
+          real_estate_id?: string | null;
+          title?: string | null;
+          updated_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'real_estate_reviews_real_estate_id_fkey';
+            columns: ['real_estate_id'];
+            isOneToOne: false;
+            referencedRelation: 'real_estate_vote_stats';
+            referencedColumns: ['real_estate_id'];
+          },
+          {
+            foreignKeyName: 'real_estate_reviews_real_estate_id_fkey';
+            columns: ['real_estate_id'];
+            isOneToOne: false;
+            referencedRelation: 'real_estates';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'real_estate_reviews_real_estate_id_fkey';
+            columns: ['real_estate_id'];
+            isOneToOne: false;
+            referencedRelation: 'real_estates_with_votes';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       real_estate_reviews_with_votes: {
         Row: {
           created_at: string | null;
@@ -852,6 +1019,44 @@ export type Database = {
           total_votes: number | null;
           updated_at: string | null;
           user_id: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'real_estate_reviews_real_estate_id_fkey';
+            columns: ['real_estate_id'];
+            isOneToOne: false;
+            referencedRelation: 'real_estate_vote_stats';
+            referencedColumns: ['real_estate_id'];
+          },
+          {
+            foreignKeyName: 'real_estate_reviews_real_estate_id_fkey';
+            columns: ['real_estate_id'];
+            isOneToOne: false;
+            referencedRelation: 'real_estates';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'real_estate_reviews_real_estate_id_fkey';
+            columns: ['real_estate_id'];
+            isOneToOne: false;
+            referencedRelation: 'real_estates_with_votes';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      real_estate_reviews_with_votes_public: {
+        Row: {
+          created_at: string | null;
+          description: string | null;
+          dislikes: number | null;
+          id: string | null;
+          is_mine: boolean | null;
+          likes: number | null;
+          rating: number | null;
+          real_estate_id: string | null;
+          title: string | null;
+          total_votes: number | null;
+          updated_at: string | null;
         };
         Relationships: [
           {
@@ -912,6 +1117,94 @@ export type Database = {
         };
         Relationships: [];
       };
+      reviews_public: {
+        Row: {
+          address_osm_id: string | null;
+          address_text: string | null;
+          apartment_number: string | null;
+          created_at: string | null;
+          description: string | null;
+          humidity: string | null;
+          id: string | null;
+          is_mine: boolean | null;
+          latitude: number | null;
+          longitude: number | null;
+          property_type: string | null;
+          rating: number | null;
+          real_estate_experience: string | null;
+          real_estate_id: string | null;
+          summer_comfort: string | null;
+          title: string | null;
+          updated_at: string | null;
+          winter_comfort: string | null;
+          zone_rating: number | null;
+        };
+        Insert: {
+          address_osm_id?: string | null;
+          address_text?: string | null;
+          apartment_number?: string | null;
+          created_at?: string | null;
+          description?: string | null;
+          humidity?: string | null;
+          id?: string | null;
+          is_mine?: never;
+          latitude?: number | null;
+          longitude?: number | null;
+          property_type?: string | null;
+          rating?: number | null;
+          real_estate_experience?: string | null;
+          real_estate_id?: string | null;
+          summer_comfort?: string | null;
+          title?: string | null;
+          updated_at?: string | null;
+          winter_comfort?: string | null;
+          zone_rating?: number | null;
+        };
+        Update: {
+          address_osm_id?: string | null;
+          address_text?: string | null;
+          apartment_number?: string | null;
+          created_at?: string | null;
+          description?: string | null;
+          humidity?: string | null;
+          id?: string | null;
+          is_mine?: never;
+          latitude?: number | null;
+          longitude?: number | null;
+          property_type?: string | null;
+          rating?: number | null;
+          real_estate_experience?: string | null;
+          real_estate_id?: string | null;
+          summer_comfort?: string | null;
+          title?: string | null;
+          updated_at?: string | null;
+          winter_comfort?: string | null;
+          zone_rating?: number | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'reviews_real_estate_id_fkey';
+            columns: ['real_estate_id'];
+            isOneToOne: false;
+            referencedRelation: 'real_estate_vote_stats';
+            referencedColumns: ['real_estate_id'];
+          },
+          {
+            foreignKeyName: 'reviews_real_estate_id_fkey';
+            columns: ['real_estate_id'];
+            isOneToOne: false;
+            referencedRelation: 'real_estates';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'reviews_real_estate_id_fkey';
+            columns: ['real_estate_id'];
+            isOneToOne: false;
+            referencedRelation: 'real_estates_with_votes';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       reviews_with_votes: {
         Row: {
           address_osm_id: string | null;
@@ -935,6 +1228,55 @@ export type Database = {
           total_votes: number | null;
           updated_at: string | null;
           user_id: string | null;
+          winter_comfort: string | null;
+          zone_rating: number | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'reviews_real_estate_id_fkey';
+            columns: ['real_estate_id'];
+            isOneToOne: false;
+            referencedRelation: 'real_estate_vote_stats';
+            referencedColumns: ['real_estate_id'];
+          },
+          {
+            foreignKeyName: 'reviews_real_estate_id_fkey';
+            columns: ['real_estate_id'];
+            isOneToOne: false;
+            referencedRelation: 'real_estates';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'reviews_real_estate_id_fkey';
+            columns: ['real_estate_id'];
+            isOneToOne: false;
+            referencedRelation: 'real_estates_with_votes';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      reviews_with_votes_public: {
+        Row: {
+          address_osm_id: string | null;
+          address_text: string | null;
+          apartment_number: string | null;
+          created_at: string | null;
+          description: string | null;
+          dislikes: number | null;
+          humidity: string | null;
+          id: string | null;
+          is_mine: boolean | null;
+          latitude: number | null;
+          likes: number | null;
+          longitude: number | null;
+          property_type: string | null;
+          rating: number | null;
+          real_estate_experience: string | null;
+          real_estate_id: string | null;
+          summer_comfort: string | null;
+          title: string | null;
+          total_votes: number | null;
+          updated_at: string | null;
           winter_comfort: string | null;
           zone_rating: number | null;
         };
@@ -991,7 +1333,8 @@ export type Database = {
         };
         Returns: Json;
       };
-      create_review: {
+      create_review:
+      | {
         Args: {
           p_address_osm_id: string;
           p_address_text: string;
@@ -1002,6 +1345,33 @@ export type Database = {
           p_property_type?: string;
           p_rating: number;
           p_real_estate_id?: string;
+          p_summer_comfort?: string;
+          p_title: string;
+          p_winter_comfort?: string;
+          p_zone_rating?: number;
+        };
+        Returns: Database['public']['CompositeTypes']['create_review_result'];
+        SetofOptions: {
+          from: '*';
+          to: 'create_review_result';
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      }
+      | {
+        Args: {
+          p_address_osm_id: string;
+          p_address_text: string;
+          p_apartment_number?: string;
+          p_description: string;
+          p_humidity?: string;
+          p_latitude: number;
+          p_longitude: number;
+          p_property_type?: string;
+          p_rating: number;
+          p_real_estate_experience?: string;
+          p_real_estate_id?: string;
+          p_review_rooms?: Json;
           p_summer_comfort?: string;
           p_title: string;
           p_winter_comfort?: string;
@@ -1155,6 +1525,14 @@ export type Database = {
         Returns: string;
       };
       get_user_review_vote: { Args: { p_review_id: string }; Returns: string };
+      get_user_vote_on_real_estate_review: {
+        Args: { p_real_estate_review_id: string };
+        Returns: string;
+      };
+      get_user_vote_on_review: {
+        Args: { p_review_id: string };
+        Returns: string;
+      };
       has_user_reported_real_estate: {
         Args: { p_real_estate_id: string };
         Returns: boolean;
@@ -1192,17 +1570,11 @@ export type Database = {
       };
       report_real_estate_review: {
         Args: {
-          p_description: string;
+          p_description?: string;
           p_real_estate_review_id: string;
           p_reason: string;
         };
-        Returns: Database['public']['CompositeTypes']['report_result'];
-        SetofOptions: {
-          from: '*';
-          to: 'report_result';
-          isOneToOne: true;
-          isSetofReturn: false;
-        };
+        Returns: Json;
       };
       report_review: {
         Args: { p_description?: string; p_reason: string; p_review_id: string };
@@ -1389,114 +1761,114 @@ type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, 'public'>]
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
-    | keyof (DefaultSchema['Tables'] & DefaultSchema['Views'])
-    | { schema: keyof DatabaseWithoutInternals },
+  | keyof (DefaultSchema['Tables'] & DefaultSchema['Views'])
+  | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals;
   }
-    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'] &
-        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Views'])
-    : never = never,
+  ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'] &
+    DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Views'])
+  : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals;
 }
   ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'] &
-      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Views'])[TableName] extends {
+    DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Views'])[TableName] extends {
       Row: infer R;
     }
-    ? R
-    : never
+  ? R
+  : never
   : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema['Tables'] & DefaultSchema['Views'])
-    ? (DefaultSchema['Tables'] & DefaultSchema['Views'])[DefaultSchemaTableNameOrOptions] extends {
-        Row: infer R;
-      }
-      ? R
-      : never
-    : never;
+  ? (DefaultSchema['Tables'] & DefaultSchema['Views'])[DefaultSchemaTableNameOrOptions] extends {
+    Row: infer R;
+  }
+  ? R
+  : never
+  : never;
 
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema['Tables']
-    | { schema: keyof DatabaseWithoutInternals },
+  | keyof DefaultSchema['Tables']
+  | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals;
   }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables']
-    : never = never,
+  ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables']
+  : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals;
 }
   ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'][TableName] extends {
-      Insert: infer I;
-    }
-    ? I
-    : never
+    Insert: infer I;
+  }
+  ? I
+  : never
   : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema['Tables']
-    ? DefaultSchema['Tables'][DefaultSchemaTableNameOrOptions] extends {
-        Insert: infer I;
-      }
-      ? I
-      : never
-    : never;
+  ? DefaultSchema['Tables'][DefaultSchemaTableNameOrOptions] extends {
+    Insert: infer I;
+  }
+  ? I
+  : never
+  : never;
 
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema['Tables']
-    | { schema: keyof DatabaseWithoutInternals },
+  | keyof DefaultSchema['Tables']
+  | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals;
   }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables']
-    : never = never,
+  ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables']
+  : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals;
 }
   ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions['schema']]['Tables'][TableName] extends {
-      Update: infer U;
-    }
-    ? U
-    : never
+    Update: infer U;
+  }
+  ? U
+  : never
   : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema['Tables']
-    ? DefaultSchema['Tables'][DefaultSchemaTableNameOrOptions] extends {
-        Update: infer U;
-      }
-      ? U
-      : never
-    : never;
+  ? DefaultSchema['Tables'][DefaultSchemaTableNameOrOptions] extends {
+    Update: infer U;
+  }
+  ? U
+  : never
+  : never;
 
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
-    | keyof DefaultSchema['Enums']
-    | { schema: keyof DatabaseWithoutInternals },
+  | keyof DefaultSchema['Enums']
+  | { schema: keyof DatabaseWithoutInternals },
   EnumName extends DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals;
   }
-    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions['schema']]['Enums']
-    : never = never,
+  ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions['schema']]['Enums']
+  : never = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals;
 }
   ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions['schema']]['Enums'][EnumName]
   : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema['Enums']
-    ? DefaultSchema['Enums'][DefaultSchemaEnumNameOrOptions]
-    : never;
+  ? DefaultSchema['Enums'][DefaultSchemaEnumNameOrOptions]
+  : never;
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
-    | keyof DefaultSchema['CompositeTypes']
-    | { schema: keyof DatabaseWithoutInternals },
+  | keyof DefaultSchema['CompositeTypes']
+  | { schema: keyof DatabaseWithoutInternals },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals;
   }
-    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes']
-    : never = never,
+  ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes']
+  : never = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals;
 }
   ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes'][CompositeTypeName]
   : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema['CompositeTypes']
-    ? DefaultSchema['CompositeTypes'][PublicCompositeTypeNameOrOptions]
-    : never;
+  ? DefaultSchema['CompositeTypes'][PublicCompositeTypeNameOrOptions]
+  : never;
 
 export const Constants = {
   public: {

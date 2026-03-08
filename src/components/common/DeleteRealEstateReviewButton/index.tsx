@@ -22,7 +22,7 @@ export const DeleteRealEstateReviewButton: React.FC<DeleteRealEstateReviewButton
     isOwner,
   } = useDeleteRealEstateReviewButton({ review });
 
-  if (!isOwner || !review.user_id) {
+  if (!isOwner) {
     return null;
   }
 

@@ -1,6 +1,6 @@
-import { RealEstateReviewWithVotes } from '@/types';
+import { RealEstateReviewWithVotesPublic } from '@/types';
 import { RealEstateReviewForDelete } from './deleteRealEstateReviewButton.types';
 
 export interface UseDeleteRealEstateReviewButtonProps {
-  review: RealEstateReviewWithVotes | RealEstateReviewForDelete;
+  review: RealEstateReviewWithVotesPublic | RealEstateReviewForDelete;
 }

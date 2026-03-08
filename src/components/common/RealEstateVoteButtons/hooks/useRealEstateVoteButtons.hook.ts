@@ -1,4 +1,3 @@
-import { useAuthContext } from '@/components/providers/AuthProvider';
 import { useVoteRealEstate } from '@/services';
 import { VoteType } from '@/types';
 import { useState } from 'react';
@@ -12,15 +11,10 @@ export interface RealEstateVoteButtonsProps {
 
 export const useRealEstateVoteButtons = (props: RealEstateVoteButtonsProps) => {
   const { realEstateId, userVote, refetchRealEstate } = props;
-  const { isAuthenticated } = useAuthContext();
   const { mutateAsync, isPending } = useVoteRealEstate();
   const [clickedButton, setClickedButton] = useState<VoteType | null>(null);
 
   const handleVote = async (voteType: VoteType) => {
-    if (!isAuthenticated) {
-      toast.warning('Debes estar autenticado para poder votar');
-      return;
-    }
     setClickedButton(voteType);
     setTimeout(() => setClickedButton(null), 300);
 

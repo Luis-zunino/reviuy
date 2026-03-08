@@ -3,12 +3,10 @@ import { VoteType } from '@/types';
 import { useState } from 'react';
 import type { ReviewLikesButtonsProps } from '../types';
 import type { AddVoteParams } from './types';
-import { useAuthContext } from '@/components/providers/AuthProvider';
 import { toast } from 'sonner';
 
 export const useReviewLikesButtons = (props: ReviewLikesButtonsProps) => {
   const { id, likes: initialLikes, dislikes: initialDislikes } = props;
-  const { userId } = useAuthContext();
 
   const { mutateAsync, isPending: isVoting, isError } = useVoteReview();
   const { data, isLoading, refetch } = useGetReviewVote({
@@ -20,11 +18,6 @@ export const useReviewLikesButtons = (props: ReviewLikesButtonsProps) => {
   const [optimisticDislikes, setOptimisticDislikes] = useState(initialDislikes);
 
   const addVote = async ({ id, voteType }: AddVoteParams) => {
-    if (!userId) {
-      toast.warning('Necesitas iniciar sesión para votar');
-      return;
-    }
-
     setClickedButton(voteType);
     setTimeout(() => setClickedButton(null), 300);
 

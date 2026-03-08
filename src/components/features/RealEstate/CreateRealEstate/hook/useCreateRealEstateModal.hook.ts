@@ -3,12 +3,10 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import type { UseCreateRealEstateModalProps } from './types';
 import { formCreateRealEstateSchema, FormCreateRealEstateSchema } from '@/schemas';
-import { useAuthContext } from '@/components/providers/AuthProvider';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 export const useCreateRealEstateModal = (props: UseCreateRealEstateModalProps) => {
   const { onOpenChange, name, defaultValues } = props;
-  const { userId } = useAuthContext();
 
   const {
     reset,
@@ -24,11 +22,6 @@ export const useCreateRealEstateModal = (props: UseCreateRealEstateModalProps) =
   const { mutateAsync, isPending } = useCreateRealEstateHook();
 
   const onSubmit = async (data: FormCreateRealEstateSchema) => {
-    if (!userId) {
-      toast.warning('Debes estar autenticado para crear una inmobiliaria');
-      return;
-    }
-
     const realEstateData = {
       real_estate_name: data[name],
     };

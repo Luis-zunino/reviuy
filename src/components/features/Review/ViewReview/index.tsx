@@ -1,7 +1,7 @@
 'use client';
 import { ReviewSidebar, ReviewSummary } from './components';
 import { useViewReview } from './hooks';
-import { Loader, ErrorPage, BackButton } from '@/components/common';
+import { Loader, ErrorPage } from '@/components/common';
 
 export const ViewReview = () => {
   const { data, isLoading, error } = useViewReview();
@@ -34,8 +34,6 @@ export const ViewReview = () => {
       <div className="max-w-7xl mx-auto">
         <div className="mb-8 lg:mb-10">
           <div className="flex items-start gap-4 mb-6">
-            <BackButton />
-
             <div className="hidden lg:flex flex-1 min-w-0">
               <h1 className="font-bold text-2xl md:text-3xl lg:text-4xl text-foreground leading-tight text-balance">
                 {data?.address_text}

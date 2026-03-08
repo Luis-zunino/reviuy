@@ -1,4 +1,4 @@
-import type { RealEstateReviewWithVotes, VoteType } from '@/types';
+import type { RealEstateReviewWithVotesPublic, VoteType } from '@/types';
 import type { QueryObserverResult, RefetchOptions } from '@tanstack/react-query';
 
 export interface RealEstateReviewVoteButtonsProps {
@@ -9,5 +9,5 @@ export interface RealEstateReviewVoteButtonsProps {
   className?: string;
   refetchRealEstateReview?: (
     options?: RefetchOptions | undefined
-  ) => Promise<QueryObserverResult<RealEstateReviewWithVotes | null, Error>>;
+  ) => Promise<QueryObserverResult<RealEstateReviewWithVotesPublic | null, Error>>;
 }

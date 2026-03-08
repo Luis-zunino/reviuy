@@ -1,3 +1,5 @@
+import type { BreadcrumbItem } from '../../Breadcrumbs';
+
 export interface PageWithSidebarProps {
   title: string;
   description: string;
@@ -12,4 +14,5 @@ export interface PageWithSidebarProps {
   errorSubTitle?: string;
   authIsRequired?: boolean;
   headerAction?: React.ReactNode;
+  breadcrumbItems?: BreadcrumbItem[];
 }

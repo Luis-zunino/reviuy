@@ -6,6 +6,13 @@ import { AsyncSearchSelect } from '../AsyncSearchSelect';
 import { FieldValues, Path } from 'react-hook-form';
 import { NominatimEntity } from '@/types';
 
+/**
+ * Componente que muestra un buscador de direcciones
+ * @param <T>
+ * @param props Propiedades del componente de buscador de direcciones
+ *
+ * @returns {JSX.Element}
+ */
 export const AddressSearchInput = <T extends FieldValues>(props: AddressSearchInputProps<T>) => {
   const {
     setOpen,

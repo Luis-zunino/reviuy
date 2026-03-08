@@ -5,6 +5,11 @@ import { FormSearcherAddressHome } from './constants';
 import { useSearcherAddressHome } from './hooks';
 import { AddressSearchInput } from '@/components/common/AddressSearchInput';
 
+/**
+ * Componente que muestra el buscador de direcciones en la landing principal
+ *
+ * @returns {JSX.Element}
+ */
 export const SearcherAddressHomeSection = () => {
   const { open, setOpen, queryValue, handleClear, form, onSelect } = useSearcherAddressHome();
   return (
@@ -18,13 +23,11 @@ export const SearcherAddressHomeSection = () => {
           name="address_text"
           form={form}
           onSelect={onSelect}
-          placeholder="Busca una direccion..."
+          placeholder="Buscá una dirección..."
           className={{
-            container: 'w-3/4 md:w-1/2 mx-auto',
+            container: 'w-full',
             input:
-              'w-full rounded-lg px-3 py-2 text-foreground outline-none focus-visible:none bg-blue-100',
-            inputContainer:
-              'p-1 rounded-xl bg-linear-to-r from-blue-400 to-purple-600 animate-gradient',
+              'w-full rounded-lg px-3 py-2 text-foreground outline-none focus-visible:none bg-transparent border-none border-0 shadow-none',
           }}
         />
       </Form>

@@ -71,7 +71,6 @@ export function createError(code: keyof typeof ErrorCodes, customMessage?: strin
   const errorCode = ErrorCodes[code];
   const message = customMessage || ErrorMessages[errorCode];
   const statusCode = ErrorStatusCodes[errorCode];
-
   return new AppError(errorCode, message, statusCode);
 }
 

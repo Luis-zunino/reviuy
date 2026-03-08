@@ -5,9 +5,9 @@ import { PagesUrls } from '@/enums';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Sobre Nosotros | Reviuy',
+  title: 'Sobre Nosotros | ReviUy',
   description:
-    'Conoce más sobre Reviuy, la plataforma de reseñas de alquileres en Uruguay. Nuestra misión, visión y equipo.',
+    'Conoce más sobre ReviUy, la plataforma de reseñas de alquileres en Uruguay. Nuestra misión, visión y equipo.',
 };
 
 export default function AboutPage() {
@@ -25,15 +25,15 @@ export default function AboutPage() {
             />
           </Link>
           <h1 className="text-4xl font-bold text-gray-900 mb-2">Sobre Nosotros</h1>
-          <p className="text-lg text-gray-600">Conoce más sobre Reviuy y nuestra misión</p>
+          <p className="text-lg text-gray-600">Conoce más sobre ReviUy y nuestra misión</p>
         </div>
 
         {/* Hero Section */}
         <div className="bg-white rounded-lg shadow-sm p-8 mb-6">
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-blue-600 mb-4">¿Qué es Reviuy?</h2>
+            <h2 className="text-3xl font-bold text-blue-600 mb-4">¿Qué es ReviUy?</h2>
             <p className="text-lg text-gray-700 leading-relaxed">
-              Reviuy es la plataforma líder en Uruguay para compartir y descubrir experiencias
+              ReviUy es la plataforma líder en Uruguay para compartir y descubrir experiencias
               reales sobre alquileres. Conectamos inquilinos y propietarios a través de reseñas
               honestas y transparentes, ayudando a tomar mejores decisiones.
             </p>
@@ -142,7 +142,7 @@ export default function AboutPage() {
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Nuestra historia</h2>
           <div className="space-y-4 text-gray-700 leading-relaxed">
             <p>
-              Reviuy nació de la necesidad de crear un espacio donde inquilinos y propietarios
+              ReviUy nació de la necesidad de crear un espacio donde inquilinos y propietarios
               pudieran compartir sus experiencias de forma honesta y constructiva. Vimos que muchas
               personas enfrentaban dificultades para encontrar información confiable sobre
               propiedades de alquiler en Uruguay.

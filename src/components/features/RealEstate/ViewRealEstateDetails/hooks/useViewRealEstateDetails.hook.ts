@@ -1,4 +1,3 @@
-import { useAuthContext } from '@/components/providers/AuthProvider';
 import { useGetReviewsByRealEstateId } from '@/services';
 import { useGetAllRealEstateReviews } from '@/services';
 import { useParams } from 'next/navigation';
@@ -6,7 +5,6 @@ import { useMemo } from 'react';
 
 export const useViewRealEstateDetails = () => {
   const { realEstateId } = useParams<{ realEstateId: string }>();
-  const { userId } = useAuthContext();
   const { data, isLoading, error } = useGetAllRealEstateReviews({ id: realEstateId });
   const { data: reviewsData, isLoading: isLoadingReviews } =
     useGetReviewsByRealEstateId(realEstateId);
@@ -35,6 +33,5 @@ export const useViewRealEstateDetails = () => {
     realEstateId,
     averageRating,
     isLoadingReviews,
-    userId: userId ?? '',
   };
 };

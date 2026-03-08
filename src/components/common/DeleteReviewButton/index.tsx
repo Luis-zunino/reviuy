@@ -7,7 +7,6 @@ import { DeleteReviewDialog } from '@/components/common';
 import { useDeleteReview } from '@/services/apis/reviews';
 import { useRouter } from 'next/navigation';
 import type { DeleteReviewButtonProps } from './types';
-import { useAuthContext } from '@/components/providers/AuthProvider';
 import { toast } from 'sonner';
 
 export const DeleteReviewButton: React.FC<DeleteReviewButtonProps> = ({
@@ -19,12 +18,11 @@ export const DeleteReviewButton: React.FC<DeleteReviewButtonProps> = ({
 }) => {
   const router = useRouter();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const { isOwner } = useAuthContext();
 
   const { mutateAsync, isPending } = useDeleteReview();
 
-  // Si no es el propietario o no hay user_id, no mostrar el componente
-  if (!isOwner(review.user_id) || !review.user_id) {
+  // Si no es el propietario, no mostrar el componente
+  if (!review.is_mine) {
     return null;
   }
 

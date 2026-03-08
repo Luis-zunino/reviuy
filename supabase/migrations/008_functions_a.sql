@@ -384,13 +384,17 @@ create or replace function public.create_review (
   p_zone_rating integer default null,
   p_winter_comfort text default null,
   p_summer_comfort text default null,
-  p_humidity text default null
+  p_humidity text default null, 
+  p_real_estate_experience text default null,
+  p_apartment_number text default null,
+  p_review_rooms jsonb default null
 ) RETURNS public.create_review_result LANGUAGE plpgsql SECURITY DEFINER
 set
   search_path = public as $$
 DECLARE
     v_review_id UUID;
     v_user_id UUID;
+        v_room_count INTEGER := 0;
 BEGIN
     -- Verificar rate limit (5 reseñas por 10 minutos)
     IF NOT check_rate_limit('create_review', 5, 10) THEN
@@ -511,6 +515,14 @@ BEGIN
         p_humidity := NULL;
     END IF;
 
+    IF p_real_estate_experience IS NOT NULL AND btrim(p_real_estate_experience) = '' THEN
+        p_real_estate_experience := NULL;
+    END IF;
+
+    IF p_apartment_number IS NOT NULL AND btrim(p_apartment_number) = '' THEN
+        p_apartment_number := NULL;
+    END IF;
+
     -- Verificación de duplicados (una reseña por usuario y propiedad)
     IF EXISTS (
         SELECT 1
@@ -548,7 +560,9 @@ BEGIN
         zone_rating,
         winter_comfort,
         summer_comfort,
-        humidity
+        humidity,
+        real_estate_experience,
+        apartment_number
     )
 VALUES
     (
@@ -565,8 +579,43 @@ VALUES
         p_zone_rating,
         p_winter_comfort,
         p_summer_comfort,
-        p_humidity
+        p_humidity,
+        p_real_estate_experience,
+        p_apartment_number
     ) RETURNING id INTO v_review_id;
+
+    -- Insertar habitaciones asociadas de forma atómica dentro de la misma transacción
+    IF p_review_rooms IS NOT NULL THEN
+        IF jsonb_typeof(p_review_rooms) <> 'array' THEN
+            RETURN (
+                false,
+                NULL,
+                NULL,
+                'review_rooms debe ser un arreglo JSON'
+            );
+        END IF;
+
+        IF jsonb_array_length(p_review_rooms) > 0 THEN
+            INSERT INTO public.review_rooms (
+                review_id,
+                room_type,
+                area_m2
+            )
+            SELECT
+                v_review_id,
+                NULLIF(btrim(room->>'room_type'), '')::text,
+                CASE
+                    WHEN room ? 'area_m2'
+                     AND room->>'area_m2' IS NOT NULL
+                     AND btrim(room->>'area_m2') <> ''
+                    THEN (room->>'area_m2')::numeric
+                    ELSE NULL
+                END
+            FROM jsonb_array_elements(p_review_rooms) AS room;
+
+            GET DIAGNOSTICS v_room_count = ROW_COUNT;
+        END IF;
+    END IF;
 
     -- Log exitoso
     PERFORM log_security_event(
@@ -579,7 +628,10 @@ VALUES
     RETURN (
         true,
         v_review_id,
-        'Reseña creada exitosamente',
+        CASE
+            WHEN v_room_count > 0 THEN 'Reseña creada exitosamente con ' || v_room_count || ' habitaciones'
+            ELSE 'Reseña creada exitosamente'
+        END,
         NULL
     );
 

@@ -1,9 +1,8 @@
 import { NextResponse } from 'next/server';
-import {
-  ReportRealEstateReviewTemplate,
-  ReportRealEstateReviewTemplateProps,
-} from '@/components/common/Emails';
-import { getAuthenticatedUser, sendEmail } from '../_utils';
+import { ReportRealEstateReviewTemplate } from '@/components/common/Emails';
+import { getAuthenticatedUser, parseAndValidateBody, sendEmail } from '../_utils';
+import { AppError, createError } from '@/lib';
+import { reportRealEstateReviewApiSchema } from '@/schemas';
 
 export async function GET() {
   return NextResponse.json(
@@ -20,14 +19,14 @@ export async function POST(req: Request) {
     const user = await getAuthenticatedUser();
 
     if (!user) {
-      return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+      throw createError('UNAUTHORIZED', 'No autorizado');
     }
 
-    const body: ReportRealEstateReviewTemplateProps = await req.json();
+    const body = await parseAndValidateBody(req, reportRealEstateReviewApiSchema);
     const { realEstateReviewUuid, reason, message } = body;
 
-    if (!realEstateReviewUuid || !reason || !message || !user.email) {
-      throw new Error('Faltan campos obligatorios');
+    if (!user.email) {
+      throw createError('INVALID_INPUT', 'El email del usuario no se encontro');
     }
 
     await sendEmail({
@@ -45,7 +44,14 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ success: true });
-  } catch (error) {
+  } catch (error: unknown) {
+    if (error instanceof AppError) {
+      return NextResponse.json(
+        { error: error.message, code: error.code },
+        { status: error.statusCode }
+      );
+    }
+
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Error interno' },
       { status: 500 }

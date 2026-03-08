@@ -13,5 +13,9 @@ export async function withRateLimit(key: string, type: RateLimitType): Promise<b
 
   const { success } = await limiter.limit(key);
 
+  if (!success) {
+    throw createError('RATE_LIMIT');
+  }
+
   return success;
 }

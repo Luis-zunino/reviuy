@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { Toaster } from '@/components/ui/sonner';
 import { AuthProvider } from '@/components/providers/AuthProvider';
+import { WebVitals } from '@/components/common/WebVitals';
+import { StructuredData, createWebSiteSchema } from '@/components/seo';
 import { Geist, Geist_Mono, Inter } from 'next/font/google';
 import './globals.css';
 
@@ -105,9 +107,24 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
+      <head>
+        {/* Resource hints para optimizar performance */}
+        <link rel="preconnect" href="https://nominatim.openstreetmap.org" />
+        <link rel="dns-prefetch" href="https://nominatim.openstreetmap.org" />
+        <link rel="preconnect" href="https://tile.openstreetmap.org" />
+        <link rel="dns-prefetch" href="https://tile.openstreetmap.org" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${inter.className} antialiased bg-blue-50 relative overflow-x-hidden`}
       >
+        <WebVitals />
+        <StructuredData
+          data={createWebSiteSchema({
+            name: 'ReviUy',
+            url: siteUrl,
+            searchUrl: `${siteUrl}/buscar?q=`,
+          })}
+        />
         <AuthProvider>
           {children}
           <Toaster richColors />

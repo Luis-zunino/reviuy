@@ -3,8 +3,8 @@ import { Metadata } from 'next';
 import React from 'react';
 
 export const metadata: Metadata = {
-  title: 'Mi Perfil | Reviuy',
-  description: 'Administra tu perfil, reseñas y configuraciones en Reviuy.',
+  title: 'Mi Perfil | ReviUy',
+  description: 'Administra tu perfil, reseñas y configuraciones en ReviUy.',
 };
 
 const ProfilePage = () => {

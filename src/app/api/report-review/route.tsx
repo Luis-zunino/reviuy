@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
-import { getAuthenticatedUser, sendEmail } from '../_utils';
-import { ReportReviewTemplate, ReportReviewTemplateProps } from '@/components/common/Emails';
+import { getAuthenticatedUser, parseAndValidateBody, sendEmail } from '../_utils';
+import { ReportReviewTemplate } from '@/components/common/Emails';
+import { AppError, createError } from '@/lib';
+import { reportReviewApiSchema } from '@/schemas';
 
 export async function GET() {
   return NextResponse.json(
@@ -17,20 +19,20 @@ export async function POST(req: Request) {
     const user = await getAuthenticatedUser();
 
     if (!user) {
-      return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+      throw createError('UNAUTHORIZED', 'No autorizado');
     }
 
-    const body: ReportReviewTemplateProps = await req.json();
+    const body = await parseAndValidateBody(req, reportReviewApiSchema);
     const { reviewUuid, reason, message } = body;
 
-    if (!reviewUuid || !reason || !message || !user.email) {
-      throw new Error('Faltan campos obligatorios');
+    if (!user.email) {
+      throw createError('INVALID_INPUT', 'El email del usuario no se encontró');
     }
 
     await sendEmail({
       to: [process.env.CONTACT_EMAIL!],
       replyTo: user.email,
-      subject: `Se ha reportado la opinion de la siguiente direccion: ${reviewUuid}`,
+      subject: `Se ha reportado la opinión de la siguiente dirección: ${reviewUuid}`,
       react: (
         <ReportReviewTemplate
           reviewUuid={reviewUuid}
@@ -42,7 +44,14 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ success: true });
-  } catch (error) {
+  } catch (error: unknown) {
+    if (error instanceof AppError) {
+      return NextResponse.json(
+        { error: error.message, code: error.code },
+        { status: error.statusCode }
+      );
+    }
+
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Error interno' },
       { status: 500 }

@@ -256,7 +256,7 @@ $$;
 -- =============================================================================
 -- FUNCIÓN PARA SABER EL VOTO DEL USUARIO SOBRE UNA REAL ESTATE
 --=============================================================================
-create function get_user_real_estate_vote(p_real_estate_id uuid)
+create or replace function get_user_real_estate_vote(p_real_estate_id uuid)
 returns text
 language sql
 as $$

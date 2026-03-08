@@ -7,11 +7,9 @@ import React, { useState } from 'react';
 import { validateText } from '@/utils';
 import { toast } from 'sonner';
 import type { UseReportRealEstateReviewButtonProps } from './types';
-import { useAuthContext } from '@/components/providers/AuthProvider';
 
 export const useReportRealEstateReviewButton = (props: UseReportRealEstateReviewButtonProps) => {
   const { review } = props;
-  const { isOwner } = useAuthContext();
   const [isOpen, setIsOpen] = useState(false);
   const [selectedReason, setSelectedReason] = useState('');
   const [description, setDescription] = useState('');
@@ -88,7 +86,7 @@ export const useReportRealEstateReviewButton = (props: UseReportRealEstateReview
     setDescription,
     handleCancel,
     isPending,
-    showReportedButton: !isOwner(review?.user_id ?? undefined),
+    showReportedButton: !review?.is_mine,
     hasReported,
     reportReasons,
   };

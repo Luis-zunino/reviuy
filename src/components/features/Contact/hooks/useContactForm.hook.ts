@@ -20,11 +20,6 @@ export const useContactForm = () => {
 
   const { mutateAsync: sendMessage } = useSendContactMessage();
   const onSubmit = async (data: FormContactSchema) => {
-    if (!isAuthenticated) {
-      toast.error('Debes iniciar sesión para enviar un mensaje');
-      return;
-    }
-
     await sendMessage(data, {
       onSuccess: () => {
         toast.success('El mensaje se envió correctamente');

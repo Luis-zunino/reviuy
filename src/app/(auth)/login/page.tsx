@@ -10,14 +10,14 @@ import { PagesUrls } from '@/enums';
 const queryClient = new QueryClient();
 
 const AuthPage = () => {
-  const { session, loading } = useAuthContext();
+  const { isAuthenticated, loading } = useAuthContext();
   const router = useRouter();
 
   useEffect(() => {
-    if (!loading && session) {
+    if (!loading && isAuthenticated) {
       router.replace(PagesUrls.HOME);
     }
-  }, [session, loading, router]);
+  }, [isAuthenticated, loading, router]);
 
   return (
     <QueryClientProvider client={queryClient}>

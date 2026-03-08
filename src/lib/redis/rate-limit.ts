@@ -32,4 +32,9 @@ export const rateLimiters = {
     redis,
     limiter: Ratelimit.slidingWindow(5, '10 s'),
   }),
+
+  sensitive: new Ratelimit({
+    redis,
+    limiter: Ratelimit.slidingWindow(3, '1 h'),
+  }),
 };

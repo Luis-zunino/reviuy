@@ -1,5 +1,5 @@
-import type { ReviewWithVotes } from '@/types';
+import type { ReviewWithVotesPublic } from '@/types';
 
 export interface UseReportReviewButtonProps {
-  review: ReviewWithVotes;
+  review: ReviewWithVotesPublic;
 }

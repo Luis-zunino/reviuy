@@ -1,5 +1,5 @@
-import type { ReviewWithRelations } from '@/types';
+import type { ReviewPublicWithRelations } from '@/types';
 
 export interface UseCreateOrUpdateReviewFormProps {
-  defaultValues?: ReviewWithRelations | null;
+  defaultValues?: ReviewPublicWithRelations | null;
 }

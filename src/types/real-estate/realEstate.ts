@@ -11,3 +11,17 @@ export type RealEstateReviewUpdate = Database['public']['Tables']['real_estate_r
 export type RealEstateWitheVotes = Database['public']['Views']['real_estates_with_votes']['Row'];
 export type RealEstateReviewWithVotes =
   Database['public']['Views']['real_estate_reviews_with_votes']['Row'];
+
+/* ============================================================================
+ * Tipos para vistas públicas (sin user_id - protección de privacidad)
+ * ============================================================================
+ */
+
+/**
+ * Vista pública de reseñas de inmobiliarias con estadísticas de votos, sin user_id.
+ * Usar para mostrar reseñas en listados públicos con likes/dislikes.
+ *
+ * @see supabase/migrations/050_secure_user_privacy.sql
+ */
+export type RealEstateReviewWithVotesPublic =
+  Database['public']['Views']['real_estate_reviews_with_votes_public']['Row'];

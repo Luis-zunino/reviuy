@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
-import { ContactEmailTemplate, ContactEmailTemplateProps } from '@/components/common/Emails';
-import { getAuthenticatedUser, sendEmail } from '../_utils';
-import { EMAIL_REGEX } from '@/constants';
+import { ContactEmailTemplate } from '@/components/common/Emails';
+import { getAuthenticatedUser, parseAndValidateBody, sendEmail } from '../_utils';
+import { AppError, createError } from '@/lib';
+import { contactApiSchema } from '@/schemas';
 
 export async function GET() {
   return NextResponse.json(
@@ -18,23 +19,15 @@ export async function POST(req: Request) {
     const user = await getAuthenticatedUser();
 
     if (!user) {
-      return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+      throw createError('UNAUTHORIZED', 'No autorizado');
     }
-    const body: ContactEmailTemplateProps = await req.json();
+    const body = await parseAndValidateBody(req, contactApiSchema);
     const { name, email, message } = body;
-
-    if (!name || !email || !message) {
-      return NextResponse.json({ error: 'Faltan campos obligatorios' }, { status: 400 });
-    }
-
-    if (!EMAIL_REGEX.test(email)) {
-      return NextResponse.json({ error: 'El formato del email es inválido' }, { status: 400 });
-    }
 
     const loginEmail = user.email;
 
     if (!loginEmail) {
-      throw new Error('El email de sesión no encontrado');
+      throw createError('INVALID_INPUT', 'El email de sesión no se encontró');
     }
 
     await sendEmail({
@@ -47,7 +40,14 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ success: true });
-  } catch (error) {
+  } catch (error: unknown) {
+    if (error instanceof AppError) {
+      return NextResponse.json(
+        { error: error.message, code: error.code },
+        { status: error.statusCode }
+      );
+    }
+
     return NextResponse.json({ error: 'Error procesando datos' }, { status: 500 });
   }
 }

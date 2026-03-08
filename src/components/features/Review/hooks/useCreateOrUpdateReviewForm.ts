@@ -16,7 +16,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormProps) => {
   const { defaultValues } = props;
-  const { userId, isAuthenticated, isOwner } = useAuthContext();
+  const { isAuthenticated } = useAuthContext();
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [openRealEstateModal, setOpenRealEstateModal] = useState(false);
@@ -68,14 +68,9 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
   };
 
   const onSubmit = async (formData: FormReviewSchema) => {
-    if (!isOwner(defaultValues?.user_id ?? '') && isUpdate) {
+    if (!defaultValues?.is_mine && isUpdate) {
       toast.error('No tienes permisos para editar esta reseña');
       router.push(PagesUrls.HOME);
-      return;
-    }
-
-    if (!userId || !isAuthenticated) {
-      toast.error('Debes iniciar sesión para publicar una reseña');
       return;
     }
 
@@ -154,7 +149,7 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
   };
 
   useEffect(() => {
-    if (defaultValues && !isOwner(defaultValues.user_id ?? '')) {
+    if (defaultValues && !defaultValues.is_mine) {
       router.push(PagesUrls.HOME);
 
       const timer = setTimeout(() => {
@@ -163,14 +158,14 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
 
       return () => clearTimeout(timer);
     }
-  }, [defaultValues, router, isOwner]);
+  }, [defaultValues, router]);
 
   useEffect(() => {
     if (defaultValues) reset(getDefaultValues(defaultValues), { keepDirty: false });
   }, [defaultValues, reset]);
 
   useEffect(() => {
-    if (!isAuthenticated || !userId || !existingReview) return;
+    if (!isAuthenticated || !existingReview) return;
 
     if (reviewId && existingReview.id === reviewId) return;
 
@@ -181,7 +176,7 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
         onClick: () => router.push(PagesUrls.REVIEW_DETAILS.replace(':id', existingReview.id)),
       },
     });
-  }, [existingReview, isAuthenticated, userId, reviewId, router]);
+  }, [existingReview, isAuthenticated, reviewId, router]);
 
   return {
     ...form,
@@ -194,7 +189,7 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
     append,
     remove,
     replace,
-    isOwner: isOwner(defaultValues?.user_id ?? ''),
+    isOwner: defaultValues?.is_mine ?? false,
     watch,
     isSubmitDisabled: Boolean(existingReview && defaultValues && !form.formState.isValid),
     open,

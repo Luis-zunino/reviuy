@@ -1,1 +1,1 @@
-export type RateLimitType = 'vote' | 'write';
+export type RateLimitType = 'vote' | 'write' | 'sensitive';

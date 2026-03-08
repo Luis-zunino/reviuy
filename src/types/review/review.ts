@@ -54,3 +54,25 @@ export type ReviewWithRelations = ReviewWithVotes & {
 export type ReviewWithNullableRating = Omit<Review, 'rating'> & {
   rating: number | null;
 };
+
+/* ============================================================================
+ * Tipos para vistas públicas (sin user_id - protección de privacidad)
+ * ============================================================================
+ */
+
+/**
+ * Vista pública de reviews sin user_id para proteger anonimato.
+ * Usar para queries públicos donde no se necesita exponer la identidad del usuario.
+ *
+ * @see supabase/migrations/050_secure_user_privacy.sql
+ */
+export type ReviewWithVotesPublic = Database['public']['Views']['reviews_with_votes_public']['Row'];
+
+/**
+ * Review pública con relaciones (rooms + real estate).
+ * Versión segura de ReviewWithRelations.
+ */
+export type ReviewPublicWithRelations = ReviewWithVotesPublic & {
+  review_rooms: ReviewRoom[];
+  real_estates: RealEstateWitheVotes | null;
+};

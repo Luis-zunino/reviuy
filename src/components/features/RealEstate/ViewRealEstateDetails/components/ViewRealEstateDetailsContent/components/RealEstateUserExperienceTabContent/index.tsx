@@ -4,14 +4,14 @@ import { TabDetailsSkeleton } from '../../../TabDetailsSkeleton';
 import { Card, CardContent } from '@/components/ui/card';
 import { Calendar, Eye, MapPin, ThumbsDown, ThumbsUp } from 'lucide-react';
 import { StarRatingDisplay } from '@/components/common';
-import { ReviewWithVotes } from '@/types';
+import { ReviewWithVotesPublic } from '@/types';
 import { Button } from '@/components/ui/button';
 import { PagesUrls } from '@/enums';
 import { useRouter } from 'next/navigation';
 import { Separator } from '@/components/ui/separator';
 
 export interface RealEstateUserExperienceTabContentProps {
-  reviews: ReviewWithVotes[];
+  reviews: ReviewWithVotesPublic[];
   isLoadingReviews: boolean;
 }
 export const RealEstateUserExperienceTabContent = (

@@ -1,6 +1,5 @@
-import { useAuthContext } from '@/components/providers/AuthProvider';
 import { useVoteRealEstateReview } from '@/services';
-import { RealEstateReviewWithVotes, VoteType } from '@/types';
+import { RealEstateReviewWithVotesPublic, VoteType } from '@/types';
 import { QueryObserverResult, RefetchOptions } from '@tanstack/react-query';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -11,21 +10,16 @@ export interface RealEstateReviewVoteButtonsProps {
   refetchRealEstateReview:
     | ((
         options?: RefetchOptions | undefined
-      ) => Promise<QueryObserverResult<RealEstateReviewWithVotes | null, Error>>)
+      ) => Promise<QueryObserverResult<RealEstateReviewWithVotesPublic | null, Error>>)
     | undefined;
 }
 
 export const useRealEstateReviewVoteButtons = (props: RealEstateReviewVoteButtonsProps) => {
   const { reviewId, userVote, refetchRealEstateReview } = props;
-  const { isAuthenticated } = useAuthContext();
   const { mutateAsync, isPending } = useVoteRealEstateReview();
   const [clickedButton, setClickedButton] = useState<VoteType | null>(null);
 
   const handleVote = async (voteType: VoteType) => {
-    if (!isAuthenticated) {
-      toast.warning('Debes estar autenticado para poder votar');
-      return;
-    }
     setClickedButton(voteType);
     setTimeout(() => setClickedButton(null), 300);
 

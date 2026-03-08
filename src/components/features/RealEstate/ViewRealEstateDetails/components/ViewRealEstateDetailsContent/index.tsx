@@ -1,18 +1,17 @@
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MessageSquare } from 'lucide-react';
 import React, { useState } from 'react';
-import { RealEstateReviewWithVotes, ReviewWithVotes } from '@/types';
+import { RealEstateReviewWithVotesPublic, ReviewWithVotesPublic } from '@/types';
 import { RealEstateReviewTabContent, RealEstateUserExperienceTabContent } from './components';
 
 export interface ViewRealEstateDetailsContentProps {
-  reviews: ReviewWithVotes[];
-  realEstateReview?: RealEstateReviewWithVotes[] | null;
+  reviews: ReviewWithVotesPublic[];
+  realEstateReview?: RealEstateReviewWithVotesPublic[] | null;
   isLoadingReviews: boolean;
   realEstateId: string;
-  userId: string;
 }
 export const ViewRealEstateDetailsContent = (props: ViewRealEstateDetailsContentProps) => {
-  const { reviews, realEstateReview, isLoadingReviews, realEstateId, userId } = props;
+  const { reviews, realEstateReview, isLoadingReviews, realEstateId } = props;
   const [activeTab, setActiveTab] = useState('realEstateReview');
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col">
@@ -27,11 +26,7 @@ export const ViewRealEstateDetailsContent = (props: ViewRealEstateDetailsContent
         </TabsTrigger>
       </TabsList>
 
-      <RealEstateReviewTabContent
-        realEstateReview={realEstateReview}
-        realEstateId={realEstateId}
-        userId={userId}
-      />
+      <RealEstateReviewTabContent realEstateReview={realEstateReview} realEstateId={realEstateId} />
       <RealEstateUserExperienceTabContent reviews={reviews} isLoadingReviews={isLoadingReviews} />
     </Tabs>
   );

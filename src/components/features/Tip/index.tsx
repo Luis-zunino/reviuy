@@ -4,6 +4,7 @@ import React from 'react';
 import { useTip } from './hooks';
 import { PageWithSidebar } from '@/components/common';
 import type { ContentBlock, ContentSection } from '@/types';
+import { PagesUrls } from '@/enums';
 
 const renderContentBlock = (block: ContentBlock, index: number): React.ReactNode => {
   const key = `${block.type}-${index}`;
@@ -100,7 +101,15 @@ export const TipComponent = () => {
   const { tip } = useTip();
 
   return (
-    <PageWithSidebar title={tip?.title ?? ''} description="" isError={!tip}>
+    <PageWithSidebar
+      title={tip?.title ?? ''}
+      description=""
+      isError={!tip}
+      breadcrumbItems={[
+        { label: 'Consejos y guías', href: PagesUrls.TIPS },
+        { label: tip?.title ?? '' },
+      ]}
+    >
       <div className="prose prose-lg max-w-none px-4 md:px-10">
         {Array.isArray(tip?.content) ? (
           tip.content.map((section, index) => renderContentSection(section, index))

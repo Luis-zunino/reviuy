@@ -8,7 +8,7 @@ import { useAuthContext } from '@/components/providers/AuthProvider';
 export const useViewAddressReviews = () => {
   const { osmId } = useParams<{ osmId: string }>();
   const router = useRouter();
-  const { isAuthenticated, userId } = useAuthContext();
+  const { isAuthenticated } = useAuthContext();
   const {
     data: addressData,
     isLoading: isLoadingAddress,
@@ -38,7 +38,7 @@ export const useViewAddressReviews = () => {
       return;
     }
 
-    const hasExistingReview = reviews?.some((review) => review.user_id === userId);
+    const hasExistingReview = reviews?.some((review) => review.is_mine);
 
     if (hasExistingReview) {
       toast.warning('Ya has reseñado esta propiedad', {
