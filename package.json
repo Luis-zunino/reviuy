@@ -21,7 +21,8 @@
     "format:check": "prettier --check \"src/**/*.{js,jsx,ts,tsx,json,css,md}\"",
     "analyze": "ANALYZE=true next build",
     "lint": "eslint .",
-    "lint:fix": "eslint --fix ."
+    "lint:fix": "eslint --fix .",
+    "precommit": "python -m pre_commit run --all-files"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
