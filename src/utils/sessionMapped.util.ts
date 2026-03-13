@@ -7,14 +7,8 @@ export const sessionMapped = (session: Session | null): AppSession | null => {
   }
 
   const sessionMapped: AppSession = {
-    providerToken: session?.provider_token,
-    providerRefreshToken: session?.provider_refresh_token,
-    accessToken: session?.access_token,
-    refreshToken: session?.refresh_token,
-    expiresIn: session?.expires_in,
-    expiresAt: session?.expires_at,
-    tokenType: session?.token_type,
     userId: session?.user?.id,
+    expiresAt: session?.expires_at,
   };
 
   return sessionMapped;

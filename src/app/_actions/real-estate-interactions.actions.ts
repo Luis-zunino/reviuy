@@ -1,8 +1,11 @@
 'use server';
 
+import { z } from 'zod';
 import { withRateLimit, createError, handleSupabaseError } from '@/lib';
 import { VoteType } from '@/types';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
+
+const voteTypeSchema = z.nativeEnum(VoteType);
 
 export async function voteRealEstateAction(realEstateId: string, voteType: VoteType) {
   const supabase = await createSupabaseServerClient();
@@ -14,6 +17,8 @@ export async function voteRealEstateAction(realEstateId: string, voteType: VoteT
   if (!user) {
     throw createError('UNAUTHORIZED');
   }
+
+  voteTypeSchema.parse(voteType);
 
   // 🔥 RATE LIMIT
   await withRateLimit(`vote-real-estate:${user.id}`, 'vote');
@@ -40,6 +45,8 @@ export async function voteRealEstateReviewAction(reviewId: string, voteType: Vot
   if (!user) {
     throw createError('UNAUTHORIZED');
   }
+
+  voteTypeSchema.parse(voteType);
 
   // 🔥 RATE LIMIT
   await withRateLimit(`vote-re-review:${user.id}`, 'vote');

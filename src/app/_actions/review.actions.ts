@@ -83,7 +83,7 @@ export async function createReviewAction(input: CreateReviewData) {
   }
 
   const { data: insertedReview, error: fetchReviewError } = await supabase
-    .from('reviews')
+    .from('reviews_public')
     .select('*, review_rooms(*)')
     .eq('id', result.review_id)
     .single();

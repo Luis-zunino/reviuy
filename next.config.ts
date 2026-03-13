@@ -70,7 +70,6 @@ const nextConfig: NextConfig = {
                     script-src
                     'self'
                     'unsafe-inline'
-                    'unsafe-eval'
                     https://apis.google.com
                     https://va.vercel-scripts.com;
                     style-src

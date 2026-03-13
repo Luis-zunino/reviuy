@@ -12,5 +12,8 @@ export * from './real-estate-interactions.actions';
 // Delete account
 export * from './delete-account.actions';
 
+// Reports
+export * from './report.actions';
+
 //Address
 export * from './address.actions';

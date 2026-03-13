@@ -45,7 +45,7 @@ export async function createRealEstateReviewAction(input: unknown) {
         user_id: user.id,
       },
     ])
-    .select()
+    .select('id, real_estate_id, title, description, rating, created_at, updated_at')
     .single();
 
   if (error) {

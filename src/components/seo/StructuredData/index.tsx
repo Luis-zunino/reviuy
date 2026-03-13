@@ -120,16 +120,23 @@ export function StructuredData({ data }: StructuredDataProps) {
 
   return (
     <>
-      {jsonLd.map((schema, index) => (
-        <Script
-          key={`structured-data-${schema['@type']}-${index}`}
-          id={`structured-data-${schema['@type']}-${index}`}
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(schema, null, 2),
-          }}
-        />
-      ))}
+      {jsonLd.map((schema, index) => {
+        // Escapar </script> y <!-- para prevenir XSS en bloques JSON-LD
+        const safeJson = JSON.stringify(schema, null, 2)
+          .replace(/</g, '\\u003c')
+          .replace(/>/g, '\\u003e');
+
+        return (
+          <Script
+            key={`structured-data-${schema['@type']}-${index}`}
+            id={`structured-data-${schema['@type']}-${index}`}
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: safeJson,
+            }}
+          />
+        );
+      })}
     </>
   );
 }

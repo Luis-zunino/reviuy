@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { ReportRealEstateReviewTemplate } from '@/components/common/Emails';
 import { getAuthenticatedUser, parseAndValidateBody, sendEmail } from '../_utils';
-import { AppError, createError } from '@/lib';
+import { AppError, createError, withRateLimit } from '@/lib';
 import { reportRealEstateReviewApiSchema } from '@/schemas';
 
 export async function GET() {
@@ -21,6 +21,8 @@ export async function POST(req: Request) {
     if (!user) {
       throw createError('UNAUTHORIZED', 'No autorizado');
     }
+
+    await withRateLimit(`api-report-real-estate-review:${user.id}`, 'sensitive');
 
     const body = await parseAndValidateBody(req, reportRealEstateReviewApiSchema);
     const { realEstateReviewUuid, reason, message } = body;
@@ -52,9 +54,6 @@ export async function POST(req: Request) {
       );
     }
 
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Error interno' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Error interno' }, { status: 500 });
   }
 }

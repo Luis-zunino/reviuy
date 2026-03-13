@@ -1,4 +1,4 @@
-import { FeedBackBadge, LazyMapComponent, StarRatingDisplay } from '@/components/common';
+import { LazyMapComponent, StarRatingDisplay } from '@/components/common';
 import { MapPinned, Calendar, Home, DoorClosed } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import type { ReviewSidebarProps } from './types';
@@ -7,14 +7,9 @@ import { translatePropertyType } from '@/utils';
 
 export const ReviewSidebar = ({ review }: ReviewSidebarProps) => {
   const addressText = review?.address_text;
-  const recommended = (review?.rating ?? 0) >= 3.5;
 
   return (
     <div className="space-y-6">
-      <div className="lg:hidden">
-        <FeedBackBadge recommended={recommended} />
-      </div>
-
       <div className="lg:sticky lg:top-6 space-y-6">
         <Card className="shadow-sm border-border/50">
           <CardContent className="p-6 space-y-6">

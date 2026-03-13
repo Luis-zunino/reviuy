@@ -1,13 +1,14 @@
-import { hasUserReportedReview, reportReview } from './reportReview.api';
+import { hasUserReportedReview } from './reportReview.api';
 import { useAuthMutation } from '../user';
 import { useQuery } from '@tanstack/react-query';
+import { reportReviewAction } from '@/app/_actions/report.actions';
 
 /**
  * Hook para reportar una review
  */
 export const useReportReview = () => {
   return useAuthMutation({
-    mutationFn: reportReview,
+    mutationFn: reportReviewAction,
   });
 };
 
