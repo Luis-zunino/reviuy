@@ -72,9 +72,9 @@ DECLARE
 
 EXCEPTION
     WHEN OTHERS THEN
-        -- En caso de error, permitir (fail open) para no bloquear usuarios
+        -- En caso de error, bloquear (fail closed) para no omitir el rate limit
         RAISE WARNING 'Error en check_rate_limit: %', SQLERRM;
-        RETURN TRUE;
+        RETURN FALSE;
 END;
 $$;
 
