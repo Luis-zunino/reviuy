@@ -1,17 +1,18 @@
 'use server';
 
 import { createError } from '../errors';
-import { rateLimiters } from './rate-limit';
+import { getRateLimiter } from './rate-limit';
 import type { RateLimitType } from './types';
 
 export async function withRateLimit(key: string, type: RateLimitType): Promise<boolean> {
-  const limiter = rateLimiters[type];
+  let success = false;
 
-  if (!limiter) {
-    throw createError('RATE_LIMIT');
+  try {
+    const limiter = getRateLimiter(type);
+    ({ success } = await limiter.limit(key));
+  } catch {
+    throw createError('INTERNAL_ERROR', 'Servicio temporalmente no disponible');
   }
-
-  const { success } = await limiter.limit(key);
 
   if (!success) {
     throw createError('RATE_LIMIT');

@@ -1,10 +1,11 @@
-import { hasUserReportedRealEstate, reportRealEstate } from './reportRealEstate.api';
+import { hasUserReportedRealEstate } from './reportRealEstate.api';
 import { useAuthMutation } from '../user';
 import { useQuery } from '@tanstack/react-query';
+import { reportRealEstateAction } from '@/app/_actions/report.actions';
 
 export const useReportRealEstate = () => {
   return useAuthMutation({
-    mutationFn: reportRealEstate,
+    mutationFn: reportRealEstateAction,
   });
 };
 

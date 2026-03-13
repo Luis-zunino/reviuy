@@ -1,0 +1,27 @@
+import { defineConfig } from 'vitest/config';
+import path from 'node:path';
+
+export default defineConfig({
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, 'src'),
+    },
+  },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: ['./src/test/setup.ts'],
+    include: ['src/**/*.{test,spec}.{ts,tsx}'],
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'html', 'lcov'],
+      reportsDirectory: './coverage',
+      thresholds: {
+        lines: 70,
+        functions: 70,
+        branches: 70,
+        statements: 70,
+      },
+    },
+  },
+});

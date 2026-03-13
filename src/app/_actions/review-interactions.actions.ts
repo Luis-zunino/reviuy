@@ -1,8 +1,11 @@
 'use server';
 
+import { z } from 'zod';
 import { withRateLimit, createError, handleSupabaseError } from '@/lib';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { VoteType } from '@/types';
+
+const voteTypeSchema = z.nativeEnum(VoteType);
 
 // ============================================================================
 // VOTE REVIEW ACTION
@@ -18,6 +21,8 @@ export async function voteReviewAction(reviewId: string, voteType: VoteType) {
   if (!user) {
     throw createError('UNAUTHORIZED');
   }
+
+  voteTypeSchema.parse(voteType);
 
   // 🔥 RATE LIMIT
   await withRateLimit(`vote-review:${user.id}`, 'vote');
@@ -48,6 +53,8 @@ export async function toggleFavoriteReviewAction(reviewId: string) {
   if (!user) {
     throw createError('UNAUTHORIZED');
   }
+
+  z.string().uuid('El identificador de reseña no es válido').parse(reviewId);
 
   // 🔥 RATE LIMIT
   await withRateLimit(`favorite-review:${user.id}`, 'vote');

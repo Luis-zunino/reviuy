@@ -5,6 +5,7 @@ import { WebVitals } from '@/components/common/WebVitals';
 import { StructuredData, createWebSiteSchema } from '@/components/seo';
 import { Geist, Geist_Mono, Inter } from 'next/font/google';
 import './globals.css';
+import { NOMINATIM_URL } from '@/constants';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -109,8 +110,8 @@ export default function RootLayout({
     <html lang="es">
       <head>
         {/* Resource hints para optimizar performance */}
-        <link rel="preconnect" href="https://nominatim.openstreetmap.org" />
-        <link rel="dns-prefetch" href="https://nominatim.openstreetmap.org" />
+        <link rel="preconnect" href={NOMINATIM_URL} />
+        <link rel="dns-prefetch" href={NOMINATIM_URL} />
         <link rel="preconnect" href="https://tile.openstreetmap.org" />
         <link rel="dns-prefetch" href="https://tile.openstreetmap.org" />
       </head>

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { ContactEmailTemplate } from '@/components/common/Emails';
 import { getAuthenticatedUser, parseAndValidateBody, sendEmail } from '../_utils';
-import { AppError, createError } from '@/lib';
+import { AppError, createError, withRateLimit } from '@/lib';
 import { contactApiSchema } from '@/schemas';
 
 export async function GET() {
@@ -21,6 +21,9 @@ export async function POST(req: Request) {
     if (!user) {
       throw createError('UNAUTHORIZED', 'No autorizado');
     }
+
+    await withRateLimit(`api-contact:${user.id}`, 'sensitive');
+
     const body = await parseAndValidateBody(req, contactApiSchema);
     const { name, email, message } = body;
 

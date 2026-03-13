@@ -23,7 +23,7 @@ enabled = false
 
 [db]
 # Port to use for the local database URL.
-port = 54322
+port = 56789
 # Port used by db diff command to initialize the shadow database.
 shadow_port = 54320
 # The database major version to use. This has to be the same as your remote database's. Run `SHOW
@@ -316,8 +316,8 @@ deno_version = 2
 # secret_key = "env(SECRET_VALUE)"
 
 [analytics]
-enabled = true
-port = 54327
+enabled = false  # disabled because Windows reserved the port range (includes 54399)
+port = 54399  # left for documentation; not used when disabled
 # Configure one of the supported backends: `postgres`, `bigquery`.
 backend = "postgres"
 

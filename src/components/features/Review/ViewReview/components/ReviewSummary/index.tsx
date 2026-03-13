@@ -13,7 +13,6 @@ import {
 import type { ReviewSummaryProps } from './types';
 import { PagesUrls, RoomType } from '@/enums';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import Link from 'next/link';
 import {
@@ -28,21 +27,14 @@ export const ReviewSummary = ({ review }: ReviewSummaryProps) => {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <Badge
-          variant={recommended ? 'default' : 'destructive'}
-          className={`hidden lg:flex items-center gap-2 font-semibold uppercase text-xs px-4 py-2.5 ${
-            recommended ? 'bg-success hover:bg-success/90 text-success-foreground' : ''
-          }`}
-        >
-          {recommended ? <FeedBackBadge recommended={recommended} /> : null}
-        </Badge>
-        <div className="flex gap-2 ml-auto">
-          <FavoriteReviewButton reviewId={review.id ?? ''} showText />
-          <EditReviewButton review={review} showText />
-          <ReportReviewButton review={review} showText />
-          <DeleteReviewButton review={review} showText />
+      <div className="flex w-full flex-wrap md:flex-nowrap items-center justify-between gap-4 align-middle">
+        <div className="mr-auto">
+          <FeedBackBadge recommended={recommended} />
         </div>
+        <FavoriteReviewButton reviewId={review.id ?? ''} showText />
+        <EditReviewButton review={review} showText />
+        <ReportReviewButton review={review} showText />
+        <DeleteReviewButton review={review} showText />
       </div>
 
       <Card className="shadow-sm border-border/50">

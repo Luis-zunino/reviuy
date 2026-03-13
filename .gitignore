@@ -51,8 +51,6 @@ next-env.d.ts
 .husky
 .yarn
 
-security.readme.md
-
 /scripts
 /src/content
 /docs

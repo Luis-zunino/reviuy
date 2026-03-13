@@ -45,19 +45,19 @@ export async function middleware(request: NextRequest) {
   );
 
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+  } = await supabase.auth.getUser();
   const pathname = request.nextUrl.pathname;
 
   const isProtected = matchesRoute(pathname, PROTECTED_ROUTE_PATTERNS);
 
-  if (isProtected && !session) {
+  if (isProtected && !user) {
     const redirectUrl = new URL(PagesUrls.LOGIN, request.url);
     redirectUrl.searchParams.set('redirectTo', request.nextUrl.pathname);
     return NextResponse.redirect(redirectUrl);
   }
 
-  if (session && matchesRoute(pathname, AUTH_ROUTE_PATTERNS)) {
+  if (user && matchesRoute(pathname, AUTH_ROUTE_PATTERNS)) {
     return NextResponse.redirect(new URL(PagesUrls.HOME, request.url));
   }
 
