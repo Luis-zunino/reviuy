@@ -116,7 +116,7 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://tile.openstreetmap.org" />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${inter.className} antialiased bg-blue-50 relative overflow-x-hidden`}
+        className={`${geistSans.variable} ${geistMono.variable} ${inter.className} antialiased bg-background relative overflow-x-hidden`}
       >
         <WebVitals />
         <StructuredData
