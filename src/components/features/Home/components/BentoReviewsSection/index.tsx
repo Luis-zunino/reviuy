@@ -96,13 +96,13 @@ const ReviewCard = ({ review, className }: ReviewCardProps) => {
         transition: { duration: 0.25, ease: 'easeOut' } 
       }}
       className={cn(
-        'group relative flex flex-col rounded-2xl border border-zinc-200/50 bg-white p-5 shadow-sm transition-all duration-300',
-        'hover:border-zinc-300/70 hover:shadow-lg',
+        'group relative flex flex-col rounded-2xl border border-zinc-200/50 dark:border-zinc-700/50 bg-white dark:bg-reviuy-gray-800/50 p-5 shadow-sm transition-all duration-300',
+        'hover:border-zinc-300/70 dark:hover:border-zinc-600/70 hover:shadow-lg',
         className
       )}
     >
       {/* Quote icon */}
-      <Quote className="absolute right-4 top-4 h-6 w-6 text-reviuy-gray-100 transition-colors duration-300 group-hover:text-reviuy-primary-100" />
+      <Quote className="absolute right-4 top-4 h-6 w-6 text-reviuy-gray-100 dark:text-reviuy-gray-700 transition-colors duration-300 group-hover:text-reviuy-primary-100 dark:group-hover:text-reviuy-primary-800" />
       
       {/* Rating */}
       <div className="mb-3 flex items-center gap-1">
@@ -113,34 +113,34 @@ const ReviewCard = ({ review, className }: ReviewCardProps) => {
               'h-4 w-4',
               i < review.rating
                 ? 'fill-reviuy-secondary-400 text-reviuy-secondary-400'
-                : 'fill-reviuy-gray-100 text-reviuy-gray-200'
+                : 'fill-reviuy-gray-100 dark:fill-reviuy-gray-700 text-reviuy-gray-200 dark:text-reviuy-gray-600'
             )}
           />
         ))}
       </div>
 
       {/* Title */}
-      <h3 className={`${manrope.className} mb-2 text-base font-semibold text-reviuy-gray-900 line-clamp-2`}>
+      <h3 className={`${manrope.className} mb-2 text-base font-semibold text-reviuy-gray-900 dark:text-white line-clamp-2`}>
         {review.title}
       </h3>
 
       {/* Excerpt */}
-      <p className={`${manrope.className} mb-4 flex-1 text-sm leading-relaxed text-reviuy-gray-600 line-clamp-3`}>
+      <p className={`${manrope.className} mb-4 flex-1 text-sm leading-relaxed text-reviuy-gray-600 dark:text-reviuy-gray-400 line-clamp-3`}>
         {review.excerpt}
       </p>
 
       {/* Footer */}
-      <div className="mt-auto flex items-center justify-between border-t border-reviuy-gray-100 pt-4">
+      <div className="mt-auto flex items-center justify-between border-t border-reviuy-gray-100 dark:border-reviuy-gray-700 pt-4">
         <div className="flex flex-col">
-          <span className={`${manrope.className} text-sm font-medium text-reviuy-gray-800`}>
+          <span className={`${manrope.className} text-sm font-medium text-reviuy-gray-800 dark:text-reviuy-gray-200`}>
             {review.author}
           </span>
-          <span className={`${manrope.className} flex items-center gap-1 text-xs text-reviuy-gray-500`}>
+          <span className={`${manrope.className} flex items-center gap-1 text-xs text-reviuy-gray-500 dark:text-reviuy-gray-400`}>
             <MapPin className="h-3 w-3" />
             {review.location}
           </span>
         </div>
-        <div className="flex items-center gap-1 rounded-full bg-reviuy-gray-50 px-2.5 py-1 text-xs font-medium text-reviuy-gray-600">
+        <div className="flex items-center gap-1 rounded-full bg-reviuy-gray-50 dark:bg-reviuy-gray-700/50 px-2.5 py-1 text-xs font-medium text-reviuy-gray-600 dark:text-reviuy-gray-300">
           <ThumbsUp className="h-3 w-3" />
           {review.likes}
         </div>
@@ -167,17 +167,17 @@ export const BentoReviewsSection = () => {
         >
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
-              <h2 className={`${playfair.className} text-3xl font-bold text-reviuy-gray-900 md:text-4xl`}>
+              <h2 className={`${playfair.className} text-3xl font-bold text-reviuy-gray-900 dark:text-white md:text-4xl`}>
                 Resenas destacadas
               </h2>
-              <p className={`${manrope.className} mt-3 max-w-xl text-reviuy-gray-600`}>
+              <p className={`${manrope.className} mt-3 max-w-xl text-reviuy-gray-600 dark:text-reviuy-gray-400`}>
                 Experiencias reales de inquilinos que ya encontraron su hogar
               </p>
             </div>
             <motion.a
               href="/review"
               whileHover={{ x: 4 }}
-              className={`${manrope.className} group inline-flex items-center gap-2 text-sm font-semibold text-reviuy-primary-600 transition-colors hover:text-reviuy-primary-700`}
+              className={`${manrope.className} group inline-flex items-center gap-2 text-sm font-semibold text-reviuy-primary-600 dark:text-reviuy-primary-400 transition-colors hover:text-reviuy-primary-700 dark:hover:text-reviuy-primary-300`}
             >
               Ver todas las resenas
               <span className="transition-transform duration-200 group-hover:translate-x-1">

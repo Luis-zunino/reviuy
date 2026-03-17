@@ -124,10 +124,10 @@ export const FeaturedProjectsCarousel = () => {
           className="mb-12 flex flex-col gap-4 md:flex-row md:items-end md:justify-between"
         >
           <div>
-            <h2 className={`${playfair.className} text-3xl font-bold text-reviuy-gray-900 md:text-4xl`}>
+            <h2 className={`${playfair.className} text-3xl font-bold text-reviuy-gray-900 dark:text-white md:text-4xl`}>
               Edificios destacados
             </h2>
-            <p className={`${manrope.className} mt-3 text-reviuy-gray-600`}>
+            <p className={`${manrope.className} mt-3 text-reviuy-gray-600 dark:text-reviuy-gray-400`}>
               Los proyectos mejor valorados por la comunidad
             </p>
           </div>
@@ -139,7 +139,7 @@ export const FeaturedProjectsCarousel = () => {
                 setIsAutoPlaying(false);
                 paginate(-1);
               }}
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-reviuy-gray-200 bg-white text-reviuy-gray-600 shadow-sm transition-all hover:border-reviuy-gray-300 hover:shadow-md"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-reviuy-gray-200 dark:border-reviuy-gray-700 bg-white dark:bg-reviuy-gray-800 text-reviuy-gray-600 dark:text-reviuy-gray-400 shadow-sm transition-all hover:border-reviuy-gray-300 dark:hover:border-reviuy-gray-600 hover:shadow-md"
               aria-label="Proyecto anterior"
             >
               <ChevronLeft className="h-5 w-5" />
@@ -149,7 +149,7 @@ export const FeaturedProjectsCarousel = () => {
                 setIsAutoPlaying(false);
                 paginate(1);
               }}
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-reviuy-gray-200 bg-white text-reviuy-gray-600 shadow-sm transition-all hover:border-reviuy-gray-300 hover:shadow-md"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-reviuy-gray-200 dark:border-reviuy-gray-700 bg-white dark:bg-reviuy-gray-800 text-reviuy-gray-600 dark:text-reviuy-gray-400 shadow-sm transition-all hover:border-reviuy-gray-300 dark:hover:border-reviuy-gray-600 hover:shadow-md"
               aria-label="Siguiente proyecto"
             >
               <ChevronRight className="h-5 w-5" />
@@ -183,15 +183,15 @@ export const FeaturedProjectsCarousel = () => {
             >
               <div className="grid gap-6 md:grid-cols-2 md:gap-8">
                 {/* Image placeholder */}
-                <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-reviuy-gray-200/60 bg-gradient-to-br from-reviuy-gray-100 to-reviuy-gray-200 shadow-sm md:aspect-[3/2]">
+                <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-reviuy-gray-200/60 dark:border-reviuy-gray-700/50 bg-gradient-to-br from-reviuy-gray-100 to-reviuy-gray-200 dark:from-reviuy-gray-800 dark:to-reviuy-gray-700 shadow-sm md:aspect-[3/2]">
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <Building2 className="h-24 w-24 text-reviuy-gray-300" />
+                    <Building2 className="h-24 w-24 text-reviuy-gray-300 dark:text-reviuy-gray-600" />
                   </div>
                   
                   {/* Rating badge */}
-                  <div className="absolute left-4 top-4 flex items-center gap-1.5 rounded-full bg-white/95 px-3 py-1.5 shadow-lg backdrop-blur-sm">
+                  <div className="absolute left-4 top-4 flex items-center gap-1.5 rounded-full bg-white/95 dark:bg-reviuy-gray-800/95 px-3 py-1.5 shadow-lg backdrop-blur-sm">
                     <Star className="h-4 w-4 fill-reviuy-secondary-400 text-reviuy-secondary-400" />
-                    <span className={`${manrope.className} text-sm font-semibold text-reviuy-gray-900`}>
+                    <span className={`${manrope.className} text-sm font-semibold text-reviuy-gray-900 dark:text-white`}>
                       {currentProject.rating}
                     </span>
                   </div>
@@ -199,16 +199,16 @@ export const FeaturedProjectsCarousel = () => {
 
                 {/* Content */}
                 <div className="flex flex-col justify-center">
-                  <h3 className={`${playfair.className} text-2xl font-bold text-reviuy-gray-900 md:text-3xl`}>
+                  <h3 className={`${playfair.className} text-2xl font-bold text-reviuy-gray-900 dark:text-white md:text-3xl`}>
                     {currentProject.name}
                   </h3>
                   
-                  <div className={`${manrope.className} mt-2 flex items-center gap-1.5 text-sm text-reviuy-gray-600`}>
+                  <div className={`${manrope.className} mt-2 flex items-center gap-1.5 text-sm text-reviuy-gray-600 dark:text-reviuy-gray-400`}>
                     <MapPin className="h-4 w-4" />
                     {currentProject.location}
                   </div>
 
-                  <p className={`${manrope.className} mt-4 text-base leading-relaxed text-reviuy-gray-600`}>
+                  <p className={`${manrope.className} mt-4 text-base leading-relaxed text-reviuy-gray-600 dark:text-reviuy-gray-400`}>
                     {currentProject.description}
                   </p>
 
@@ -219,7 +219,7 @@ export const FeaturedProjectsCarousel = () => {
                         key={highlight}
                         className={cn(
                           manrope.className,
-                          'rounded-full border border-reviuy-primary-100 bg-reviuy-primary-50 px-3 py-1.5 text-xs font-medium text-reviuy-primary-700'
+                          'rounded-full border border-reviuy-primary-100 dark:border-reviuy-primary-500/30 bg-reviuy-primary-50 dark:bg-reviuy-primary-500/10 px-3 py-1.5 text-xs font-medium text-reviuy-primary-700 dark:text-reviuy-primary-400'
                         )}
                       >
                         {highlight}
@@ -228,13 +228,13 @@ export const FeaturedProjectsCarousel = () => {
                   </div>
 
                   <div className="mt-6 flex items-center gap-4">
-                    <span className={`${manrope.className} text-sm text-reviuy-gray-500`}>
+                    <span className={`${manrope.className} text-sm text-reviuy-gray-500 dark:text-reviuy-gray-400`}>
                       {currentProject.reviewCount} resenas
                     </span>
                     <motion.a
                       href={`/real-estate/${currentProject.id}`}
                       whileHover={{ x: 4 }}
-                      className={`${manrope.className} inline-flex items-center gap-2 text-sm font-semibold text-reviuy-primary-600 transition-colors hover:text-reviuy-primary-700`}
+                      className={`${manrope.className} inline-flex items-center gap-2 text-sm font-semibold text-reviuy-primary-600 dark:text-reviuy-primary-400 transition-colors hover:text-reviuy-primary-700 dark:hover:text-reviuy-primary-300`}
                     >
                       Ver detalles
                       <span className="transition-transform duration-200">
@@ -260,7 +260,7 @@ export const FeaturedProjectsCarousel = () => {
                   'h-2 rounded-full transition-all duration-300',
                   index === projectIndex
                     ? 'w-8 bg-reviuy-primary-500'
-                    : 'w-2 bg-reviuy-gray-300 hover:bg-reviuy-gray-400'
+                    : 'w-2 bg-reviuy-gray-300 dark:bg-reviuy-gray-600 hover:bg-reviuy-gray-400 dark:hover:bg-reviuy-gray-500'
                 )}
                 aria-label={`Ir al proyecto ${index + 1}`}
               />
