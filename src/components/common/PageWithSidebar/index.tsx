@@ -66,13 +66,18 @@ export const PageWithSidebar: React.FC<PageWithSidebarProps> = (props) => {
 
   return (
     <main className="min-h-screen bg-background">
-      <div className={cn('bg-blue-50 border-b border-border py-12', headerClassName)}>
+      <div
+        className={cn(
+          'bg-blue-50 border-b border-border py-12 dark:bg-gray-900 px-4',
+          headerClassName
+        )}
+      >
         <div className="max-w-md md:max-w-7xl mx-auto flex items-start gap-4">
           <div>
             <h1 className="text-4xl font-bold text-foreground mb-3">{title}</h1>
             <p className="text-muted-foreground text-lg">{description}</p>
           </div>
-          {headerAction ? headerAction : null}
+          {headerAction}
         </div>
       </div>
       <div className="sm:max-w-7xl mx-auto py-12 px-4 xl:px-0">
