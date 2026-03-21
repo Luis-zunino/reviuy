@@ -22,18 +22,21 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { NavBarItem } from './components/NavBarItem';
 import { cn } from '@/lib/utils';
+import { ThemeToggle } from '@/components/common/ThemeToggle';
 
 export const NavBar = () => {
   const { isAuthenticated, opacity, signOut, sharedStyles, isOpen, setIsOpen } = useNavBar();
 
   return (
     <nav
-      className="sticky top-0 z-50 transition-all duration-300"
+      className={cn(
+        'sticky top-0 z-50 transition-all duration-300',
+        opacity > 0 && 'bg-background/80 border-b border-border/50'
+      )}
       style={{
-        backgroundColor: `rgba(255, 255, 255, ${opacity})`,
-        borderBottom: `1px solid rgba(229, 231, 235, ${opacity})`,
         backdropFilter: opacity > 0 && opacity < 1 ? 'blur(8px)' : 'none',
       }}
+      data-opacity={opacity}
     >
       <div className="xl:mx-40 mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
@@ -52,6 +55,7 @@ export const NavBar = () => {
             </Link>
           </div>
           <div className="flex gap-2 items-center">
+            <ThemeToggle />
             <Link href={PagesUrls.REVIEW_CREATE} className={cn(sharedStyles, 'hidden md:flex')}>
               <FilePenLine className="w-4 h-4" />
               Escribir reseña
