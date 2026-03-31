@@ -242,6 +242,7 @@
    * ==================================== */
 
   /* Base system variables */
+  color-scheme: light;
   --radius: 0.75rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -341,6 +342,7 @@
    * ==================================== */
 
   /* Base system dark colors */
+  color-scheme: dark;
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
@@ -353,67 +355,13 @@
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.556 0 0);
 
-  /* REVIUY PRIMARY COLORS - Azul adaptado para dark mode */
-  --reviuy-primary-50: #1e293b; /* Invertido para dark */
-  --reviuy-primary-100: #334155;
-  --reviuy-primary-200: #475569;
-  --reviuy-primary-300: #64748b;
-  --reviuy-primary-400: #94a3b8;
-  --reviuy-primary-500: #60a5fa; /* Más brillante en dark */
-  --reviuy-primary-600: #3b82f6; /* Color principal mantenido */
-  --reviuy-primary-700: #2563eb;
-  --reviuy-primary-800: #1d4ed8;
-  --reviuy-primary-900: #dbeafe;
-  --reviuy-primary-950: #eff6ff; /* Invertido para dark */
-
-  /* REVIUY SECONDARY COLORS - Naranja suavizado para dark */
-  --reviuy-secondary-50: #292524; /* Invertido */
-  --reviuy-secondary-100: #44403c;
-  --reviuy-secondary-200: #57534e;
-  --reviuy-secondary-300: #78716c;
-  --reviuy-secondary-400: #a8a29e;
-  --reviuy-secondary-500: #fb923c; /* Más suave en dark */
-  --reviuy-secondary-600: #f97316;
-  --reviuy-secondary-700: #ea580c;
-  --reviuy-secondary-800: #fdead3;
-  --reviuy-secondary-900: #fef7ee; /* Invertido */
-
-  /* REVIUY SEMANTIC COLORS - Ajustados para dark mode */
-  --reviuy-success-50: #14532d;
-  --reviuy-success-500: #22c55e; /* Más brillante */
-  --reviuy-success-600: #16a34a;
-  --reviuy-success-700: #15803d;
-
-  --reviuy-warning-50: #451a03;
-  --reviuy-warning-500: #fbbf24; /* Más brillante */
-  --reviuy-warning-600: #f59e0b;
-  --reviuy-warning-700: #d97706;
-
-  --reviuy-error-50: #450a0a;
-  --reviuy-error-500: #f87171; /* Más suave en dark */
-  --reviuy-error-600: #ef4444;
-  --reviuy-error-700: #dc2626;
-
-  /* REVIUY NEUTRAL GRAYS - Invertidos para dark mode */
-  --reviuy-gray-50: #030712; /* Casi negro */
-  --reviuy-gray-100: #111827;
-  --reviuy-gray-200: #1f2937;
-  --reviuy-gray-300: #374151;
-  --reviuy-gray-400: #4b5563;
-  --reviuy-gray-500: #6b7280; /* Centro - sin cambio */
-  --reviuy-gray-600: #9ca3af;
-  --reviuy-gray-700: #d1d5db;
-  --reviuy-gray-800: #e5e7eb;
-  --reviuy-gray-900: #f3f4f6;
-  --reviuy-gray-950: #f9fafb; /* Casi blanco */
-
   /* Legacy compatibility - mapear a los nuevos colores dark */
-  --primary: var(--reviuy-primary-500); /* Más brillante en dark */
+  --primary: var(--reviuy-primary-500);
   --primary-foreground: var(--reviuy-gray-950);
-  --secondary: var(--reviuy-gray-200);
-  --secondary-foreground: var(--reviuy-gray-900);
-  --accent: var(--reviuy-gray-200);
-  --accent-foreground: var(--reviuy-gray-900);
+  --secondary: var(--reviuy-gray-800);
+  --secondary-foreground: var(--reviuy-gray-100);
+  --accent: var(--reviuy-gray-800);
+  --accent-foreground: var(--reviuy-gray-100);
   --destructive: var(--reviuy-error-500);
 
   /* Charts y sidebar para dark mode */
@@ -441,6 +389,78 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: var(--foreground);
+    font-family: 'Playfair Display', serif;
+    line-height: 1.2;
+    text-wrap: balance;
+  }
+
+  p,
+  li,
+  small {
+    color: color-mix(in oklab, var(--foreground) 78%, transparent);
+  }
+
+  a {
+    color: var(--reviuy-gray-700);
+    text-underline-offset: 2px;
+    transition: color 150ms ease;
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-sm);
+  }
+
+  a:hover {
+    color: var(--reviuy-gray-900);
+    background-color: var(--reviuy-gray-100);
+  }
+
+  .dark a {
+    color: var(--reviuy-gray-300);
+  }
+
+  .dark a:hover {
+    color: white;
+    background-color: var(--reviuy-gray-800);
+  }
+
+  a[data-variant='destructive']:hover {
+    background-color: var(--reviuy-error-500);
+    color: var(--reviuy-error-50);
+  }
+
+  button {
+    border-radius: var(--radius-md);
+  }
+
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  input,
+  textarea,
+  select {
+    background-color: var(--background);
+    color: var(--foreground);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--muted-foreground);
   }
 }
 
@@ -524,9 +544,4 @@
   .landing-delay-3 {
     animation: none;
   }
-}
-
-h1,
-h2 {
-  font-family: 'Playfair Display', serif;
 }

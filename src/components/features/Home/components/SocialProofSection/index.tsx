@@ -10,28 +10,28 @@ const stats = [
     value: '2,500+',
     label: 'Resenas verificadas',
     color: 'text-reviuy-secondary-500',
-    bgColor: 'bg-reviuy-secondary-50 dark:bg-reviuy-secondary-500/10',
+    bgColor: 'bg-reviuy-secondary-50',
   },
   {
     icon: Building2,
     value: '850+',
     label: 'Edificios registrados',
-    color: 'text-reviuy-primary-600 dark:text-reviuy-primary-400',
-    bgColor: 'bg-reviuy-primary-50 dark:bg-reviuy-primary-500/10',
+    color: 'text-reviuy-primary-600',
+    bgColor: 'bg-reviuy-primary-50',
   },
   {
     icon: Users,
     value: '5,000+',
     label: 'Inquilinos activos',
-    color: 'text-reviuy-success-600 dark:text-reviuy-success-500',
-    bgColor: 'bg-reviuy-success-50 dark:bg-reviuy-success-500/10',
+    color: 'text-reviuy-success-600',
+    bgColor: 'bg-reviuy-success-50',
   },
   {
     icon: Shield,
     value: '100%',
     label: 'Datos protegidos',
-    color: 'text-reviuy-gray-700 dark:text-reviuy-gray-300',
-    bgColor: 'bg-reviuy-gray-100 dark:bg-reviuy-gray-700/50',
+    color: 'text-reviuy-gray-700',
+    bgColor: 'bg-reviuy-gray-100',
   },
 ];
 
@@ -71,14 +71,12 @@ export const SocialProofSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.5 }}
-          className="mb-12 text-center"
+          className="mb-12 text-center "
         >
-          <h2
-            className={`${playfair.className} text-2xl font-bold text-reviuy-gray-900 dark:text-white md:text-3xl`}
-          >
+          <h2 className={`${playfair.className} text-2xl font-bold  md:text-3xl`}>
             La confianza de la comunidad
           </h2>
-          <p className={`${manrope.className} mt-3 text-reviuy-gray-600 dark:text-reviuy-gray-400`}>
+          <p className={`${manrope.className} mt-3`}>
             Miles de uruguayos ya comparten sus experiencias
           </p>
         </motion.div>
@@ -95,23 +93,17 @@ export const SocialProofSection = () => {
               key={stat.label}
               variants={itemVariants}
               whileHover={{ y: -4, transition: { duration: 0.2 } }}
-              className="group flex flex-col items-center rounded-2xl border border-reviuy-gray-200/60 dark:border-reviuy-gray-700/50 bg-white dark:bg-reviuy-gray-800/50 p-6 shadow-sm transition-all duration-300 hover:border-reviuy-gray-300 dark:hover:border-reviuy-gray-600 hover:shadow-lg md:p-8"
+              className="group flex flex-col items-center rounded-2xl border border-reviuy-gray-200/60  dark:bg-reviuy-gray-800/50  p-6 shadow-sm transition-all duration-300 hover:border-reviuy-gray-300 hover:shadow-lg md:p-8"
             >
               <div
                 className={`mb-4 rounded-xl ${stat.bgColor} p-3 transition-transform duration-300 group-hover:scale-110`}
               >
                 <stat.icon className={`h-6 w-6 ${stat.color}`} />
               </div>
-              <span
-                className={`${playfair.className} text-2xl font-bold text-reviuy-gray-900 dark:text-white md:text-3xl`}
-              >
+              <span className={`${playfair.className} text-2xl font-bold  md:text-3xl`}>
                 {stat.value}
               </span>
-              <span
-                className={`${manrope.className} mt-1 text-center text-sm text-reviuy-gray-500 dark:text-reviuy-gray-400`}
-              >
-                {stat.label}
-              </span>
+              <span className={`${manrope.className} mt-1 text-center text-sm`}>{stat.label}</span>
             </motion.div>
           ))}
         </motion.div>

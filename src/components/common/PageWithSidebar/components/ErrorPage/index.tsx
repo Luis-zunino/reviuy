@@ -13,8 +13,8 @@ export const ErrorPage = ({ title, subTitle }: IErrorPageProps) => {
     <div className="container mx-auto p-6 max-w-6xl">
       <Card className="mt-6">
         <CardContent className="p-6 text-center">
-          <p className="text-gray-600 mb-4">{title}</p>
-          <p className="text-gray-400 mb-4">{subTitle}</p>
+          <h6 className="mb-4">{title}</h6>
+          <p className="mb-4">{subTitle}</p>
           <Button onClick={() => window.history.back()} variant="outline">
             Volver atrás
           </Button>

@@ -66,7 +66,7 @@ export const WhySection = () => {
   return (
     <section className="py-16 md:py-24">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div className="rounded-3xl border border-reviuy-gray-200/60 dark:border-reviuy-gray-700/50 bg-white dark:bg-reviuy-gray-800/50 p-8 shadow-sm md:p-12 lg:p-16">
+        <div className="rounded-3xl border border-reviuy-gray-200/60 dark:border-reviuy-gray-700/50  dark:bg-reviuy-gray-800/50 p-8 shadow-sm md:p-12 lg:p-16">
           {/* Header */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -105,7 +105,7 @@ export const WhySection = () => {
                   transition: { duration: 0.25, ease: 'easeOut' },
                 }}
                 className={cn(
-                  'group relative flex flex-col rounded-2xl border bg-white dark:bg-reviuy-gray-800/80 p-6 transition-all duration-300',
+                  'group relative flex flex-col rounded-2xl border  dark:bg-reviuy-gray-800/80 p-6 transition-all duration-300',
                   feature.borderColor,
                   'hover:shadow-lg hover:border-opacity-70'
                 )}

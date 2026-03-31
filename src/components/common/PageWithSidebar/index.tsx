@@ -87,7 +87,7 @@ export const PageWithSidebar: React.FC<PageWithSidebarProps> = (props) => {
             <div className="lg:col-span-1">
               <div
                 className={cn(
-                  'sticky top-20 bg-white rounded-lg border border-border p-6',
+                  'sticky top-20  dark:bg-reviuy-gray-800/50 rounded-lg border border-border p-6',
                   sidebarClassName
                 )}
               >

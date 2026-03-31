@@ -73,36 +73,36 @@ export const NavBar = () => {
                   setIsOpen(false);
                 }}
               >
-                <NavBarItem pageUrl={PagesUrls.HOME} Icon={Home} label="Inicio" />
+                <NavBarItem pageUrl={PagesUrls.HOME} icon={Home} label="Inicio" />
                 <NavBarItem
                   pageUrl={PagesUrls.REAL_ESTATE}
-                  Icon={Building2}
+                  icon={Building2}
                   label="Inmobiliarias"
                 />
-                <NavBarItem pageUrl={PagesUrls.TIPS} Icon={Lightbulb} label="Tips" />
-                <NavBarItem pageUrl={PagesUrls.FAQ} Icon={HelpCircle} label="FAQ" />
+                <NavBarItem pageUrl={PagesUrls.TIPS} icon={Lightbulb} label="Tips" />
+                <NavBarItem pageUrl={PagesUrls.FAQ} icon={HelpCircle} label="FAQ" />
                 <NavBarItem
                   pageUrl={PagesUrls.REVIEW_CREATE}
-                  Icon={FilePenLine}
+                  icon={FilePenLine}
                   label="Escribir reseña"
                 />
                 {isAuthenticated ? (
                   <>
                     <NavBarItem
                       pageUrl={PagesUrls.CONTACT}
-                      Icon={Contact}
+                      icon={Contact}
                       label="Contáctanos"
                       showInDesktop={true}
                     />
                     <NavBarItem
                       pageUrl={PagesUrls.PROFILE}
-                      Icon={UserRoundCog}
+                      icon={UserRoundCog}
                       label="Perfil"
                       showInDesktop={true}
                     />
                     <NavBarItem
                       variant="destructive"
-                      Icon={LogOut}
+                      icon={LogOut}
                       onClick={signOut}
                       label="Cerrar sesión"
                       showInDesktop={true}
@@ -111,7 +111,7 @@ export const NavBar = () => {
                 ) : (
                   <NavBarItem
                     pageUrl={PagesUrls.LOGIN}
-                    Icon={UserRoundCog}
+                    icon={UserRoundCog}
                     label="Iniciar sesión"
                     showInDesktop={true}
                   />

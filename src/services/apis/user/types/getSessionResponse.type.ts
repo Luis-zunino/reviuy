@@ -1,9 +1,5 @@
 import { AuthError } from '@supabase/supabase-js';
-
-export interface AppSession {
-  userId?: string;
-  expiresAt?: number;
-}
+import type { AppSession } from '@/modules/profiles/domain';
 
 export interface UseGetSession {
   session: AppSession | null;

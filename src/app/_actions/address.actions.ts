@@ -25,10 +25,6 @@ export const searchAddressAction = async (
     data: { user },
   } = await supabase.auth.getUser();
 
-  // if (!user) {
-  //   throw createError('UNAUTHORIZED');
-  // }
-
   await withRateLimit(`search-address:${user?.id ?? 'anonymous'}`, 'write');
 
   const params = addressSearchSchema.parse({ query, countrycodes, limit });

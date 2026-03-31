@@ -29,7 +29,7 @@ export const TipsPageComponent = () => {
             href={PagesUrls.TIPS_DETAILS?.replace(':id', tip?.id.toString())}
             className="hover:shadow-lg transition-shadow"
           >
-            <article className="bg-white rounded-lg border border-border overflow-hidden hover:shadow-lg transition-shadow grid grid-cols-1 md:grid-cols-2">
+            <article className="rounded-lg border border-border overflow-hidden hover:shadow-lg transition-shadow grid grid-cols-1 md:grid-cols-2">
               <div className="p-6 md:col-span-2 flex flex-col justify-between">
                 <div>
                   <div className="flex items-center gap-3 mb-3">

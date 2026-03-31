@@ -1,5 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
-import { isReviewFavorite } from './isReviewFavorite.api';
+import { supabaseClient } from '@/lib/supabase';
+import {
+  createIsReviewFavoriteQuery,
+  SupabasePropertyReviewReadRepository,
+} from '@/modules/property-reviews';
+
+const propertyReviewReadRepository = new SupabasePropertyReviewReadRepository(supabaseClient);
+const isReviewFavorite = createIsReviewFavoriteQuery({
+  propertyReviewReadRepository,
+});
 
 export interface UseIsReviewFavoriteProps {
   reviewId: string;

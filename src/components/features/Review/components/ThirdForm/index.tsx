@@ -41,7 +41,7 @@ export const ThirdForm = (props: ThirdFormProps) => {
                 onOpenChange={setIsModalOpen}
                 showModal={showModal}
                 triggerComponentModal={() => (
-                  <div className="z-10 mt-1 w-full min-w-87.5 rounded-md bg-white">
+                  <div className="z-10 mt-1 w-full min-w-87.5 rounded-md ">
                     <div className="p-4 text-center">
                       <Building2 className="h-8 w-8 text-gray-400 mx-auto mb-2" />
                       <p className="text-sm text-gray-600 mb-3">

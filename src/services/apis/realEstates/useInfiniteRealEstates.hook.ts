@@ -1,8 +1,14 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { RealEstateWitheVotes } from '@/types';
-import { getAllRealEstatesPaginated } from './getAllRealEstatesPaginated.api';
+import { supabaseClient } from '@/lib/supabase';
+import {
+  createGetAllRealEstatesPaginatedQuery,
+  SupabaseRealEstateReadRepository,
+} from '@/modules/real-estates';
 
 const DEFAULT_LIMIT = 10;
+const repository = new SupabaseRealEstateReadRepository(supabaseClient);
+const getAllRealEstatesPaginated = createGetAllRealEstatesPaginatedQuery({ repository });
 
 export interface UseInfiniteRealEstatesParams {
   search?: string | null;

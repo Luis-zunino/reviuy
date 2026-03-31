@@ -31,12 +31,12 @@ export const ViewRealEstateDetailsHeader = (props: ViewRealEstateDetailsHeaderPr
         <CardContent>
           <div className="flex justify-between gap-6">
             <div className="space-y-4 sm:w-1/2">
-              <h3 className="font-semibold text-gray-900 mb-3">{realEstate?.name}</h3>
+              <h3 className="font-semibold mb-3">{realEstate?.name}</h3>
               <div className="flex items-center gap-3">
-                <div className="text-3xl font-bold text-gray-900">{averageRating.toFixed(1)}</div>
+                <div className="text-3xl font-bold">{averageRating.toFixed(1)}</div>
                 <div>
                   <StarRatingDisplay rating={averageRating} />
-                  <p className="text-sm text-gray-600 mt-1">
+                  <p className="text-sm mt-1">
                     {amountReviews} {amountReviews === 1 ? 'reseña' : 'reseñas'}
                   </p>
                 </div>
@@ -46,7 +46,7 @@ export const ViewRealEstateDetailsHeader = (props: ViewRealEstateDetailsHeaderPr
               <div className="mt-4 grid grid-cols-1 gap-2">
                 <FavoriteRealEstateButton realEstateId={realEstateId} showText />
                 {realEstate ? <ReportRealEstateButton realEstate={realEstate} showText /> : null}
-                {!hasRealEstateReview ? (
+                {hasRealEstateReview ? null : (
                   <Button
                     onClick={handleOnCreateReview}
                     className="max-w-min"
@@ -55,14 +55,14 @@ export const ViewRealEstateDetailsHeader = (props: ViewRealEstateDetailsHeaderPr
                   >
                     <span className="hidden sm:inline">Crea tu reseña</span>
                   </Button>
-                ) : null}
+                )}
               </div>
             </div>
           </div>
         </CardContent>
       </Card>
       <div className="flex flex-col mx-auto items-center">
-        <p className="text-sm text-gray-600 mb-2">¿Recomendarías esta inmobiliaria?</p>
+        <p className="text-sm mb-2">¿Recomendarías esta inmobiliaria?</p>
         <RealEstateVoteButtons
           realEstateId={realEstateId}
           likes={realEstate?.likes ?? 0}

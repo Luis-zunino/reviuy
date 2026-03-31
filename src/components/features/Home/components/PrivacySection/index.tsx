@@ -160,17 +160,16 @@ export const PrivacySection = () => {
                 <motion.div
                   whileHover={{ scale: 1.05 }}
                   transition={{ duration: 0.3 }}
-                  className="relative flex h-48 w-48 items-center justify-center rounded-3xl border border-reviuy-gray-200/60 dark:border-reviuy-gray-700/50 bg-white dark:bg-reviuy-gray-800/80 shadow-xl shadow-reviuy-primary-100/20 dark:shadow-reviuy-primary-900/10 md:h-64 md:w-64"
+                  className="relative flex h-48 w-48 items-center justify-center rounded-3xl border border-reviuy-gray-200/60 dark:border-reviuy-gray-700/50  dark:bg-reviuy-gray-800/80 shadow-xl shadow-reviuy-primary-100/20 dark:shadow-reviuy-primary-900/10 md:h-64 md:w-64"
                 >
                   <Shield className="h-24 w-24 text-reviuy-primary-500 dark:text-reviuy-primary-400 md:h-32 md:w-32" />
-
                   {/* Floating badges */}
                   <motion.div
                     initial={{ opacity: 0, x: 20 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.5, delay: 0.4 }}
-                    className="absolute -right-4 -top-4 flex items-center gap-1.5 rounded-full border border-reviuy-success-200 dark:border-reviuy-success-500/30 bg-white dark:bg-reviuy-gray-800 px-3 py-1.5 shadow-lg md:-right-6"
+                    className="absolute -right-4 -top-4 flex items-center gap-1.5 rounded-full border border-reviuy-success-200 dark:border-reviuy-success-500/30  dark:bg-reviuy-gray-800 px-3 py-1.5 shadow-lg md:-right-6"
                   >
                     <CheckCircle2 className="h-4 w-4 text-reviuy-success-500" />
                     <span
@@ -185,7 +184,7 @@ export const PrivacySection = () => {
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.5, delay: 0.5 }}
-                    className="absolute -bottom-4 -left-4 flex items-center gap-1.5 rounded-full border border-reviuy-primary-200 dark:border-reviuy-primary-500/30 bg-white dark:bg-reviuy-gray-800 px-3 py-1.5 shadow-lg md:-left-6"
+                    className="absolute -bottom-4 -left-4 flex items-center gap-1.5 rounded-full border border-reviuy-primary-200 dark:border-reviuy-primary-500/30  dark:bg-reviuy-gray-800 px-3 py-1.5 shadow-lg md:-left-6"
                   >
                     <Lock className="h-4 w-4 text-reviuy-primary-500 dark:text-reviuy-primary-400" />
                     <span

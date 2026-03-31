@@ -6,7 +6,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import React from 'react';
 import type { FAQSidebarProps } from './types';
 
 export const FAQSidebar = (props: FAQSidebarProps) => {
@@ -48,7 +47,7 @@ export const FAQSidebar = (props: FAQSidebarProps) => {
               }`}
               variant="ghost"
             >
-              <span className="group-hover:font-medium">{getCategoryLabel(category)}</span>
+              <span className="group-hover:font-medium p-1">{getCategoryLabel(category)}</span>
             </Button>
           ))}
         </div>

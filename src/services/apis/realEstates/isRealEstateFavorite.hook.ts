@@ -1,5 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
-import { isRealEstateFavorite } from './isRealEstateFavorite.api';
+import { supabaseClient } from '@/lib/supabase';
+import {
+  createIsRealEstateFavoriteQuery,
+  SupabaseRealEstateReadRepository,
+} from '@/modules/real-estates';
+
+const repository = new SupabaseRealEstateReadRepository(supabaseClient);
+const isRealEstateFavorite = createIsRealEstateFavoriteQuery({ repository });
 
 export interface UseIsRealEstateFavoriteProps {
   realEstateId: string;
