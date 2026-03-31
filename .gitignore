@@ -43,6 +43,7 @@ next-env.d.ts
 
 .sonarlint
 
+connectedMode.json
 .github
 
 .env.local

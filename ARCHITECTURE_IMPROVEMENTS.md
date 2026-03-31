@@ -4,6 +4,24 @@
 
 Se implementaron mejoras arquitecturales críticas en el proyecto, específicamente en el manejo de errores, validación de datos y centralización de esquemas.
 
+## ✅ Actualizacion Marzo 2026: Migracion Modular
+
+Ademas de las mejoras base de errores y validacion, el proyecto ya incorporo una migracion modular activa en src/modules.
+
+Estado actual consolidado:
+
+- property-reviews y real-estates operan con commands, queries y repositorios propios
+- addresses expone busqueda por nombre y detalle de direccion desde el modulo
+- moderation centraliza reportes y ya esta conectado a server actions y API routes
+- profiles centraliza auth, session, delete-account, reseñas propias y favoritos del usuario
+- content ya es owner del flujo de contacto
+
+Pendientes funcionales principales:
+
+- consolidar resumen del usuario en profiles
+- extender content hacia FAQ, tips y contenido institucional
+- seguir retirando adaptadores legacy que hoy solo delegan a los modulos
+
 ## ✅ Punto 1: Sistema de Errores Personalizados
 
 ### Archivos Creados

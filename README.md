@@ -103,6 +103,22 @@ yarn security:owasp
 - Tipos de dominio: src/types/
 - SQL y migraciones: supabase/migrations/
 
+## Estado Arquitectonico
+
+La aplicacion ya esta en una migracion activa hacia monolito modular por dominio.
+
+Estado actual resumido:
+
+- property-reviews y real-estates ya operan con commands, queries y repositorios propios
+- addresses ya es owner de la busqueda por nombre y del detalle de direccion
+- moderation ya centraliza reportes conectados a server actions y API routes
+- profiles ya centraliza auth, session, delete-account, reseñas propias y favoritos del usuario
+- content ya centraliza el flujo de contacto
+
+Todavia existe codigo legacy en src/services/apis y otros entrypoints, pero cada vez mas como capa adaptadora que delega a src/modules.
+
+Ver detalle en [src/modules/README.md](src/modules/README.md) y [docs/architecture/MIGRATION_PLAN_TOWARD_TARGET_ARCHITECTURE.md](docs/architecture/MIGRATION_PLAN_TOWARD_TARGET_ARCHITECTURE.md).
+
 ## Documentacion
 
 - Centro de documentacion: [docs/README.md](docs/README.md)
@@ -111,6 +127,7 @@ yarn security:owasp
 - Seguridad: [security.readme.md](security.readme.md)
 - Rate limiting: [docs/security/RATE_LIMITING_IMPLEMENTATION.md](docs/security/RATE_LIMITING_IMPLEMENTATION.md)
 - Mejoras de arquitectura: [docs/architecture/ARCHITECTURE_IMPROVEMENTS.md](docs/architecture/ARCHITECTURE_IMPROVEMENTS.md)
+- Estado de modulos: [src/modules/README.md](src/modules/README.md)
 - Despliegue por entorno: [docs/operations/DEPLOYMENT.md](docs/operations/DEPLOYMENT.md)
 - Branching y releases: [docs/process/BRANCHING_AND_RELEASES.md](docs/process/BRANCHING_AND_RELEASES.md)
 - Runbook de incidentes: [docs/operations/INCIDENT_RUNBOOK.md](docs/operations/INCIDENT_RUNBOOK.md)

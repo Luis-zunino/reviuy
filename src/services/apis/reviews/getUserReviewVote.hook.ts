@@ -1,8 +1,17 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
+import { supabaseClient } from '@/lib/supabase';
 import { VoteType } from '@/types';
 import { REVIEW_KEYS } from '@/services/constants';
-import { getUserReviewVote } from './getUserReviewVote.api';
+import {
+  createGetUserReviewVoteQuery,
+  SupabasePropertyReviewReadRepository,
+} from '@/modules/property-reviews';
 import type { GetUserReviewVoteParams } from './types';
+
+const propertyReviewReadRepository = new SupabasePropertyReviewReadRepository(supabaseClient);
+const getUserReviewVote = createGetUserReviewVoteQuery({
+  propertyReviewReadRepository,
+});
 
 export const useGetReviewVote = ({
   reviewId,

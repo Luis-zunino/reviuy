@@ -24,7 +24,7 @@ export const RealEstateReviewTabContent = (props: RealEstateReviewTabContentProp
             {realEstateReview?.length === 0 ? (
               <div className="text-center py-8">
                 <MessageSquare className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-600 mb-4">Aún no hay reseñas para esta inmobiliaria</p>
+                <p className="mb-4">Aún no hay reseñas para esta inmobiliaria</p>
                 <Button
                   onClick={() =>
                     push(PagesUrls.REAL_ESTATE_CREATE_REVIEW.replace(':id', realEstateId))
@@ -44,7 +44,7 @@ export const RealEstateReviewTabContent = (props: RealEstateReviewTabContentProp
                       <div className="flex gap-2">
                         <div className="flex-1 min-w-0">
                           <h4 className="font-medium text-gray-900 mb-1 truncate">{rer.title}</h4>
-                          <p className="text-gray-600 mb-2 truncate">{rer.description}</p>
+                          <p className="mb-2 truncate">{rer.description}</p>
                           <StarRatingDisplay rating={rer.rating ?? 0} />
                         </div>
                         <div className="grid grid-cols-1 gap-2 ml-auto">

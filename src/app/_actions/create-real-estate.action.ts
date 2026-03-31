@@ -1,51 +1,19 @@
 'use server';
 
-import { withRateLimit, createError, handleSupabaseError } from '@/lib';
-import { createSupabaseServerClient } from '@/lib/supabase/server';
-import { formCreateRealEstateSchema } from '@/schemas';
-import { ZodError } from 'zod';
+import {
+  createCreateRealEstateUseCase,
+  SupabaseRealEstateCommandRepository,
+} from '@/modules/real-estates';
+import { createModerationDeps } from './utils';
 
-// Nota: input es 'unknown' intencionalmente. Nunca confiar en datos del cliente.
-// Zod validará y convertirá a tipo seguro.
 export async function createRealEstateAction(input: unknown) {
-  const supabase = await createSupabaseServerClient();
+  const { supabase, getCurrentUserId, rateLimit } = await createModerationDeps();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const createRealEstateUseCase = createCreateRealEstateUseCase({
+    getCurrentUserId,
+    rateLimit,
+    repository: new SupabaseRealEstateCommandRepository(supabase),
+  });
 
-  if (!user) {
-    throw createError('UNAUTHORIZED');
-  }
-
-  // 🔥 RATE LIMIT
-  await withRateLimit(`create-real-estate:${user.id}`, 'write');
-
-  // Validar input
-  let validatedData;
-  try {
-    validatedData = formCreateRealEstateSchema.parse(input);
-  } catch (error) {
-    if (error instanceof ZodError) {
-      const firstError = error.issues[0];
-      throw createError('VALIDATION_ERROR', `${firstError.path.join('.')}: ${firstError.message}`);
-    }
-    throw error;
-  }
-
-  // Insertar en la base de datos - mapear real_estate_name a name
-  const { data: realEstate, error } = await supabase
-    .from('real_estates')
-    .insert({
-      name: validatedData.real_estate_name,
-      created_by: user.id,
-    })
-    .select()
-    .single();
-
-  if (error) {
-    throw handleSupabaseError(error);
-  }
-
-  return realEstate;
+  return createRealEstateUseCase(input);
 }

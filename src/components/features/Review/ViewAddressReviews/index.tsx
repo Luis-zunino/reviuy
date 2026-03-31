@@ -18,7 +18,7 @@ export const ViewAddressReviews = () => {
       title="Reseñas de la dirección"
       description="Lee las reseñas de otros usuarios sobre esta dirección o comparte tu experiencia"
     >
-      <div className="lg:px-14 lg:pb:-14 bg-white pb-4 mb-11 lg:mb-0">
+      <div className="lg:px-14 lg:pb:-14 pb-4 mb-11 lg:mb-0">
         <div className="flex flex-col gap-2 mb-7">
           <h1 className="text-2xl lg:text-3xl  font-secondary">
             {address?.road ? `${address.road},` : ''}{' '}

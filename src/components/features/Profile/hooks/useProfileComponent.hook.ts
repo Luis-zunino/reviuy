@@ -1,17 +1,18 @@
 import { useState } from 'react';
 import {
-  useGetReviewByUserId,
-  useGetUserFavoriteRealEstates,
-  useGetUserFavoriteReviews,
+  useGetCurrentUserFavoriteRealEstates,
+  useGetCurrentUserFavoriteReviews,
+  useGetCurrentUserReviews,
 } from '@/services';
 import { useRouter } from 'next/navigation';
 
 export const useProfileComponent = () => {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('reviews');
-  const { data: reviews, isLoading: loadingReviews, error, refetch } = useGetReviewByUserId();
-  const { data: favorites, isLoading: loadingFavorites } = useGetUserFavoriteRealEstates();
-  const { data: favoriteReviews, isLoading: loadingFavoriteReviews } = useGetUserFavoriteReviews();
+  const { data: reviews, isLoading: loadingReviews, error, refetch } = useGetCurrentUserReviews();
+  const { data: favorites, isLoading: loadingFavorites } = useGetCurrentUserFavoriteRealEstates();
+  const { data: favoriteReviews, isLoading: loadingFavoriteReviews } =
+    useGetCurrentUserFavoriteReviews();
 
   return {
     reviews,

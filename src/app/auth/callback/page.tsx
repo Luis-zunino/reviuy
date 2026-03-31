@@ -5,7 +5,13 @@ import { useRouter } from 'next/navigation';
 import { PagesUrls } from '@/enums';
 import { Loader } from '@/components/common/Loaders';
 import { toast } from 'sonner';
-import { getSession } from '@/services/apis/user/getSession.api';
+import { createGetSessionQuery } from '@/modules/profiles/application';
+import { SupabaseProfileAuthReadRepository } from '@/modules/profiles/infrastructure';
+
+const profileAuthReadRepository = new SupabaseProfileAuthReadRepository();
+const getSession = createGetSessionQuery({
+  profileAuthReadRepository,
+});
 
 export default function AuthCallback() {
   const router = useRouter();
@@ -14,7 +20,7 @@ export default function AuthCallback() {
   useEffect(() => {
     const handleAuthCallback = async () => {
       try {
-        const { session, error } = await getSession();
+        const { session, error } = await getSession({});
 
         if (error) {
           console.error('Error durante la autenticación:', error);

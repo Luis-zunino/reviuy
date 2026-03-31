@@ -1,4 +1,4 @@
-import { EMAIL_REGEX } from '@/constants';
+import { EMAIL_REGEX } from '@/constants/email_regex.constant';
 import { z } from 'zod';
 
 export const contactApiSchema = z.object({

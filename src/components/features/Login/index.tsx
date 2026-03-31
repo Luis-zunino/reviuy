@@ -29,7 +29,7 @@ export const Login = () => {
           <span className="w-full border-t" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-white px-2 text-gray-500">O continúa con</span>
+          <span className="px-2 text-gray-500">O continúa con</span>
         </div>
       </div>
 

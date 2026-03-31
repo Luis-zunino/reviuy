@@ -19,7 +19,6 @@ import {
 export const Home = () => {
   return (
     <div className={`${manrope.className} relative flex flex-col`}>
-      <div className="pointer-events-none fixed inset-0 -z-20 bg-[radial-gradient(ellipse_at_top,rgba(239,246,255,0.5),transparent_50%)]" />
       <HeroSection />
       <SocialProofSection />
       <WhySection />

@@ -1,14 +1,21 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
+import { supabaseClient } from '@/lib/supabase';
 import { VoteType } from '@/types';
-import { getUserRealEstateVote } from './getUserRealEstateVote.api';
 import { REAL_ESTATE_REVIEWS } from '@/services/constants';
+import {
+  createGetUserRealEstateVoteQuery,
+  SupabaseRealEstateReadRepository,
+} from '@/modules/real-estates';
 
-export interface useGetUserRealEstateVoteParams {
+const repository = new SupabaseRealEstateReadRepository(supabaseClient);
+const getUserRealEstateVote = createGetUserRealEstateVoteQuery({ repository });
+
+export interface GetUserRealEstateVoteParams {
   realEstateId: string;
 }
 export const useGetUserRealEstateVote = ({
   realEstateId,
-}: useGetUserRealEstateVoteParams): UseQueryResult<VoteType | null> => {
+}: GetUserRealEstateVoteParams): UseQueryResult<VoteType | null> => {
   return useQuery({
     queryKey: [REAL_ESTATE_REVIEWS.getUserRealEstateVote, realEstateId],
     queryFn: () => getUserRealEstateVote({ realEstateId }),

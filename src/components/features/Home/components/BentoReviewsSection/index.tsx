@@ -93,7 +93,7 @@ const ReviewCard = ({ review, className }: ReviewCardProps) => {
         transition: { duration: 0.25, ease: 'easeOut' },
       }}
       className={cn(
-        'group relative flex flex-col rounded-2xl border border-zinc-200/50 dark:border-zinc-700/50 bg-white dark:bg-reviuy-gray-800/50 p-5 shadow-sm transition-all duration-300',
+        'group relative flex flex-col rounded-2xl border border-zinc-200/50 dark:border-zinc-700/50  dark:bg-reviuy-gray-800/50 p-5 shadow-sm transition-all duration-300',
         'hover:border-zinc-300/70 dark:hover:border-zinc-600/70 hover:shadow-lg',
         className
       )}
@@ -103,9 +103,9 @@ const ReviewCard = ({ review, className }: ReviewCardProps) => {
 
       {/* Rating */}
       <div className="mb-3 flex items-center gap-1">
-        {[...Array(5)].map((_, i) => (
+        {new Array(5).map((element, i) => (
           <Star
-            key={i}
+            key={element}
             className={cn(
               'h-4 w-4',
               i < review.rating
@@ -116,14 +116,12 @@ const ReviewCard = ({ review, className }: ReviewCardProps) => {
         ))}
       </div>
 
-      {/* Title */}
       <h3
         className={`${manrope.className} mb-2 text-base font-semibold text-reviuy-gray-900 dark:text-white line-clamp-2`}
       >
         {review.title}
       </h3>
 
-      {/* Excerpt */}
       <p
         className={`${manrope.className} mb-4 flex-1 text-sm leading-relaxed text-reviuy-gray-600 dark:text-reviuy-gray-400 line-clamp-3`}
       >

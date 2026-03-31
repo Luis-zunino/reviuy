@@ -1,7 +1,14 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import type { RealEstateReviewWithVotes } from '@/types';
 import { REAL_ESTATE_REVIEWS } from '@/services/constants';
-import { getRealEstateReviewByUserIdApi } from './getRealEstateReviewByUserId.api';
+import { supabaseClient } from '@/lib/supabase';
+import {
+  createGetRealEstateReviewByUserIdQuery,
+  SupabaseRealEstateReadRepository,
+} from '@/modules/real-estates';
+
+const repository = new SupabaseRealEstateReadRepository(supabaseClient);
+const getRealEstateReviewByUserId = createGetRealEstateReviewByUserIdQuery({ repository });
 
 export const useGetRealEstateReviewByUserId = ({
   realEstateId,
@@ -10,7 +17,7 @@ export const useGetRealEstateReviewByUserId = ({
 }): UseQueryResult<RealEstateReviewWithVotes | null> => {
   return useQuery({
     queryKey: [REAL_ESTATE_REVIEWS.getRealEstateReviewByUserId, realEstateId],
-    queryFn: () => getRealEstateReviewByUserIdApi({ realEstateId }),
+    queryFn: () => getRealEstateReviewByUserId({ realEstateId }),
     enabled: Boolean(realEstateId),
   });
 };

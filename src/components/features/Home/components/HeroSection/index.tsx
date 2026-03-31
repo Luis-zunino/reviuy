@@ -21,7 +21,7 @@ export const HeroSection = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: 'easeOut' }}
-            className={`${manrope.className} mb-6 inline-flex items-center gap-2 rounded-full border border-reviuy-primary-200/60 dark:border-reviuy-primary-500/30 bg-white/80 dark:bg-reviuy-gray-800/80 px-5 py-2.5 text-sm font-medium text-reviuy-primary-700 dark:text-reviuy-primary-400 shadow-sm backdrop-blur-sm`}
+            className={`${manrope.className} mb-6 inline-flex items-center gap-2 rounded-full border border-reviuy-primary-200/60 dark:border-reviuy-primary-500/30 /80 dark:bg-reviuy-gray-800/80 px-5 py-2.5 text-sm font-medium text-reviuy-primary-700 dark:text-reviuy-primary-400 shadow-sm backdrop-blur-sm`}
           >
             <span className="h-2 w-2 rounded-full bg-reviuy-success-500 animate-pulse" />
             La comunidad de inquilinos de Uruguay
@@ -63,7 +63,7 @@ export const HeroSection = () => {
             transition={{ duration: 0.6, delay: 0.4, ease: 'easeOut' }}
             className="w-full max-w-2xl"
           >
-            <div className="rounded-2xl border border-reviuy-gray-200/80 dark:border-reviuy-gray-700/60 bg-white dark:bg-reviuy-gray-800/90 p-2 shadow-xl shadow-reviuy-primary-100/30 dark:shadow-reviuy-primary-900/20 transition-shadow duration-300 hover:shadow-2xl hover:shadow-reviuy-primary-100/40 dark:hover:shadow-reviuy-primary-900/30">
+            <div className="rounded-2xl border border-reviuy-gray-200/80 dark:border-reviuy-gray-700/60  dark:bg-reviuy-gray-800/90 p-2 shadow-xl shadow-reviuy-primary-100/30 dark:shadow-reviuy-primary-900/20 transition-shadow duration-300 hover:shadow-2xl hover:shadow-reviuy-primary-100/40 dark:hover:shadow-reviuy-primary-900/30">
               <SearcherAddressHomeSection />
             </div>
             <motion.p
