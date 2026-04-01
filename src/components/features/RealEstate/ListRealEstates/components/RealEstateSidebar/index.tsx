@@ -1,4 +1,3 @@
-import React from 'react';
 import { Filter } from 'lucide-react';
 import { StarRatingInput } from '@/components/common';
 import { Button } from '@/components/ui/button';

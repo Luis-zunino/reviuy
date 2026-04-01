@@ -1,10 +1,11 @@
 'use client';
 
-import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Heart } from 'lucide-react';
-import { useToggleFavoriteRealEstate } from '@/services/apis/realEstates/toggleFavoriteRealEstate.hook';
-import { useIsRealEstateFavorite } from '@/services/apis/realEstates/isRealEstateFavorite.hook';
+import {
+  useToggleFavoriteRealEstate,
+  useIsRealEstateFavorite,
+} from '@/modules/real-estates/presentation';
 import type { FavoriteRealEstateButtonProps } from './types';
 
 export const FavoriteRealEstateButton: React.FC<FavoriteRealEstateButtonProps> = ({

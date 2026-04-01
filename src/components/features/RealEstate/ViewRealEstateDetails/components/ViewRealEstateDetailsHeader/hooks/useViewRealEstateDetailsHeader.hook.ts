@@ -4,7 +4,7 @@ import {
   useGetRealEstateById,
   useGetRealEstateReviewByUserId,
   useGetUserRealEstateVote,
-} from '@/services';
+} from '@/modules/real-estates';
 import { useParams, useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 

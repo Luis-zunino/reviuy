@@ -1,7 +1,7 @@
 import { createError } from '@/lib';
 import type { UseCaseHandler } from '@/shared/kernel/contracts';
 import { z } from 'zod';
-import type { VoteRealEstateInput, VoteRealEstateOutput } from '../../domain';
+import { type VoteRealEstateInput, type VoteRealEstateOutput } from '../../domain';
 import { RealEstateCommandoBase } from './interfaces';
 import { VoteType } from '@/types';
 
@@ -10,6 +10,13 @@ const voteRealEstateInputSchema = z.object({
   voteType: z.enum([VoteType.LIKE, VoteType.DISLIKE]),
 });
 
+/**
+ * Creates a Use Case Handler for a user to vote (Like or Dislike) on a real estate agency.
+ * This interaction helps in calculating the overall reputation and trustworthiness of the agency.
+ *
+ * @param dependencies - Repository and access control dependencies.
+ * @returns A function that processes the real estate vote.
+ */
 export const createVoteRealEstateUseCase = (
   dependencies: RealEstateCommandoBase
 ): UseCaseHandler<VoteRealEstateInput, VoteRealEstateOutput> => {

@@ -1,4 +1,4 @@
-import { handleSupabaseError } from '@/lib/errors';
+import { createError, handleSupabaseError } from '@/lib/errors';
 import { supabaseClient } from '@/lib/supabase/client';
 import type {
   GetRealEstateByIdInput,
@@ -147,7 +147,7 @@ export class SupabaseRealEstateReadRepository implements RealEstateReadRepositor
     const userId = user?.id ?? null;
 
     if (!userId) {
-      throw new Error('Usuario no autenticado');
+      throw createError('UNAUTHORIZED', 'Usuario no autenticado');
     }
 
     const { data, error } = await this.supabase

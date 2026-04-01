@@ -1,4 +1,4 @@
-import type { ReviewWithVotesPublic } from '@/types';
+import { ReviewWithVotesPublic } from '@/modules/property-reviews';
 
 export interface UseReportReviewButtonProps {
   review: ReviewWithVotesPublic;

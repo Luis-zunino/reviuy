@@ -4,8 +4,6 @@ import { useEffect, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { useParams, useRouter } from 'next/navigation';
-import { useCreateReview, useUpdateReview, useCheckUserReviewForAddress } from '@/services';
-import type { NominatimEntity, RealEstateWitheVotes } from '@/types';
 import { PagesUrls } from '@/enums';
 import type { UseCreateOrUpdateReviewFormProps } from './types';
 import { useAuthContext } from '@/components/providers/AuthProvider';
@@ -13,6 +11,13 @@ import { formReviewSchema, FormReviewSchema } from '@/schemas';
 import { formatDataToBackend, getDefaultValues } from '../utils';
 import { getAddressOsmId } from '@/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  useCheckUserReviewForAddress,
+  useCreateReview,
+  useUpdateReview,
+} from '@/modules/property-reviews';
+import { NominatimEntity } from '@/modules/addresses';
+import { RealEstateWitheVotes } from '@/modules/real-estates';
 
 export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormProps) => {
   const { defaultValues } = props;

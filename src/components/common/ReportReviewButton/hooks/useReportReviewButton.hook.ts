@@ -1,4 +1,4 @@
-import { useHasUserReportedReview, useReportReview } from '@/services';
+import { useHasUserReportedReview, useReportReview } from '@/modules/property-reviews/presentation';
 import React, { useState } from 'react';
 import { validateText } from '@/utils';
 import { toast } from 'sonner';

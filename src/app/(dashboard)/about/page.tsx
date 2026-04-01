@@ -2,13 +2,14 @@ import Link from 'next/link';
 import { ArrowLeft, Target, Eye, Users, Heart, Shield, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PagesUrls } from '@/enums';
-import { Metadata } from 'next';
+import { generatePageMetadata } from '@/lib/metadata';
 
-export const metadata: Metadata = {
+export const metadata = generatePageMetadata({
   title: 'Sobre Nosotros | ReviUy',
   description:
     'Conoce más sobre ReviUy, la plataforma de reseñas de alquileres en Uruguay. Nuestra misión, visión y equipo.',
-};
+  path: '/about',
+});
 
 export default function AboutPage() {
   return (

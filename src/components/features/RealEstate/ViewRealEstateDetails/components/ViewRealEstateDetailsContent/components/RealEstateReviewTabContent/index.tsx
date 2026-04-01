@@ -4,7 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { TabsContent } from '@/components/ui/tabs';
 import { PagesUrls } from '@/enums';
-import { RealEstateReviewWithVotesPublic } from '@/types';
+import { RealEstateReviewWithVotesPublic } from '@/modules/real-estates';
 import { Calendar, Eye, MessageSquare, Pencil, ThumbsDown, ThumbsUp } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 

@@ -6,9 +6,10 @@ import type {
   UseFormHandleSubmit,
   UseFormReturn,
 } from 'react-hook-form';
-import type { NominatimEntity, RealEstateWitheVotes } from '@/types';
 import { Dispatch, SetStateAction } from 'react';
 import { FormReviewSchema } from '@/schemas';
+import { NominatimEntity } from '@/modules/addresses';
+import { RealEstateWitheVotes } from '@/modules/real-estates';
 
 export interface ReviewFormProps {
   isLoading?: boolean;

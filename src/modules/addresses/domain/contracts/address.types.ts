@@ -1,4 +1,49 @@
-import type { NominatimByOsmId, NominatimEntity } from '@/types';
+import { OsmType } from '@/enums';
+
+export interface NominatimEntity {
+  place_id: number;
+  licence: string;
+  osm_type: OsmType;
+  osm_id: number;
+  lat: string;
+  lon: string;
+  class: string;
+  type: string;
+  place_rank: number;
+  importance: number;
+  addresstype: string;
+  name?: string;
+  display_name: string;
+  boundingbox: string[];
+}
+
+export interface NominatimByOsmId {
+  address: {
+    'ISO3166-2-lvl4': string;
+    city: string;
+    country: string;
+    country_code: string;
+    house_number: string;
+    postcode: string;
+    road: string;
+    state: string;
+    suburb: string;
+  };
+  addresstype: string;
+  boundingbox: string[];
+  class: string;
+  display_name: string;
+  importance: number;
+  lat: string;
+  licence: string;
+  lon: string;
+  name: string;
+  osm_id: number;
+  osm_type: OsmType;
+  place_id: number;
+  place_rank: number;
+  type: string;
+}
 
 export interface SearchAddressByNameInput {
   query: string;

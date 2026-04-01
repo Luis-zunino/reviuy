@@ -1,8 +1,8 @@
-import { handleSupabaseError } from '@/lib';
+import { createError, handleSupabaseError } from '@/lib';
 import type { createSupabaseServerClient } from '@/lib/supabase/server';
 import type {
   CreateRealEstateInput,
-  CreateRealEstateOutput,
+  RealEstate,
   VoteRealEstateInput,
   VoteRealEstateOutput,
   ToggleFavoriteRealEstateInput,
@@ -23,13 +23,13 @@ type SupabaseServerClient = Awaited<ReturnType<typeof createSupabaseServerClient
 export class SupabaseRealEstateCommandRepository implements RealEstateCommandRepository {
   constructor(private readonly supabase: SupabaseServerClient) {}
 
-  async create(input: CreateRealEstateInput): Promise<CreateRealEstateOutput> {
+  async create(input: CreateRealEstateInput): Promise<RealEstate> {
     const {
       data: { user },
     } = await this.supabase.auth.getUser();
 
     if (!user) {
-      throw new Error('UNAUTHORIZED');
+      throw createError('UNAUTHORIZED', 'No autorizado');
     }
 
     const { data: realEstate, error } = await this.supabase

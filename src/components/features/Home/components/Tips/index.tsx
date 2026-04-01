@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { PagesUrls } from '@/enums';
 import { manrope, playfair } from '@/constants';
 import { cn } from '@/lib/utils';
-import { tips } from '@/services/mocks/tips.mock';
+import { tips } from '@/modules/content/data';
 import { ShieldCheck, ArrowRight, Home, Handshake, Scale } from 'lucide-react';
 import Link from 'next/link';
 
@@ -52,7 +52,7 @@ export const Tips = () => {
         <div
           className={cn(
             'overflow-hidden rounded-3xl border border-reviuy-gray-200/60 dark:border-reviuy-gray-700/50 p-8 shadow-sm md:p-12',
-            'bg-gradient-to-br from-white via-reviuy-secondary-50/20 to-reviuy-primary-50/30',
+            'bg-linear-to-br from-white via-reviuy-secondary-50/20 to-reviuy-primary-50/30',
             'dark:from-reviuy-gray-800 dark:via-reviuy-secondary-900/10 dark:to-reviuy-primary-900/10'
           )}
         >

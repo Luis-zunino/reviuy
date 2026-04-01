@@ -1,5 +1,4 @@
 import { ViewAddressReviews } from '@/components/features/Review/ViewAddressReviews';
-import React from 'react';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {

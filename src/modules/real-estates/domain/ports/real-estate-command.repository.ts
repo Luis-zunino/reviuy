@@ -1,6 +1,6 @@
 import type {
   CreateRealEstateInput,
-  CreateRealEstateOutput,
+  RealEstate,
   VoteRealEstateInput,
   VoteRealEstateOutput,
   ToggleFavoriteRealEstateInput,
@@ -16,7 +16,7 @@ import type {
 } from '../contracts/real-estate.types';
 
 export interface RealEstateCommandRepository {
-  create(input: CreateRealEstateInput): Promise<CreateRealEstateOutput>;
+  create(input: CreateRealEstateInput): Promise<RealEstate>;
   vote(input: VoteRealEstateInput): Promise<VoteRealEstateOutput>;
   toggleFavorite(input: ToggleFavoriteRealEstateInput): Promise<ToggleFavoriteRealEstateOutput>;
   createReview(input: CreateRealEstateReviewInput): Promise<CreateRealEstateReviewOutput>;

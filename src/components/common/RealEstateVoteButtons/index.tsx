@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { ThumbsUp, ThumbsDown, Loader2 } from 'lucide-react';

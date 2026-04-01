@@ -1,5 +1,5 @@
-import { useGetReviewsByRealEstateId } from '@/services';
-import { useGetAllRealEstateReviews } from '@/services';
+import { useGetReviewsByRealEstateId } from '@/modules/property-reviews';
+import { useGetAllRealEstateReviews } from '@/modules/real-estates';
 import { useParams } from 'next/navigation';
 import { useMemo } from 'react';
 

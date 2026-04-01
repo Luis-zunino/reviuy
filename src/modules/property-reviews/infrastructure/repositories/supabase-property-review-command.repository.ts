@@ -1,6 +1,5 @@
 import { createError, handleSupabaseError } from '@/lib';
 import type { createSupabaseServerClient } from '@/lib/supabase/server';
-import type { ReviewRoom } from '@/types';
 import type {
   CreatePropertyReviewInput,
   CreatePropertyReviewResult,
@@ -13,6 +12,7 @@ import type {
   ToggleFavoritePropertyReviewInput,
   ToggleFavoritePropertyReviewResult,
   PropertyReviewCommandRepository,
+  ReviewRoom,
 } from '../../domain';
 
 type SupabaseServerClient = Awaited<ReturnType<typeof createSupabaseServerClient>>;

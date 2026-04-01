@@ -1,14 +1,13 @@
 import { FormLabel } from '@/components/common/Form';
 import { Textarea } from '@/components/ui/textarea';
-import React from 'react';
 import type { ThirdFormProps } from './types';
-import { RealEstateWitheVotes } from '@/types';
 import { AsyncSearchSelect } from '@/components/common/AsyncSearchSelect';
 import { FormReviewSchema } from '@/schemas';
 import { CreateRealEstateModal } from '@/components/features/RealEstate/CreateRealEstate/CreateRealEstateModal';
 import { useThirdForm } from './hooks';
 import { Building2, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { RealEstateWitheVotes } from '@/modules/real-estates';
 
 export const ThirdForm = (props: ThirdFormProps) => {
   const { form, open, setOpen, handleClear, onSelect, queryValue } = props;

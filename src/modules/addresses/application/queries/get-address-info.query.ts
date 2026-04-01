@@ -7,7 +7,6 @@ export const createGetAddressInfoQuery = (
 ): QueryHandler<GetAddressInfoInput, GetAddressInfoOutput> => {
   const { repository } = dependencies;
 
-  return async (input: GetAddressInfoInput): Promise<GetAddressInfoOutput> => {
-    return repository.getAddressInfo(input);
-  };
+  return async (input: GetAddressInfoInput): Promise<GetAddressInfoOutput> =>
+    repository.getAddressInfo(input);
 };

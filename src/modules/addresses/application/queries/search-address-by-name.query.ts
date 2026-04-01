@@ -7,7 +7,6 @@ export const createSearchAddressByNameQuery = (
 ): QueryHandler<SearchAddressByNameInput, SearchAddressByNameOutput> => {
   const { repository } = dependencies;
 
-  return async (input: SearchAddressByNameInput): Promise<SearchAddressByNameOutput> => {
-    return repository.searchByName(input);
-  };
+  return async (input: SearchAddressByNameInput): Promise<SearchAddressByNameOutput> =>
+    repository.searchByName(input);
 };

@@ -11,7 +11,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { useDeleteAccount } from '@/services';
+import { useDeleteAccount } from '@/modules/profiles/presentation';
 import { useState } from 'react';
 
 export const DeleteAccountSection = () => {

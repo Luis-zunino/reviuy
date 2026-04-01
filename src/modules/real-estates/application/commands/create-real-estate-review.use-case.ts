@@ -5,6 +5,14 @@ import { ZodError } from 'zod';
 import type { CreateRealEstateReviewInput, CreateRealEstateReviewOutput } from '../../domain';
 import { RealEstateCommandoBase } from './interfaces';
 
+/**
+ * Creates a Use Case Handler to submit a new review for a real estate agency.
+ * The process includes authentication verification, write-operation rate limiting,
+ * and strict input validation using Zod.
+ *
+ * @param dependencies - Core dependencies including repository and session management.
+ * @returns An asynchronous function that processes the review creation.
+ */
 export const createCreateRealEstateReviewUseCase = (
   dependencies: RealEstateCommandoBase
 ): UseCaseHandler<unknown, CreateRealEstateReviewOutput> => {
