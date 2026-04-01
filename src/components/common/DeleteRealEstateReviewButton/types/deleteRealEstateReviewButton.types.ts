@@ -1,4 +1,4 @@
-import type { RealEstateReviewWithVotesPublic } from '@/types';
+import type { RealEstateReviewWithVotesPublic } from '@/modules/real-estates';
 import type { BaseButtonProps } from '../../types';
 
 // Tipo que incluye los campos mínimos necesarios para eliminar una reseña

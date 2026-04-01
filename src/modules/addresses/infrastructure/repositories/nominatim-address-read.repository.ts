@@ -1,5 +1,5 @@
 import { NOMINATIM_URL } from '@/constants';
-import { searchAddressAction } from '@/app/_actions';
+import { createError } from '@/lib/errors';
 import type {
   AddressReadRepository,
   GetAddressInfoInput,
@@ -14,7 +14,24 @@ export class NominatimAddressReadRepository implements AddressReadRepository {
     countrycodes = 'uy',
     limit = 5,
   }: SearchAddressByNameInput): Promise<SearchAddressByNameOutput> {
-    return searchAddressAction(query, countrycodes, limit);
+    const url = new URL(`${NOMINATIM_URL}/search`);
+    url.searchParams.set('format', 'json');
+    url.searchParams.set('q', query);
+    url.searchParams.set('countrycodes', countrycodes);
+    url.searchParams.set('limit', String(limit));
+
+    const response = await fetch(url.toString(), {
+      headers: {
+        'User-Agent': 'ReviUy/1.0',
+      },
+      signal: AbortSignal.timeout(5000),
+    });
+
+    if (!response.ok) {
+      return [];
+    }
+
+    return response.json() as Promise<SearchAddressByNameOutput>;
   }
 
   async getAddressInfo({ osmId }: GetAddressInfoInput): Promise<GetAddressInfoOutput> {
@@ -23,7 +40,7 @@ export class NominatimAddressReadRepository implements AddressReadRepository {
     );
 
     if (!response.ok) {
-      throw new Error('Network response was not ok');
+      throw createError('INTERNAL_ERROR', 'Error consultando informacion de direccion');
     }
 
     return response.json() as Promise<GetAddressInfoOutput>;

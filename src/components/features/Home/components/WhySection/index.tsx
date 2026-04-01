@@ -6,6 +6,7 @@ import { manrope, playfair } from '@/constants';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { PagesUrls } from '@/enums';
+import { Box } from '@/components/common';
 
 const features = [
   {
@@ -66,7 +67,7 @@ export const WhySection = () => {
   return (
     <section className="py-16 md:py-24">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div className="rounded-3xl border border-reviuy-gray-200/60 dark:border-reviuy-gray-700/50  dark:bg-reviuy-gray-800/50 p-8 shadow-sm md:p-12 lg:p-16">
+        <Box className="rounded-3xl border border-reviuy-gray-200/60 dark:border-reviuy-gray-700/50  p-8 shadow-sm md:p-12 lg:p-16">
           {/* Header */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -153,7 +154,7 @@ export const WhySection = () => {
               <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
             </Link>
           </motion.div>
-        </div>
+        </Box>
       </div>
     </section>
   );

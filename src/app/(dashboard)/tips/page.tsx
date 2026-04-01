@@ -1,11 +1,11 @@
 import { TipsPageComponent } from '@/components/features/Tips';
-import { Metadata } from 'next';
-import React from 'react';
+import { generatePageMetadata } from '@/lib/metadata';
 
-export const metadata: Metadata = {
+export const metadata = generatePageMetadata({
   title: 'Consejos y Tips | ReviUy',
   description: 'Descubre consejos útiles para alquilar y evaluar propiedades.',
-};
+  path: '/tips',
+});
 
 const TipsPage = () => {
   return <TipsPageComponent />;

@@ -1,11 +1,26 @@
-import type {
-  Review,
-  ReviewRoom,
-  ReviewWithVotes,
-  ReviewWithVotesPublic,
-  ReviewPublicWithRelations,
-  VoteType,
-} from '@/types';
+import { RealEstateWitheVotes } from '@/modules/real-estates';
+import type { VoteType, Database } from '@/types';
+
+// Tabla reviews
+export type Review = Database['public']['Tables']['reviews']['Row'];
+export type ReviewRoom = Database['public']['Tables']['review_rooms']['Row'];
+export type ReviewWithVotes = Database['public']['Views']['reviews_with_votes']['Row'];
+export type ReviewUpdate = Database['public']['Tables']['reviews']['Update'];
+export type ReviewRoomUpdate = Database['public']['Tables']['review_rooms']['Update'];
+/**
+ * Vista pública de reviews sin user_id para proteger anonimato.
+ * Usar para queries públicos donde no se necesita exponer la identidad del usuario.
+ */
+export type ReviewWithVotesPublic = Database['public']['Views']['reviews_with_votes_public']['Row'];
+
+/**
+ * Review pública con relaciones (rooms + real estate).
+ * Versión segura de ReviewWithRelations.
+ */
+export type ReviewPublicWithRelations = ReviewWithVotesPublic & {
+  review_rooms: ReviewRoom[];
+  real_estates: RealEstateWitheVotes | null;
+};
 
 export interface PropertyReviewRoomDraft {
   room_type: string | null;

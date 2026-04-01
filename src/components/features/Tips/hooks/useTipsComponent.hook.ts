@@ -1,7 +1,10 @@
-import { tips } from '@/services/mocks/tips.mock';
+import { tips } from '@/modules/content/data';
 import { TipType } from '@/types';
 import { useState } from 'react';
-
+/**
+ *
+ * @returns
+ */
 export const useTipsComponent = () => {
   const [selectedCategory, setSelectedCategory] = useState<TipType>(TipType.ALL);
 

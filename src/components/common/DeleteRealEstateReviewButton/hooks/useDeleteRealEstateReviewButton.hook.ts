@@ -1,4 +1,4 @@
-import { useDeleteRealEstateReview } from '@/services';
+import { useDeleteRealEstateReview } from '@/modules/real-estates/presentation';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { UseDeleteRealEstateReviewButtonProps } from '../types';

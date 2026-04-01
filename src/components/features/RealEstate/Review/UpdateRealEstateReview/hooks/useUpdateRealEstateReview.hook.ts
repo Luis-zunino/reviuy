@@ -1,6 +1,9 @@
 'use client';
 
-import { useUpdateRealEstateReviewHook, useGetRealEstateReviewById } from '@/services';
+import {
+  useUpdateRealEstateReviewHook,
+  useGetRealEstateReviewById,
+} from '@/modules/real-estates/presentation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
@@ -53,7 +56,7 @@ export const useUpdateRealEstateReview = () => {
       },
       { keepDirty: false }
     );
-  }, [data]);
+  }, [data, form]);
 
   return {
     form,

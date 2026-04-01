@@ -1,8 +1,8 @@
-import { CreateReviewData } from '@/app/_actions/types/review.types';
+import type { CreatePropertyReviewInput } from '@/modules/property-reviews';
 import { FormReviewSchema } from '@/schemas';
 import { getAddressOsmId } from '@/utils';
 
-export const formatDataToBackend = (data: FormReviewSchema): CreateReviewData => {
+export const formatDataToBackend = (data: FormReviewSchema): CreatePropertyReviewInput => {
   const addressOsmId = getAddressOsmId({ osm_type: data.osm_type, osm_id: data.osm_id });
 
   return {

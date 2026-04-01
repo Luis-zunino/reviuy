@@ -1,4 +1,4 @@
-import { useGetReviewVote, useVoteReview } from '@/services';
+import { useGetReviewVote, useVoteReview } from '@/modules/property-reviews/presentation';
 import { VoteType } from '@/types';
 import { useState } from 'react';
 import type { ReviewLikesButtonsProps } from '../types';

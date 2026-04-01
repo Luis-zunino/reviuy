@@ -1,7 +1,6 @@
 'use client';
 
 import { FavoriteRealEstateButton, PageWithSidebar, ReviewCard } from '@/components/common';
-import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { RefreshCw, Plus, Building2, Search } from 'lucide-react';

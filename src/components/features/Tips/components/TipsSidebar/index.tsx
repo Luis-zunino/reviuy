@@ -6,7 +6,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import React from 'react';
 import type { TipsSidebarProps } from './types';
 
 export const TipsSidebar: React.FC<TipsSidebarProps> = ({
@@ -45,24 +44,15 @@ export const TipsSidebar: React.FC<TipsSidebarProps> = ({
         <h3 className="font-bold text-foreground mb-6">Categorías</h3>
         <div className="space-y-3">
           {categories.map((cat) => {
-            const isActive = cat.name === selectedCategory;
             return (
               <Button
                 key={cat.name}
                 onClick={() => setSelectedCategory(cat.name)}
-                variant="ghost"
-                className={`flex items-center justify-between text-sm group w-full text-left p-2 ${
-                  isActive ? 'text-blue-600 font-medium' : 'hover:text-blue-600'
-                }`}
+                variant="link"
+                className={`flex items-center justify-between text-sm group w-full text-left p-2 `}
               >
                 <span className="group-hover:font-medium">{cat.name}</span>
-                <span
-                  className={`text-xs px-2 py-1 rounded ${
-                    isActive ? 'bg-blue-600 text-white' : 'bg-blue-50 text-blue-600'
-                  }`}
-                >
-                  {cat.count}
-                </span>
+                <span className="text-xs px-2 py-1 rounded">{cat.count}</span>
               </Button>
             );
           })}

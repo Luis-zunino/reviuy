@@ -1,7 +1,7 @@
 import type { UseFormReturn } from 'react-hook-form';
-import type { NominatimEntity } from '@/types';
 import { Dispatch, SetStateAction } from 'react';
 import { FormReviewSchema } from '@/schemas';
+import { NominatimEntity } from '@/modules/addresses';
 
 export interface FirstFormProps {
   form: UseFormReturn<FormReviewSchema, undefined, FormReviewSchema>;

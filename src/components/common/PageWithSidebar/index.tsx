@@ -1,12 +1,12 @@
 'use client';
 
-import React from 'react';
 import { cn } from '@/lib/utils';
 import type { PageWithSidebarProps } from './types';
 import { useAuthContext } from '@/components/providers/AuthProvider';
 import { Loader } from '../Loaders';
 import { ErrorPage, NoAuthenticated } from './components';
 import { Breadcrumbs } from '../Breadcrumbs';
+import { Box } from '../Box';
 
 /**
  * @description Page layout component with a sidebar and main content area.
@@ -85,14 +85,14 @@ export const PageWithSidebar: React.FC<PageWithSidebarProps> = (props) => {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 w-full">
           {sidebar ? (
             <div className="lg:col-span-1">
-              <div
+              <Box
                 className={cn(
-                  'sticky top-20  dark:bg-reviuy-gray-800/50 rounded-lg border border-border p-6',
+                  'sticky top-20 rounded-lg border border-border p-6',
                   sidebarClassName
                 )}
               >
                 {sidebar}
-              </div>
+              </Box>
             </div>
           ) : null}
 

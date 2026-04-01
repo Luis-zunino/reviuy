@@ -1,7 +1,7 @@
-import { ReviewPublicWithRelations } from '@/types';
 import { FormReviewSchema } from '@/schemas';
 import { normalizeNullable } from '@/utils';
 import { PropertyType } from '@/enums';
+import { ReviewPublicWithRelations } from '@/modules/property-reviews';
 
 export const getDefaultValues = (
   defaultValues?: ReviewPublicWithRelations | null

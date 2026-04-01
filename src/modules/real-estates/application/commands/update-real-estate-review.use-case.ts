@@ -5,6 +5,14 @@ import { ZodError } from 'zod';
 import type { UpdateRealEstateReviewInput, UpdateRealEstateReviewOutput } from '../../domain';
 import { RealEstateCommandoBase } from './interfaces';
 
+/**
+ * Creates a Use Case Handler to partially update an existing real estate review.
+ * It allows modification of specific fields like rating or description while
+ * ensuring the update adheres to domain validation rules.
+ *
+ * @param dependencies - Infrastructure dependencies for persistence and validation.
+ * @returns A function that validates partial input and updates the review.
+ */
 export const createUpdateRealEstateReviewUseCase = (
   dependencies: RealEstateCommandoBase
 ): UseCaseHandler<UpdateRealEstateReviewInput, UpdateRealEstateReviewOutput> => {

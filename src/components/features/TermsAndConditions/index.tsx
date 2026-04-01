@@ -1,4 +1,3 @@
-import React from 'react';
 import { PageWithSidebar } from '@/components/common';
 
 export const TermsAndConditionsComponent = () => {
@@ -31,7 +30,7 @@ export const TermsAndConditionsComponent = () => {
               3. Limitación de Responsabilidad
             </h2>
             <p className="text-gray-700 leading-relaxed">
-              ReviUy funciona como un tablón de anuncios comunitario.{' '}
+              ReviUy funciona como un tablón de anuncios comunitario.
               <strong>No garantizamos la veracidad</strong>
               de las reseñas publicadas por los usuarios. No somos responsables por decisiones
               económicas, legales o inmobiliarias tomadas basándose en el contenido del sitio.

@@ -1,11 +1,17 @@
-import type {
-  RealEstate,
-  RealEstateReview,
-  RealEstateReviewWithVotes,
-  RealEstateReviewWithVotesPublic,
-  RealEstateWitheVotes,
-  VoteType,
-} from '@/types';
+import type { Database, VoteType } from '@/types';
+
+export type RealEstateReviewInsert = Database['public']['Tables']['real_estate_reviews']['Insert'];
+export type RealEstate = Database['public']['Tables']['real_estates']['Row'];
+export type RealEstateReview = Database['public']['Tables']['real_estate_reviews']['Row'];
+export type RealEstateWitheVotes = Database['public']['Views']['real_estates_with_votes']['Row'];
+export type RealEstateReviewWithVotes =
+  Database['public']['Views']['real_estate_reviews_with_votes']['Row'];
+/**
+ * Vista pública de reseñas de inmobiliarias con estadísticas de votos, sin user_id.
+ * Usar para mostrar reseñas en listados públicos con likes/dislikes.
+ */
+export type RealEstateReviewWithVotesPublic =
+  Database['public']['Views']['real_estate_reviews_with_votes_public']['Row'];
 
 export type RealEstateReviewSummary = Pick<
   RealEstateReview,
@@ -15,8 +21,6 @@ export type RealEstateReviewSummary = Pick<
 export interface CreateRealEstateInput {
   real_estate_name: string;
 }
-
-export type CreateRealEstateOutput = RealEstate;
 
 export interface VoteRealEstateInput {
   realEstateId: string;

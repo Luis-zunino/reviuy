@@ -95,10 +95,10 @@ yarn security:owasp
 
 ## Arquitectura (resumen)
 
-- Server Actions: src/app/\_actions/
+- Entry points por dominio: src/modules/\*/presentation/
 - API Routes publicas/webhooks: src/app/api/
 - Schemas Zod: src/schemas/
-- Hooks de datos: src/services/apis/
+- Hooks de datos: src/modules/\*/presentation/ y shared para utilidades transversales
 - Componentes UI/features: src/components/
 - Tipos de dominio: src/types/
 - SQL y migraciones: supabase/migrations/
@@ -114,8 +114,11 @@ Estado actual resumido:
 - moderation ya centraliza reportes conectados a server actions y API routes
 - profiles ya centraliza auth, session, delete-account, reseñas propias y favoritos del usuario
 - content ya centraliza el flujo de contacto
+- content tambien concentra el dataset estático de tips en src/modules/content/data/
+- shared/auth centraliza useAuthMutation como utilidad transversal
+- src/constants/queryKeys.constants.ts centraliza query keys compartidas
 
-Todavia existe codigo legacy en src/services/apis y otros entrypoints, pero cada vez mas como capa adaptadora que delega a src/modules.
+La capa legacy src/services fue retirada por completo. Los imports ahora apuntan directo a modulos, shared o constants segun corresponda.
 
 Ver detalle en [src/modules/README.md](src/modules/README.md) y [docs/architecture/MIGRATION_PLAN_TOWARD_TARGET_ARCHITECTURE.md](docs/architecture/MIGRATION_PLAN_TOWARD_TARGET_ARCHITECTURE.md).
 

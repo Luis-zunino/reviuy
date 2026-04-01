@@ -1,6 +1,6 @@
 'use client';
 
-import { tips } from '@/services/mocks/tips.mock';
+import { tips } from '@/modules/content/data';
 import { useParams } from 'next/navigation';
 
 export const useTip = () => {

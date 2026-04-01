@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import { Footer } from './components/Footer';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { NavBar } from './components/NavBar';

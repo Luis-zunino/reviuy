@@ -4,6 +4,10 @@ import { AppError, createError, withRateLimit, RateLimitType } from '@/lib';
 import { createSendContactMessageUseCase } from '@/modules/content/application';
 import { ResendContentCommandRepository } from '@/modules/content/infrastructure';
 
+/**
+ * Handles GET requests to the contact endpoint, which are not allowed.
+ * @returns A JSON response indicating that the method is not allowed.
+ */
 export async function GET() {
   return NextResponse.json(
     {
@@ -13,7 +17,11 @@ export async function GET() {
     { status: 405 }
   );
 }
-
+/**
+ * Handles POST requests to send contact messages.
+ * @param req - The incoming request containing the contact message data.
+ * @returns A JSON response indicating the success or failure of the operation.
+ */
 export async function POST(req: Request) {
   try {
     const user = await getAuthenticatedUser();

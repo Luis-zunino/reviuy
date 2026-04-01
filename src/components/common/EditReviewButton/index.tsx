@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { PagesUrls } from '@/enums';
 import { PencilIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import React from 'react';
 import type { EditReviewButtonProps } from './types';
 
 export const EditReviewButton = (props: EditReviewButtonProps) => {

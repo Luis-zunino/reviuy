@@ -1,4 +1,4 @@
-import type { RealEstateWitheVotes } from '@/types';
+import type { RealEstateWitheVotes } from '@/modules/real-estates';
 
 export interface UseReportRealEstateButtonProps {
   realEstate: RealEstateWitheVotes;

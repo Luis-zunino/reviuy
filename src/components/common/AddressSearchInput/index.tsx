@@ -4,7 +4,7 @@ import type { AddressSearchInputProps } from './types';
 import { useAddressSearchInput } from './hooks';
 import { AsyncSearchSelect } from '../AsyncSearchSelect';
 import { FieldValues, Path } from 'react-hook-form';
-import { NominatimEntity } from '@/types';
+import { NominatimEntity } from '@/modules/addresses';
 
 /**
  * Componente que muestra un buscador de direcciones

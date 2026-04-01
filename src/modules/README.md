@@ -61,21 +61,31 @@ La migracion sigue siendo incremental: nuevos slices deben nacer aqui y los entr
 
 ## Adaptadores Legacy Temporales
 
-La carpeta src/services/apis sigue existiendo, pero su rol esperado es cada vez mas fino: actuar como adaptador de React Query o de consumo cliente sobre casos de uso y query handlers definidos en src/modules.
+La carpeta src/services ya fue retirada por completo.
 
-Ejemplos actuales de adaptadores temporales:
+Estado actual esperado:
 
-- src/services/apis/address/\*.hook.ts delega a addresses
-- src/services/apis/user/verifyAuthentication.hook.ts y hooks de current user delegan a profiles
-- hooks en src/services/apis/reviews y src/services/apis/realEstates siguen encapsulando consumo cliente mientras la migracion se completa
+- la logica transversal reutilizable debe vivir en shared
+- las query keys compartidas deben vivir en constants
+- los hooks de dominio deben vivir en presentation del modulo owner
+- el contenido estatico owner de un dominio puede vivir en data dentro del modulo owner
 
-La deuda pendiente no es volver a implementar estas capacidades, sino decidir cuales hooks deben permanecer como adaptadores de consumo y cuales ya pueden eliminarse o consolidarse.
+Migraciones ya consolidadas:
+
+- src/shared/auth/useAuthMutation.hook.ts como helper compartido para mutaciones autenticadas
+- src/modules/content/presentation/useSendContactMessage.hook.ts para contacto
+- src/modules/content/data/tips.mock.ts para tips y contenido estatico del dominio
+- src/modules/moderation/presentation/useSendReport\*.hook.ts para reportes
+- src/modules/real-estates/presentation/toggleFavoriteRealEstate.hook.ts y useInfiniteRealEstates.hook.ts
+- src/modules/property-reviews/presentation/useToggleFavoriteReview.hook.ts
+- src/constants/queryKeys.constants.ts para query keys compartidas entre modulos
+
+La deuda pendiente ya no es retirar adaptadores legacy, sino seguir consolidando ownership claro por dominio y evitar reintroducir barrels transversales innecesarios.
 
 ## Pendiente Principal
 
-- consolidar mas read models de profiles, por ejemplo resumen del usuario
 - extender content hacia FAQ, tips y contenido institucional
-- seguir eliminando dependencias legacy que hoy son solo adaptadores de consumo
+- seguir moviendo activos o utilidades al modulo owner correcto cuando aparezcan nuevos casos
 
 ## Glosario de Capas
 

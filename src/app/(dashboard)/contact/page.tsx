@@ -1,4 +1,3 @@
-import React from 'react';
 import { PageWithSidebar } from '@/components/common';
 import { Contact } from '@/components/features';
 

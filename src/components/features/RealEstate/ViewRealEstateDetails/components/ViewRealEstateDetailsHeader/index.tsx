@@ -6,7 +6,6 @@ import {
 } from '@/components/common';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import React from 'react';
 import type { ViewRealEstateDetailsHeaderProps } from './types';
 import { NotebookPen } from 'lucide-react';
 import { useViewRealEstateDetailsHeader } from './hooks';
