@@ -1,4 +1,4 @@
-import { RealEstateWitheVotes } from '@/modules/real-estates';
+import { type RealEstateWitheVotes } from '@/modules/real-estates';
 import type { VoteType, Database } from '@/types';
 
 // Tabla reviews

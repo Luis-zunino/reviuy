@@ -16,8 +16,8 @@ import {
   useCreateReview,
   useUpdateReview,
 } from '@/modules/property-reviews';
-import { NominatimEntity } from '@/modules/addresses';
-import { RealEstateWitheVotes } from '@/modules/real-estates';
+import { type NominatimEntity } from '@/modules/addresses';
+import { type RealEstateWitheVotes } from '@/modules/real-estates';
 
 export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormProps) => {
   const { defaultValues } = props;

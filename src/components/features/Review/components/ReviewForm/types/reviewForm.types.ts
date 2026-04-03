@@ -8,8 +8,8 @@ import type {
 } from 'react-hook-form';
 import { Dispatch, SetStateAction } from 'react';
 import { FormReviewSchema } from '@/schemas';
-import { NominatimEntity } from '@/modules/addresses';
-import { RealEstateWitheVotes } from '@/modules/real-estates';
+import { type NominatimEntity } from '@/modules/addresses';
+import { type RealEstateWitheVotes } from '@/modules/real-estates';
 
 export interface ReviewFormProps {
   isLoading?: boolean;

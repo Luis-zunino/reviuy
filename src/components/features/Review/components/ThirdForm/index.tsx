@@ -7,7 +7,7 @@ import { CreateRealEstateModal } from '@/components/features/RealEstate/CreateRe
 import { useThirdForm } from './hooks';
 import { Building2, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { RealEstateWitheVotes } from '@/modules/real-estates';
+import { type RealEstateWitheVotes } from '@/modules/real-estates';
 
 export const ThirdForm = (props: ThirdFormProps) => {
   const { form, open, setOpen, handleClear, onSelect, queryValue } = props;
