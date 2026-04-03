@@ -5,265 +5,248 @@
 create extension IF not exists citext;
 
 -- Tabla de inmobiliarias
-create table
-    if not exists public.real_estates (
-        id UUID primary key default gen_random_uuid (),
-        name CITEXT not null check (
-            char_length(btrim (name)) > 0
-            and char_length(name) <= 100
-        ),
-        description VARCHAR(500),
-        review_count INTEGER not null default 0 check (review_count >= 0),
-        rating DECIMAL(3, 2) not null default 0.00 check (
-            rating >= 0
-            and rating <= 5
-        ),
-        created_by UUID references auth.users (id) on delete set null,
-        created_at TIMESTAMPTZ not null default now (),
-        updated_at TIMESTAMPTZ not null default now () check (updated_at >= created_at),
-        deleted_at TIMESTAMPTZ,
-        unique (name)
-    );
+create table if not exists public.real_estates (
+  id UUID primary key default gen_random_uuid (),
+  name CITEXT not null check (
+    char_length(btrim(name)) > 0
+    and char_length(name) <= 100
+  ),
+  description VARCHAR(500),
+  review_count INTEGER not null default 0 check (review_count >= 0),
+  rating DECIMAL(3, 2) not null default 0.00 check (
+    rating >= 0
+    and rating <= 5
+  ),
+  created_by UUID references auth.users (id) on delete set null,
+  created_at TIMESTAMPTZ not null default now(),
+  updated_at TIMESTAMPTZ not null default now() check (updated_at >= created_at),
+  deleted_at TIMESTAMPTZ,
+  unique (name)
+);
 
 -- Tabla principal de reseñas de propiedades
-create table
-    if not exists public.reviews (
-        id UUID primary key default gen_random_uuid (),
-        user_id UUID references auth.users (id) on delete set null,
-        real_estate_id UUID references public.real_estates (id) on delete set null,
-        title VARCHAR(200) not null check (char_length(btrim (title)) > 0),
-        description VARCHAR(800) not null check (char_length(btrim (description)) > 0),
-        rating INTEGER not null check (
-            rating >= 1
-            and rating <= 5
-        ),
-        property_type TEXT check (property_type in ('apartment', 'house', 'room')),
-        address_text VARCHAR(200) not null check (char_length(btrim (address_text)) > 0),
-        address_osm_id VARCHAR(100) not null check (char_length(btrim (address_osm_id)) > 0),
-        latitude DECIMAL(10, 8) not null check (
-            latitude >= -90
-            and latitude <= 90
-        ),
-        longitude DECIMAL(11, 8) not null check (
-            longitude >= -180
-            and longitude <= 180
-        ),
-        zone_rating INTEGER check (
-            zone_rating >= 1
-            and zone_rating <= 5
-        ),
-        winter_comfort TEXT check (winter_comfort in ('hot', 'comfortable', 'cold')),
-        summer_comfort TEXT check (summer_comfort in ('hot', 'comfortable', 'cold')),
-        humidity TEXT check (humidity in ('high', 'normal', 'low')),
-        created_at TIMESTAMPTZ not null default now (),
-        updated_at TIMESTAMPTZ not null default now () check (updated_at >= created_at),
-        apartment_number VARCHAR(10),
-        real_estate_experience VARCHAR(200),
-        deleted_at TIMESTAMPTZ
-    );
+create table if not exists public.reviews (
+  id UUID primary key default gen_random_uuid (),
+  user_id UUID references auth.users (id) on delete set null,
+  real_estate_id UUID references public.real_estates (id) on delete set null,
+  title VARCHAR(200) not null check (char_length(btrim(title)) > 0),
+  description VARCHAR(800) not null check (char_length(btrim(description)) > 0),
+  rating INTEGER not null check (
+    rating >= 1
+    and rating <= 5
+  ),
+  property_type TEXT check (property_type in ('apartment', 'house', 'room')),
+  address_text VARCHAR(200) not null check (char_length(btrim(address_text)) > 0),
+  address_osm_id VARCHAR(100) not null check (char_length(btrim(address_osm_id)) > 0),
+  latitude DECIMAL(10, 8) not null check (
+    latitude >= -90
+    and latitude <= 90
+  ),
+  longitude DECIMAL(11, 8) not null check (
+    longitude >= -180
+    and longitude <= 180
+  ),
+  zone_rating INTEGER check (
+    zone_rating >= 1
+    and zone_rating <= 5
+  ),
+  winter_comfort TEXT check (winter_comfort in ('hot', 'comfortable', 'cold')),
+  summer_comfort TEXT check (summer_comfort in ('hot', 'comfortable', 'cold')),
+  humidity TEXT check (humidity in ('high', 'normal', 'low')),
+  created_at TIMESTAMPTZ not null default now(),
+  updated_at TIMESTAMPTZ not null default now() check (updated_at >= created_at),
+  apartment_number VARCHAR(10),
+  real_estate_experience VARCHAR(200),
+  deleted_at TIMESTAMPTZ
+);
 
 -- Tabla de rooms asociados a reviews
-create table
-    if not exists public.review_rooms (
-        id uuid primary key default gen_random_uuid (),
-        review_id uuid not null references public.reviews (id) on delete CASCADE,
-        room_type TEXT check (
-            room_type in (
-                'bedroom',
-                'living_room',
-                'kitchen',
-                'bathroom',
-                'dining_room',
-                'study',
-                'storage'
-            )
-        ),
-        area_m2 NUMERIC(7, 2) check (
-            area_m2 >= 0
-            and area_m2 <= 10000
-        ),
-        created_at TIMESTAMPTZ not null default now (),
-        updated_at TIMESTAMPTZ not null default now () check (updated_at >= created_at)
-    );
+create table if not exists public.review_rooms (
+  id uuid primary key default gen_random_uuid (),
+  review_id uuid not null references public.reviews (id) on delete CASCADE,
+  room_type TEXT check (
+    room_type in (
+      'bedroom',
+      'living_room',
+      'kitchen',
+      'bathroom',
+      'dining_room',
+      'study',
+      'storage'
+    )
+  ),
+  area_m2 NUMERIC(7, 2) check (
+    area_m2 >= 0
+    and area_m2 <= 10000
+  ),
+  created_at TIMESTAMPTZ not null default now(),
+  updated_at TIMESTAMPTZ not null default now() check (updated_at >= created_at)
+);
 
 -- Tabla para rate limiting
-create table
-    if not exists public.rate_limits (
-        id UUID primary key default gen_random_uuid (),
-        user_id UUID not null references auth.users (id) on delete CASCADE,
-        ip_address INET,
-        endpoint TEXT not null check (char_length(btrim (endpoint)) > 0),
-        request_count INTEGER not null default 1 check (request_count >= 0),
-        window_start TIMESTAMPTZ not null default now (),
-        created_at TIMESTAMPTZ default now (),
-        unique (user_id, endpoint, window_start)
-    );
+create table if not exists public.rate_limits (
+  id UUID primary key default gen_random_uuid (),
+  user_id UUID not null references auth.users (id) on delete CASCADE,
+  ip_address INET,
+  endpoint TEXT not null check (char_length(btrim(endpoint)) > 0),
+  request_count INTEGER not null default 1 check (request_count >= 0),
+  window_start TIMESTAMPTZ not null default now(),
+  created_at TIMESTAMPTZ default now(),
+  unique (user_id, endpoint, window_start)
+);
 
 -- Tabla de logs de seguridad
-create table
-    if not exists public.security_logs (
-        id UUID primary key default gen_random_uuid (),
-        user_id UUID references auth.users (id) on delete set null,
-        ip_address INET,
-        user_agent TEXT,
-        endpoint TEXT,
-        action TEXT,
-        status TEXT,
-        error_message TEXT,
-        metadata JSONB,
-        created_at TIMESTAMPTZ default now ()
-    );
+create table if not exists public.security_logs (
+  id UUID primary key default gen_random_uuid (),
+  user_id UUID references auth.users (id) on delete set null,
+  ip_address INET,
+  user_agent TEXT,
+  endpoint TEXT,
+  action TEXT,
+  status TEXT,
+  error_message TEXT,
+  metadata JSONB,
+  created_at TIMESTAMPTZ default now()
+);
 
 -- =============================================================================
 -- TABLAS PARA SISTEMA DE REVIEWS
 -- =============================================================================
 -- Tabla de votos para reviews
-create table
-    if not exists public.review_votes (
-        id UUID primary key default gen_random_uuid (),
-        review_id UUID not null references public.reviews (id) on delete CASCADE,
-        user_id UUID not null references auth.users (id) on delete CASCADE,
-        vote_type TEXT not null check (vote_type in ('like', 'dislike')),
-        created_at TIMESTAMPTZ not null default now (),
-        unique (review_id, user_id)
-    );
+create table if not exists public.review_votes (
+  id UUID primary key default gen_random_uuid (),
+  review_id UUID not null references public.reviews (id) on delete CASCADE,
+  user_id UUID not null references auth.users (id) on delete CASCADE,
+  vote_type TEXT not null check (vote_type in ('like', 'dislike')),
+  created_at TIMESTAMPTZ not null default now(),
+  unique (review_id, user_id)
+);
 
 -- Tabla para reportes de reviews
-create table
-    if not exists public.review_reports (
-        id UUID default gen_random_uuid () primary key,
-        review_id UUID not null references public.reviews (id) on delete CASCADE,
-        reported_by_user_id UUID references auth.users (id) on delete set null,
-        reason VARCHAR(200) not null check (char_length(btrim (reason)) > 0),
-        description VARCHAR(500),
-        status TEXT default 'pending' check (
-            status in ('pending', 'reviewed', 'resolved', 'dismissed')
-        ),
-        created_at TIMESTAMPTZ default now (),
-        updated_at TIMESTAMPTZ default now () check (updated_at >= created_at),
-        unique (review_id, reported_by_user_id)
-    );
+create table if not exists public.review_reports (
+  id UUID default gen_random_uuid () primary key,
+  review_id UUID not null references public.reviews (id) on delete CASCADE,
+  reported_by_user_id UUID references auth.users (id) on delete set null,
+  reason VARCHAR(200) not null check (char_length(btrim(reason)) > 0),
+  description VARCHAR(500),
+  status TEXT default 'pending' check (
+    status in ('pending', 'reviewed', 'resolved', 'dismissed')
+  ),
+  created_at TIMESTAMPTZ default now(),
+  updated_at TIMESTAMPTZ default now() check (updated_at >= created_at),
+  unique (review_id, reported_by_user_id)
+);
 
 -- Tabla de auditoría para eliminaciones
-create table
-    if not exists public.review_deletions (
-        id UUID primary key default gen_random_uuid (),
-        review_id UUID not null references public.reviews (id) on delete CASCADE,
-        deleted_by UUID references auth.users (id) on delete set null,
-        review_title VARCHAR(200),
-        review_rating INTEGER,
-        review_created_at TIMESTAMPTZ,
-        deletion_reason VARCHAR(200),
-        deleted_at TIMESTAMPTZ not null default now ()
-    );
+create table if not exists public.review_deletions (
+  id UUID primary key default gen_random_uuid (),
+  review_id UUID references public.reviews (id) on delete set null,
+  deleted_by UUID references auth.users (id) on delete set null,
+  review_title VARCHAR(200),
+  review_rating INTEGER,
+  review_created_at TIMESTAMPTZ,
+  deletion_reason VARCHAR(200),
+  deleted_at TIMESTAMPTZ not null default now()
+);
 
 -- Tabla de auditoría completa
-create table
-    if not exists public.review_audit (
-        id UUID primary key default gen_random_uuid (),
-        review_id UUID not null references public.reviews (id) on delete CASCADE,
-        old_data JSONB,
-        new_data JSONB,
-        changed_by UUID references auth.users (id) on delete set null,
-        change_type TEXT not null check (change_type in ('create', 'update', 'delete')),
-        created_at TIMESTAMPTZ not null default now ()
-    );
+create table if not exists public.review_audit (
+  id UUID primary key default gen_random_uuid (),
+  review_id UUID references public.reviews (id) on delete set null,
+  old_data JSONB,
+  new_data JSONB,
+  changed_by UUID references auth.users (id) on delete set null,
+  change_type TEXT not null check (change_type in ('create', 'update', 'delete')),
+  created_at TIMESTAMPTZ not null default now()
+);
 
 -- TABLA: Reseñas de inmobiliarias
-create table
-    if not exists public.real_estate_reviews (
-        id UUID primary key default gen_random_uuid (),
-        real_estate_id UUID not null references public.real_estates (id) on delete CASCADE,
-        user_id UUID references auth.users (id) on delete set null,
-        -- Contenido de la reseña sobre la inmobiliaria
-        title VARCHAR(200) not null check (char_length(btrim (title)) > 0),
-        description VARCHAR(400) not null check (char_length(btrim (description)) > 0),
-        rating INTEGER not null check (
-            rating >= 1
-            and rating <= 5
-        ),
-        -- Timestamps
-        created_at TIMESTAMPTZ not null default now (),
-        updated_at TIMESTAMPTZ not null default now () check (updated_at >= created_at),
-        deleted_at TIMESTAMPTZ -- Índice condicional para soft delete (ver migración 054)
-    );
+create table if not exists public.real_estate_reviews (
+  id UUID primary key default gen_random_uuid (),
+  real_estate_id UUID not null references public.real_estates (id) on delete CASCADE,
+  user_id UUID references auth.users (id) on delete set null,
+  -- Contenido de la reseña sobre la inmobiliaria
+  title VARCHAR(200) not null check (char_length(btrim(title)) > 0),
+  description VARCHAR(400) not null check (char_length(btrim(description)) > 0),
+  rating INTEGER not null check (
+    rating >= 1
+    and rating <= 5
+  ),
+  -- Timestamps
+  created_at TIMESTAMPTZ not null default now(),
+  updated_at TIMESTAMPTZ not null default now() check (updated_at >= created_at),
+  deleted_at TIMESTAMPTZ -- Índice condicional para soft delete (ver migración 054)
+);
 
 -- TABLA: Votos para reseñas de inmobiliarias
-create table
-    if not exists public.real_estate_review_votes (
-        id UUID primary key default gen_random_uuid (),
-        real_estate_review_id UUID not null references public.real_estate_reviews (id) on delete CASCADE,
-        user_id UUID not null references auth.users (id) on delete CASCADE,
-        user_id_snapshot UUID not null check (user_id_snapshot = user_id),
-        vote_type TEXT not null check (vote_type in ('like', 'dislike')),
-        created_at TIMESTAMPTZ not null default now (),
-        updated_at TIMESTAMPTZ not null default now () check (updated_at >= created_at),
-        unique (real_estate_review_id, user_id)
-    );
+create table if not exists public.real_estate_review_votes (
+  id UUID primary key default gen_random_uuid (),
+  real_estate_review_id UUID not null references public.real_estate_reviews (id) on delete CASCADE,
+  user_id UUID not null references auth.users (id) on delete CASCADE,
+  vote_type TEXT not null check (vote_type in ('like', 'dislike')),
+  created_at TIMESTAMPTZ not null default now(),
+  updated_at TIMESTAMPTZ not null default now() check (updated_at >= created_at),
+  unique (real_estate_review_id, user_id)
+);
 
 -- TABLA: Reportes para reseñas de inmobiliarias
-create table
-    if not exists public.real_estate_review_reports (
-        id UUID default gen_random_uuid () primary key,
-        real_estate_review_id UUID not null references public.real_estate_reviews (id) on delete CASCADE,
-        reported_by_user_id UUID references auth.users (id) on delete set null,
-        reason VARCHAR(200) not null check (char_length(btrim (reason)) > 0),
-        description VARCHAR(500),
-        status TEXT default 'pending' check (
-            status in ('pending', 'reviewed', 'resolved', 'dismissed')
-        ),
-        created_at TIMESTAMPTZ default now (),
-        updated_at TIMESTAMPTZ default now () check (updated_at >= created_at),
-        unique (real_estate_review_id, reported_by_user_id)
-    );
+create table if not exists public.real_estate_review_reports (
+  id UUID default gen_random_uuid () primary key,
+  real_estate_review_id UUID not null references public.real_estate_reviews (id) on delete CASCADE,
+  reported_by_user_id UUID references auth.users (id) on delete set null,
+  reason VARCHAR(200) not null check (char_length(btrim(reason)) > 0),
+  description VARCHAR(500),
+  status TEXT default 'pending' check (
+    status in ('pending', 'reviewed', 'resolved', 'dismissed')
+  ),
+  created_at TIMESTAMPTZ default now(),
+  updated_at TIMESTAMPTZ default now() check (updated_at >= created_at),
+  unique (real_estate_review_id, reported_by_user_id)
+);
 
 -- Tabla para reportes de inmobiliarias
-create table
-    if not exists public.real_estate_reports (
-        id UUID primary key default gen_random_uuid (),
-        real_estate_id UUID not null references public.real_estates (id) on delete CASCADE,
-        reported_by_user_id UUID references auth.users (id) on delete set null,
-        reason VARCHAR(200) not null check (char_length(btrim (reason)) > 0),
-        description VARCHAR(500),
-        status TEXT default 'pending' check (
-            status in ('pending', 'reviewed', 'resolved', 'dismissed')
-        ),
-        created_at TIMESTAMPTZ default now (),
-        updated_at TIMESTAMPTZ default now () check (updated_at >= created_at),
-        unique (real_estate_id, reported_by_user_id)
-    );
+create table if not exists public.real_estate_reports (
+  id UUID primary key default gen_random_uuid (),
+  real_estate_id UUID not null references public.real_estates (id) on delete CASCADE,
+  reported_by_user_id UUID references auth.users (id) on delete set null,
+  reason VARCHAR(200) not null check (char_length(btrim(reason)) > 0),
+  description VARCHAR(500),
+  status TEXT default 'pending' check (
+    status in ('pending', 'reviewed', 'resolved', 'dismissed')
+  ),
+  created_at TIMESTAMPTZ default now(),
+  updated_at TIMESTAMPTZ default now() check (updated_at >= created_at),
+  unique (real_estate_id, reported_by_user_id)
+);
 
 -- Tabla para votos de inmobiliarias
-create table
-    if not exists public.real_estate_votes (
-        id UUID primary key default gen_random_uuid (),
-        real_estate_id UUID not null references public.real_estates (id) on delete CASCADE,
-        user_id UUID not null references auth.users (id) on delete CASCADE,
-        vote_type TEXT not null check (vote_type in ('like', 'dislike')),
-        created_at TIMESTAMPTZ default now (),
-        updated_at TIMESTAMPTZ default now () check (updated_at >= created_at),
-        unique (real_estate_id, user_id)
-    );
+create table if not exists public.real_estate_votes (
+  id UUID primary key default gen_random_uuid (),
+  real_estate_id UUID not null references public.real_estates (id) on delete CASCADE,
+  user_id UUID not null references auth.users (id) on delete CASCADE,
+  vote_type TEXT not null check (vote_type in ('like', 'dislike')),
+  created_at TIMESTAMPTZ default now(),
+  updated_at TIMESTAMPTZ default now() check (updated_at >= created_at),
+  unique (real_estate_id, user_id)
+);
 
 -- Crear tabla de favoritos de inmobiliarias
-create table
-    if not exists public.real_estate_favorites (
-        id UUID primary key default gen_random_uuid (),
-        real_estate_id UUID not null references public.real_estates (id) on delete CASCADE,
-        user_id UUID not null references auth.users (id) on delete CASCADE,
-        created_at TIMESTAMPTZ default now (),
-        unique (real_estate_id, user_id)
-    );
+create table if not exists public.real_estate_favorites (
+  id UUID primary key default gen_random_uuid (),
+  real_estate_id UUID not null references public.real_estates (id) on delete CASCADE,
+  user_id UUID not null references auth.users (id) on delete CASCADE,
+  created_at TIMESTAMPTZ default now(),
+  unique (real_estate_id, user_id)
+);
 
 -- Crear tabla de favoritos de reseñas
-create table
-    if not exists public.review_favorites (
-        id UUID primary key default gen_random_uuid (),
-        review_id UUID not null references public.reviews (id) on delete CASCADE,
-        user_id UUID not null references auth.users (id) on delete CASCADE,
-        created_at TIMESTAMPTZ default now (),
-        unique (review_id, user_id)
-    );
+create table if not exists public.review_favorites (
+  id UUID primary key default gen_random_uuid (),
+  review_id UUID not null references public.reviews (id) on delete CASCADE,
+  user_id UUID not null references auth.users (id) on delete CASCADE,
+  created_at TIMESTAMPTZ default now(),
+  unique (review_id, user_id)
+);
 
 -- =============================================================================
 -- DOCUMENTACIÓN POR TABLA Y COLUMNA
@@ -485,8 +468,6 @@ COMMENT on column public.real_estate_review_votes.real_estate_review_id is 'Rese
 
 COMMENT on column public.real_estate_review_votes.user_id is 'Usuario que vota (FK).';
 
-COMMENT on column public.real_estate_review_votes.user_id_snapshot is 'Snapshot del user_id para auditoría/compliance.';
-
 COMMENT on column public.real_estate_review_votes.vote_type is 'Tipo de voto (like|dislike).';
 
 COMMENT on column public.real_estate_review_votes.created_at is 'Fecha del voto.';
@@ -577,37 +558,56 @@ drop materialized view if exists public.real_estate_vote_stats cascade;
 
 create materialized view public.real_estate_vote_stats as
 select
-    re.id as real_estate_id,
-    coalesce(sum(case when rev.vote_type = 'like' then 1 else 0 end), 0)::integer as likes,
-    coalesce(sum(case when rev.vote_type = 'dislike' then 1 else 0 end), 0)::integer as dislikes,
-    count(rev.id)::integer as total_votes
-from public.real_estates re
-left join public.real_estate_votes rev 
-    on re.id = rev.real_estate_id
-where re.deleted_at is null
-group by re.id;
+  re.id as real_estate_id,
+  coalesce(
+    sum(
+      case
+        when rev.vote_type = 'like' then 1
+        else 0
+      end
+    ),
+    0
+  )::integer as likes,
+  coalesce(
+    sum(
+      case
+        when rev.vote_type = 'dislike' then 1
+        else 0
+      end
+    ),
+    0
+  )::integer as dislikes,
+  count(rev.id)::integer as total_votes
+from
+  public.real_estates re
+  left join public.real_estate_votes rev on re.id = rev.real_estate_id
+where
+  re.deleted_at is null
+group by
+  re.id;
 
 -- Índice único en la vista materializada (necesario antes del REFRESH CONCURRENTLY)
-create unique index idx_real_estate_vote_stats_real_estate_id 
-    on public.real_estate_vote_stats(real_estate_id);
+create unique index idx_real_estate_vote_stats_real_estate_id on public.real_estate_vote_stats (real_estate_id);
 
 -- Vista para facilitar consultas de real_estates con contadores
-create or replace view public.real_estates_with_votes with (security_invoker = on) as
+create or replace view public.real_estates_with_votes
+with
+  (security_invoker = on) as
 select
-    re.*,
-    coalesce(stats.likes, 0) as likes,
-    coalesce(stats.dislikes, 0) as dislikes,
-    coalesce(stats.total_votes, 0) as total_votes
-from public.real_estates re
-left join public.real_estate_vote_stats stats on re.id = stats.real_estate_id
-where re.deleted_at is null;
+  re.*,
+  coalesce(stats.likes, 0) as likes,
+  coalesce(stats.dislikes, 0) as dislikes,
+  coalesce(stats.total_votes, 0) as total_votes
+from
+  public.real_estates re
+  left join public.real_estate_vote_stats stats on re.id = stats.real_estate_id
+where
+  re.deleted_at is null;
 
 -- Comentarios para documentación
-comment on materialized view public.real_estate_vote_stats is 
-    'Vista materializada que cachea los contadores de likes/dislikes para real_estates. Se actualiza automáticamente con cada cambio en real_estate_votes.';
+comment on materialized view public.real_estate_vote_stats is 'Vista materializada que cachea los contadores de likes/dislikes para real_estates. Se actualiza automáticamente con cada cambio en real_estate_votes.';
 
-comment on view public.real_estates_with_votes is 
-    'Vista que combina real_estates con sus contadores de votos calculados dinámicamente. Usar esta vista en lugar de consultar real_estates directamente cuando se necesiten los contadores.';
+comment on view public.real_estates_with_votes is 'Vista que combina real_estates con sus contadores de votos calculados dinámicamente. Usar esta vista en lugar de consultar real_estates directamente cuando se necesiten los contadores.';
 
 -- Refrescar la vista materializada por primera vez
 refresh materialized view public.real_estate_vote_stats;
@@ -621,37 +621,56 @@ drop materialized view if exists public.review_vote_stats cascade;
 
 create materialized view public.review_vote_stats as
 select
-    r.id as review_id,
-    coalesce(sum(case when rv.vote_type = 'like' then 1 else 0 end), 0)::integer as likes,
-    coalesce(sum(case when rv.vote_type = 'dislike' then 1 else 0 end), 0)::integer as dislikes,
-    count(rv.id)::integer as total_votes
-from public.reviews r
-left join public.review_votes rv 
-    on r.id = rv.review_id
-where r.deleted_at is null
-group by r.id;
+  r.id as review_id,
+  coalesce(
+    sum(
+      case
+        when rv.vote_type = 'like' then 1
+        else 0
+      end
+    ),
+    0
+  )::integer as likes,
+  coalesce(
+    sum(
+      case
+        when rv.vote_type = 'dislike' then 1
+        else 0
+      end
+    ),
+    0
+  )::integer as dislikes,
+  count(rv.id)::integer as total_votes
+from
+  public.reviews r
+  left join public.review_votes rv on r.id = rv.review_id
+where
+  r.deleted_at is null
+group by
+  r.id;
 
 -- Índice único en la vista materializada (necesario antes del REFRESH CONCURRENTLY)
-create unique index idx_review_vote_stats_review_id 
-    on public.review_vote_stats(review_id);
+create unique index idx_review_vote_stats_review_id on public.review_vote_stats (review_id);
 
 -- Vista para facilitar consultas de reviews con contadores
-create or replace view public.reviews_with_votes as
+create or replace view public.reviews_with_votes
+with
+  (security_invoker = on) as
 select
-    r.*,
-    coalesce(stats.likes, 0) as likes,
-    coalesce(stats.dislikes, 0) as dislikes,
-    coalesce(stats.total_votes, 0) as total_votes
-from public.reviews r
-left join public.review_vote_stats stats on r.id = stats.review_id
-where r.deleted_at is null;
+  r.*,
+  coalesce(stats.likes, 0) as likes,
+  coalesce(stats.dislikes, 0) as dislikes,
+  coalesce(stats.total_votes, 0) as total_votes
+from
+  public.reviews r
+  left join public.review_vote_stats stats on r.id = stats.review_id
+where
+  r.deleted_at is null;
 
 -- Comentarios para documentación
-comment on materialized view public.review_vote_stats is 
-    'Vista materializada que cachea los contadores de likes/dislikes para reviews. Se actualiza automáticamente con cada cambio en review_votes.';
+comment on materialized view public.review_vote_stats is 'Vista materializada que cachea los contadores de likes/dislikes para reviews. Se actualiza automáticamente con cada cambio en review_votes.';
 
-comment on view public.reviews_with_votes is 
-    'Vista que combina reviews con sus contadores de votos calculados dinámicamente. Usar esta vista en lugar de consultar reviews directamente cuando se necesiten los contadores.';
+comment on view public.reviews_with_votes is 'Vista que combina reviews con sus contadores de votos calculados dinámicamente. Usar esta vista en lugar de consultar reviews directamente cuando se necesiten los contadores.';
 
 -- Refrescar la vista materializada por primera vez
 refresh materialized view public.review_vote_stats;
@@ -665,38 +684,58 @@ drop materialized view if exists public.real_estate_review_vote_stats cascade;
 
 create materialized view public.real_estate_review_vote_stats as
 select
-    rer.id as real_estate_review_id,
-    coalesce(sum(case when rerv.vote_type = 'like' then 1 else 0 end), 0)::integer as likes,
-    coalesce(sum(case when rerv.vote_type = 'dislike' then 1 else 0 end), 0)::integer as dislikes,
-    count(rerv.id)::integer as total_votes
-from public.real_estate_reviews rer
-left join public.real_estate_review_votes rerv 
-    on rer.id = rerv.real_estate_review_id
-where rer.deleted_at is null
-group by rer.id;
+  rer.id as real_estate_review_id,
+  coalesce(
+    sum(
+      case
+        when rerv.vote_type = 'like' then 1
+        else 0
+      end
+    ),
+    0
+  )::integer as likes,
+  coalesce(
+    sum(
+      case
+        when rerv.vote_type = 'dislike' then 1
+        else 0
+      end
+    ),
+    0
+  )::integer as dislikes,
+  count(rerv.id)::integer as total_votes
+from
+  public.real_estate_reviews rer
+  left join public.real_estate_review_votes rerv on rer.id = rerv.real_estate_review_id
+where
+  rer.deleted_at is null
+group by
+  rer.id;
 
 -- Índice único en la vista materializada (necesario antes del REFRESH CONCURRENTLY)
-create unique index idx_real_estate_review_vote_stats_review_id 
-    on public.real_estate_review_vote_stats(real_estate_review_id);
+create unique index idx_real_estate_review_vote_stats_review_id on public.real_estate_review_vote_stats (real_estate_review_id);
 
 drop view if exists public.real_estate_reviews_with_votes;
+
 -- Vista para facilitar consultas de real_estate_reviews con contadores
-create view public.real_estate_reviews_with_votes with (security_invoker = on) as
+create view public.real_estate_reviews_with_votes
+with
+  (security_invoker = on) as
 select
-    rer.*,
-    coalesce(stats.likes, 0) as likes,
-    coalesce(stats.dislikes, 0) as dislikes,
-    coalesce(stats.total_votes, 0) as total_votes
-from public.real_estate_reviews rer
-left join public.real_estate_review_vote_stats stats on rer.id = stats.real_estate_review_id
-where rer.deleted_at is null;
+  rer.*,
+  coalesce(stats.likes, 0) as likes,
+  coalesce(stats.dislikes, 0) as dislikes,
+  coalesce(stats.total_votes, 0) as total_votes
+from
+  public.real_estate_reviews rer
+  left join public.real_estate_review_vote_stats stats on rer.id = stats.real_estate_review_id
+where
+  rer.deleted_at is null;
 
 -- Comentarios para documentación
-comment on materialized view public.real_estate_review_vote_stats is 
-    'Vista materializada que cachea los contadores de likes/dislikes para real_estate_reviews. Se actualiza automáticamente con cada cambio en real_estate_review_votes.';
+comment on materialized view public.real_estate_review_vote_stats is 'Vista materializada que cachea los contadores de likes/dislikes para real_estate_reviews. Se actualiza automáticamente con cada cambio en real_estate_review_votes.';
 
-comment on view public.real_estate_reviews_with_votes is 
-    'Vista que combina real_estate_reviews con sus contadores de votos calculados dinámicamente. Usar esta vista en lugar de consultar real_estate_reviews directamente cuando se necesiten los contadores.';
+comment on view public.real_estate_reviews_with_votes is 'Vista que combina real_estate_reviews con sus contadores de votos calculados dinámicamente. Usar esta vista en lugar de consultar real_estate_reviews directamente cuando se necesiten los contadores.';
 
 -- Refrescar la vista materializada por primera vez
 refresh materialized view public.real_estate_review_vote_stats;

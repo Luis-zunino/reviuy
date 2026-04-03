@@ -8,7 +8,6 @@
 -- Nota: Usamos security_invoker = on para que la vista se ejecute con
 --       permisos del rol invocador y no del owner.
 -- =============================================================================
-
 do $$
 begin
   if exists (
