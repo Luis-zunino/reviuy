@@ -9,4 +9,16 @@ repos:
     rev: v8.18.1
     hooks:
       - id: gitleaks
+  - repo: local
+    hooks:
+      - id: supabase-db-lint
+        name: supabase db lint
+        entry: yarn db:lint
+        language: system
+        pass_filenames: false
+      - id: supabase-static-migration-security
+        name: supabase static migration security tests
+        entry: yarn db:test:static
+        language: system
+        pass_filenames: false
 # si en el futuro se agregan lenguajes específicos podemos añadir más repos
