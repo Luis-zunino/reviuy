@@ -4,7 +4,7 @@ import { REVIEW_KEYS } from '@/constants';
 import { useQuery } from '@tanstack/react-query';
 import { createSearchAddressByNameQuery } from '@/modules/addresses/application';
 import { NominatimAddressReadRepository } from '@/modules/addresses/infrastructure';
-import { NominatimEntity } from '../domain';
+import { type NominatimEntity } from '../domain';
 
 interface GetAddressListByNameParams {
   query: string;

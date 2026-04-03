@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useState } from 'react';
 import { formSchema, FormSearcherAddressHome } from '../constants';
 import { getAddressOsmId } from '@/utils';
-import { NominatimEntity } from '@/modules/addresses';
+import { type NominatimEntity } from '@/modules/addresses';
 
 export const useSearcherAddressHome = () => {
   const [open, setOpen] = useState(false);

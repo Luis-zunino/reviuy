@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction } from 'react';
 import { FieldValues, UseFormReturn } from 'react-hook-form';
 import { AsyncSearchSelectClassNameProps } from '../../AsyncSearchSelect/types';
-import { NominatimEntity } from '@/modules/addresses';
+import { type NominatimEntity } from '@/modules/addresses';
 
 export interface AddressSearchInputProps<T extends FieldValues> {
   form: UseFormReturn<T, any, T>;
