@@ -85,7 +85,7 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
     );
     const data = formatDataToBackend(formData);
 
-    if (defaultValues && defaultValues.id) {
+    if (defaultValues?.id) {
       mutationUpdate(
         {
           reviewId: defaultValues.id,

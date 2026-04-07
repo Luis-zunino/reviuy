@@ -27,7 +27,7 @@ export const SearcherAddressHomeSection = () => {
           className={{
             container: 'w-full',
             input:
-              'w-full rounded-lg px-3 py-2 text-foreground outline-none focus-visible:none bg-transparent border-none border-0 shadow-none',
+              'w-full rounded-xl px-3 py-2 text-foreground outline-none focus-visible:none bg-transparent border-none border-0 shadow-none',
           }}
         />
       </Form>

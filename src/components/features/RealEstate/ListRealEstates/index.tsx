@@ -35,9 +35,7 @@ export const ListRealEstates: React.FC = () => {
 
       {isLoading ? (
         <div className="flex items-center justify-center">
-          <div className="text-center">
-            <Loader message="Cargando inmobiliarias..." />
-          </div>
+          <Loader />
         </div>
       ) : null}
       {!isLoading && displayedItems.length === 0 ? (

@@ -1,9 +1,7 @@
 import { useState } from 'react';
 import { useGetCurrentUserSummary } from '@/modules/profiles/presentation';
-import { useRouter } from 'next/navigation';
 
 export const useProfileComponent = () => {
-  const router = useRouter();
   const [activeTab, setActiveTab] = useState('reviews');
   const { data: summary, isLoading, error, refetch } = useGetCurrentUserSummary();
 
@@ -20,7 +18,6 @@ export const useProfileComponent = () => {
     loadingFavorites: isLoading,
     favoriteReviews,
     loadingFavoriteReviews: isLoading,
-    router,
     activeTab,
     setActiveTab,
   };
