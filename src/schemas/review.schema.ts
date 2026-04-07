@@ -106,10 +106,20 @@ export const formReviewSchema = z.object({
     .max(10, 'El número de apartamento es muy largo')
     .optional()
     .or(z.literal('')),
+  images: z
+    .array(
+      z.custom<File>(
+        (value) => typeof File === 'undefined' || value instanceof File,
+        'Archivo inválido'
+      )
+    )
+    .max(5, 'Podés subir hasta 5 imágenes')
+    .optional()
+    .default([]),
   review_rooms: z.array(formReviewRoomSchema).optional(),
 });
 
-export type FormReviewSchema = z.infer<typeof formReviewSchema>;
+export type FormReviewSchema = z.input<typeof formReviewSchema>;
 export type ReviewRoomSchema = z.infer<typeof formReviewRoomSchema>;
 
 // Schema para validar datos después de formatDataToBackend (con latitude/longitude como números)

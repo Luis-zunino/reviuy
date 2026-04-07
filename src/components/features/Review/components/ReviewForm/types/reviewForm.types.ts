@@ -15,8 +15,8 @@ export interface ReviewFormProps {
   isLoading?: boolean;
   fields: FieldArrayWithId<FormReviewSchema, 'review_rooms', 'id'>[];
   replace: UseFieldArrayReplace<FormReviewSchema, 'review_rooms'>;
-  form: UseFormReturn<FormReviewSchema>;
-  handleSubmit: UseFormHandleSubmit<FormReviewSchema>;
+  form: UseFormReturn<FormReviewSchema, undefined, FormReviewSchema>;
+  handleSubmit: UseFormHandleSubmit<FormReviewSchema, FormReviewSchema>;
   onSubmit: (data: FormReviewSchema) => void;
   append: UseFieldArrayAppend<FormReviewSchema, 'review_rooms'>;
   remove: UseFieldArrayRemove;

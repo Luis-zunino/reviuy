@@ -1,4 +1,5 @@
 export * from './review.actions';
+export * from './review-images.actions';
 export * from './review-interactions.actions';
 export * from './checkUserReviewForAddress.hook';
 export * from './createReview.hook';
@@ -10,6 +11,7 @@ export * from './getReviewsByUserId.hook';
 export * from './getUserReviewVote.hook';
 export * from './reportReview.hook';
 export * from './updateReview.hook';
+export * from './uploadReviewImage.hook';
 export * from './useGetUserFavoriteReviews.hook';
 export * from './useIsReviewFavorite.hook';
 export * from './useToggleFavoriteReview.hook';

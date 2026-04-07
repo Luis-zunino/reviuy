@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 export function ThemeToggle() {
-  const { setTheme, theme } = useTheme();
+  const { setTheme } = useTheme();
 
   return (
     <DropdownMenu>
@@ -20,7 +20,7 @@ export function ThemeToggle() {
           variant="ghost"
           size="icon"
           className="h-9 w-9 rounded-full"
-          aria-label={`Cambiar tema (actual: ${theme ?? 'system'})`}
+          aria-label="Cambiar tema"
         >
           <Sun
             className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0"

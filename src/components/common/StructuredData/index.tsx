@@ -12,6 +12,7 @@ export const StructuredData: React.FC<StructuredDataProps> = ({ data }) => {
     <Script
       id="structured-data"
       type="application/ld+json"
+      // nosemgrep: typescript.react.security.audit.react-dangerouslysetinnerhtml.react-dangerouslysetinnerhtml -- JSON-LD serializado localmente y escapado; no acepta HTML de usuario.
       dangerouslySetInnerHTML={{ __html: safeJson }}
     />
   );

@@ -169,3 +169,48 @@ export interface HasUserReportedReviewInput {
 }
 
 export type HasUserReportedReviewOutput = boolean;
+
+// ============================================================================
+// REVIEW IMAGES
+// ============================================================================
+
+export interface ReviewImage {
+  id: string;
+  review_id: string;
+  url: string;
+  path: string;
+  order: number;
+  created_at: string;
+}
+
+export interface UploadReviewImageInput {
+  reviewId: string;
+  osmId: string;
+  file: Buffer;
+  filename: string;
+  contentType: string;
+}
+
+export interface UploadReviewImageResult {
+  success: boolean;
+  message: string;
+  data?: ReviewImage;
+  error?: string;
+}
+
+export interface DeleteReviewImageInput {
+  imageId: string;
+  reviewId: string;
+}
+
+export interface DeleteReviewImageResult {
+  success: boolean;
+  message: string;
+  error?: string;
+}
+
+export interface GetReviewImagesInput {
+  reviewId: string;
+}
+
+export type GetReviewImagesOutput = ReviewImage[];

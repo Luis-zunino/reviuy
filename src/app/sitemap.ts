@@ -1,6 +1,7 @@
 import { MetadataRoute } from 'next';
 import { createClient } from '@supabase/supabase-js';
 import { Database } from '@/types/supabase';
+import { getSiteOrigin } from '@/lib/site-url';
 
 // Use a client without cookies for static sitemap generation
 const getSupabaseClient = () => {
@@ -10,7 +11,7 @@ const getSupabaseClient = () => {
 };
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://reviuy.vercel.app';
+  const baseUrl = getSiteOrigin();
   const now = new Date();
 
   // Static pages
@@ -20,12 +21,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: now,
       changeFrequency: 'daily',
       priority: 1,
-    },
-    {
-      url: `${baseUrl}/home`,
-      lastModified: now,
-      changeFrequency: 'daily',
-      priority: 0.9,
     },
     {
       url: `${baseUrl}/login`,

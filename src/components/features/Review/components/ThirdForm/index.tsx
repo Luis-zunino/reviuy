@@ -8,6 +8,8 @@ import { useThirdForm } from './hooks';
 import { Building2, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { type RealEstateWitheVotes } from '@/modules/real-estates';
+import { Controller } from 'react-hook-form';
+import { ImageInput } from '../ImageInput';
 
 export const ThirdForm = (props: ThirdFormProps) => {
   const { form, open, setOpen, handleClear, onSelect, queryValue } = props;
@@ -82,6 +84,22 @@ export const ThirdForm = (props: ThirdFormProps) => {
         {errors?.real_estate_experience && (
           <p className="text-red-500 text-sm">{errors.real_estate_experience.message}</p>
         )}
+      </div>
+
+      <div className="space-y-2">
+        <Controller
+          control={form.control}
+          name="images"
+          render={({ field, fieldState }) => (
+            <ImageInput
+              value={field.value ?? []}
+              onChange={field.onChange}
+              error={fieldState.error?.message}
+              label="Imágenes de la reseña"
+              description="Podés agregar hasta 5 imágenes para acompañar tu reseña."
+            />
+          )}
+        />
       </div>
     </div>
   );
