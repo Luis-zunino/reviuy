@@ -1,4 +1,3 @@
-import { PagesUrls } from '@/enums';
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
@@ -53,7 +52,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: 'X-Frame-Options',
-            value: 'SAMEORIGIN',
+            value: 'DENY',
           },
           {
             key: 'X-Content-Type-Options',
@@ -62,40 +61,6 @@ const nextConfig: NextConfig = {
           {
             key: 'Referrer-Policy',
             value: 'strict-origin-when-cross-origin',
-          },
-          {
-            key: 'Content-Security-Policy',
-            value: `
-                    default-src 'self';
-                    script-src
-                    'self'
-                    'unsafe-inline'
-                    https://apis.google.com
-                    https://va.vercel-scripts.com;
-                    style-src
-                    'self'
-                    'unsafe-inline';
-                    img-src
-                    'self'
-                    data:
-                    blob:
-                    https://placehold.co
-                    https://firebasestorage.googleapis.com
-                    https://lh3.googleusercontent.com
-                    https://*.tile.openstreetmap.org;
-                    font-src 'self' data:;
-                    connect-src
-                    'self'
-                    https://*.supabase.co
-                    https://firebasestorage.googleapis.com
-                    https://vitals.vercel-insights.com
-                    https://nominatim.openstreetmap.org;
-                    object-src 'none';
-                    base-uri 'self';
-                    frame-ancestors 'none';
-                    `
-              .replace(/\s{2,}/g, ' ')
-              .trim(),
           },
         ],
       },
@@ -141,8 +106,8 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       {
-        source: '/',
-        destination: PagesUrls.HOME,
+        source: '/home',
+        destination: '/',
         permanent: true,
       },
     ];

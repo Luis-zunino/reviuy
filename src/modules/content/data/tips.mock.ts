@@ -890,7 +890,7 @@ export const tips: Tip[] = [
     id: '9c10c2ea-4b16-468e-929b-7d9f6395b818',
     title: 'Derechos y deberes del inquilino',
     excerpt:
-      'Todo lo que necesitas saber sobre tus derechos y responsabilidades legales como inquilino en España.',
+      'Todo lo que necesitas saber sobre tus derechos y responsabilidades legales como inquilino en Uruguay.',
     category: TipType.TIPS,
     date: 'Nov 18, 2024',
     readTime: '10 min',

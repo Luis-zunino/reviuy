@@ -1,7 +1,8 @@
 import { Metadata } from 'next';
 import type { PageMetadataProps } from './types';
+import { getSiteOrigin } from './site-url';
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://reviuy.vercel.app';
+const siteUrl = getSiteOrigin();
 
 /**
  * Genera metadata optimizado para SEO para páginas específicas

@@ -7,6 +7,8 @@ import { StructuredData, createWebSiteSchema } from '@/components/seo';
 import { Geist, Geist_Mono, Inter } from 'next/font/google';
 import './globals.css';
 import { NOMINATIM_URL } from '@/constants';
+import { getSiteOrigin } from '@/lib/site-url';
+import { headers } from 'next/headers';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -21,7 +23,7 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://reviuy.vercel.app';
+const siteUrl = getSiteOrigin();
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -102,11 +104,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const nonce = (await headers()).get('x-nonce') ?? undefined;
+
   return (
     <html lang="es" suppressHydrationWarning>
       <head>
@@ -121,6 +125,7 @@ export default function RootLayout({
       >
         <WebVitals />
         <StructuredData
+          nonce={nonce}
           data={createWebSiteSchema({
             name: 'ReviUy',
             url: siteUrl,

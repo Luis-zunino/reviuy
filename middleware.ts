@@ -18,9 +18,48 @@ const matchesRoute = (pathname: string, patterns: RegExp[]) => {
   return patterns.some((pattern) => pattern.test(pathname));
 };
 
+const buildCsp = (nonce: string) => {
+  return `
+    default-src 'self';
+    script-src 'self' 'nonce-${nonce}' https://apis.google.com https://va.vercel-scripts.com;
+    style-src 'self' 'unsafe-inline';
+    img-src 'self' data: blob: https://placehold.co https://firebasestorage.googleapis.com https://lh3.googleusercontent.com https://*.tile.openstreetmap.org;
+    font-src 'self' data:;
+    connect-src 'self' https://*.supabase.co https://firebasestorage.googleapis.com https://vitals.vercel-insights.com https://nominatim.openstreetmap.org;
+    object-src 'none';
+    base-uri 'self';
+    frame-ancestors 'none';
+  `
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+};
+
+const withSecurityHeaders = (response: NextResponse, nonce: string) => {
+  response.headers.set('Content-Security-Policy', buildCsp(nonce));
+  response.headers.set('x-nonce', nonce);
+  return response;
+};
+
+const createNonce = () => {
+  const bytes = crypto.getRandomValues(new Uint8Array(16));
+  let binary = '';
+
+  bytes.forEach((byte) => {
+    binary += String.fromCharCode(byte);
+  });
+
+  return btoa(binary);
+};
+
 export async function middleware(request: NextRequest) {
+  const nonce = createNonce();
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set('x-nonce', nonce);
+
   let supabaseResponse = NextResponse.next({
-    request,
+    request: {
+      headers: requestHeaders,
+    },
   });
 
   const supabase = createServerClient(
@@ -34,7 +73,9 @@ export async function middleware(request: NextRequest) {
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
           supabaseResponse = NextResponse.next({
-            request,
+            request: {
+              headers: requestHeaders,
+            },
           });
           cookiesToSet.forEach(({ name, value, options }) =>
             supabaseResponse.cookies.set(name, value, options)
@@ -54,14 +95,14 @@ export async function middleware(request: NextRequest) {
   if (isProtected && !user) {
     const redirectUrl = new URL(PagesUrls.LOGIN, request.url);
     redirectUrl.searchParams.set('redirectTo', request.nextUrl.pathname);
-    return NextResponse.redirect(redirectUrl);
+    return withSecurityHeaders(NextResponse.redirect(redirectUrl), nonce);
   }
 
   if (user && matchesRoute(pathname, AUTH_ROUTE_PATTERNS)) {
-    return NextResponse.redirect(new URL(PagesUrls.HOME, request.url));
+    return withSecurityHeaders(NextResponse.redirect(new URL(PagesUrls.HOME, request.url)), nonce);
   }
 
-  return supabaseResponse;
+  return withSecurityHeaders(supabaseResponse, nonce);
 }
 
 export const config = {

@@ -10,6 +10,7 @@ import { sessionMapped } from '@/utils';
 import { AuthContext } from './constants';
 import { createGetSessionQuery } from '@/modules/profiles/application';
 import { SupabaseProfileAuthReadRepository } from '@/modules/profiles/infrastructure';
+import { buildSiteUrl } from '@/lib/site-url';
 
 const profileAuthReadRepository = new SupabaseProfileAuthReadRepository();
 const getSession = createGetSessionQuery({
@@ -50,36 +51,40 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [session, setSession] = useState<AppSession | null>(null);
   const [loading, setLoading] = useState(true);
   const { push } = useRouter();
+  const authCallbackUrl = buildSiteUrl('/auth/callback');
 
   const signInWithGoogle = useCallback(async () => {
     setLoading(true);
     const { error } = await supabaseClient.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: process.env.NEXT_PUBLIC_SITE_URL,
+        redirectTo: authCallbackUrl,
       },
     });
     setLoading(false);
     if (error) {
       throw error;
     }
-  }, []);
+  }, [authCallbackUrl]);
 
-  const signInWithEmail = useCallback(async (email: string) => {
-    setLoading(true);
-    const emailRedirectTo = process.env.NEXT_PUBLIC_SITE_URL;
-    const { error } = await supabaseClient.auth.signInWithOtp({
-      email,
-      options: {
-        emailRedirectTo,
-      },
-    });
-    setLoading(false);
+  const signInWithEmail = useCallback(
+    async (email: string) => {
+      setLoading(true);
+      const emailRedirectTo = authCallbackUrl;
+      const { error } = await supabaseClient.auth.signInWithOtp({
+        email,
+        options: {
+          emailRedirectTo,
+        },
+      });
+      setLoading(false);
 
-    if (error) {
-      throw error;
-    }
-  }, []);
+      if (error) {
+        throw error;
+      }
+    },
+    [authCallbackUrl]
+  );
 
   const signOut = useCallback(async () => {
     const { error } = await supabaseClient.auth.signOut();

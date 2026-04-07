@@ -1,0 +1,681 @@
+{
+  "ssl": {
+    "subject": {
+      "CN": "*.vercel.app"
+    },
+    "issuer": {
+      "C": "US",
+      "O": "Google Trust Services",
+      "CN": "WR1"
+    },
+    "subjectaltname": "DNS:*.vercel.app, DNS:vercel.app",
+    "infoAccess": {
+      "OCSP - URI": [
+        "http://o.pki.goog/s/wr1/XEs"
+      ],
+      "CA Issuers - URI": [
+        "http://i.pki.goog/wr1.crt"
+      ]
+    },
+    "ca": false,
+    "modulus": "BC55A6FBB043872EFA0FDFA4CB27436F2BB63594ED784146FE0A1C09FCF398F8E7A901C5C3BB27113159FD09CD6A93F261DA25E78A7BC342BF2D51F7AEB6BBC82BEA5F14CF8F214DE08F9A5D838072AD6A7AB81CDCAB03D58D7397B9E73D37DE30FADF69A7F5D08127E084FA006D59833C61090B5212F3BF1E36B287FD23444D48772037548CACEFCA7F1A5E55E6B6B02704F073D650E16642886867A4E6EAF6BD6BFAE8C3BB3EE2A6EAF0C9A5A9EF3A37DFD18A77A936681948F4114440595D629CB3923B786ACDA8DBED2B5FA72FCFCF3A0755F64A5F49BC554E7185E46F0A6A1192D4A5203B2C34EC29F4593F259E210DA013B44412EC5D334DA32DF9D35B",
+    "bits": 2048,
+    "exponent": "0x10001",
+    "pubkey": {
+      "type": "Buffer",
+      "data": [
+        48,
+        130,
+        1,
+        34,
+        48,
+        13,
+        6,
+        9,
+        42,
+        134,
+        72,
+        134,
+        247,
+        13,
+        1,
+        1,
+        1,
+        5,
+        0,
+        3,
+        130,
+        1,
+        15,
+        0,
+        48,
+        130,
+        1,
+        10,
+        2,
+        130,
+        1,
+        1,
+        0,
+        188,
+        85,
+        166,
+        251,
+        176,
+        67,
+        135,
+        46,
+        250,
+        15,
+        223,
+        164,
+        203,
+        39,
+        67,
+        111,
+        43,
+        182,
+        53,
+        148,
+        237,
+        120,
+        65,
+        70,
+        254,
+        10,
+        28,
+        9,
+        252,
+        243,
+        152,
+        248,
+        231,
+        169,
+        1,
+        197,
+        195,
+        187,
+        39,
+        17,
+        49,
+        89,
+        253,
+        9,
+        205,
+        106,
+        147,
+        242,
+        97,
+        218,
+        37,
+        231,
+        138,
+        123,
+        195,
+        66,
+        191,
+        45,
+        81,
+        247,
+        174,
+        182,
+        187,
+        200,
+        43,
+        234,
+        95,
+        20,
+        207,
+        143,
+        33,
+        77,
+        224,
+        143,
+        154,
+        93,
+        131,
+        128,
+        114,
+        173,
+        106,
+        122,
+        184,
+        28,
+        220,
+        171,
+        3,
+        213,
+        141,
+        115,
+        151,
+        185,
+        231,
+        61,
+        55,
+        222,
+        48,
+        250,
+        223,
+        105,
+        167,
+        245,
+        208,
+        129,
+        39,
+        224,
+        132,
+        250,
+        0,
+        109,
+        89,
+        131,
+        60,
+        97,
+        9,
+        11,
+        82,
+        18,
+        243,
+        191,
+        30,
+        54,
+        178,
+        135,
+        253,
+        35,
+        68,
+        77,
+        72,
+        119,
+        32,
+        55,
+        84,
+        140,
+        172,
+        239,
+        202,
+        127,
+        26,
+        94,
+        85,
+        230,
+        182,
+        176,
+        39,
+        4,
+        240,
+        115,
+        214,
+        80,
+        225,
+        102,
+        66,
+        136,
+        104,
+        103,
+        164,
+        230,
+        234,
+        246,
+        189,
+        107,
+        250,
+        232,
+        195,
+        187,
+        62,
+        226,
+        166,
+        234,
+        240,
+        201,
+        165,
+        169,
+        239,
+        58,
+        55,
+        223,
+        209,
+        138,
+        119,
+        169,
+        54,
+        104,
+        25,
+        72,
+        244,
+        17,
+        68,
+        64,
+        89,
+        93,
+        98,
+        156,
+        179,
+        146,
+        59,
+        120,
+        106,
+        205,
+        168,
+        219,
+        237,
+        43,
+        95,
+        167,
+        47,
+        207,
+        207,
+        58,
+        7,
+        85,
+        246,
+        74,
+        95,
+        73,
+        188,
+        85,
+        78,
+        113,
+        133,
+        228,
+        111,
+        10,
+        106,
+        17,
+        146,
+        212,
+        165,
+        32,
+        59,
+        44,
+        52,
+        236,
+        41,
+        244,
+        89,
+        63,
+        37,
+        158,
+        33,
+        13,
+        160,
+        19,
+        180,
+        68,
+        18,
+        236,
+        93,
+        51,
+        77,
+        163,
+        45,
+        249,
+        211,
+        91,
+        2,
+        3,
+        1,
+        0,
+        1
+      ]
+    },
+    "valid_from": "Feb 26 06:28:03 2026 GMT",
+    "valid_to": "May 27 06:28:02 2026 GMT",
+    "fingerprint": "D6:62:1A:52:B7:FD:F6:BB:FA:AC:01:9E:BB:CD:40:86:5F:04:95:51",
+    "fingerprint256": "4B:37:7D:7D:8E:17:70:BB:E1:51:9B:58:96:24:6C:11:6A:B3:AE:A9:68:43:46:58:B3:30:F0:54:F7:EA:43:38",
+    "fingerprint512": "B5:23:77:35:4D:C2:4A:E3:FA:AD:F4:2F:10:51:70:D4:F9:E1:35:15:1A:97:DD:FC:8B:71:69:50:A5:A0:6E:51:60:F9:94:93:D7:14:A8:C2:77:AB:D6:C7:6A:87:33:7A:DF:55:20:A0:BC:65:51:BB:E4:8F:26:CE:ED:B3:D1:04",
+    "ext_key_usage": [
+      "1.3.6.1.5.5.7.3.1"
+    ],
+    "serialNumber": "5C4B5834CC85C93913DDE476E8797368"
+  },
+  "domain": {
+    "internicData": {
+      "error": "No matches found for domain in internic database"
+    },
+    "whoisData": null
+  },
+  "headers": {
+    "access-control-allow-origin": "*",
+    "age": "2065615",
+    "cache-control": "public, max-age=0, must-revalidate",
+    "content-disposition": "inline",
+    "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' https://apis.google.com https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://placehold.co https://firebasestorage.googleapis.com https://lh3.googleusercontent.com https://*.tile.openstreetmap.org; font-src 'self' data:; connect-src 'self' https://*.supabase.co https://firebasestorage.googleapis.com https://vitals.vercel-insights.com https://nominatim.openstreetmap.org; object-src 'none'; base-uri 'self'; frame-ancestors 'none';",
+    "content-type": "text/html; charset=utf-8",
+    "date": "Mon, 06 Apr 2026 20:42:43 GMT",
+    "etag": "W/\"8376294ad30141c800eea3f21f78b6fd\"",
+    "permissions-policy": "geolocation=(),microphone=(),camera=(),gyroscope=(),magnetometer=(),accelerometer=(),payment=(),usb=()",
+    "referrer-policy": "strict-origin-when-cross-origin",
+    "server": "Vercel",
+    "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
+    "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "x-content-type-options": "nosniff",
+    "x-dns-prefetch-control": "on",
+    "x-frame-options": "SAMEORIGIN",
+    "x-matched-path": "/home",
+    "x-nextjs-prerender": "1",
+    "x-nextjs-stale-time": "300",
+    "x-vercel-cache": "HIT",
+    "x-vercel-id": "gru1:lhr1::4c7sp-1775508162274-918e1df66d36",
+    "transfer-encoding": "chunked"
+  },
+  "dns": {
+    "A": {
+      "address": "64.29.17.67",
+      "family": 4
+    },
+    "AAAA": [
+      "64.29.17.67",
+      "216.198.79.67"
+    ],
+    "MX": [],
+    "TXT": [],
+    "NS": [],
+    "CNAME": [],
+    "SOA": [],
+    "SRV": [],
+    "PTR": []
+  },
+  "http-security": {
+    "strictTransportPolicy": true,
+    "xFrameOptions": true,
+    "xContentTypeOptions": true,
+    "xXSSProtection": false,
+    "contentSecurityPolicy": true
+  },
+  "social-tags": {
+    "title": "Inicio | ReviUy | ReviUy",
+    "description": "Bienvenido a ReviUy, la plataforma para evaluar y encontrar tu próximo hogar.",
+    "keywords": "reseñas propiedades uruguay,alquiler uruguay,inmobiliarias uruguay,opiniones alquileres,arrendamientos uruguay,propiedades montevideo,reviews propiedades",
+    "canonicalUrl": "https://reviuy.vercel.app/auth/callback",
+    "ogTitle": "ReviUy - Reseñas de Propiedades e Inmobiliarias en Uruguay",
+    "ogType": "website",
+    "ogImage": "https://reviuy.vercel.app/auth/callback/og-image.png",
+    "ogUrl": "https://reviuy.vercel.app/auth/callback",
+    "ogDescription": "Plataforma de reseñas de propiedades de alquiler e inmobiliarias en Uruguay. Comparte tu experiencia y ayuda a otros a tomar mejores decisiones.",
+    "ogSiteName": "ReviUy",
+    "twitterCard": "summary_large_image",
+    "twitterCreator": "@reviuy",
+    "twitterTitle": "ReviUy - Reseñas de Propiedades e Inmobiliarias en Uruguay",
+    "twitterDescription": "Descubre y comparte experiencias sobre propiedades de alquiler e inmobiliarias en Uruguay.",
+    "twitterImage": "https://reviuy.vercel.app/auth/callback/og-image.png",
+    "robots": "index, follow",
+    "googlebot": "index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1",
+    "viewport": "width=device-width, initial-scale=1",
+    "author": "ReviUy Team",
+    "favicon": "/favicon.ico?favicon.054e82d4.ico"
+  },
+  "security-txt": {
+    "isPresent": false
+  },
+  "firewall": {
+    "hasWaf": false
+  },
+  "dnssec": {
+    "DNSKEY": {
+      "isFound": false,
+      "answer": null,
+      "response": {
+        "Status": 3,
+        "TC": false,
+        "RD": true,
+        "RA": true,
+        "AD": true,
+        "CD": false,
+        "Question": [
+          {
+            "name": "https://reviuy.vercel.app/home.",
+            "type": 48
+          }
+        ],
+        "Authority": [
+          {
+            "name": ".",
+            "type": 6,
+            "TTL": 86399,
+            "data": "a.root-servers.net. nstld.verisign-grs.com. 2026040602 1800 900 604800 86400"
+          }
+        ]
+      }
+    },
+    "DS": {
+      "isFound": false,
+      "answer": null,
+      "response": {
+        "Status": 3,
+        "TC": false,
+        "RD": true,
+        "RA": true,
+        "AD": true,
+        "CD": false,
+        "Question": [
+          {
+            "name": "https://reviuy.vercel.app/home.",
+            "type": 43
+          }
+        ],
+        "Authority": [
+          {
+            "name": ".",
+            "type": 6,
+            "TTL": 86400,
+            "data": "a.root-servers.net. nstld.verisign-grs.com. 2026040602 1800 900 604800 86400"
+          }
+        ],
+        "Comment": "Response from 199.7.91.13."
+      }
+    },
+    "RRSIG": {
+      "isFound": false,
+      "answer": null,
+      "response": {
+        "Status": 3,
+        "TC": false,
+        "RD": true,
+        "RA": true,
+        "AD": true,
+        "CD": false,
+        "Question": [
+          {
+            "name": "https://reviuy.vercel.app/home.",
+            "type": 46
+          }
+        ],
+        "Authority": [
+          {
+            "name": ".",
+            "type": 6,
+            "TTL": 86397,
+            "data": "a.root-servers.net. nstld.verisign-grs.com. 2026040602 1800 900 604800 86400"
+          }
+        ]
+      }
+    }
+  },
+  "hsts": {
+    "message": "Site is compatible with the HSTS preload list!",
+    "compatible": true,
+    "hstsHeader": "max-age=31536000; includeSubDomains; preload"
+  },
+  "threats": {
+    "urlHaus": {
+      "error": "Request to URLHaus failed, Request failed with status code 401"
+    },
+    "phishTank": {
+      "url0": {
+        "url": "https://reviuy.vercel.app/home",
+        "in_database": "false"
+      }
+    },
+    "cloudmersive": {
+      "error": "Request to Cloudmersive failed: Request failed with status code 401"
+    },
+    "safeBrowsing": {
+      "error": "GOOGLE_CLOUD_API_KEY is required for the Google Safe Browsing check"
+    }
+  },
+  "redirects": {
+    "redirects": [
+      "https://reviuy.vercel.app/home"
+    ]
+  },
+  "linked-pages": {
+    "internal": [
+      "https://reviuy.vercel.app/home#",
+      "https://reviuy.vercel.app/home#main-content",
+      "https://reviuy.vercel.app/home"
+    ],
+    "external": []
+  },
+  "robots-txt": {
+    "robots": [
+      {
+        "lbl": "User-Agent",
+        "val": "*"
+      },
+      {
+        "lbl": "Allow",
+        "val": "/"
+      },
+      {
+        "lbl": "Disallow",
+        "val": "/api/"
+      },
+      {
+        "lbl": "Disallow",
+        "val": "/auth/"
+      },
+      {
+        "lbl": "Disallow",
+        "val": "/_next/"
+      },
+      {
+        "lbl": "Disallow",
+        "val": "/admin/"
+      },
+      {
+        "lbl": "Disallow",
+        "val": "/profile/edit"
+      },
+      {
+        "lbl": "Disallow",
+        "val": "/review/edit/*"
+      },
+      {
+        "lbl": "User-Agent",
+        "val": "Googlebot"
+      },
+      {
+        "lbl": "Allow",
+        "val": "/"
+      },
+      {
+        "lbl": "Disallow",
+        "val": "/api/"
+      },
+      {
+        "lbl": "Disallow",
+        "val": "/auth/"
+      },
+      {
+        "lbl": "Disallow",
+        "val": "/admin/"
+      }
+    ]
+  },
+  "status": {
+    "isUp": true,
+    "responseTime": 722.5837820000015,
+    "responseCode": 200
+  },
+  "block-lists": {
+    "blocklists": [
+      {
+        "server": "AdGuard",
+        "serverIp": "176.103.130.130",
+        "isBlocked": false
+      },
+      {
+        "server": "AdGuard Family",
+        "serverIp": "176.103.130.132",
+        "isBlocked": false
+      },
+      {
+        "server": "CleanBrowsing Adult",
+        "serverIp": "185.228.168.10",
+        "isBlocked": false
+      },
+      {
+        "server": "CleanBrowsing Family",
+        "serverIp": "185.228.168.168",
+        "isBlocked": false
+      },
+      {
+        "server": "CleanBrowsing Security",
+        "serverIp": "185.228.168.9",
+        "isBlocked": false
+      },
+      {
+        "server": "CloudFlare",
+        "serverIp": "1.1.1.1",
+        "isBlocked": false
+      },
+      {
+        "server": "CloudFlare Family",
+        "serverIp": "1.1.1.3",
+        "isBlocked": false
+      },
+      {
+        "server": "Comodo Secure",
+        "serverIp": "8.26.56.26",
+        "isBlocked": false
+      },
+      {
+        "server": "Google DNS",
+        "serverIp": "8.8.8.8",
+        "isBlocked": false
+      },
+      {
+        "server": "Neustar Family",
+        "serverIp": "156.154.70.3",
+        "isBlocked": false
+      },
+      {
+        "server": "Neustar Protection",
+        "serverIp": "156.154.70.2",
+        "isBlocked": false
+      },
+      {
+        "server": "Norton Family",
+        "serverIp": "199.85.126.20",
+        "isBlocked": false
+      },
+      {
+        "server": "OpenDNS",
+        "serverIp": "208.67.222.222",
+        "isBlocked": false
+      },
+      {
+        "server": "OpenDNS Family",
+        "serverIp": "208.67.222.123",
+        "isBlocked": false
+      },
+      {
+        "server": "Quad9",
+        "serverIp": "9.9.9.9",
+        "isBlocked": false
+      },
+      {
+        "server": "Yandex Family",
+        "serverIp": "77.88.8.7",
+        "isBlocked": false
+      },
+      {
+        "server": "Yandex Safe",
+        "serverIp": "77.88.8.88",
+        "isBlocked": false
+      }
+    ]
+  }
+}

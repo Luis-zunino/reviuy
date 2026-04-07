@@ -50,6 +50,37 @@ export const Login = () => {
           {errors.email && <div className="text-red-500 text-sm">{errors.email.message}</div>}
         </div>
 
+        <div className="space-y-2">
+          <Label htmlFor="acceptedTerms" className="text-sm text-gray-600 flex items-start gap-2">
+            <Input
+              id="acceptedTerms"
+              type="checkbox"
+              className="mt-0.5 h-4 w-4"
+              {...register('acceptedTerms')}
+            />
+            <span>
+              Acepto los{' '}
+              <Link
+                href={PagesUrls.TERMS_AND_CONDITIONS}
+                className="text-blue-600 hover:text-blue-800 underline"
+              >
+                terminos y condiciones
+              </Link>{' '}
+              y la{' '}
+              <Link
+                href={PagesUrls.PRIVACY_POLICY}
+                className="text-blue-600 hover:text-blue-800 underline"
+              >
+                politica de privacidad
+              </Link>
+              .
+            </span>
+          </Label>
+          {errors.acceptedTerms && (
+            <div className="text-red-500 text-sm">{errors.acceptedTerms.message}</div>
+          )}
+        </div>
+
         <Button variant="default" type="submit" disabled={loading} className="w-full">
           {loading ? (
             <>
@@ -63,20 +94,7 @@ export const Login = () => {
       </form>
 
       <div className="text-center text-xs text-gray-500 space-y-1">
-        Al continuar, aceptas los{' '}
-        <Link
-          href={PagesUrls.TERMS_AND_CONDITIONS}
-          className="text-blue-600 hover:text-blue-800 underline"
-        >
-          términos y condiciones
-        </Link>{' '}
-        y la{' '}
-        <Link
-          href={PagesUrls.PRIVACY_POLICY}
-          className="text-blue-600 hover:text-blue-800 underline"
-        >
-          política de privacidad
-        </Link>
+        Necesitas aceptar terminos y privacidad para continuar.
       </div>
     </div>
   );
