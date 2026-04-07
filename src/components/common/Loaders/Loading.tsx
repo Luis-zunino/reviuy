@@ -1,4 +1,3 @@
-import { Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { LoadingProps } from './types';
 
@@ -28,7 +27,12 @@ export const Loader: React.FC<LoadingProps> = ({
   if (variant === 'inline') {
     return (
       <div className={cn('flex items-center gap-2', className)}>
-        <Loader2 className={cn('animate-spin text-primary', spinnerSize)} />
+        <div
+          className={cn(
+            'animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900',
+            spinnerSize
+          )}
+        ></div>
         {message && <span className="text-sm text-muted-foreground">{message}</span>}
       </div>
     );
@@ -44,7 +48,12 @@ export const Loader: React.FC<LoadingProps> = ({
         )}
       >
         <div className="flex flex-col items-center gap-4 rounded-lg bg-card p-6 shadow-lg">
-          <Loader2 className={cn('animate-spin text-primary', spinnerSize)} />
+          <div
+            className={cn(
+              'animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900',
+              spinnerSize
+            )}
+          ></div>
           {message && <p className="text-sm text-muted-foreground">{message}</p>}
         </div>
       </div>
@@ -54,7 +63,12 @@ export const Loader: React.FC<LoadingProps> = ({
   // Default spinner variant
   return (
     <div className={cn('h-full w-full flex flex-col items-center justify-center', className)}>
-      <Loader2 className={cn('animate-spin text-primary mb-4', spinnerSize)} />
+      <div
+        className={cn(
+          'animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900',
+          spinnerSize
+        )}
+      ></div>
       {message && <p className="text-muted-foreground">{message}</p>}
     </div>
   );

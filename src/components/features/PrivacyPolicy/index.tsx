@@ -50,9 +50,9 @@ export const PrivacyPolicyComponent = () => {
             <h2 className="text-xl font-semibold mb-3">4. Eliminación de datos</h2>
             <p className=" leading-relaxed">
               Tienes derecho a retirar tu consentimiento y solicitar la eliminación de tus datos en
-              cualquier momento. Para ello, envía un correo a <strong>[TU_EMAIL_AQUÍ]</strong> y
-              eliminaremos tu cuenta y registros asociados en un plazo máximo de 5 días hábiles,
-              conforme a la Ley Nº 18.331 de Uruguay.
+              cualquier momento. Para ello, contactanos y eliminaremos tu cuenta y registros
+              asociados en un plazo máximo de 5 días hábiles, conforme a la Ley Nº 18.331 de
+              Uruguay.
             </p>
           </section>
         </div>

@@ -8,7 +8,7 @@ import { toast } from 'sonner';
 export const useReviewLikesButtons = (props: ReviewLikesButtonsProps) => {
   const { id, likes: initialLikes, dislikes: initialDislikes } = props;
 
-  const { mutateAsync, isPending: isVoting, isError } = useVoteReview();
+  const { mutateAsync, isPending: isVoting } = useVoteReview();
   const { data, isLoading, refetch } = useGetReviewVote({
     reviewId: id,
   });
@@ -21,9 +21,6 @@ export const useReviewLikesButtons = (props: ReviewLikesButtonsProps) => {
     setClickedButton(voteType);
     setTimeout(() => setClickedButton(null), 300);
 
-    const previousLikes = optimisticLikes;
-    const previousDislikes = optimisticDislikes;
-
     if (voteType === VoteType.LIKE) {
       if (data === VoteType.LIKE) {
         setOptimisticLikes((prev) => prev - 1);
@@ -33,32 +30,28 @@ export const useReviewLikesButtons = (props: ReviewLikesButtonsProps) => {
       } else {
         setOptimisticLikes((prev) => prev + 1);
       }
+    }
+
+    if (data === VoteType.DISLIKE) {
+      setOptimisticDislikes((prev) => prev - 1);
+    } else if (data === VoteType.LIKE) {
+      setOptimisticLikes((prev) => prev - 1);
+      setOptimisticDislikes((prev) => prev + 1);
     } else {
-      if (data === VoteType.DISLIKE) {
-        setOptimisticDislikes((prev) => prev - 1);
-      } else if (data === VoteType.LIKE) {
-        setOptimisticLikes((prev) => prev - 1);
-        setOptimisticDislikes((prev) => prev + 1);
-      } else {
-        setOptimisticDislikes((prev) => prev + 1);
-      }
+      setOptimisticDislikes((prev) => prev + 1);
     }
 
     await mutateAsync(
       { reviewId: id, voteType },
       {
-        onError: () => {
-          toast.error('Error inesperado', {
-            description: 'No se pudo actualizar la reseña. Inténtalo de nuevo.',
-          });
+        onError: (error: Error) => {
+          setOptimisticLikes(initialLikes);
+          setOptimisticDislikes(initialDislikes);
+          toast.warning(error.message);
         },
       }
     );
 
-    if (isError) {
-      setOptimisticLikes(previousLikes);
-      setOptimisticDislikes(previousDislikes);
-    }
     await refetch();
   };
 

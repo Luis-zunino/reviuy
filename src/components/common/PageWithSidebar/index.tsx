@@ -95,7 +95,6 @@ export const PageWithSidebar: React.FC<PageWithSidebarProps> = (props) => {
               </Box>
             </div>
           ) : null}
-
           <div className={cn(sidebar ? 'lg:col-span-3' : 'col-span-4', 'w-full', contentClassName)}>
             {children}
           </div>

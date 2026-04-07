@@ -1,14 +1,14 @@
 import { useMutation, type UseMutationResult } from '@tanstack/react-query';
-import { toast } from 'sonner';
 import { useVerifyAuthentication } from '@/modules/profiles/presentation';
 import type { UseAuthMutationConfig } from './useAuthMutation.types';
+import { ErrorMessages } from '@/lib';
 
 export const useAuthMutation = <TData, TError = Error, TVariables = void>(
   config: UseAuthMutationConfig<TData, TError, TVariables>
 ): UseMutationResult<TData, TError, TVariables> => {
   const {
     mutationFn,
-    authErrorMessage = 'Debes iniciar sesión para realizar esta acción',
+    authErrorMessage = ErrorMessages.UNAUTHORIZED,
     showErrorToast = true,
     errorToastMessage,
     onError,
@@ -30,7 +30,7 @@ export const useAuthMutation = <TData, TError = Error, TVariables = void>(
       return mutationError.message;
     }
 
-    return 'Ocurrió un error inesperado';
+    return ErrorMessages.UNKNOWN_ERROR;
   };
 
   const shouldToastError = (mutationError: TError): boolean => {
@@ -43,7 +43,6 @@ export const useAuthMutation = <TData, TError = Error, TVariables = void>(
 
   const authenticatedMutationFn = async (variables: TVariables): Promise<TData> => {
     if (error || !data?.userId) {
-      toast.warning(authErrorMessage);
       throw new Error(authErrorMessage);
     }
 
@@ -54,7 +53,7 @@ export const useAuthMutation = <TData, TError = Error, TVariables = void>(
     mutationFn: authenticatedMutationFn,
     onError: (mutationError, variables, onMutateResult, context) => {
       if (shouldToastError(mutationError)) {
-        toast.error(getErrorMessage(mutationError));
+        throw new Error(getErrorMessage(mutationError));
       }
 
       onError?.(mutationError, variables, onMutateResult, context);
