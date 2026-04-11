@@ -17,12 +17,12 @@ export const useMultiForm = <T extends FieldValues = FieldValues>(props: {
   };
 
   const handleNext = async () => {
-    // const isValid = await form.trigger();
+    const isValid = await form.trigger();
 
-    // if (!isValid) {
-    //   toast.error('Por favor completa todos los campos requeridos');
-    //   return;
-    // }
+    if (!isValid) {
+      toast.error('Por favor completa todos los campos requeridos');
+      return;
+    }
 
     if (step < totalSteps - 1) {
       setStep(step + 1);
