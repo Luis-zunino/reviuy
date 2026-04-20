@@ -168,7 +168,7 @@ export const BentoReviewsSection = () => {
               <h2
                 className={`${playfair.className} text-3xl font-bold text-reviuy-gray-900 dark:text-white md:text-4xl`}
               >
-                Resenas destacadas
+                Reseñas destacadas
               </h2>
               <p
                 className={`${manrope.className} mt-3 max-w-xl text-reviuy-gray-600 dark:text-reviuy-gray-400`}
@@ -181,7 +181,7 @@ export const BentoReviewsSection = () => {
               whileHover={{ x: 4 }}
               className={`${manrope.className} group inline-flex items-center gap-2 text-sm font-semibold text-reviuy-primary-600 dark:text-reviuy-primary-400 transition-colors hover:text-reviuy-primary-700 dark:hover:text-reviuy-primary-300`}
             >
-              Ver todas las resenas
+              Ver todas las reseñas
               <span className="transition-transform duration-200 group-hover:translate-x-1">
                 &rarr;
               </span>

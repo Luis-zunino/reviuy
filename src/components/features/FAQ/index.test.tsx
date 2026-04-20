@@ -47,7 +47,7 @@ describe('FAQComponent', () => {
         {
           id: 1,
           question: 'Como funciona ReviUy?',
-          answer: 'Publicando y leyendo resenas.',
+          answer: 'Publicando y leyendo reseñas.',
         },
       ],
       selectedCategory: 'all',
@@ -64,7 +64,7 @@ describe('FAQComponent', () => {
     expect(screen.getByText('Preguntas precuentes')).toBeInTheDocument();
     expect(screen.getByText('Sidebar FAQ')).toBeInTheDocument();
     expect(screen.getByText('Como funciona ReviUy?')).toBeInTheDocument();
-    expect(screen.queryByText('Publicando y leyendo resenas.')).not.toBeInTheDocument();
+    expect(screen.queryByText('Publicando y leyendo reseñas.')).not.toBeInTheDocument();
   });
 
   it('abre respuesta al hacer click en la pregunta', async () => {

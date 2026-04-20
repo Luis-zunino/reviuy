@@ -29,7 +29,7 @@ const features = [
   {
     icon: Users,
     title: 'Comparti y protege',
-    description: 'Tu resena ayuda a toda la comunidad a tomar decisiones mas seguras.',
+    description: 'Tu reseña ayuda a toda la comunidad a tomar decisiones mas seguras.',
     color: 'text-reviuy-secondary-600 dark:text-reviuy-secondary-500',
     bgColor: 'bg-reviuy-secondary-50 dark:bg-reviuy-secondary-500/10',
     borderColor: 'border-reviuy-secondary-100 dark:border-reviuy-secondary-500/20',
@@ -84,7 +84,7 @@ export const WhySection = () => {
             <p
               className={`${manrope.className} mt-4 text-lg leading-relaxed text-reviuy-gray-600 dark:text-reviuy-gray-400`}
             >
-              Tomamos resenas reales y las convertimos en una decision clara para tu proximo
+              Tomamos reseñas reales y las convertimos en una decision clara para tu proximo
               alquiler.
             </p>
           </motion.div>
@@ -150,7 +150,7 @@ export const WhySection = () => {
                 'group inline-flex items-center gap-2 rounded-xl bg-reviuy-primary-600 dark:bg-reviuy-primary-500 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-reviuy-primary-700 dark:hover:bg-reviuy-primary-600 hover:shadow-md'
               )}
             >
-              Escribi tu primera resena
+              Escribi tu primera reseña
               <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
             </Link>
           </motion.div>
