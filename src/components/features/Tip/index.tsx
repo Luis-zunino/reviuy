@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import { useTip } from './hooks';
 import { PageWithSidebar } from '@/components/common';
 import type { ContentBlock, ContentSection } from '@/types';

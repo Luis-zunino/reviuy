@@ -9,7 +9,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Save } from 'lucide-react';
-import React from 'react';
 import { RealEstateReviewFormContent } from './components/RealEstateReviewFormContent';
 import type { RealEstateReviewFormProps } from './types';
 import { Form } from '@/components/ui/form';
@@ -74,11 +73,11 @@ export const RealEstateReviewForm = (props: RealEstateReviewFormProps) => {
                 <ReportRealEstateReviewButton review={review} showText />
               ) : null}
               {review ? <DeleteRealEstateReviewButton review={review} showText /> : null}
-              {!isReadOnly ? (
+              {isReadOnly ? null : (
                 <Button type="submit" disabled={isSubmitting} icon={Save} size="sm">
                   {isSubmitting ? 'Guardando...' : 'Publicar reseña'}
                 </Button>
-              ) : null}
+              )}
             </div>
           </form>
         </Form>

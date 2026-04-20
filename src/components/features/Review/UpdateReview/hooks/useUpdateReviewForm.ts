@@ -1,6 +1,6 @@
 'use client';
 
-import { useGetReviewById } from '@/services/apis/reviews';
+import { useGetReviewById } from '@/modules/property-reviews';
 import { useCreateOrUpdateReviewForm } from '../../hooks';
 import { useParams } from 'next/navigation';
 

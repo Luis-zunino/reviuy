@@ -6,7 +6,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import React from 'react';
 import type { FAQSidebarProps } from './types';
 
 export const FAQSidebar = (props: FAQSidebarProps) => {
@@ -46,9 +45,9 @@ export const FAQSidebar = (props: FAQSidebarProps) => {
               className={`flex items-center justify-between text-sm group w-full text-left p-0 ${
                 selectedCategory === category ? 'text-blue-600 font-medium' : 'hover:text-blue-600'
               }`}
-              variant="ghost"
+              variant="link"
             >
-              <span className="group-hover:font-medium">{getCategoryLabel(category)}</span>
+              <span className="group-hover:font-medium p-1">{getCategoryLabel(category)}</span>
             </Button>
           ))}
         </div>

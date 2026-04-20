@@ -90,6 +90,7 @@ type StructuredDataSchema =
 
 interface StructuredDataProps {
   data: StructuredDataSchema | StructuredDataSchema[];
+  nonce?: string;
 }
 
 /**
@@ -115,7 +116,7 @@ interface StructuredDataProps {
  * />
  * ```
  */
-export function StructuredData({ data }: StructuredDataProps) {
+export function StructuredData({ data, nonce }: StructuredDataProps) {
   const jsonLd = Array.isArray(data) ? data : [data];
 
   return (
@@ -131,6 +132,7 @@ export function StructuredData({ data }: StructuredDataProps) {
             key={`structured-data-${schema['@type']}-${index}`}
             id={`structured-data-${schema['@type']}-${index}`}
             type="application/ld+json"
+            nonce={nonce}
             dangerouslySetInnerHTML={{
               __html: safeJson,
             }}

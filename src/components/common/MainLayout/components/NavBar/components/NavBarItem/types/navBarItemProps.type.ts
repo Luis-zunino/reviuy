@@ -1,11 +1,10 @@
 import { LucideIcon } from 'lucide-react';
-import { TEXT_VARIANT } from '../constants';
 
 export interface NavBarItemProps {
   pageUrl?: string;
-  Icon?: LucideIcon;
+  icon?: LucideIcon;
   label: string;
-  variant?: keyof typeof TEXT_VARIANT;
+  variant?: 'default' | 'destructive';
   onClick?: () => void;
   showInDesktop?: boolean;
 }

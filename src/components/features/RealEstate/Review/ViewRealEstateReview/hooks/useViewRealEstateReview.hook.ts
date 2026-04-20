@@ -1,7 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormRealEstateSchema, formRealEstateSchema } from '@/schemas';
 import { useForm } from 'react-hook-form';
-import { useGetRealEstateById, useGetRealEstateReviewById } from '@/services';
+import {
+  useGetRealEstateById,
+  useGetRealEstateReviewById,
+} from '@/modules/real-estates/presentation';
 import { useParams } from 'next/navigation';
 
 export const useViewRealEstateReview = () => {

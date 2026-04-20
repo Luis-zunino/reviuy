@@ -3,7 +3,6 @@ import { FormLabel } from '@/components/common/Form/FormLabel';
 import { StarRatingInput } from '@/components/common/StarRating';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import React from 'react';
 import { Controller } from 'react-hook-form';
 import {
   Select,

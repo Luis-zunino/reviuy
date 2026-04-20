@@ -1,8 +1,8 @@
 import {
   useHasUserReportedRealEstate,
   useReportRealEstate,
-  useSendReportRealEstateMessage,
-} from '@/services';
+} from '@/modules/real-estates/presentation';
+import { useSendReportRealEstateMessage } from '@/modules/moderation/presentation';
 import React, { useState } from 'react';
 import { validateText } from '@/utils';
 import { toast } from 'sonner';

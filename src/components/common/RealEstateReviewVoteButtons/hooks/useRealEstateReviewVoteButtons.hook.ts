@@ -1,5 +1,6 @@
-import { useVoteRealEstateReview } from '@/services';
-import { RealEstateReviewWithVotesPublic, VoteType } from '@/types';
+import { RealEstateReviewWithVotesPublic } from '@/modules/real-estates';
+import { useVoteRealEstateReview } from '@/modules/real-estates/presentation';
+import { VoteType } from '@/types';
 import { QueryObserverResult, RefetchOptions } from '@tanstack/react-query';
 import { useState } from 'react';
 import { toast } from 'sonner';

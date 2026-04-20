@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import { Flag, AlertTriangle } from 'lucide-react';
 import {
   Dialog,

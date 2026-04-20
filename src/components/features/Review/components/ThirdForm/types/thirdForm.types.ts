@@ -1,7 +1,7 @@
 import type { UseFormReturn } from 'react-hook-form';
 import { FormReviewSchema } from '@/schemas';
 import { Dispatch, SetStateAction } from 'react';
-import { RealEstateWitheVotes } from '@/types';
+import { type RealEstateWitheVotes } from '@/modules/real-estates';
 
 export interface ThirdFormProps {
   form: UseFormReturn<FormReviewSchema, any, FormReviewSchema>;

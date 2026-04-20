@@ -1,9 +1,13 @@
 import { NextResponse } from 'next/server';
-import { ContactEmailTemplate } from '@/components/common/Emails';
-import { getAuthenticatedUser, parseAndValidateBody, sendEmail } from '../_utils';
-import { AppError, createError, withRateLimit } from '@/lib';
-import { contactApiSchema } from '@/schemas';
+import { getAuthenticatedUser } from '../_utils';
+import { AppError, createError, withRateLimit, RateLimitType } from '@/lib';
+import { createSendContactMessageUseCase } from '@/modules/content/application';
+import { ResendContentCommandRepository } from '@/modules/content/infrastructure';
 
+/**
+ * Handles GET requests to the contact endpoint, which are not allowed.
+ * @returns A JSON response indicating that the method is not allowed.
+ */
 export async function GET() {
   return NextResponse.json(
     {
@@ -13,7 +17,11 @@ export async function GET() {
     { status: 405 }
   );
 }
-
+/**
+ * Handles POST requests to send contact messages.
+ * @param req - The incoming request containing the contact message data.
+ * @returns A JSON response indicating the success or failure of the operation.
+ */
 export async function POST(req: Request) {
   try {
     const user = await getAuthenticatedUser();
@@ -22,25 +30,18 @@ export async function POST(req: Request) {
       throw createError('UNAUTHORIZED', 'No autorizado');
     }
 
-    await withRateLimit(`api-contact:${user.id}`, 'sensitive');
-
-    const body = await parseAndValidateBody(req, contactApiSchema);
-    const { name, email, message } = body;
-
-    const loginEmail = user.email;
-
-    if (!loginEmail) {
-      throw createError('INVALID_INPUT', 'El email de sesión no se encontró');
-    }
-
-    await sendEmail({
-      to: [process.env.CONTACT_EMAIL!],
-      replyTo: user.email,
-      subject: `Nuevo mensaje de contacto - ${name}`,
-      react: (
-        <ContactEmailTemplate name={name} email={email} message={message} loginEmail={loginEmail} />
-      ),
+    const sendContactMessageUseCase = createSendContactMessageUseCase({
+      getCurrentUser: async () => ({
+        id: user.id,
+        email: user.email ?? null,
+      }),
+      rateLimit: async (key: string, scope: RateLimitType) => {
+        await withRateLimit(key, scope);
+      },
+      contentCommandRepository: new ResendContentCommandRepository(),
     });
+
+    await sendContactMessageUseCase(await req.json());
 
     return NextResponse.json({ success: true });
   } catch (error: unknown) {

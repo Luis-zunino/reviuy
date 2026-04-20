@@ -1,11 +1,11 @@
 import { ProfileComponent } from '@/components/features/Profile';
-import { Metadata } from 'next';
-import React from 'react';
+import { generatePageMetadata } from '@/lib/metadata';
 
-export const metadata: Metadata = {
+export const metadata = generatePageMetadata({
   title: 'Mi Perfil | ReviUy',
   description: 'Administra tu perfil, reseñas y configuraciones en ReviUy.',
-};
+  path: '/profile',
+});
 
 const ProfilePage = () => {
   return <ProfileComponent />;

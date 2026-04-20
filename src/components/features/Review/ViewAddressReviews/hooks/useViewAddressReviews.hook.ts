@@ -1,9 +1,10 @@
 import { PagesUrls } from '@/enums';
-import { useGetAddressInfo, useGetReviewsByAddress } from '@/services';
+import { useGetAddressInfo } from '@/modules/addresses/presentation';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { useParams } from 'next/navigation';
 import { useAuthContext } from '@/components/providers/AuthProvider';
+import { useGetReviewsByAddress } from '@/modules/property-reviews';
 
 export const useViewAddressReviews = () => {
   const { osmId } = useParams<{ osmId: string }>();

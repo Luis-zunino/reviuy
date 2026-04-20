@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { VoteType } from '@/types';
 import { Loader2, ThumbsDown, ThumbsUp } from 'lucide-react';
-import React from 'react';
 import { cn } from '@/lib/utils';
 import { useReviewLikesButtons } from './hooks';
 import type { ReviewLikesButtonsProps } from './types';

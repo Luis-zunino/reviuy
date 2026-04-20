@@ -1,14 +1,15 @@
 import { FormLabel } from '@/components/common/Form';
 import { Textarea } from '@/components/ui/textarea';
-import React from 'react';
 import type { ThirdFormProps } from './types';
-import { RealEstateWitheVotes } from '@/types';
 import { AsyncSearchSelect } from '@/components/common/AsyncSearchSelect';
 import { FormReviewSchema } from '@/schemas';
 import { CreateRealEstateModal } from '@/components/features/RealEstate/CreateRealEstate/CreateRealEstateModal';
 import { useThirdForm } from './hooks';
 import { Building2, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { type RealEstateWitheVotes } from '@/modules/real-estates';
+import { Controller } from 'react-hook-form';
+import { ImageInput } from '../ImageInput';
 
 export const ThirdForm = (props: ThirdFormProps) => {
   const { form, open, setOpen, handleClear, onSelect, queryValue } = props;
@@ -41,7 +42,7 @@ export const ThirdForm = (props: ThirdFormProps) => {
                 onOpenChange={setIsModalOpen}
                 showModal={showModal}
                 triggerComponentModal={() => (
-                  <div className="z-10 mt-1 w-full min-w-87.5 rounded-md bg-white">
+                  <div className="z-10 mt-1 w-full min-w-87.5 rounded-md ">
                     <div className="p-4 text-center">
                       <Building2 className="h-8 w-8 text-gray-400 mx-auto mb-2" />
                       <p className="text-sm text-gray-600 mb-3">
@@ -83,6 +84,22 @@ export const ThirdForm = (props: ThirdFormProps) => {
         {errors?.real_estate_experience && (
           <p className="text-red-500 text-sm">{errors.real_estate_experience.message}</p>
         )}
+      </div>
+
+      <div className="space-y-2">
+        <Controller
+          control={form.control}
+          name="images"
+          render={({ field, fieldState }) => (
+            <ImageInput
+              value={field.value ?? []}
+              onChange={field.onChange}
+              error={fieldState.error?.message}
+              label="Imágenes de la reseña"
+              description="Podés agregar hasta 5 imágenes para acompañar tu reseña."
+            />
+          )}
+        />
       </div>
     </div>
   );

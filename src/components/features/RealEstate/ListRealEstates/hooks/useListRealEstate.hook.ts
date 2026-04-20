@@ -1,4 +1,4 @@
-import { useInfiniteRealEstates } from '@/services';
+import { useInfiniteRealEstates } from '@/modules/real-estates/presentation';
 import { useMemo, useState } from 'react';
 import { useDebounce } from '@/hooks';
 import { useForm } from 'react-hook-form';

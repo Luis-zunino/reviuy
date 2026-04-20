@@ -1,6 +1,5 @@
 import { FeedBackBadge } from '@/components/common';
 import { Button } from '@/components/ui/button';
-import React from 'react';
 import { ReviewCardProps } from '../../types';
 
 export const AddressReviewCard = ({ review }: ReviewCardProps) => {

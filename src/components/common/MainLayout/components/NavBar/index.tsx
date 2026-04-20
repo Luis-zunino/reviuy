@@ -6,6 +6,7 @@ import {
   Building2,
   HelpCircle,
   Lightbulb,
+  Map,
   Menu,
   UserRoundCog,
   FilePenLine,
@@ -22,23 +23,30 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { NavBarItem } from './components/NavBarItem';
 import { cn } from '@/lib/utils';
+import { ThemeToggle } from '@/components/common/ThemeToggle';
 
 export const NavBar = () => {
   const { isAuthenticated, opacity, signOut, sharedStyles, isOpen, setIsOpen } = useNavBar();
 
   return (
     <nav
-      className="sticky top-0 z-50 transition-all duration-300"
+      className={cn(
+        'sticky top-0 z-50 transition-all duration-300',
+        opacity > 0 && 'bg-background/80 border-b border-border/50'
+      )}
       style={{
-        backgroundColor: `rgba(255, 255, 255, ${opacity})`,
-        borderBottom: `1px solid rgba(229, 231, 235, ${opacity})`,
         backdropFilter: opacity > 0 && opacity < 1 ? 'blur(8px)' : 'none',
       }}
+      data-opacity={opacity}
     >
       <div className="xl:mx-40 mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <Logo />
           <div className="hidden md:flex items-center gap-6">
+            <Link href={PagesUrls.EXPLORE_REVIEWS} className={sharedStyles}>
+              Explorar
+            </Link>
+
             <Link href={PagesUrls.REAL_ESTATE} className={sharedStyles}>
               Inmobiliarias
             </Link>
@@ -52,15 +60,16 @@ export const NavBar = () => {
             </Link>
           </div>
           <div className="flex gap-2 items-center">
+            <ThemeToggle />
             <Link href={PagesUrls.REVIEW_CREATE} className={cn(sharedStyles, 'hidden md:flex')}>
               <FilePenLine className="w-4 h-4" />
               Escribir reseña
             </Link>
             <DropdownMenu modal={false} open={isOpen} onOpenChange={setIsOpen}>
               <DropdownMenuTrigger asChild className="h-8 hover:cursor-pointer">
-                <Link href="#" className={sharedStyles}>
+                <button type="button" className={sharedStyles} aria-label="Abrir menú principal">
                   <Menu className="w-6 h-6" />
-                </Link>
+                </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 align="end"
@@ -69,36 +78,41 @@ export const NavBar = () => {
                   setIsOpen(false);
                 }}
               >
-                <NavBarItem pageUrl={PagesUrls.HOME} Icon={Home} label="Inicio" />
+                <NavBarItem pageUrl={PagesUrls.HOME} icon={Home} label="Inicio" />
+                <NavBarItem
+                  pageUrl={PagesUrls.EXPLORE_REVIEWS}
+                  icon={Map}
+                  label="Explorar reseñas"
+                />
                 <NavBarItem
                   pageUrl={PagesUrls.REAL_ESTATE}
-                  Icon={Building2}
+                  icon={Building2}
                   label="Inmobiliarias"
                 />
-                <NavBarItem pageUrl={PagesUrls.TIPS} Icon={Lightbulb} label="Tips" />
-                <NavBarItem pageUrl={PagesUrls.FAQ} Icon={HelpCircle} label="FAQ" />
+                <NavBarItem pageUrl={PagesUrls.TIPS} icon={Lightbulb} label="Tips" />
+                <NavBarItem pageUrl={PagesUrls.FAQ} icon={HelpCircle} label="FAQ" />
                 <NavBarItem
                   pageUrl={PagesUrls.REVIEW_CREATE}
-                  Icon={FilePenLine}
+                  icon={FilePenLine}
                   label="Escribir reseña"
                 />
                 {isAuthenticated ? (
                   <>
                     <NavBarItem
                       pageUrl={PagesUrls.CONTACT}
-                      Icon={Contact}
+                      icon={Contact}
                       label="Contáctanos"
                       showInDesktop={true}
                     />
                     <NavBarItem
                       pageUrl={PagesUrls.PROFILE}
-                      Icon={UserRoundCog}
+                      icon={UserRoundCog}
                       label="Perfil"
                       showInDesktop={true}
                     />
                     <NavBarItem
                       variant="destructive"
-                      Icon={LogOut}
+                      icon={LogOut}
                       onClick={signOut}
                       label="Cerrar sesión"
                       showInDesktop={true}
@@ -107,7 +121,7 @@ export const NavBar = () => {
                 ) : (
                   <NavBarItem
                     pageUrl={PagesUrls.LOGIN}
-                    Icon={UserRoundCog}
+                    icon={UserRoundCog}
                     label="Iniciar sesión"
                     showInDesktop={true}
                   />

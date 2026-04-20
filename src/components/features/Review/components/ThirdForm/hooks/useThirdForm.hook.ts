@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useDebounce } from '@/hooks';
-import { useSearchRealEstates } from '@/services';
+import { useSearchRealEstates } from '@/modules/real-estates';
 
 export const useThirdForm = (props: { queryValue?: string }) => {
   const { queryValue } = props;

@@ -1,12 +1,12 @@
 'use client';
 
-import React from 'react';
 import { cn } from '@/lib/utils';
 import type { PageWithSidebarProps } from './types';
 import { useAuthContext } from '@/components/providers/AuthProvider';
 import { Loader } from '../Loaders';
 import { ErrorPage, NoAuthenticated } from './components';
 import { Breadcrumbs } from '../Breadcrumbs';
+import { Box } from '../Box';
 
 /**
  * @description Page layout component with a sidebar and main content area.
@@ -66,13 +66,18 @@ export const PageWithSidebar: React.FC<PageWithSidebarProps> = (props) => {
 
   return (
     <main className="min-h-screen bg-background">
-      <div className={cn('bg-blue-50 border-b border-border py-12', headerClassName)}>
+      <div
+        className={cn(
+          'bg-blue-50 border-b border-border py-12 dark:bg-gray-900 px-4',
+          headerClassName
+        )}
+      >
         <div className="max-w-md md:max-w-7xl mx-auto flex items-start gap-4">
           <div>
             <h1 className="text-4xl font-bold text-foreground mb-3">{title}</h1>
             <p className="text-muted-foreground text-lg">{description}</p>
           </div>
-          {headerAction ? headerAction : null}
+          {headerAction}
         </div>
       </div>
       <div className="sm:max-w-7xl mx-auto py-12 px-4 xl:px-0">
@@ -80,17 +85,16 @@ export const PageWithSidebar: React.FC<PageWithSidebarProps> = (props) => {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 w-full">
           {sidebar ? (
             <div className="lg:col-span-1">
-              <div
+              <Box
                 className={cn(
-                  'sticky top-20 bg-white rounded-lg border border-border p-6',
+                  'sticky top-20 rounded-lg border border-border p-6',
                   sidebarClassName
                 )}
               >
                 {sidebar}
-              </div>
+              </Box>
             </div>
           ) : null}
-
           <div className={cn(sidebar ? 'lg:col-span-3' : 'col-span-4', 'w-full', contentClassName)}>
             {children}
           </div>

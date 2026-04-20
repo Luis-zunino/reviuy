@@ -6,16 +6,17 @@ import type {
   UseFormHandleSubmit,
   UseFormReturn,
 } from 'react-hook-form';
-import type { NominatimEntity, RealEstateWitheVotes } from '@/types';
 import { Dispatch, SetStateAction } from 'react';
 import { FormReviewSchema } from '@/schemas';
+import { type NominatimEntity } from '@/modules/addresses';
+import { type RealEstateWitheVotes } from '@/modules/real-estates';
 
 export interface ReviewFormProps {
   isLoading?: boolean;
   fields: FieldArrayWithId<FormReviewSchema, 'review_rooms', 'id'>[];
   replace: UseFieldArrayReplace<FormReviewSchema, 'review_rooms'>;
-  form: UseFormReturn<FormReviewSchema>;
-  handleSubmit: UseFormHandleSubmit<FormReviewSchema>;
+  form: UseFormReturn<FormReviewSchema, undefined, FormReviewSchema>;
+  handleSubmit: UseFormHandleSubmit<FormReviewSchema, FormReviewSchema>;
   onSubmit: (data: FormReviewSchema) => void;
   append: UseFieldArrayAppend<FormReviewSchema, 'review_rooms'>;
   remove: UseFieldArrayRemove;

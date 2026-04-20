@@ -1,7 +1,6 @@
 import { StarRatingInput, StarRatingDisplay } from '@/components/common';
 import { FormLabel } from '@/components/common/Form/FormLabel';
 import { Input } from '@/components/ui/input';
-import React from 'react';
 import { Controller } from 'react-hook-form';
 import type { RealEstateReviewFormContentProps } from './types';
 import { Textarea } from '@/components/ui/textarea';

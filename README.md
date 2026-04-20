@@ -1,6 +1,6 @@
 # ReviUy
 
-Plataforma de resenas de alquileres e inmobiliarias en Uruguay, construida con Next.js App Router, TypeScript y Supabase.
+Plataforma de reseñas de alquileres e inmobiliarias en Uruguay, construida con Next.js App Router, TypeScript y Supabase.
 
 ## Stack
 
@@ -95,13 +95,32 @@ yarn security:owasp
 
 ## Arquitectura (resumen)
 
-- Server Actions: src/app/\_actions/
+- Entry points por dominio: src/modules/\*/presentation/
 - API Routes publicas/webhooks: src/app/api/
 - Schemas Zod: src/schemas/
-- Hooks de datos: src/services/apis/
+- Hooks de datos: src/modules/\*/presentation/ y shared para utilidades transversales
 - Componentes UI/features: src/components/
 - Tipos de dominio: src/types/
 - SQL y migraciones: supabase/migrations/
+
+## Estado Arquitectonico
+
+La aplicacion ya esta en una migracion activa hacia monolito modular por dominio.
+
+Estado actual resumido:
+
+- property-reviews y real-estates ya operan con commands, queries y repositorios propios
+- addresses ya es owner de la busqueda por nombre y del detalle de direccion
+- moderation ya centraliza reportes conectados a server actions y API routes
+- profiles ya centraliza auth, session, delete-account, reseñas propias y favoritos del usuario
+- content ya centraliza el flujo de contacto
+- content tambien concentra el dataset estático de tips en src/modules/content/data/
+- shared/auth centraliza useAuthMutation como utilidad transversal
+- src/constants/queryKeys.constants.ts centraliza query keys compartidas
+
+La capa legacy src/services fue retirada por completo. Los imports ahora apuntan directo a modulos, shared o constants segun corresponda.
+
+Ver detalle en [src/modules/README.md](src/modules/README.md) y [docs/architecture/MIGRATION_PLAN_TOWARD_TARGET_ARCHITECTURE.md](docs/architecture/MIGRATION_PLAN_TOWARD_TARGET_ARCHITECTURE.md).
 
 ## Documentacion
 
@@ -111,6 +130,7 @@ yarn security:owasp
 - Seguridad: [security.readme.md](security.readme.md)
 - Rate limiting: [docs/security/RATE_LIMITING_IMPLEMENTATION.md](docs/security/RATE_LIMITING_IMPLEMENTATION.md)
 - Mejoras de arquitectura: [docs/architecture/ARCHITECTURE_IMPROVEMENTS.md](docs/architecture/ARCHITECTURE_IMPROVEMENTS.md)
+- Estado de modulos: [src/modules/README.md](src/modules/README.md)
 - Despliegue por entorno: [docs/operations/DEPLOYMENT.md](docs/operations/DEPLOYMENT.md)
 - Branching y releases: [docs/process/BRANCHING_AND_RELEASES.md](docs/process/BRANCHING_AND_RELEASES.md)
 - Runbook de incidentes: [docs/operations/INCIDENT_RUNBOOK.md](docs/operations/INCIDENT_RUNBOOK.md)

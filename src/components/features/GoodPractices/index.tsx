@@ -7,7 +7,7 @@ export const GoodPracticesComponent = () => {
       description="Guía para mantener una comunidad respetuosa y útil"
     >
       <div className="mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-white rounded-lg shadow-sm p-8 space-y-6">
+        <div className=" rounded-lg shadow-sm p-8 space-y-6">
           <section>
             <p className="text-gray-700 leading-relaxed">
               Te damos la bienvenida a la plataforma ReviUy. En esta plataforma estás invitado a

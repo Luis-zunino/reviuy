@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import {
   Dialog,
   DialogContent,
@@ -35,7 +34,7 @@ export const DeleteReviewDialog: React.FC<DeleteReviewDialogProps> = ({
               </p>
               {reviewTitle && (
                 <div className="mt-2 p-3 bg-gray-50 rounded-md border-l-4 border-red-400">
-                  <p className="font-medium text-gray-900">&ldquo;{reviewTitle}&rdquo;</p>
+                  <p className="font-medium">&ldquo;{reviewTitle}&rdquo;</p>
                 </div>
               )}
             </div>
