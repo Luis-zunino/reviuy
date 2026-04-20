@@ -6,6 +6,8 @@ import type {
   GetAddressInfoOutput,
   SearchAddressByNameInput,
   SearchAddressByNameOutput,
+  ReverseGeocodeInput,
+  ReverseGeocodeOutput,
 } from '../../domain';
 
 export class NominatimAddressReadRepository implements AddressReadRepository {
@@ -44,5 +46,27 @@ export class NominatimAddressReadRepository implements AddressReadRepository {
     }
 
     return response.json() as Promise<GetAddressInfoOutput>;
+  }
+
+  async reverseGeocode({ lat, lon }: ReverseGeocodeInput): Promise<ReverseGeocodeOutput> {
+    const url = new URL(`${NOMINATIM_URL}/reverse`);
+    url.searchParams.set('format', 'json');
+    url.searchParams.set('lat', String(lat));
+    url.searchParams.set('lon', String(lon));
+    url.searchParams.set('zoom', '14');
+    url.searchParams.set('addressdetails', '1');
+
+    const response = await fetch(url.toString(), {
+      headers: {
+        'User-Agent': 'ReviUy/1.0',
+      },
+      signal: AbortSignal.timeout(5000),
+    });
+
+    if (!response.ok) {
+      return null;
+    }
+
+    return response.json() as Promise<ReverseGeocodeOutput>;
   }
 }

@@ -74,21 +74,12 @@ const nextConfig: NextConfig = {
         ],
       },
       {
-        source: '/_next/static/:path*',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
-        ],
-      },
-      {
         source: '/(.*)',
         headers: [
           {
             key: 'Permissions-Policy',
             value: `
-              geolocation=(),
+              geolocation=(self),
               microphone=(),
               camera=(),
               gyroscope=(),
@@ -96,7 +87,7 @@ const nextConfig: NextConfig = {
               accelerometer=(),
               payment=(),
               usb=()
-            `.replace(/\s+/g, ''),
+            `.replaceAll(/\s+/g, ''),
           },
         ],
       },

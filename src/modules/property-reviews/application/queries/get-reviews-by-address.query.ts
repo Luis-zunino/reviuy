@@ -1,8 +1,11 @@
 import { createError } from '@/lib';
 import type { QueryHandler } from '@/shared/kernel/contracts';
 import { z, ZodError } from 'zod';
-import type { GetReviewsByAddressInput, PropertyReviewAddressReadModel } from '../../domain';
-import type { PropertyReviewReadRepository } from '../../domain';
+import type {
+  GetReviewsByAddressInput,
+  ReviewWithVotesPublic,
+  PropertyReviewReadRepository,
+} from '../../domain';
 
 const getReviewsByAddressSchema = z.object({
   osmId: z.string().min(1, 'El identificador de dirección es requerido'),
@@ -14,7 +17,7 @@ export interface GetReviewsByAddressQueryDependencies {
 
 export const createGetReviewsByAddressQuery = (
   dependencies: GetReviewsByAddressQueryDependencies
-): QueryHandler<GetReviewsByAddressInput, PropertyReviewAddressReadModel[]> => {
+): QueryHandler<GetReviewsByAddressInput, ReviewWithVotesPublic[]> => {
   return async (input) => {
     try {
       getReviewsByAddressSchema.parse(input);

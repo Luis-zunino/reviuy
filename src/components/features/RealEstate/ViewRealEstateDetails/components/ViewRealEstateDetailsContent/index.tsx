@@ -15,7 +15,11 @@ export const ViewRealEstateDetailsContent = (props: ViewRealEstateDetailsContent
   const { reviews, realEstateReview, isLoadingReviews, realEstateId } = props;
   const [activeTab, setActiveTab] = useState('realEstateReview');
   return (
-    <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col">
+    <Tabs
+      value={activeTab}
+      onValueChange={setActiveTab}
+      className="flex flex-col min-h-245 md:min-h-215"
+    >
       <TabsList className="grid grid-cols-2 mb-6">
         <TabsTrigger value="realEstateReview" className="flex md:items-center gap-2">
           <MessageSquare className="h-4 w-4 hidden md:block" />

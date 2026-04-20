@@ -14,7 +14,7 @@ export const createGetReviewsByUserIdQuery = (
 ): QueryHandler<GetReviewsByUserIdInput, GetReviewsByUserIdOutput> => {
   const { propertyReviewReadRepository } = dependencies;
 
-  return async (input: GetReviewsByUserIdInput): Promise<GetReviewsByUserIdOutput> => {
-    return propertyReviewReadRepository.getByUserId(input);
+  return async (): Promise<GetReviewsByUserIdOutput> => {
+    return propertyReviewReadRepository.getByUserId();
   };
 };

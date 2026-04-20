@@ -18,7 +18,12 @@ export const Login = () => {
         <h1 className="text-2xl font-bold text-gray-900">Iniciar Sesión</h1>
       </div>
 
-      <Button variant="outline" className="w-full flex items-center gap-2" onClick={onGoogleSignIn}>
+      <Button
+        variant="outline"
+        className="w-full flex items-center gap-2"
+        onClick={onGoogleSignIn}
+        disabled={loading}
+      >
         <GoogleIcon />
         Continuar con Google
       </Button>
@@ -59,17 +64,17 @@ export const Login = () => {
               {...register('acceptedTerms')}
             />
             <span>
-              Acepto los{' '}
+              Acepto los
               <Link
                 href={PagesUrls.TERMS_AND_CONDITIONS}
-                className="text-blue-600 hover:text-blue-800 underline"
+                className="text-blue-600 hover:bg-transparent underline px-1"
               >
                 terminos y condiciones
-              </Link>{' '}
+              </Link>
               y la{' '}
               <Link
                 href={PagesUrls.PRIVACY_POLICY}
-                className="text-blue-600 hover:text-blue-800 underline"
+                className="text-blue-600 hover:bg-transparent underline pl-1 pr-0"
               >
                 politica de privacidad
               </Link>
@@ -94,7 +99,7 @@ export const Login = () => {
       </form>
 
       <div className="text-center text-xs text-gray-500 space-y-1">
-        Necesitas aceptar terminos y privacidad para continuar.
+        Si ya aceptaste anteriormente, no necesitas volver a marcarlo.
       </div>
     </div>
   );

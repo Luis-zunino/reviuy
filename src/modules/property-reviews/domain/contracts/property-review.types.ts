@@ -7,6 +7,9 @@ export type ReviewRoom = Database['public']['Tables']['review_rooms']['Row'];
 export type ReviewWithVotes = Database['public']['Views']['reviews_with_votes']['Row'];
 export type ReviewUpdate = Database['public']['Tables']['reviews']['Update'];
 export type ReviewRoomUpdate = Database['public']['Tables']['review_rooms']['Update'];
+export type ReviewWriteResponse = Omit<Review, 'user_id' | 'deleted_at'> & {
+  review_rooms?: ReviewRoom[];
+};
 /**
  * Vista pública de reviews sin user_id para proteger anonimato.
  * Usar para queries públicos donde no se necesita exponer la identidad del usuario.
@@ -50,14 +53,12 @@ export interface CreatePropertyReviewResult {
   success: boolean;
   message: string;
   error?: string;
-  data?: Review & { review_rooms?: ReviewRoom[] };
+  data?: ReviewWriteResponse;
 }
 
 export interface GetReviewsByAddressInput {
   osmId: string;
 }
-
-export type PropertyReviewAddressReadModel = ReviewWithVotesPublic;
 
 export interface UpdatePropertyReviewInput {
   reviewId: string;
@@ -78,7 +79,7 @@ export interface UpdatePropertyReviewResult {
   success: boolean;
   message: string;
   error?: string;
-  data?: Review & { review_rooms?: ReviewRoom[] };
+  data?: ReviewWriteResponse;
 }
 
 export interface DeletePropertyReviewInput {
@@ -145,18 +146,11 @@ export interface UserReviewVote {
 
 export type GetUserReviewVoteOutput = VoteType | null;
 
-export interface GetUserFavoriteReviewsInput {
-  limit?: number;
-  offset?: number;
-}
-
 export type GetUserFavoriteReviewsOutput = ReviewWithVotes[];
 
 export interface IsReviewFavoriteInput {
   reviewId: string;
 }
-
-export type IsReviewFavoriteOutput = boolean;
 
 export interface CheckUserReviewForAddressInput {
   osmId: string;
@@ -168,7 +162,21 @@ export interface HasUserReportedReviewInput {
   reviewId: string;
 }
 
-export type HasUserReportedReviewOutput = boolean;
+export interface GetReviewsByZoneInput {
+  query: string;
+  limit?: number;
+}
+
+export type GetReviewsByZoneOutput = ReviewWithVotesPublic[];
+
+export interface GetReviewsNearbyInput {
+  lat: number;
+  lon: number;
+  radiusDeg?: number;
+  limit?: number;
+}
+
+export type GetReviewsNearbyOutput = ReviewWithVotesPublic[];
 
 // ============================================================================
 // REVIEW IMAGES

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { supabaseClient } from '@/lib/supabase';
-import type { AuthProviderProps } from './types';
+import type { AuthProviderProps, TermsAcceptancePayload } from './types';
 import { useRouter } from 'next/navigation';
 import { PagesUrls } from '@/enums';
 import type { AppSession } from '@/modules/profiles/domain';
@@ -53,24 +53,45 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const { push } = useRouter();
   const authCallbackUrl = buildSiteUrl('/auth/callback');
 
-  const signInWithGoogle = useCallback(async () => {
-    setLoading(true);
-    const { error } = await supabaseClient.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: authCallbackUrl,
-      },
-    });
-    setLoading(false);
-    if (error) {
-      throw error;
-    }
-  }, [authCallbackUrl]);
+  const buildAuthCallbackUrl = useCallback(
+    (payload?: TermsAcceptancePayload) => {
+      const url = new URL(authCallbackUrl);
+
+      if (payload?.acceptedTerms) {
+        url.searchParams.set('terms_accepted', '1');
+        url.searchParams.set(
+          'terms_accepted_at',
+          payload.termsAcceptedAt ?? new Date().toISOString()
+        );
+        url.searchParams.set('terms_version', payload.termsVersion ?? 'v1');
+      }
+
+      return url.toString();
+    },
+    [authCallbackUrl]
+  );
+
+  const signInWithGoogle = useCallback(
+    async (payload?: TermsAcceptancePayload) => {
+      setLoading(true);
+      const { error } = await supabaseClient.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: buildAuthCallbackUrl(payload),
+        },
+      });
+      setLoading(false);
+      if (error) {
+        throw error;
+      }
+    },
+    [buildAuthCallbackUrl]
+  );
 
   const signInWithEmail = useCallback(
-    async (email: string) => {
+    async (email: string, payload?: TermsAcceptancePayload) => {
       setLoading(true);
-      const emailRedirectTo = authCallbackUrl;
+      const emailRedirectTo = buildAuthCallbackUrl(payload);
       const { error } = await supabaseClient.auth.signInWithOtp({
         email,
         options: {
@@ -83,7 +104,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         throw error;
       }
     },
-    [authCallbackUrl]
+    [buildAuthCallbackUrl]
   );
 
   const signOut = useCallback(async () => {

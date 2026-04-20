@@ -18,10 +18,10 @@ const matchesRoute = (pathname: string, patterns: RegExp[]) => {
   return patterns.some((pattern) => pattern.test(pathname));
 };
 
-const buildCsp = (nonce: string) => {
+const buildCsp = () => {
   return `
     default-src 'self';
-    script-src 'self' 'nonce-${nonce}' https://apis.google.com https://va.vercel-scripts.com;
+    script-src 'self' 'unsafe-inline' https://apis.google.com https://va.vercel-scripts.com;
     style-src 'self' 'unsafe-inline';
     img-src 'self' data: blob: https://placehold.co https://firebasestorage.googleapis.com https://lh3.googleusercontent.com https://*.tile.openstreetmap.org;
     font-src 'self' data:;
@@ -30,37 +30,18 @@ const buildCsp = (nonce: string) => {
     base-uri 'self';
     frame-ancestors 'none';
   `
-    .replace(/\s{2,}/g, ' ')
+    .replaceAll(/\s{2,}/g, ' ')
     .trim();
 };
 
-const withSecurityHeaders = (response: NextResponse, nonce: string) => {
-  response.headers.set('Content-Security-Policy', buildCsp(nonce));
-  response.headers.set('x-nonce', nonce);
+const withSecurityHeaders = (response: NextResponse) => {
+  response.headers.set('Content-Security-Policy', buildCsp());
+  response.headers.set('Cache-Control', 'public, max-age=0, must-revalidate');
   return response;
 };
 
-const createNonce = () => {
-  const bytes = crypto.getRandomValues(new Uint8Array(16));
-  let binary = '';
-
-  bytes.forEach((byte) => {
-    binary += String.fromCharCode(byte);
-  });
-
-  return btoa(binary);
-};
-
 export async function middleware(request: NextRequest) {
-  const nonce = createNonce();
-  const requestHeaders = new Headers(request.headers);
-  requestHeaders.set('x-nonce', nonce);
-
-  let supabaseResponse = NextResponse.next({
-    request: {
-      headers: requestHeaders,
-    },
-  });
+  let supabaseResponse = NextResponse.next();
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -72,11 +53,7 @@ export async function middleware(request: NextRequest) {
         },
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
-          supabaseResponse = NextResponse.next({
-            request: {
-              headers: requestHeaders,
-            },
-          });
+          supabaseResponse = NextResponse.next();
           cookiesToSet.forEach(({ name, value, options }) =>
             supabaseResponse.cookies.set(name, value, options)
           );
@@ -95,14 +72,14 @@ export async function middleware(request: NextRequest) {
   if (isProtected && !user) {
     const redirectUrl = new URL(PagesUrls.LOGIN, request.url);
     redirectUrl.searchParams.set('redirectTo', request.nextUrl.pathname);
-    return withSecurityHeaders(NextResponse.redirect(redirectUrl), nonce);
+    return withSecurityHeaders(NextResponse.redirect(redirectUrl));
   }
 
   if (user && matchesRoute(pathname, AUTH_ROUTE_PATTERNS)) {
-    return withSecurityHeaders(NextResponse.redirect(new URL(PagesUrls.HOME, request.url)), nonce);
+    return withSecurityHeaders(NextResponse.redirect(new URL(PagesUrls.HOME, request.url)));
   }
 
-  return withSecurityHeaders(supabaseResponse, nonce);
+  return withSecurityHeaders(supabaseResponse);
 }
 
 export const config = {

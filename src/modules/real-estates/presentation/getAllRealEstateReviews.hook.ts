@@ -1,6 +1,6 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { supabaseClient } from '@/lib/supabase';
-import { REAL_ESTATE_REVIEWS } from '@/constants';
+import { REAL_ESTATE_REVIEWS, UUID_REGEX } from '@/constants';
 import { GetAllRealEstateReviews } from './types';
 import {
   createGetAllRealEstateReviewsQuery,
@@ -15,8 +15,11 @@ export const useGetAllRealEstateReviews = (
   props: GetAllRealEstateReviews
 ): UseQueryResult<RealEstateReviewWithVotesPublic[] | null> => {
   const { id, limit } = props;
+  const isValidRealEstateId = UUID_REGEX.test(id);
+
   return useQuery({
-    queryKey: [REAL_ESTATE_REVIEWS.getAllRealEstateReviews, limit],
+    queryKey: [REAL_ESTATE_REVIEWS.getAllRealEstateReviews, id, limit],
     queryFn: () => getAllRealEstateReviews({ id, limit }),
+    enabled: isValidRealEstateId,
   });
 };

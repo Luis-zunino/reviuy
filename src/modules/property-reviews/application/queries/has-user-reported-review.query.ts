@@ -1,9 +1,5 @@
 import type { QueryHandler } from '@/shared/kernel/contracts';
-import type {
-  HasUserReportedReviewInput,
-  HasUserReportedReviewOutput,
-  PropertyReviewReadRepository,
-} from '../../domain';
+import type { HasUserReportedReviewInput, PropertyReviewReadRepository } from '../../domain';
 
 export interface HasUserReportedReviewDependencies {
   propertyReviewReadRepository: PropertyReviewReadRepository;
@@ -11,10 +7,10 @@ export interface HasUserReportedReviewDependencies {
 
 export const createHasUserReportedReviewQuery = (
   dependencies: HasUserReportedReviewDependencies
-): QueryHandler<HasUserReportedReviewInput, HasUserReportedReviewOutput> => {
+): QueryHandler<HasUserReportedReviewInput, boolean> => {
   const { propertyReviewReadRepository } = dependencies;
 
-  return async (input: HasUserReportedReviewInput): Promise<HasUserReportedReviewOutput> => {
+  return async (input: HasUserReportedReviewInput): Promise<boolean> => {
     return propertyReviewReadRepository.hasUserReportedReview(input);
   };
 };

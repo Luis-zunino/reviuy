@@ -2,7 +2,6 @@ export { AddressSearchInput } from './AddressSearchInput';
 export * from './Loaders';
 export { MainLayout } from './MainLayout/index';
 export { StarRatingDisplay, StarRatingInput } from './StarRating';
-export { OptimizedImage } from './OptimizedImage';
 export { WebVitals } from './WebVitals';
 export { Breadcrumbs } from './Breadcrumbs';
 export { LazyMapComponent } from './MapComponent/index';

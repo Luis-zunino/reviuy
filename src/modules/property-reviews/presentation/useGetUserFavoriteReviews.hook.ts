@@ -13,6 +13,6 @@ const getUserFavoriteReviews = createGetUserFavoriteReviewsQuery({
 export const useGetUserFavoriteReviews = () => {
   return useQuery({
     queryKey: ['favoriteReviews'],
-    queryFn: () => getUserFavoriteReviews({}),
+    queryFn: () => getUserFavoriteReviews(),
   });
 };

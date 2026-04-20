@@ -16,3 +16,5 @@ export * from './useGetUserFavoriteReviews.hook';
 export * from './useIsReviewFavorite.hook';
 export * from './useToggleFavoriteReview.hook';
 export * from './voteReview.hook';
+export * from './getReviewsByZone.hook';
+export * from './getReviewsNearby.hook';

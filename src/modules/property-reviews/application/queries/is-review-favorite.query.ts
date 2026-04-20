@@ -1,9 +1,5 @@
 import type { QueryHandler } from '@/shared/kernel/contracts';
-import {
-  type IsReviewFavoriteInput,
-  type IsReviewFavoriteOutput,
-  type PropertyReviewReadRepository,
-} from '../../domain';
+import { type IsReviewFavoriteInput, type PropertyReviewReadRepository } from '../../domain';
 
 export interface IsReviewFavoriteDependencies {
   propertyReviewReadRepository: PropertyReviewReadRepository;
@@ -11,10 +7,10 @@ export interface IsReviewFavoriteDependencies {
 
 export const createIsReviewFavoriteQuery = (
   dependencies: IsReviewFavoriteDependencies
-): QueryHandler<IsReviewFavoriteInput, IsReviewFavoriteOutput> => {
+): QueryHandler<IsReviewFavoriteInput, boolean> => {
   const { propertyReviewReadRepository } = dependencies;
 
-  return async (input: IsReviewFavoriteInput): Promise<IsReviewFavoriteOutput> => {
+  return async (input: IsReviewFavoriteInput): Promise<boolean> => {
     return propertyReviewReadRepository.isFavorite(input);
   };
 };
