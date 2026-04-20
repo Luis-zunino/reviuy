@@ -17,7 +17,7 @@ export const Logo = () => {
         />
       </div>
       <Link href={PagesUrls.HOME} className="text-xl z-10 font-semibold relative">
-        <span className="text-blue-600  transition-colors duration-300 group-hover:text-white font-semibold relative">
+        <span className="text-blue-700 transition-colors duration-300 group-hover:text-white font-semibold relative">
           Revi
         </span>
         <span className="text-[#FFC425]">Uy</span>

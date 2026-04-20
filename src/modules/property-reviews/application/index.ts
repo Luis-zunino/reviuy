@@ -12,3 +12,5 @@ export * from './queries/get-user-favorite-reviews.query';
 export * from './queries/is-review-favorite.query';
 export * from './queries/check-user-review-for-address.query';
 export * from './queries/has-user-reported-review.query';
+export * from './queries/get-reviews-by-zone.query';
+export * from './queries/get-reviews-nearby.query';

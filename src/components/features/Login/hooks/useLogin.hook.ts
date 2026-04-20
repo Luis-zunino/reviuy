@@ -5,23 +5,36 @@ import { formLoginSchema, type FormLoginSchema } from './types';
 import { useAuthContext } from '@/components/providers/AuthProvider';
 import { zodResolver } from '@hookform/resolvers/zod';
 
+const TERMS_VERSION = 'v1';
+
 export const useLogin = () => {
   const {
     register,
     handleSubmit,
+    getValues,
     formState: { errors },
     reset,
   } = useForm<FormLoginSchema>({
     resolver: zodResolver(formLoginSchema),
+    defaultValues: {
+      email: '',
+      acceptedTerms: false,
+    },
   });
 
   const [loading, setLoading] = useState(false);
   const { signInWithEmail, signInWithGoogle } = useAuthContext();
 
   const onGoogleSignIn = async () => {
+    const hasAcceptedTerms = getValues('acceptedTerms');
+
     setLoading(true);
     try {
-      await signInWithGoogle();
+      await signInWithGoogle({
+        acceptedTerms: hasAcceptedTerms,
+        termsAcceptedAt: new Date().toISOString(),
+        termsVersion: TERMS_VERSION,
+      });
     } catch (error: unknown) {
       console.error('Error al iniciar sesión con Google:', error);
       const errorMessage =
@@ -41,7 +54,11 @@ export const useLogin = () => {
     setLoading(true);
 
     try {
-      await signInWithEmail(data.email);
+      await signInWithEmail(data.email, {
+        acceptedTerms: data.acceptedTerms,
+        termsAcceptedAt: new Date().toISOString(),
+        termsVersion: TERMS_VERSION,
+      });
 
       toast.success('¡Revisa tu correo!', {
         description:

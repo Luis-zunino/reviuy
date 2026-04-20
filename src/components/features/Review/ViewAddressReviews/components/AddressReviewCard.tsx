@@ -2,10 +2,9 @@
 
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { ThumbsDown, ThumbsUp, Calendar } from 'lucide-react';
+import { Calendar } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { StarRatingDisplay } from '@/components/common';
+import { FeedBackBadge, StarRatingDisplay } from '@/components/common';
 import { Separator } from '@/components/ui/separator';
 import { PagesUrls } from '@/enums';
 import type { AddressReviewCardProps } from './types';
@@ -24,23 +23,7 @@ export const AddressReviewCard = ({ review }: AddressReviewCardProps) => {
 
   return (
     <Card className="h-72 overflow-hidden hover:shadow-md transition-shadow duration-200 flex flex-col">
-      <Badge
-        variant={recommended ? 'default' : 'destructive'}
-        className="flex items-center gap-1.5 w-fit text-xs font-semibold px-4 mx-4 py-2 shrink-0"
-      >
-        {recommended ? (
-          <>
-            <ThumbsUp className="h-3 w-3" />
-            LO RECOMIENDO
-          </>
-        ) : (
-          <>
-            <ThumbsDown className="h-3 w-3" />
-            NO LO RECOMIENDO
-          </>
-        )}
-      </Badge>
-
+      <FeedBackBadge recommended={recommended} />
       <div className="p-4 pb-0 flex flex-col gap-3 flex-1 min-h-0">
         <div className="flex-1 min-w-0 w-full overflow-auto">
           <h3 className="text-sm font-semibold text-foreground mb-1 line-clamp-1">

@@ -2,34 +2,32 @@ import { handleSupabaseError } from '@/lib/errors';
 import { supabaseClient } from '@/lib/supabase/client';
 import type {
   GetReviewsByAddressInput,
-  PropertyReviewAddressReadModel,
+  ReviewWithVotesPublic,
   GetReviewByIdInput,
   GetReviewByIdOutput,
-  GetReviewsByUserIdInput,
   GetReviewsByUserIdOutput,
   GetReviewsByRealEstateIdInput,
   GetReviewsByRealEstateIdOutput,
   GetUserReviewVoteInput,
   GetUserReviewVoteOutput,
-  GetUserFavoriteReviewsInput,
   GetUserFavoriteReviewsOutput,
   IsReviewFavoriteInput,
-  IsReviewFavoriteOutput,
   CheckUserReviewForAddressInput,
   CheckUserReviewForAddressOutput,
   HasUserReportedReviewInput,
-  HasUserReportedReviewOutput,
+  GetReviewsByZoneInput,
+  GetReviewsByZoneOutput,
+  GetReviewsNearbyInput,
+  GetReviewsNearbyOutput,
+  PropertyReviewReadRepository,
 } from '../../domain';
-import type { PropertyReviewReadRepository } from '../../domain';
-
+import { normalizeSearchText } from '@/utils';
 type SupabaseBrowserClient = typeof supabaseClient;
 
 export class SupabasePropertyReviewReadRepository implements PropertyReviewReadRepository {
   constructor(private readonly supabase: SupabaseBrowserClient) {}
 
-  async getByAddress({
-    osmId,
-  }: GetReviewsByAddressInput): Promise<PropertyReviewAddressReadModel[]> {
+  async getByAddress({ osmId }: GetReviewsByAddressInput): Promise<ReviewWithVotesPublic[]> {
     const { data, error } = await this.supabase
       .from('reviews_with_votes_public')
       .select('*')
@@ -54,7 +52,7 @@ export class SupabasePropertyReviewReadRepository implements PropertyReviewReadR
     return data as GetReviewByIdOutput;
   }
 
-  async getByUserId(_: GetReviewsByUserIdInput): Promise<GetReviewsByUserIdOutput> {
+  async getByUserId(): Promise<GetReviewsByUserIdOutput> {
     const { data, error } = await this.supabase.rpc('get_reviews_by_current_user');
 
     if (error) {
@@ -92,10 +90,7 @@ export class SupabasePropertyReviewReadRepository implements PropertyReviewReadR
     return data as GetUserReviewVoteOutput;
   }
 
-  async getUserFavorites({
-    limit: _limit = 10,
-    offset: _offset = 0,
-  }: GetUserFavoriteReviewsInput): Promise<GetUserFavoriteReviewsOutput> {
+  async getUserFavorites(): Promise<GetUserFavoriteReviewsOutput> {
     const { data, error } = await this.supabase.rpc('get_favorite_reviews_by_current_user');
 
     if (error) {
@@ -105,7 +100,7 @@ export class SupabasePropertyReviewReadRepository implements PropertyReviewReadR
     return data ?? [];
   }
 
-  async isFavorite({ reviewId }: IsReviewFavoriteInput): Promise<IsReviewFavoriteOutput> {
+  async isFavorite({ reviewId }: IsReviewFavoriteInput): Promise<boolean> {
     const { data, error } = await this.supabase.rpc('is_review_favorite', {
       p_review_id: reviewId,
     });
@@ -131,9 +126,7 @@ export class SupabasePropertyReviewReadRepository implements PropertyReviewReadR
     return data ? { id: data } : null;
   }
 
-  async hasUserReportedReview({
-    reviewId,
-  }: HasUserReportedReviewInput): Promise<HasUserReportedReviewOutput> {
+  async hasUserReportedReview({ reviewId }: HasUserReportedReviewInput): Promise<boolean> {
     const { data, error } = await this.supabase.rpc('has_user_reported_review', {
       p_review_id: reviewId,
     });
@@ -143,5 +136,72 @@ export class SupabasePropertyReviewReadRepository implements PropertyReviewReadR
     }
 
     return data;
+  }
+
+  async searchByZone({
+    query,
+    limit = 20,
+  }: GetReviewsByZoneInput): Promise<GetReviewsByZoneOutput> {
+    const normalizedQuery = normalizeSearchText(query);
+    const { data, error } = await this.supabase
+      .from('reviews_with_votes_public')
+      .select('*')
+      .ilike('address_text', `%${query}%`)
+      .order('created_at', { ascending: false })
+      .limit(limit);
+
+    if (error) {
+      throw handleSupabaseError(error);
+    }
+
+    if (normalizedQuery.length === 0) {
+      return data ?? [];
+    }
+
+    const accentInsensitiveResults = (data ?? []).filter((review) =>
+      normalizeSearchText(review.address_text ?? '').includes(normalizedQuery)
+    );
+
+    if (accentInsensitiveResults.length > 0) {
+      return accentInsensitiveResults;
+    }
+
+    const fallbackLimit = Math.max(limit * 5, 100);
+    const { data: fallbackData, error: fallbackError } = await this.supabase
+      .from('reviews_with_votes_public')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(fallbackLimit);
+
+    if (fallbackError) {
+      throw handleSupabaseError(fallbackError);
+    }
+
+    return (fallbackData ?? [])
+      .filter((review) => normalizeSearchText(review.address_text ?? '').includes(normalizedQuery))
+      .slice(0, limit);
+  }
+
+  async searchNearby({
+    lat,
+    lon,
+    radiusDeg = 0.02,
+    limit = 20,
+  }: GetReviewsNearbyInput): Promise<GetReviewsNearbyOutput> {
+    const { data, error } = await this.supabase
+      .from('reviews_with_votes_public')
+      .select('*')
+      .gte('latitude', lat - radiusDeg)
+      .lte('latitude', lat + radiusDeg)
+      .gte('longitude', lon - radiusDeg)
+      .lte('longitude', lon + radiusDeg)
+      .order('created_at', { ascending: false })
+      .limit(limit);
+
+    if (error) {
+      throw handleSupabaseError(error);
+    }
+
+    return data ?? [];
   }
 }

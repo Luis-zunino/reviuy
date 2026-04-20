@@ -24,9 +24,9 @@ export const Footer = () => {
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-reviuy-primary-300">
               ReviUy
             </p>
-            <h4 className="text-2xl font-extrabold leading-tight text-white lg:text-3xl">
+            <p className="text-2xl font-extrabold leading-tight text-white lg:text-3xl">
               Encontrá tu lugar ideal con reseñas reales
-            </h4>
+            </p>
             <p className="max-w-sm text-sm leading-relaxed text-reviuy-gray-300">
               Información útil para alquilar con más criterio, más tranquilidad y menos sorpresas.
             </p>

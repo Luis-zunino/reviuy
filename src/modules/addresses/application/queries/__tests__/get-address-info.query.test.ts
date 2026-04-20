@@ -38,6 +38,7 @@ describe('createGetAddressInfoQuery', () => {
     const repository: AddressReadRepository = {
       getAddressInfo: vi.fn().mockResolvedValue(expected),
       searchByName: vi.fn(),
+      reverseGeocode: vi.fn(),
     };
 
     const handler = createGetAddressInfoQuery({ repository });

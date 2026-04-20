@@ -7,9 +7,7 @@ export const formLoginSchema = z.object({
     .min(1, { message: 'El campo es obligatorio.' })
     .email({ message: 'Ingresa un email válido.' })
     .regex(EMAIL_REGEX, { message: 'Ingresa un email válido.' }),
-  acceptedTerms: z.boolean().refine((value) => value, {
-    message: 'Debes aceptar los terminos y la politica de privacidad para continuar.',
-  }),
+  acceptedTerms: z.boolean(),
 });
 
 export type FormLoginSchema = z.infer<typeof formLoginSchema>;

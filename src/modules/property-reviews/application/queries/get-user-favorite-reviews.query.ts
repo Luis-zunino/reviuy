@@ -1,9 +1,4 @@
-import type { QueryHandler } from '@/shared/kernel/contracts';
-import {
-  type GetUserFavoriteReviewsInput,
-  type GetUserFavoriteReviewsOutput,
-  type PropertyReviewReadRepository,
-} from '../../domain';
+import { type GetUserFavoriteReviewsOutput, type PropertyReviewReadRepository } from '../../domain';
 
 export interface GetUserFavoriteReviewsDependencies {
   propertyReviewReadRepository: PropertyReviewReadRepository;
@@ -11,10 +6,10 @@ export interface GetUserFavoriteReviewsDependencies {
 
 export const createGetUserFavoriteReviewsQuery = (
   dependencies: GetUserFavoriteReviewsDependencies
-): QueryHandler<GetUserFavoriteReviewsInput, GetUserFavoriteReviewsOutput> => {
+): (() => Promise<GetUserFavoriteReviewsOutput>) => {
   const { propertyReviewReadRepository } = dependencies;
 
-  return async (input: GetUserFavoriteReviewsInput): Promise<GetUserFavoriteReviewsOutput> => {
-    return propertyReviewReadRepository.getUserFavorites(input);
+  return async (): Promise<GetUserFavoriteReviewsOutput> => {
+    return propertyReviewReadRepository.getUserFavorites();
   };
 };

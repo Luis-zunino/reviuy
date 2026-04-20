@@ -1,34 +1,36 @@
 import type {
   GetReviewsByAddressInput,
-  PropertyReviewAddressReadModel,
+  ReviewWithVotesPublic,
   GetReviewByIdInput,
   GetReviewByIdOutput,
-  GetReviewsByUserIdInput,
   GetReviewsByUserIdOutput,
   GetReviewsByRealEstateIdInput,
   GetReviewsByRealEstateIdOutput,
   GetUserReviewVoteInput,
   GetUserReviewVoteOutput,
-  GetUserFavoriteReviewsInput,
   GetUserFavoriteReviewsOutput,
   IsReviewFavoriteInput,
-  IsReviewFavoriteOutput,
   CheckUserReviewForAddressInput,
   CheckUserReviewForAddressOutput,
   HasUserReportedReviewInput,
-  HasUserReportedReviewOutput,
+  GetReviewsByZoneInput,
+  GetReviewsByZoneOutput,
+  GetReviewsNearbyInput,
+  GetReviewsNearbyOutput,
 } from '../contracts/property-review.types';
 
 export interface PropertyReviewReadRepository {
-  getByAddress(input: GetReviewsByAddressInput): Promise<PropertyReviewAddressReadModel[]>;
+  getByAddress(input: GetReviewsByAddressInput): Promise<ReviewWithVotesPublic[]>;
   getById(input: GetReviewByIdInput): Promise<GetReviewByIdOutput>;
-  getByUserId(input: GetReviewsByUserIdInput): Promise<GetReviewsByUserIdOutput>;
+  getByUserId(): Promise<GetReviewsByUserIdOutput>;
   getByRealEstateId(input: GetReviewsByRealEstateIdInput): Promise<GetReviewsByRealEstateIdOutput>;
   getUserVote(input: GetUserReviewVoteInput): Promise<GetUserReviewVoteOutput>;
-  getUserFavorites(input: GetUserFavoriteReviewsInput): Promise<GetUserFavoriteReviewsOutput>;
-  isFavorite(input: IsReviewFavoriteInput): Promise<IsReviewFavoriteOutput>;
+  getUserFavorites(): Promise<GetUserFavoriteReviewsOutput>;
+  isFavorite(input: IsReviewFavoriteInput): Promise<boolean>;
   checkUserReviewForAddress(
     input: CheckUserReviewForAddressInput
   ): Promise<CheckUserReviewForAddressOutput>;
-  hasUserReportedReview(input: HasUserReportedReviewInput): Promise<HasUserReportedReviewOutput>;
+  hasUserReportedReview(input: HasUserReportedReviewInput): Promise<boolean>;
+  searchByZone(input: GetReviewsByZoneInput): Promise<GetReviewsByZoneOutput>;
+  searchNearby(input: GetReviewsNearbyInput): Promise<GetReviewsNearbyOutput>;
 }

@@ -16,11 +16,12 @@ export default function AboutPage() {
     <div className="min-h-screen bg-linear-to-b from-blue-50 to-white py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
-          <Link href={PagesUrls.HOME}>
+          <Link href={PagesUrls.HOME} aria-label="Volver al inicio">
             <Button
               variant="outline"
               size="sm"
               className="mb-4"
+              aria-label="Volver al inicio"
               icon={ArrowLeft}
               iconPosition="left"
             />

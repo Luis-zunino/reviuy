@@ -16,11 +16,11 @@ export class ComposedProfileReadRepository implements ProfileReadRepository {
   constructor(private readonly dependencies: ComposedProfileReadRepositoryDependencies) {}
 
   async getCurrentUserReviews(): Promise<GetCurrentUserReviewsOutput> {
-    return this.dependencies.propertyReviewReadRepository.getByUserId({});
+    return this.dependencies.propertyReviewReadRepository.getByUserId();
   }
 
   async getCurrentUserFavoriteReviews(): Promise<GetCurrentUserFavoriteReviewsOutput> {
-    return this.dependencies.propertyReviewReadRepository.getUserFavorites({});
+    return this.dependencies.propertyReviewReadRepository.getUserFavorites();
   }
 
   async getCurrentUserFavoriteRealEstates(): Promise<GetCurrentUserFavoriteRealEstatesOutput> {

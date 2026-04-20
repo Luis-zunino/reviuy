@@ -6,22 +6,22 @@ import type { TextValidationResult } from './types';
  * Valida si el texto contiene malas palabras, números telefónicos o documentos
  */
 export class TextValidator {
-  private filter: Filter;
+  private readonly filter: Filter;
 
   // Regex para detectar números telefónicos uruguayos y formatos internacionales
-  private phonePatterns = [
-    /\b0?9[0-9]{7,8}\b/g, // Celulares uruguayos: 091234567, 99123456
-    /\b0?[2-4][0-9]{6,7}\b/g, // Teléfonos fijos uruguayos: 24001234, 29001234
-    /\+?598\s?0?9[0-9]{7,8}\b/g, // Formato internacional Uruguay: +598 91234567
+  private readonly phonePatterns = [
+    /\b0?9\d{7,8}\b/g, // Celulares uruguayos: 091234567, 99123456
+    /\b0?[2-4]\d{6,7}\b/g, // Teléfonos fijos uruguayos: 24001234, 29001234
+    /\+?598\s?0?9\d{7,8}\b/g, // Formato internacional Uruguay: +598 91234567
     /\(\d{2,4}\)\s?\d{3,4}[-\s]?\d{4}/g, // Formato con paréntesis: (091) 234-5678
     /\d{3}[-\s]?\d{3}[-\s]?\d{3,4}/g, // Formato con guiones: 091-234-567
   ];
 
   // Regex para detectar documentos uruguayos (cédula, pasaporte)
-  private documentPatterns = [
-    /\b[0-9]{1}\.[0-9]{3}\.[0-9]{3}[-][0-9]{1}\b/g, // Cédula uruguaya: 1.234.567-8
-    /\b[0-9]{7,8}\b/g, // Cédula sin formato: 1234567 o 12345678
-    /\b[A-Z]{2}[0-9]{6,7}\b/g, // Pasaporte: AA123456
+  private readonly documentPatterns = [
+    /\b\d\.\d{3}\.\d{3}-\d\b/g, // Cédula uruguaya: 1.234.567-8
+    /\b\d{7,8}\b/g, // Cédula sin formato: 1234567 o 12345678
+    /\b[A-Z]{2}\d{6,7}\b/g, // Pasaporte: AA123456
   ];
 
   constructor() {

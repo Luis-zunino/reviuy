@@ -8,7 +8,6 @@ import { Geist, Geist_Mono, Inter } from 'next/font/google';
 import './globals.css';
 import { NOMINATIM_URL } from '@/constants';
 import { getSiteOrigin } from '@/lib/site-url';
-import { headers } from 'next/headers';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -109,10 +108,8 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const nonce = (await headers()).get('x-nonce') ?? undefined;
-
   return (
-    <html lang="es" suppressHydrationWarning>
+    <html lang="es" suppressHydrationWarning data-scroll-behavior="smooth">
       <head>
         {/* Resource hints para optimizar performance */}
         <link rel="preconnect" href={NOMINATIM_URL} />
@@ -125,7 +122,6 @@ export default async function RootLayout({
       >
         <WebVitals />
         <StructuredData
-          nonce={nonce}
           data={createWebSiteSchema({
             name: 'ReviUy',
             url: siteUrl,

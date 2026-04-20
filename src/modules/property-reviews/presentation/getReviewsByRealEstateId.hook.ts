@@ -1,6 +1,6 @@
 'use client';
 
-import { REVIEW_KEYS } from '@/constants';
+import { REVIEW_KEYS, UUID_REGEX } from '@/constants';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { supabaseClient } from '@/lib/supabase';
 import {
@@ -17,9 +17,11 @@ const getReviewsByRealEstateId = createGetReviewsByRealEstateIdQuery({
 export const useGetReviewsByRealEstateId = (
   realEstateId: string
 ): UseQueryResult<ReviewWithVotesPublic[] | null> => {
+  const isValidRealEstateId = UUID_REGEX.test(realEstateId);
+
   return useQuery({
     queryKey: [REVIEW_KEYS.getReviewsByRealEstateId, realEstateId],
     queryFn: () => getReviewsByRealEstateId({ realEstateId }),
-    enabled: !!realEstateId,
+    enabled: isValidRealEstateId,
   });
 };

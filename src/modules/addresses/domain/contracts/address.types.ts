@@ -58,3 +58,10 @@ export interface GetAddressInfoInput {
 }
 
 export type GetAddressInfoOutput = NominatimByOsmId[];
+
+export interface ReverseGeocodeInput {
+  lat: number;
+  lon: number;
+}
+
+export type ReverseGeocodeOutput = NominatimByOsmId | null;

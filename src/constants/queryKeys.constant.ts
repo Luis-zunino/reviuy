@@ -8,6 +8,9 @@ export const REVIEW_KEYS = {
   getUserReviewVote: 'getUserReviewVote',
   checkUserReviewForAddress: 'checkUserReviewForAddress',
   getReviewByUserId: 'getReviewByUserId',
+  getReviewsByZone: 'getReviewsByZone',
+  getReviewsNearby: 'getReviewsNearby',
+  reverseGeocode: 'reverseGeocode',
 };
 
 export const REAL_ESTATE_REVIEWS = {

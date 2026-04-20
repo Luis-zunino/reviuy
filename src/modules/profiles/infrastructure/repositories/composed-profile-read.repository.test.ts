@@ -6,7 +6,7 @@ import type { RealEstateReadRepository } from '@/modules/real-estates';
 describe('ComposedProfileReadRepository', () => {
   it('delegates current user review reads to property reviews', async () => {
     const propertyReviewReadRepository = {
-      getByUserId: vi.fn().mockResolvedValue([{ id: 'review-1' }]),
+      getByUserId: vi.fn().mockResolvedValue([]),
       getUserFavorites: vi.fn(),
     } as unknown as PropertyReviewReadRepository;
     const realEstateReadRepository = {
@@ -18,14 +18,14 @@ describe('ComposedProfileReadRepository', () => {
       realEstateReadRepository,
     });
 
-    await expect(repository.getCurrentUserReviews()).resolves.toEqual([{ id: 'review-1' }]);
-    expect(propertyReviewReadRepository.getByUserId).toHaveBeenCalledWith({});
+    await expect(repository.getCurrentUserReviews()).resolves.toEqual([]);
+    expect(propertyReviewReadRepository.getByUserId).toHaveBeenCalledWith();
   });
 
   it('delegates favorite review reads to property reviews', async () => {
     const propertyReviewReadRepository = {
       getByUserId: vi.fn(),
-      getUserFavorites: vi.fn().mockResolvedValue([{ id: 'review-1' }]),
+      getUserFavorites: vi.fn().mockResolvedValue([]),
     } as unknown as PropertyReviewReadRepository;
     const realEstateReadRepository = {
       getUserFavorites: vi.fn(),
@@ -36,7 +36,7 @@ describe('ComposedProfileReadRepository', () => {
       realEstateReadRepository,
     });
 
-    await expect(repository.getCurrentUserFavoriteReviews()).resolves.toEqual([{ id: 'review-1' }]);
+    await expect(repository.getCurrentUserFavoriteReviews()).resolves.toEqual([]);
     expect(propertyReviewReadRepository.getUserFavorites).toHaveBeenCalledWith({});
   });
 

@@ -3,6 +3,10 @@ import { createClient } from '@supabase/supabase-js';
 import { Database } from '@/types/supabase';
 import { getSiteOrigin } from '@/lib/site-url';
 
+// Cache por 24 horas
+export const revalidate = 86400;
+const baseUrl = getSiteOrigin();
+
 // Use a client without cookies for static sitemap generation
 const getSupabaseClient = () => {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -11,7 +15,6 @@ const getSupabaseClient = () => {
 };
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = getSiteOrigin();
   const now = new Date();
 
   // Static pages
@@ -97,7 +100,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Fetch reviews (only non-deleted ones)
     const { data: reviews } = await supabase
       .from('reviews')
-      .select('id, updated_at')
+      .select('id, updated_at, address_osm_id')
       .is('deleted_at', null)
       .order('updated_at', { ascending: false });
 
@@ -113,13 +116,36 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Generate URLs for reviews
     const reviewPages: MetadataRoute.Sitemap =
       reviews?.map((review) => ({
-        url: `${baseUrl}/review/${review.id}`,
+        url: `${baseUrl}/review/${review.id}/details`,
         lastModified: new Date(review.updated_at),
         changeFrequency: 'weekly' as const,
         priority: 0.7,
       })) || [];
 
-    return [...staticPages, ...realEstatePages, ...reviewPages];
+    // Generate URLs for address pages based on reviewed addresses
+    const addressLatestUpdate = new Map<string, Date>();
+
+    for (const review of reviews ?? []) {
+      if (!review.address_osm_id) continue;
+
+      const currentDate = new Date(review.updated_at);
+      const previousDate = addressLatestUpdate.get(review.address_osm_id);
+
+      if (!previousDate || currentDate > previousDate) {
+        addressLatestUpdate.set(review.address_osm_id, currentDate);
+      }
+    }
+
+    const addressPages: MetadataRoute.Sitemap = Array.from(addressLatestUpdate.entries()).map(
+      ([addressOsmId, lastModified]) => ({
+        url: `${baseUrl}/address/${addressOsmId}`,
+        lastModified,
+        changeFrequency: 'weekly' as const,
+        priority: 0.8,
+      })
+    );
+
+    return [...staticPages, ...realEstatePages, ...reviewPages, ...addressPages];
   } catch (error) {
     console.error('Error generating dynamic sitemap:', error);
     // Return static pages if database query fails

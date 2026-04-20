@@ -10,3 +10,4 @@ export { UpdateReview } from './Review/UpdateReview';
 export { PrivacyPolicyComponent } from './PrivacyPolicy';
 export { TermsAndConditionsComponent } from './TermsAndConditions';
 export { Contact } from './Contact';
+export { ExploreReviews } from './Review/ExploreReviews';

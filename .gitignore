@@ -56,3 +56,5 @@ connectedMode.json
 /src/content
 /docs
 /.agents
+
+.unlighthouse

@@ -6,6 +6,7 @@ import {
   Building2,
   HelpCircle,
   Lightbulb,
+  Map,
   Menu,
   UserRoundCog,
   FilePenLine,
@@ -42,6 +43,10 @@ export const NavBar = () => {
         <div className="flex justify-between items-center h-16">
           <Logo />
           <div className="hidden md:flex items-center gap-6">
+            <Link href={PagesUrls.EXPLORE_REVIEWS} className={sharedStyles}>
+              Explorar
+            </Link>
+
             <Link href={PagesUrls.REAL_ESTATE} className={sharedStyles}>
               Inmobiliarias
             </Link>
@@ -62,9 +67,9 @@ export const NavBar = () => {
             </Link>
             <DropdownMenu modal={false} open={isOpen} onOpenChange={setIsOpen}>
               <DropdownMenuTrigger asChild className="h-8 hover:cursor-pointer">
-                <Link href="#" className={sharedStyles}>
+                <button type="button" className={sharedStyles} aria-label="Abrir menú principal">
                   <Menu className="w-6 h-6" />
-                </Link>
+                </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 align="end"
@@ -74,6 +79,11 @@ export const NavBar = () => {
                 }}
               >
                 <NavBarItem pageUrl={PagesUrls.HOME} icon={Home} label="Inicio" />
+                <NavBarItem
+                  pageUrl={PagesUrls.EXPLORE_REVIEWS}
+                  icon={Map}
+                  label="Explorar reseñas"
+                />
                 <NavBarItem
                   pageUrl={PagesUrls.REAL_ESTATE}
                   icon={Building2}

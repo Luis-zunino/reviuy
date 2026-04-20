@@ -13,14 +13,14 @@ const MapComponentDynamic = dynamic(
   }
 );
 
-export const LazyMapComponent: FC<MapComponentProps> = ({ lat, lon, children }) => {
+export const LazyMapComponent: FC<MapComponentProps> = ({ lat, lon, children, markers }) => {
   // Si no hay coordenadas válidas, mostrar skeleton
   if (lat === null || lon === null) {
     return <MapSkeleton />;
   }
 
   return (
-    <MapComponentDynamic lat={lat} lon={lon}>
+    <MapComponentDynamic lat={lat} lon={lon} markers={markers}>
       {children}
     </MapComponentDynamic>
   );

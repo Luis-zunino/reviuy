@@ -1,4 +1,12 @@
 import { House } from 'lucide-react';
+import { generatePageMetadata } from '@/lib/metadata';
+
+export const metadata = generatePageMetadata({
+  title: 'Iniciar sesión | ReviUy',
+  description: 'Accede a tu cuenta para gestionar reseñas y tu perfil en ReviUy.',
+  path: '/login',
+  noIndex: true,
+});
 
 const layout = ({
   children,

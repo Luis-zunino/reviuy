@@ -1,10 +1,12 @@
 import { useGetReviewsByRealEstateId } from '@/modules/property-reviews';
 import { useGetAllRealEstateReviews } from '@/modules/real-estates';
-import { useParams } from 'next/navigation';
+import { UUID_REGEX } from '@/constants';
 import { useMemo } from 'react';
 
-export const useViewRealEstateDetails = () => {
-  const { realEstateId } = useParams<{ realEstateId: string }>();
+export const useViewRealEstateDetails = (props: { realEstateId: string }) => {
+  const { realEstateId } = props;
+  const isValidRealEstateId = UUID_REGEX.test(realEstateId);
+
   const { data, isLoading, error } = useGetAllRealEstateReviews({ id: realEstateId });
   const { data: reviewsData, isLoading: isLoadingReviews } =
     useGetReviewsByRealEstateId(realEstateId);
@@ -31,6 +33,7 @@ export const useViewRealEstateDetails = () => {
     isLoading,
     error,
     realEstateId,
+    isValidRealEstateId,
     averageRating,
     isLoadingReviews,
   };
