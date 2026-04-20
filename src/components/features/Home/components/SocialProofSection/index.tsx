@@ -8,7 +8,7 @@ const stats = [
   {
     icon: Star,
     value: '2,500+',
-    label: 'Resenas verificadas',
+    label: 'Reseñas verificadas',
     color: 'text-reviuy-secondary-500',
     bgColor: 'bg-reviuy-secondary-50',
   },

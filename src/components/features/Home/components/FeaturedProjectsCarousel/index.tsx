@@ -154,7 +154,7 @@ export const FeaturedProjectsCarousel = () => {
                     <span
                       className={`${manrope.className} text-sm text-reviuy-gray-500 dark:text-reviuy-gray-400`}
                     >
-                      {currentProject.reviewCount} resenas
+                      {currentProject.reviewCount} reseñas
                     </span>
                     <motion.a
                       href={`/real-estate/${currentProject.id}`}

@@ -1,6 +1,6 @@
 # ReviUy
 
-Plataforma de resenas de alquileres e inmobiliarias en Uruguay, construida con Next.js App Router, TypeScript y Supabase.
+Plataforma de reseñas de alquileres e inmobiliarias en Uruguay, construida con Next.js App Router, TypeScript y Supabase.
 
 ## Stack
 

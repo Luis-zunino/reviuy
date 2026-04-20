@@ -6,7 +6,7 @@ import { RealEstateCommandoBase } from './interfaces';
 import { VoteType } from '@/types';
 
 const voteRealEstateReviewInputSchema = z.object({
-  reviewId: z.string().uuid('El identificador de resena no es valido'),
+  reviewId: z.string().uuid('El identificador de reseña no es valido'),
   voteType: z.enum([VoteType.LIKE, VoteType.DISLIKE]),
 });
 
