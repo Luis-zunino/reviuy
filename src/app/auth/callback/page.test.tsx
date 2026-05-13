@@ -45,7 +45,7 @@ vi.mock('sonner', () => ({
 describe('AuthCallback terms persistence', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    window.history.pushState({}, '', '/auth/callback');
+    globalThis.history.pushState({}, '', '/auth/callback');
 
     getSessionMock.mockResolvedValue({
       session: { userId: 'user-1' },
@@ -88,7 +88,7 @@ describe('AuthCallback terms persistence', () => {
   });
 
   it('updates metadata from redirect params and redirects home for first acceptance', async () => {
-    window.history.pushState(
+    globalThis.history.pushState(
       {},
       '',
       '/auth/callback?terms_accepted=1&terms_accepted_at=2026-04-11T10%3A00%3A00.000Z&terms_version=v1'

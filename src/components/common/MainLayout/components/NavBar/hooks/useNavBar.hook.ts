@@ -9,14 +9,14 @@ export const useNavBar = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      const newOpacity = Math.min(window.scrollY / 100, 1);
+      const newOpacity = Math.min(globalThis.scrollY / 100, 1);
 
-      setOpacity((prev) => (prev !== newOpacity ? newOpacity : prev));
+      setOpacity((prev) => (prev === newOpacity ? prev : newOpacity));
     };
 
     handleScroll();
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    globalThis.addEventListener('scroll', handleScroll, { passive: true });
+    return () => globalThis.removeEventListener('scroll', handleScroll);
   }, []);
 
   return {

@@ -11,9 +11,9 @@ describe('ErrorPage', () => {
     expect(screen.getByText('Algo salio mal')).toBeInTheDocument();
   });
 
-  it('ejecuta window.history.back al hacer click en volver atras', async () => {
+  it('ejecuta globalThis.history.back al hacer click en volver atras', async () => {
     const user = userEvent.setup();
-    const backSpy = vi.spyOn(window.history, 'back').mockImplementation(() => undefined);
+    const backSpy = vi.spyOn(globalThis.history, 'back').mockImplementation(() => undefined);
 
     render(<ErrorPage title="Oops" />);
 

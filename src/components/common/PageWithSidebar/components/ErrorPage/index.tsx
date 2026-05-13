@@ -15,7 +15,7 @@ export const ErrorPage = ({ title, subTitle }: IErrorPageProps) => {
         <CardContent className="p-6 text-center">
           <h6 className="mb-4">{title}</h6>
           <p className="mb-4">{subTitle}</p>
-          <Button onClick={() => window.history.back()} variant="outline">
+          <Button onClick={() => globalThis.history.back()} variant="outline">
             Volver atrás
           </Button>
         </CardContent>
