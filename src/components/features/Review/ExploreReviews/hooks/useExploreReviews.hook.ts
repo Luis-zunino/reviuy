@@ -46,6 +46,7 @@ export const useExploreReviews = () => {
     setGeoStatus('loading');
     setGeoError(null);
     setSearchMode('nearby');
+    // Required to show nearby apartments based on user location
     navigator.geolocation.getCurrentPosition(
       (position) => {
         setUserCoords({
