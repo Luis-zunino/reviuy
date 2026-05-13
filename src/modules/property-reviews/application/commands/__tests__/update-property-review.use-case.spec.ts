@@ -1,13 +1,17 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { PropertyReviewCommandRepository } from '../../domain';
-import { createUpdatePropertyReviewUseCase } from './update-property-review.use-case';
-import type { UpdatePropertyReviewDependencies } from './update-property-review.use-case';
+import {
+  createUpdatePropertyReviewUseCase,
+  PropertyReviewCommandRepository,
+  UpdatePropertyReviewDependencies,
+  UpdatePropertyReviewInput,
+  UpdatePropertyReviewResult,
+} from '@/modules/property-reviews';
+import { beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 
 describe('createUpdatePropertyReviewUseCase', () => {
   let dependencies: UpdatePropertyReviewDependencies;
-  let getCurrentUserId: ReturnType<typeof vi.fn>;
-  let rateLimit: ReturnType<typeof vi.fn>;
-  let updateReview: ReturnType<typeof vi.fn>;
+  let getCurrentUserId: Mock<() => Promise<string | null>>;
+  let rateLimit: Mock<(key: string, action: string) => Promise<void>>;
+  let updateReview: Mock<(input: UpdatePropertyReviewInput) => Promise<UpdatePropertyReviewResult>>;
 
   const repository = (): PropertyReviewCommandRepository => ({
     create: vi.fn(),

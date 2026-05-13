@@ -1,19 +1,23 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { CreatePropertyReviewResult, PropertyReviewCommandRepository } from '../../domain';
+import { beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
+import type {
+  CreatePropertyReviewInput,
+  CreatePropertyReviewResult,
+  PropertyReviewCommandRepository,
+} from '../../../domain';
 
 vi.mock('@/lib', () => ({
   createError: (code: string, message?: string) => new Error(message ?? code),
   RateLimitType: {},
 }));
 
-import { createCreatePropertyReviewUseCase } from './create-property-review.use-case';
-import type { CreatePropertyReviewUseCaseDependencies } from './create-property-review.use-case';
+import { createCreatePropertyReviewUseCase } from '../create-property-review.use-case';
+import type { CreatePropertyReviewUseCaseDependencies } from '../create-property-review.use-case';
 
 describe('createCreatePropertyReviewUseCase', () => {
   let dependencies: CreatePropertyReviewUseCaseDependencies;
-  let getCurrentUserId: ReturnType<typeof vi.fn>;
-  let rateLimit: ReturnType<typeof vi.fn>;
-  let createReview: ReturnType<typeof vi.fn>;
+  let getCurrentUserId: Mock<() => Promise<string | null>>;
+  let rateLimit: Mock<(key: string, action: string) => Promise<void>>;
+  let createReview: Mock<(input: CreatePropertyReviewInput) => Promise<CreatePropertyReviewResult>>;
 
   const repository = (): PropertyReviewCommandRepository => ({
     create: createReview,

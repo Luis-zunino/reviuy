@@ -1,8 +1,7 @@
 import next from 'eslint-config-next';
 import nextCoreWebVitals from 'eslint-config-next/core-web-vitals';
 import nextTypescript from 'eslint-config-next/typescript';
-import { dirname } from 'path';
-import { fileURLToPath } from 'url';
+import { fileURLToPath } from 'node:url';
 import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import reactPlugin from 'eslint-plugin-react';

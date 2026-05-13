@@ -1,14 +1,18 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 import { VoteType } from '@/types';
-import type { PropertyReviewCommandRepository } from '../../domain';
-import { createVotePropertyReviewUseCase } from './vote-property-review.use-case';
-import type { VotePropertyReviewDependencies } from './vote-property-review.use-case';
+import type {
+  PropertyReviewCommandRepository,
+  VotePropertyReviewInput,
+  VotePropertyReviewResult,
+} from '../../../domain';
+import { createVotePropertyReviewUseCase } from '../vote-property-review.use-case';
+import type { VotePropertyReviewDependencies } from '../vote-property-review.use-case';
 
 describe('createVotePropertyReviewUseCase', () => {
   let dependencies: VotePropertyReviewDependencies;
-  let getCurrentUserId: ReturnType<typeof vi.fn>;
-  let rateLimit: ReturnType<typeof vi.fn>;
-  let voteReview: ReturnType<typeof vi.fn>;
+  let getCurrentUserId: Mock<() => Promise<string | null>>;
+  let rateLimit: Mock<(key: string, action: string) => Promise<void>>;
+  let voteReview: Mock<(input: VotePropertyReviewInput) => Promise<VotePropertyReviewResult>>;
 
   const repository = (): PropertyReviewCommandRepository => ({
     create: vi.fn(),

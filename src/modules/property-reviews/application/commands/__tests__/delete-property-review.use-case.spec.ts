@@ -1,13 +1,17 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { PropertyReviewCommandRepository } from '../../domain';
-import { createDeletePropertyReviewUseCase } from './delete-property-review.use-case';
-import type { DeletePropertyReviewDependencies } from './delete-property-review.use-case';
+import {
+  DeletePropertyReviewDependencies,
+  DeletePropertyReviewInput,
+  DeletePropertyReviewResult,
+  PropertyReviewCommandRepository,
+} from '@/modules/property-reviews';
+import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
+import { createDeletePropertyReviewUseCase } from '../delete-property-review.use-case';
 
 describe('createDeletePropertyReviewUseCase', () => {
   let dependencies: DeletePropertyReviewDependencies;
-  let getCurrentUserId: ReturnType<typeof vi.fn>;
-  let rateLimit: ReturnType<typeof vi.fn>;
-  let deleteReview: ReturnType<typeof vi.fn>;
+  let getCurrentUserId: Mock<() => Promise<string | null>>;
+  let rateLimit: Mock<(key: string, action: string) => Promise<void>>;
+  let deleteReview: Mock<(input: DeletePropertyReviewInput) => Promise<DeletePropertyReviewResult>>;
 
   const repository = (): PropertyReviewCommandRepository => ({
     create: vi.fn(),
