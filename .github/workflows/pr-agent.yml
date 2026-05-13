@@ -15,7 +15,7 @@ jobs:
 
     steps:
       - name: PR Agent Action
-        uses: qodo-ai/pr-agent@v0.31
+        uses: qodo-ai/pr-agent@d36ad319f7fb0049205017405a71275c41599587
 
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_KEY }}
