@@ -37,14 +37,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # 1. Habilitar Corepack primero para que el runner reconozca pnpm
+      - name: Enable Corepack
+        run: corepack enable
+
+      # 2. Configurar Node con la caché de pnpm (ahora ya no fallará)
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: pnpm
-
-      - name: Enable Corepack
-        run: corepack enable
 
       - name: Install dependencies
         run: pnpm install --immutable
