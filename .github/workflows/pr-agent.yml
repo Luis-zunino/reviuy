@@ -1,0 +1,22 @@
+name: Autodocumentar PR con AI
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+permissions:
+  issues: write
+  pull-requests: write
+  contents: read
+
+jobs:
+  pr-agent:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: PR Agent Action
+        uses: qodo-ai/pr-agent@d36ad319f7fb0049205017405a71275c41599587
+
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

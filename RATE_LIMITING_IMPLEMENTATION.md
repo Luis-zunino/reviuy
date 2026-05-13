@@ -125,7 +125,7 @@ UPSTASH_REDIS_REST_TOKEN=your_redis_token_here
 3. **Centralizado**: Todas las mutaciones pasan por Server Actions
 4. **Backward compatible**: APIs originales aún disponibles si se necesitan
 5. **Type-safe**: Todas las Server Actions tienen tipos correctos
-6. **Sin errores**: Compilación exitosa (`yarn type-check` ✓)
+6. **Sin errores**: Compilación exitosa (`pnpm type-check` ✓)
 
 ## 📝 Notas Importantes
 
