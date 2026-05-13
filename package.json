@@ -27,8 +27,8 @@
     "lint:fix": "eslint --fix .",
     "precommit": "python -m pre_commit run --all-files",
     "security:semgrep": "semgrep scan --config p/owasp-top-ten --config p/javascript --config p/typescript --config p/secrets --error --exclude node_modules --exclude .next .",
-    "security:deps": "yarn npm audit --all",
-    "security:owasp": "yarn security:semgrep && yarn security:deps"
+    "security:deps": "pnpm npm audit --all",
+    "security:owasp": "pnpm security:semgrep && pnpm security:deps"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -107,7 +107,6 @@
       "eslint --fix"
     ]
   },
-  "packageManager": "yarn@4.12.0",
   "resolutions": {
     "diff": "8.0.3",
     "@isaacs/brace-expansion": "5.0.1",

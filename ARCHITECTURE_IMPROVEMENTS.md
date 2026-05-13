@@ -299,11 +299,11 @@ throw handleSupabaseError(error);
 
 ```bash
 # Type-check pasando
-$ yarn tsc --noEmit
+$ pnpm tsc --noEmit
 ✓ No errors
 
 # Build exitoso
-$ yarn build
+$ pnpm build
 ✓ Compiled successfully
 ```
 

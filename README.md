@@ -15,7 +15,7 @@ Plataforma de resenas de alquileres e inmobiliarias en Uruguay, construida con N
 1. Instalar dependencias.
 
 ```bash
-yarn install
+pnpm install
 ```
 
 2. Configurar entorno.
@@ -27,41 +27,41 @@ cp .env.example .env.local
 3. Iniciar infraestructura local y aplicar migraciones.
 
 ```bash
-yarn supabase:start
-yarn migrations
-yarn supabase:typeLocal
+pnpm supabase:start
+pnpm migrations
+pnpm supabase:typeLocal
 ```
 
 4. Ejecutar aplicacion.
 
 ```bash
-yarn dev
+pnpm dev
 ```
 
 ## Scripts Principales
 
 ```bash
-yarn dev
-yarn build
-yarn start
-yarn type-check
-yarn lint
-yarn lint:fix
-yarn format
-yarn format:check
+pnpm dev
+pnpm build
+pnpm start
+pnpm type-check
+pnpm lint
+pnpm lint:fix
+pnpm format
+pnpm format:check
 ```
 
 ## Scripts de Supabase
 
 ```bash
-yarn supabase:start
-yarn supabase:stop
-yarn supabase:status
-yarn supabase:reset
-yarn migrations
-yarn supabase:migrate
-yarn supabase:diff
-yarn supabase:typeLocal
+pnpm supabase:start
+pnpm supabase:stop
+pnpm supabase:status
+pnpm supabase:reset
+pnpm migrations
+pnpm supabase:migrate
+pnpm supabase:diff
+pnpm supabase:typeLocal
 ```
 
 ## Seguridad
@@ -69,7 +69,7 @@ yarn supabase:typeLocal
 Auditoria de dependencias:
 
 ```bash
-yarn security:deps
+pnpm security:deps
 ```
 
 Auditoria SAST con Semgrep (requiere CLI instalada):
@@ -84,13 +84,13 @@ python -m pipx install semgrep
 python -m pipx ensurepath   # luego cerrar/abrir la terminal
 
 # luego ejecutar
-yarn security:semgrep
+pnpm security:semgrep
 ```
 
 Auditoria combinada:
 
 ```bash
-yarn security:owasp
+pnpm security:owasp
 ```
 
 ## Arquitectura (resumen)
@@ -120,6 +120,6 @@ yarn security:owasp
 ## Validacion Minima Antes de Merge
 
 ```bash
-yarn type-check
-yarn lint
+pnpm type-check
+pnpm lint
 ```
