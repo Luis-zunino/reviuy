@@ -34,23 +34,6 @@ const eslintConfig = [
         version: 'detect',
       },
     },
-  },
-  {
-    ignores: [
-      '.next/**',
-      'out/**',
-      'build/**',
-      'next-env.d.ts',
-      'node_modules/**',
-      'dist/**',
-      '*.min.js',
-      '.vercel/**',
-      'public/**',
-      '*.config.js',
-      '*.config.mjs',
-    ],
-  },
-  {
     rules: {
       // Reglas de React Hooks
       'react-hooks/rules-of-hooks': 'error',
@@ -77,6 +60,21 @@ const eslintConfig = [
       'no-undef': 'off', // TypeScript lo maneja
       'no-useless-catch': 'warn', // De error a warning
     },
+  },
+  {
+    ignores: [
+      '.next/**',
+      'out/**',
+      'build/**',
+      'next-env.d.ts',
+      'node_modules/**',
+      'dist/**',
+      '*.min.js',
+      '.vercel/**',
+      'public/**',
+      '*.config.js',
+      '*.config.mjs',
+    ],
   },
 ];
 

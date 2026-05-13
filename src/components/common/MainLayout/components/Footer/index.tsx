@@ -1,12 +1,12 @@
 import { PagesUrls } from '@/enums';
-import { Facebook, Instagram, Linkedin, Youtube } from 'lucide-react';
+import { Factory, IceCream, Lamp, JapaneseYen } from 'lucide-react';
 import Link from 'next/link';
 
 const socialLinks = [
-  { name: 'Instagram', href: '#', Icon: Instagram },
-  { name: 'Facebook', href: '#', Icon: Facebook },
-  { name: 'LinkedIn', href: '#', Icon: Linkedin },
-  { name: 'YouTube', href: '#', Icon: Youtube },
+  { name: 'Instagram', href: '#', Icon: IceCream },
+  { name: 'Facebook', href: '#', Icon: Factory },
+  { name: 'LinkedIn', href: '#', Icon: Lamp },
+  { name: 'YouTube', href: '#', Icon: JapaneseYen },
 ];
 
 /**
