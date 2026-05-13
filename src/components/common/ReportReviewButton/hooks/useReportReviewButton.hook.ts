@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { validateText } from '@/utils';
 import { toast } from 'sonner';
 import type { UseReportReviewButtonProps } from './types';
+import { reportReviewReasons } from '@/constants';
 
 export const useReportReviewButton = (props: UseReportReviewButtonProps) => {
   const { review } = props;
@@ -12,16 +13,6 @@ export const useReportReviewButton = (props: UseReportReviewButtonProps) => {
 
   const { mutateAsync, isPending } = useReportReview();
   const { data: hasReported } = useHasUserReportedReview(review.id ?? '');
-
-  const reportReasons = [
-    { value: 'spam', label: 'Spam o contenido promocional no solicitado' },
-    { value: 'inappropriate', label: 'Contenido inapropiado o ofensivo' },
-    { value: 'false_info', label: 'Información falsa o engañosa' },
-    { value: 'harassment', label: 'Acoso o intimidación' },
-    { value: 'hate_speech', label: 'Discurso de odio' },
-    { value: 'copyright', label: 'Violación de derechos de autor' },
-    { value: 'other', label: 'Otro motivo' },
-  ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,6 +68,6 @@ export const useReportReviewButton = (props: UseReportReviewButtonProps) => {
     isPending,
     showReportedButton: !review?.is_mine,
     hasReported,
-    reportReasons,
+    reportReasons: reportReviewReasons,
   };
 };
