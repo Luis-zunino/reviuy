@@ -5,8 +5,8 @@ Aplica estas reglas en cualquier cambio de código de este repositorio.
 ## Contexto del proyecto
 
 - Stack principal: Next.js App Router, TypeScript, React, Supabase, Zod, React Hook Form y TanStack Query.
-- Gestor de paquetes: yarn 4.
-- Validación mínima antes de cerrar un cambio: `yarn type-check` y `yarn lint`.
+- Gestor de paquetes: pnpm 4.
+- Validación mínima antes de cerrar un cambio: `pnpm type-check` y `pnpm lint`.
 
 ## Arquitectura obligatoria
 

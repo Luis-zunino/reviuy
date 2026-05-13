@@ -14,7 +14,7 @@ applyTo: 'src/**/*.ts,src/**/*.tsx,supabase/**/*.sql,middleware.ts,next.config.t
 - Nunca exponer `user_id` ni datos personales en consultas publicas; preferir vistas sanitizadas e indicadores como `is_mine`.
 - No introducir secretos en variables `NEXT_PUBLIC_` ni almacenar tokens en `localStorage`.
 - Si se cambia SQL, revisar migraciones, RLS y compatibilidad de tipos generados.
-- Antes de cerrar el cambio, validar con `yarn type-check` y `yarn lint` cuando el entorno lo permita.
+- Antes de cerrar el cambio, validar con `pnpm type-check` y `pnpm lint` cuando el entorno lo permita.
 
 Esta instruccion define la capa comun del repositorio. Las reglas especificas por dominio viven tambien en:
 

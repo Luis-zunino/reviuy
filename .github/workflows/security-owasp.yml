@@ -41,16 +41,16 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: yarn
+          cache: pnpm
 
       - name: Enable Corepack
         run: corepack enable
 
       - name: Install dependencies
-        run: yarn install --immutable
+        run: pnpm install --immutable
 
       - name: Run dependency audit
-        run: yarn security:deps
+        run: pnpm security:deps
 
   zap-baseline:
     name: OWASP ZAP Baseline (staging)
