@@ -11,6 +11,22 @@ vi.mock('@/lib', () => ({
   createError: (code: string, message?: string) => new Error(message ?? code),
 }));
 
+// Mock next/font/google as it's not meant to run in a test environment
+vi.mock('next/font/google', () => ({
+  Manrope: () => ({
+    className: 'mock-manrope-class',
+    style: {
+      fontFamily: 'mock-manrope',
+    },
+  }),
+  Playfair_Display: () => ({
+    className: 'mock-playfair-class',
+    style: {
+      fontFamily: 'mock-playfair',
+    },
+  }),
+}));
+
 // Helper para crear un objeto RealEstate mock completo con valores por defecto
 const createMockRealEstate = (overrides?: Partial<RealEstate>): RealEstate => ({
   id: '550e8400-e29b-41d4-a716-446655440000', // UUID por defecto

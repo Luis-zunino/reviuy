@@ -1,3 +1,42 @@
+import { beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
+
+// Mock server-only to prevent resolution errors in Vitest environment
+vi.mock('server-only', () => ({}));
+
+// Mock next/font/google as it's not meant to run in a test environment
+vi.mock('next/font/google', () => ({
+  Manrope: () => ({
+    className: 'mock-manrope-class',
+    style: {
+      fontFamily: 'mock-manrope',
+    },
+  }),
+  Playfair_Display: () => ({
+    className: 'mock-playfair-class',
+    style: {
+      fontFamily: 'mock-playfair',
+    },
+  }),
+}));
+
+// Mock @supabase/ssr to prevent actual client initialization in tests
+vi.mock('@supabase/ssr', () => ({
+  createBrowserClient: vi.fn(() => ({
+    auth: {
+      getUser: vi.fn(() =>
+        Promise.resolve({ data: { user: { id: 'mock-user-id' } }, error: null })
+      ),
+    },
+    from: vi.fn(() => ({
+      select: vi.fn(() => ({
+        eq: vi.fn(() => ({
+          single: vi.fn(() => Promise.resolve({ data: {}, error: null })),
+        })),
+      })),
+    })),
+  })),
+}));
+
 import {
   createUpdatePropertyReviewUseCase,
   PropertyReviewCommandRepository,
@@ -5,7 +44,6 @@ import {
   UpdatePropertyReviewInput,
   UpdatePropertyReviewResult,
 } from '@/modules/property-reviews';
-import { beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 
 describe('createUpdatePropertyReviewUseCase', () => {
   let dependencies: UpdatePropertyReviewDependencies;

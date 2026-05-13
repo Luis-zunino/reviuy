@@ -37,7 +37,7 @@ describe('ComposedProfileReadRepository', () => {
     });
 
     await expect(repository.getCurrentUserFavoriteReviews()).resolves.toEqual([]);
-    expect(propertyReviewReadRepository.getUserFavorites).toHaveBeenCalledWith({});
+    expect(propertyReviewReadRepository.getUserFavorites).toHaveBeenCalledWith();
   });
 
   it('delegates favorite real estate reads to real estates', async () => {

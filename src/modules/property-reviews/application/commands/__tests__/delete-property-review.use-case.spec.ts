@@ -1,10 +1,14 @@
+import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
+
+// Mock server-only to prevent resolution errors in Vitest environment
+vi.mock('server-only', () => ({}));
+
 import {
   DeletePropertyReviewDependencies,
   DeletePropertyReviewInput,
   DeletePropertyReviewResult,
   PropertyReviewCommandRepository,
 } from '@/modules/property-reviews';
-import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import { createDeletePropertyReviewUseCase } from '../delete-property-review.use-case';
 
 describe('createDeletePropertyReviewUseCase', () => {

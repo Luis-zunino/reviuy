@@ -1,5 +1,21 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { formatDataToBackend } from './formatDataToBackend.util';
+
+// Mock next/font/google as it's not meant to run in a test environment
+vi.mock('next/font/google', () => ({
+  Manrope: () => ({
+    className: 'mock-manrope-class',
+    style: {
+      fontFamily: 'mock-manrope',
+    },
+  }),
+  Playfair_Display: () => ({
+    className: 'mock-playfair-class',
+    style: {
+      fontFamily: 'mock-playfair',
+    },
+  }),
+}));
 
 describe('formatDataToBackend', () => {
   it('normalizes empty optional strings before creating a review', () => {
@@ -21,7 +37,6 @@ describe('formatDataToBackend', () => {
       real_estate_name: '',
       real_estate_experience: '   ',
       apartment_number: ' ',
-      images: [],
       review_rooms: [],
     });
 

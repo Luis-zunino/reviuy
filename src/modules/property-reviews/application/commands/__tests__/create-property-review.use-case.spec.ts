@@ -1,22 +1,41 @@
 import { beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
-import type {
-  CreatePropertyReviewInput,
-  CreatePropertyReviewResult,
-  PropertyReviewCommandRepository,
-} from '../../../domain';
+
+// Mock server-only to prevent resolution errors in Vitest environment
+vi.mock('server-only', () => ({}));
 
 vi.mock('@/lib', () => ({
   createError: (code: string, message?: string) => new Error(message ?? code),
   RateLimitType: {},
 }));
 
+// Mock next/font/google as it's not meant to run in a test environment
+vi.mock('next/font/google', () => ({
+  Manrope: () => ({
+    className: 'mock-manrope-class',
+    style: {
+      fontFamily: 'mock-manrope',
+    },
+  }),
+  Playfair_Display: () => ({
+    className: 'mock-playfair-class',
+    style: {
+      fontFamily: 'mock-playfair',
+    },
+  }),
+}));
+
 import { createCreatePropertyReviewUseCase } from '../create-property-review.use-case';
 import type { CreatePropertyReviewUseCaseDependencies } from '../create-property-review.use-case';
+import {
+  CreatePropertyReviewInput,
+  CreatePropertyReviewResult,
+  PropertyReviewCommandRepository,
+} from '@/modules/property-reviews/domain';
 
 describe('createCreatePropertyReviewUseCase', () => {
   let dependencies: CreatePropertyReviewUseCaseDependencies;
   let getCurrentUserId: Mock<() => Promise<string | null>>;
-  let rateLimit: Mock<(key: string, action: string) => Promise<void>>;
+  let rateLimit: Mock<(key: string, action: string) => Promise<void>>; // Assuming this is the correct signature
   let createReview: Mock<(input: CreatePropertyReviewInput) => Promise<CreatePropertyReviewResult>>;
 
   const repository = (): PropertyReviewCommandRepository => ({
