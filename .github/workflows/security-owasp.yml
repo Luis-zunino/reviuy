@@ -9,14 +9,15 @@ on:
     - cron: '0 8 * * 1'
   workflow_dispatch:
 
-permissions:
-  contents: read
-  security-events: write
-
 jobs:
   semgrep:
     name: Semgrep OWASP SAST
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      security-events: write
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -33,6 +34,10 @@ jobs:
   dependency-audit:
     name: Dependency Audit (CVE)
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -58,6 +63,10 @@ jobs:
     name: OWASP ZAP Baseline (staging)
     runs-on: ubuntu-latest
     if: ${{ vars.ZAP_TARGET_URL != '' }}
+
+    permissions:
+      contents: read
+
     steps:
       - name: ZAP Baseline Scan
         uses: zaproxy/action-baseline@v0.14.0
