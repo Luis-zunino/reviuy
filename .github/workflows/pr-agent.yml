@@ -1,18 +1,17 @@
 name: Autodocumentar PR con Gemini
 on:
   pull_request:
-    # 'opened' se activa al crear la PR
-    # 'synchronize' se activa cada vez que haces un push a la rama de la PR
-    types: [opened, synchronize, ready_for_review]
+    types: [opened, reopened, synchronize, ready_for_review]
 
 permissions:
   pull-requests: write
   contents: write
+  issues: write
 
 jobs:
   pr-agent:
     runs-on: ubuntu-latest
-    # Evitamos que corra en PRs que todavía son borradores (drafts) para ahorrar recursos
+    # Solo corre si la PR no es un borrador
     if: github.event.pull_request.draft == false
     steps:
       - uses: actions/checkout@v4
@@ -21,16 +20,21 @@ jobs:
       - name: Run PR Agent
         uses: Codium-ai/pr-agent@main
         env:
+          # Autenticación
           GOOGLE_AI_STUDIO_KEY: ${{ secrets.GOOGLE_AI_STUDIO_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-          # Configuración del motor gratuito
+          # Configuración del Modelo (Gemini 1.5 Flash es gratuito y rápido)
           CONFIG.MODEL: 'gemini/gemini-1.5-flash'
+          PR_AGENT.MODEL: 'gemini/gemini-1.5-flash'
 
-          # Acciones automáticas
-          GITHUB_ACTION_CONFIG.AUTO_DESCRIBE: 'true' # Genera la descripción del PR
-          GITHUB_ACTION_CONFIG.AUTO_REVIEW: 'true' # Hace una revisión rápida del código
+          # Comandos automáticos al crear o actualizar la PR
+          GITHUB_ACTION_CONFIG.AUTO_DESCRIBE: 'true'
+          GITHUB_ACTION_CONFIG.AUTO_REVIEW: 'true'
 
-          # Personalización de la descripción
-          PR_DESCRIPTION.PUBLISH_DESCRIPTION_AS_COMMENT: 'false' # Para que edite la descripción principal en vez de crear un comentario
-          PR_DESCRIPTION.EXTRA_INSTRUCTIONS: 'Resume los cambios de forma clara y técnica en español.'
+          # Personalización de la Documentación
+          PR_DESCRIPTION.PUBLISH_DESCRIPTION_AS_COMMENT: 'false' # Edita la descripción principal
+          PR_DESCRIPTION.EXTRA_INSTRUCTIONS: 'Responde siempre en español. Sé conciso, técnico y estructurado.'
+
+          # Forzar actualización en cada push (synchronize)
+          PR_DESCRIPTION.REGENERATE_DESCRIPTION: 'true'
