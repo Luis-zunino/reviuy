@@ -14,8 +14,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: PR Agent Action
         uses: qodo-ai/pr-agent@d36ad319f7fb0049205017405a71275c41599587
+        with:
+          command: '/describe'
 
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_KEY }}
