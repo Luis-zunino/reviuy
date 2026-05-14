@@ -1,7 +1,7 @@
 name: Autodocumentar PR con Gemini
 on:
   pull_request:
-    types: [opened, reopened, synchronize, ready_for_review]
+    types: [opened, reopened, ready_for_review]
 
 permissions:
   pull-requests: write
@@ -41,6 +41,10 @@ jobs:
           # Comandos automáticos al crear o actualizar la PR
           GITHUB_ACTION_CONFIG__AUTO_DESCRIBE: 'true'
           GITHUB_ACTION_CONFIG__AUTO_REVIEW: 'true'
+          GITHUB_ACTION_CONFIG__ENABLE_FOR_DRAFT: 'false'
+
+          # IMPORTANTE: Permitir que procese eventos de "synchronize" (pushes a PRs)
+          PR_REVIEWER__ENABLE_INCREMENTAL_REVIEW: 'true'
 
           # Personalización de la Documentación
           PR_DESCRIPTION__PUBLISH_DESCRIPTION_AS_COMMENT: 'false'
