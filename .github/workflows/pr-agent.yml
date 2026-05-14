@@ -1,7 +1,10 @@
 name: Autodocumentar PR con Gemini
+
 on:
   pull_request:
-    types: [opened, reopened, ready_for_review]
+    types: [opened, synchronize, reopened]
+  issue_comment:
+    types: [created]
 
 permissions:
   pull-requests: write
@@ -11,8 +14,10 @@ permissions:
 jobs:
   pr-agent:
     runs-on: ubuntu-latest
-    # Solo corre si la PR no es un borrador
-    if: github.event.pull_request.draft == false
+    if: >
+      github.event_name == 'pull_request' && github.event.pull_request.draft == false ||
+      github.event_name == 'issue_comment' && github.event.issue.pull_request &&
+      startsWith(github.event.comment.body, '/describe')
     steps:
       - uses: actions/checkout@v4
         with:
@@ -27,31 +32,21 @@ jobs:
           echo "✅ Secretos configurados correctamente"
 
       - name: Run PR Agent
-        uses: Codium-ai/pr-agent@main
+        uses: the-pr-agent/pr-agent@main
         env:
-          # Autenticación - Cambiar según el proveedor disponible:
-          # Para Gemini: GOOGLE_AI_STUDIO_KEY
-          # Para OpenAI: OPENAI_API_KEY (si tienes, cambia los modelos abajo)
           GOOGLE_AI_STUDIO_KEY: ${{ secrets.GOOGLE_AI_STUDIO_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-          # Configuración del Modelo - Gemini 1.5 Flash
-          # CAMBIAR A OPENAI: CONFIG__MODEL: 'gpt-4-turbo' y PR_AGENT__MODEL: 'gpt-4-turbo'
           CONFIG__MODEL: 'gemini/gemini-1.5-flash'
           PR_AGENT__MODEL: 'gemini/gemini-1.5-flash'
 
-          # Comandos automáticos al crear o actualizar la PR
-          GITHUB_ACTION_CONFIG__AUTO_DESCRIBE: 'true'
-          GITHUB_ACTION_CONFIG__AUTO_REVIEW: 'true'
-          GITHUB_ACTION_CONFIG__ENABLE_FOR_DRAFT: 'false'
+          GITHUB_ACTION__AUTO_DESCRIBE: 'true'
+          GITHUB_ACTION__AUTO_REVIEW: 'true'
+          GITHUB_ACTION__ENABLE_FOR_DRAFT: 'false'
 
-          # IMPORTANTE: Permitir que procese eventos de "synchronize" (pushes a PRs)
-          PR_REVIEWER__ENABLE_INCREMENTAL_REVIEW: 'true'
-
-          # Personalización de la Documentación
           PR_DESCRIPTION__PUBLISH_DESCRIPTION_AS_COMMENT: 'false'
           PR_DESCRIPTION__EXTRA_INSTRUCTIONS: 'Responde siempre en español. Sé conciso, técnico y estructurado.'
           PR_DESCRIPTION__REGENERATE_DESCRIPTION: 'true'
-
-          # Configuración de reintentos
           PR_DESCRIPTION__MAX_AI_CALLS: '2'
+
+          PR_REVIEWER__ENABLE_INCREMENTAL_REVIEW: 'true'
