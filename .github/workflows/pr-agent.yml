@@ -17,6 +17,15 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      
+      - name: Validate secrets
+        run: |
+          if [ -z "${{ secrets.GOOGLE_AI_STUDIO_KEY }}" ]; then
+            echo "❌ Error: GOOGLE_AI_STUDIO_KEY no está configurado"
+            exit 1
+          fi
+          echo "✅ Secretos configurados correctamente"
+      
       - name: Run PR Agent
         uses: Codium-ai/pr-agent@main
         env:
