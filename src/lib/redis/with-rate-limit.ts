@@ -10,7 +10,7 @@ export async function withRateLimit(key: string, type: RateLimitType): Promise<b
     return true;
   }
 
-  let success = false;
+  let success: boolean;
 
   try {
     const limiter = getRateLimiter(type);

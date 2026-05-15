@@ -35,12 +35,14 @@ export const ExploreReviews = () => {
     />
   );
 
-  const resultsTitle =
-    searchMode === 'idle'
-      ? null
-      : activeReviews.length > 0
-        ? `${activeReviews.length} ${activeReviews.length === 1 ? 'reseña encontrada' : 'reseñas encontradas'}`
-        : 'Sin reseñas en esta zona';
+  const getResultsTitle = () => {
+    if (searchMode === 'idle') return null;
+    if (activeReviews.length === 0) return 'Sin reseñas en esta zona';
+    const label = activeReviews.length === 1 ? 'reseña encontrada' : 'reseñas encontradas';
+    return `${activeReviews.length} ${label}`;
+  };
+
+  const resultsTitle = getResultsTitle();
 
   const markers = useMemo(() => {
     const groupedByAddress = new Map<

@@ -20,6 +20,8 @@ import {
 import { type NominatimEntity } from '@/modules/addresses';
 import { type RealEstateWitheVotes } from '@/modules/real-estates';
 
+const pluralizeImage = (count: number) => (count === 1 ? '' : 'es');
+
 export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormProps) => {
   const { defaultValues } = props;
   const { isAuthenticated } = useAuthContext();
@@ -136,9 +138,7 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
     toast.success('Reseña actualizada', {
       description:
         failedCount > 0
-          ? `La reseña se actualizó, pero ${failedCount} imagen${
-              failedCount === 1 ? '' : 'es'
-            } no se pudieron subir.`
+          ? `La reseña se actualizó, pero ${failedCount} imagen${pluralizeImage(failedCount)} no se pudieron subir.`
           : 'Cambios guardados correctamente.',
     });
 
@@ -175,9 +175,7 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
     toast.success('¡Reseña publicada!', {
       description:
         failedCount > 0
-          ? `Tu reseña fue publicada, pero ${failedCount} imagen${
-              failedCount === 1 ? '' : 'es'
-            } no se pudieron subir.`
+          ? `Tu reseña fue publicada, pero ${failedCount} imagen${pluralizeImage(failedCount)} no se pudieron subir.`
           : 'Tu experiencia ha sido compartida con la comunidad',
     });
 

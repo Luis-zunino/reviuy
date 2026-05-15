@@ -25,7 +25,10 @@ export const FeaturedProjectsCarousel = () => {
   } = useFeaturedProjectsCarousel();
 
   return (
-    <section className="py-16 md:py-24 overflow-hidden">
+    <section
+      className="py-16 md:py-24 overflow-hidden"
+      aria-label="Carrusel de edificios destacados"
+    >
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
@@ -74,7 +77,7 @@ export const FeaturedProjectsCarousel = () => {
         </motion.div>
 
         {/* Carousel */}
-        <div
+        <button
           className="relative"
           onMouseEnter={() => setIsAutoPlaying(false)}
           onMouseLeave={() => setIsAutoPlaying(true)}
@@ -161,8 +164,7 @@ export const FeaturedProjectsCarousel = () => {
                       whileHover={{ x: 4 }}
                       className={`${manrope.className} inline-flex items-center gap-2 text-sm font-semibold text-reviuy-primary-600 dark:text-reviuy-primary-400 transition-colors hover:text-reviuy-primary-700 dark:hover:text-reviuy-primary-300`}
                     >
-                      Ver detalles
-                      <span className="transition-transform duration-200">&rarr;</span>
+                      Ver detalles<span className="transition-transform duration-200">&rarr;</span>
                     </motion.a>
                   </div>
                 </div>
@@ -189,7 +191,7 @@ export const FeaturedProjectsCarousel = () => {
               />
             ))}
           </div>
-        </div>
+        </button>
       </div>
     </section>
   );

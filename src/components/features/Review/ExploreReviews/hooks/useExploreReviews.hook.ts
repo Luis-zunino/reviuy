@@ -95,12 +95,17 @@ export const useExploreReviews = () => {
       ? { lat: activeReviews[0].latitude, lon: activeReviews[0].longitude }
       : null);
 
-  const locationLabel =
-    searchMode === 'nearby' && reverseGeoData
-      ? [reverseGeoData.address?.suburb, reverseGeoData.address?.city].filter(Boolean).join(', ')
-      : searchMode === 'zone' && debouncedZone.length >= 3
-        ? debouncedZone
-        : null;
+  const locationLabel = (() => {
+    if (searchMode === 'nearby' && reverseGeoData) {
+      return [reverseGeoData.address?.suburb, reverseGeoData.address?.city]
+        .filter(Boolean)
+        .join(', ');
+    }
+    if (searchMode === 'zone' && debouncedZone.length >= 3) {
+      return debouncedZone;
+    }
+    return null;
+  })();
 
   return {
     searchMode,

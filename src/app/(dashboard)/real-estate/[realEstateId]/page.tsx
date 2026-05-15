@@ -15,7 +15,9 @@ export async function generateMetadata({ params }: RealEstateDetailsPageProps) {
   });
 }
 
-export default async function RealEstateDetailsPage({ params }: RealEstateDetailsPageProps) {
+export default async function RealEstateDetailsPage({
+  params,
+}: Readonly<RealEstateDetailsPageProps>) {
   const { realEstateId } = await params;
 
   return <ViewRealEstateDetails realEstateId={realEstateId} />;
