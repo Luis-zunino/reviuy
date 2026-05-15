@@ -1,5 +1,4 @@
 import Script from 'next/script';
-import DOMPurify from 'dompurify';
 
 interface BaseStructuredData {
   '@context': 'https://schema.org';
@@ -122,8 +121,7 @@ export function StructuredData({ data }: Readonly<StructuredDataProps>) {
   return (
     <>
       {jsonLd.map((schema, index) => {
-        // Sanitiza el JSON para evitar problemas de seguridad
-        const safeJson = DOMPurify.sanitize(JSON.stringify(data));
+        const jsonString = JSON.stringify(schema);
 
         return (
           <Script
@@ -133,7 +131,7 @@ export function StructuredData({ data }: Readonly<StructuredDataProps>) {
             // nosemgrep: typescript.react.security.audit.react-dangerouslysetinnerhtml.react-dangerouslysetinnerhtml
             // Se omite porque la variable safeJson ya fue sanitizada previamente usando DOMPurify
             dangerouslySetInnerHTML={{
-              __html: safeJson,
+              __html: jsonString,
             }}
           />
         );
