@@ -1,4 +1,4 @@
-import type { QueryHandler } from '@/shared/kernel/contracts';
+import type { VoidQueryHandler } from '@/shared/kernel/contracts';
 import type { GetCurrentUserFavoriteReviewsOutput, ProfileReadRepository } from '../../domain';
 
 export interface GetCurrentUserFavoriteReviewsQueryDependencies {
@@ -7,7 +7,7 @@ export interface GetCurrentUserFavoriteReviewsQueryDependencies {
 
 export const createGetCurrentUserFavoriteReviewsQuery = (
   dependencies: GetCurrentUserFavoriteReviewsQueryDependencies
-): QueryHandler<Record<string, never>, GetCurrentUserFavoriteReviewsOutput> => {
+): VoidQueryHandler<GetCurrentUserFavoriteReviewsOutput> => {
   const { profileReadRepository } = dependencies;
 
   return async (): Promise<GetCurrentUserFavoriteReviewsOutput> => {

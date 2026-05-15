@@ -23,6 +23,6 @@ export const useGetCurrentUserFavoriteReviews =
   (): UseQueryResult<GetUserFavoriteReviewsOutput> => {
     return useQuery({
       queryKey: ['favoriteReviews'],
-      queryFn: () => getCurrentUserFavoriteReviews({}),
+      queryFn: () => getCurrentUserFavoriteReviews(),
     });
   };

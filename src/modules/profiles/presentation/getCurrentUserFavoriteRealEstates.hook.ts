@@ -23,6 +23,6 @@ export const useGetCurrentUserFavoriteRealEstates =
   (): UseQueryResult<GetUserFavoriteRealEstatesOutput> => {
     return useQuery({
       queryKey: ['favoriteRealEstates'],
-      queryFn: () => getCurrentUserFavoriteRealEstates({}),
+      queryFn: () => getCurrentUserFavoriteRealEstates(),
     });
   };

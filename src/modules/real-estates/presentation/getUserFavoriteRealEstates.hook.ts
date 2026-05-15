@@ -11,6 +11,6 @@ const getUserFavoriteRealEstates = createGetUserFavoriteRealEstatesQuery({ repos
 export const useGetUserFavoriteRealEstates = () => {
   return useQuery({
     queryKey: ['favoriteRealEstates'],
-    queryFn: () => getUserFavoriteRealEstates({}),
+    queryFn: () => getUserFavoriteRealEstates(),
   });
 };

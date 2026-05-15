@@ -12,7 +12,7 @@ describe('createGetCurrentUserFavoriteRealEstatesQuery', () => {
 
     const query = createGetCurrentUserFavoriteRealEstatesQuery({ profileReadRepository });
 
-    await expect(query({})).resolves.toEqual([{ id: 'real-estate-1' }]);
+    await expect(query()).resolves.toEqual([{ id: 'real-estate-1' }]);
     expect(profileReadRepository.getCurrentUserFavoriteRealEstates).toHaveBeenCalledTimes(1);
   });
 });

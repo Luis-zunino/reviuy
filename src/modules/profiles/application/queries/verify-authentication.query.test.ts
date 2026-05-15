@@ -16,7 +16,7 @@ describe('createVerifyAuthenticationQuery', () => {
 
     const handler = createVerifyAuthenticationQuery({ profileAuthReadRepository });
 
-    await expect(handler({})).resolves.toEqual(expected);
+    await expect(handler()).resolves.toEqual(expected);
     expect(profileAuthReadRepository.verifyAuthentication).toHaveBeenCalledTimes(1);
   });
 });

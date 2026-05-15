@@ -1,3 +1,4 @@
+import type { VoidQueryHandler } from '@/shared/kernel/contracts';
 import { type GetUserFavoriteReviewsOutput, type PropertyReviewReadRepository } from '../../domain';
 
 export interface GetUserFavoriteReviewsDependencies {
@@ -6,7 +7,7 @@ export interface GetUserFavoriteReviewsDependencies {
 
 export const createGetUserFavoriteReviewsQuery = (
   dependencies: GetUserFavoriteReviewsDependencies
-): (() => Promise<GetUserFavoriteReviewsOutput>) => {
+): VoidQueryHandler<GetUserFavoriteReviewsOutput> => {
   const { propertyReviewReadRepository } = dependencies;
 
   return async (): Promise<GetUserFavoriteReviewsOutput> => {

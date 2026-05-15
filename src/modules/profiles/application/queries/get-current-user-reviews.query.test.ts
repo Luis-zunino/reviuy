@@ -12,7 +12,7 @@ describe('createGetCurrentUserReviewsQuery', () => {
 
     const query = createGetCurrentUserReviewsQuery({ profileReadRepository });
 
-    await expect(query({})).resolves.toEqual([{ id: 'review-1' }]);
+    await expect(query()).resolves.toEqual([{ id: 'review-1' }]);
     expect(profileReadRepository.getCurrentUserReviews).toHaveBeenCalledTimes(1);
   });
 });

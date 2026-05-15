@@ -12,7 +12,7 @@ describe('createGetCurrentUserFavoriteReviewsQuery', () => {
 
     const query = createGetCurrentUserFavoriteReviewsQuery({ profileReadRepository });
 
-    await expect(query({})).resolves.toEqual([{ id: 'review-1' }]);
+    await expect(query()).resolves.toEqual([{ id: 'review-1' }]);
     expect(profileReadRepository.getCurrentUserFavoriteReviews).toHaveBeenCalledTimes(1);
   });
 });

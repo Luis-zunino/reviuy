@@ -1,4 +1,4 @@
-import type { QueryHandler } from '@/shared/kernel/contracts';
+import type { VoidQueryHandler } from '@/shared/kernel/contracts';
 import type { ProfileAuthReadRepository, VerifyAuthenticationOutput } from '../../domain';
 
 export interface VerifyAuthenticationQueryDependencies {
@@ -7,7 +7,7 @@ export interface VerifyAuthenticationQueryDependencies {
 
 export const createVerifyAuthenticationQuery = (
   dependencies: VerifyAuthenticationQueryDependencies
-): QueryHandler<Record<string, never>, VerifyAuthenticationOutput> => {
+): VoidQueryHandler<VerifyAuthenticationOutput> => {
   const { profileAuthReadRepository } = dependencies;
 
   return async (): Promise<VerifyAuthenticationOutput> => {

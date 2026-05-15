@@ -19,7 +19,7 @@ describe('createGetSessionQuery', () => {
 
     const handler = createGetSessionQuery({ profileAuthReadRepository });
 
-    await expect(handler({})).resolves.toEqual(expected);
+    await expect(handler()).resolves.toEqual(expected);
     expect(profileAuthReadRepository.getSession).toHaveBeenCalledTimes(1);
   });
 });

@@ -18,6 +18,6 @@ export const useVerifyAuthentication = (): UseQueryResult<
 > => {
   return useQuery({
     queryKey: [USER_KEYS.useVerifyAuthentication],
-    queryFn: () => verifyAuthentication({}),
+    queryFn: () => verifyAuthentication(),
   });
 };

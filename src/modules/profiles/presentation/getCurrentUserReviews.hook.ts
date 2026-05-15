@@ -23,6 +23,6 @@ const getCurrentUserReviews = createGetCurrentUserReviewsQuery({
 export const useGetCurrentUserReviews = (): UseQueryResult<GetReviewsByUserIdOutput> => {
   return useQuery({
     queryKey: [REVIEW_KEYS.getReviewByUserId],
-    queryFn: () => getCurrentUserReviews({}),
+    queryFn: () => getCurrentUserReviews(),
   });
 };

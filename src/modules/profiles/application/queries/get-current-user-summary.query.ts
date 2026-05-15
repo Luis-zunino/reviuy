@@ -1,4 +1,4 @@
-import type { QueryHandler } from '@/shared/kernel/contracts';
+import type { VoidQueryHandler } from '@/shared/kernel/contracts';
 import type { GetCurrentUserSummaryOutput, ProfileReadRepository } from '../../domain';
 
 export interface GetCurrentUserSummaryQueryDependencies {
@@ -7,7 +7,7 @@ export interface GetCurrentUserSummaryQueryDependencies {
 
 export const createGetCurrentUserSummaryQuery = (
   dependencies: GetCurrentUserSummaryQueryDependencies
-): QueryHandler<Record<string, never>, GetCurrentUserSummaryOutput> => {
+): VoidQueryHandler<GetCurrentUserSummaryOutput> => {
   const { profileReadRepository } = dependencies;
 
   return async (): Promise<GetCurrentUserSummaryOutput> => {

@@ -20,6 +20,6 @@ const getCurrentUserSummary = createGetCurrentUserSummaryQuery({
 export const useGetCurrentUserSummary = (): UseQueryResult<GetCurrentUserSummaryOutput> => {
   return useQuery({
     queryKey: ['currentUserSummary'],
-    queryFn: () => getCurrentUserSummary({}),
+    queryFn: () => getCurrentUserSummary(),
   });
 };

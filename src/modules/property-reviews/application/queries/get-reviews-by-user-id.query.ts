@@ -1,9 +1,5 @@
-import type { QueryHandler } from '@/shared/kernel/contracts';
-import {
-  type GetReviewsByUserIdInput,
-  type GetReviewsByUserIdOutput,
-  type PropertyReviewReadRepository,
-} from '../../domain';
+import type { VoidQueryHandler } from '@/shared/kernel/contracts';
+import { type GetReviewsByUserIdOutput, type PropertyReviewReadRepository } from '../../domain';
 
 export interface GetReviewsByUserIdDependencies {
   propertyReviewReadRepository: PropertyReviewReadRepository;
@@ -11,7 +7,7 @@ export interface GetReviewsByUserIdDependencies {
 
 export const createGetReviewsByUserIdQuery = (
   dependencies: GetReviewsByUserIdDependencies
-): QueryHandler<GetReviewsByUserIdInput, GetReviewsByUserIdOutput> => {
+): VoidQueryHandler<GetReviewsByUserIdOutput> => {
   const { propertyReviewReadRepository } = dependencies;
 
   return async (): Promise<GetReviewsByUserIdOutput> => {

@@ -1,4 +1,4 @@
-import type { QueryHandler } from '@/shared/kernel/contracts';
+import type { VoidQueryHandler } from '@/shared/kernel/contracts';
 import type { GetSessionOutput, ProfileAuthReadRepository } from '../../domain';
 
 export interface GetSessionQueryDependencies {
@@ -7,7 +7,7 @@ export interface GetSessionQueryDependencies {
 
 export const createGetSessionQuery = (
   dependencies: GetSessionQueryDependencies
-): QueryHandler<Record<string, never>, GetSessionOutput> => {
+): VoidQueryHandler<GetSessionOutput> => {
   const { profileAuthReadRepository } = dependencies;
 
   return async (): Promise<GetSessionOutput> => profileAuthReadRepository.getSession();
