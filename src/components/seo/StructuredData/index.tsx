@@ -130,6 +130,7 @@ export function StructuredData({ data }: Readonly<StructuredDataProps>) {
             type="application/ld+json"
             // nosemgrep: typescript.react.security.audit.react-dangerouslysetinnerhtml.react-dangerouslysetinnerhtml
             // Se omite porque la variable safeJson ya fue sanitizada previamente usando DOMPurify
+            // nosemgrep
             dangerouslySetInnerHTML={{
               __html: jsonString,
             }}

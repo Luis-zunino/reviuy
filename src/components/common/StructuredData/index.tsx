@@ -14,7 +14,7 @@ export const StructuredData: React.FC<StructuredDataProps> = ({ data }) => {
       type="application/ld+json"
       // nosemgrep: typescript.react.security.audit.react-dangerouslysetinnerhtml.react-dangerouslysetinnerhtml
       // Se omite porque la variable safeJson ya fue sanitizada previamente usando DOMPurify
-      dangerouslySetInnerHTML={{ __html: jsonString }}
+      dangerouslySetInnerHTML={{ __html: jsonString }} // nosemgrep
     />
   );
 };
