@@ -136,7 +136,7 @@ describe('AuthProvider', () => {
       expect(screen.getByText('loading:false')).toBeInTheDocument();
     });
 
-    expect(getSessionHandlerMock).toHaveBeenCalledWith({});
+    expect(getSessionHandlerMock).toHaveBeenCalledWith();
     expect(screen.getByText('auth:true')).toBeInTheDocument();
   });
 
