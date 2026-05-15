@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import { createError } from '@/lib/errors';
 import { uploadImage, deleteImage } from '@/lib/storage';
 import type { createSupabaseServerClient } from '@/lib/supabase/server';
@@ -49,7 +50,7 @@ export class SupabaseReviewImageRepository implements ReviewImageRepository {
     }
 
     const ext = input.filename.split('.').pop() ?? 'jpg';
-    const uniqueName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+    const uniqueName = `${Date.now()}-${randomUUID()}.${ext}`;
     const path = `reviews/${input.osmId}/${input.reviewId}/${uniqueName}`;
 
     const { url } = await uploadImage({ path, file: input.file, contentType: input.contentType });
