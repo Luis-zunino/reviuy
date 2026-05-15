@@ -4,7 +4,7 @@ import { PagesUrls } from '@/enums';
 import { Calendar, User, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { useTipsComponent } from './hooks';
-import { PageWithSidebar } from '@/components/common';
+import { Box, PageWithSidebar } from '@/components/common';
 import { TipsSidebar } from './components/TipsSidebar';
 
 export const TipsPageComponent = () => {
@@ -24,12 +24,8 @@ export const TipsPageComponent = () => {
     >
       <div className="flex flex-col gap-2">
         {filteredTips.map((tip) => (
-          <Link
-            key={tip.id}
-            href={PagesUrls.TIPS_DETAILS?.replace(':id', tip?.id.toString())}
-            className="hover:shadow-lg transition-shadow"
-          >
-            <article className="bg-white rounded-lg border border-border overflow-hidden hover:shadow-lg transition-shadow grid grid-cols-1 md:grid-cols-2">
+          <Box key={tip.id}>
+            <article className="rounded-lg border border-border overflow-hidden hover:shadow-lg transition-shadow grid grid-cols-1 md:grid-cols-2">
               <div className="p-6 md:col-span-2 flex flex-col justify-between">
                 <div>
                   <div className="flex items-center gap-3 mb-3">
@@ -54,11 +50,17 @@ export const TipsPageComponent = () => {
                       {tip.category}
                     </div>
                   </div>
-                  <ArrowRight className="w-4 h-4 text-blue-600 group-hover:translate-x-1 transition-transform" />
+                  <Link
+                    href={PagesUrls.TIPS_DETAILS?.replace(':id', tip?.id.toString())}
+                    className="hover:shadow-lg transition-shadow"
+                    title="Ver detalles"
+                  >
+                    <ArrowRight className="w-4 h-4 text-blue-600 group-hover:translate-x-1 transition-transform" />{' '}
+                  </Link>
                 </div>
               </div>
             </article>
-          </Link>
+          </Box>
         ))}
       </div>
     </PageWithSidebar>

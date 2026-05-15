@@ -1,4 +1,4 @@
-import { useGetReviewById } from '@/services';
+import { useGetReviewById } from '@/modules/property-reviews';
 import { useParams } from 'next/navigation';
 
 export const useViewReview = () => {

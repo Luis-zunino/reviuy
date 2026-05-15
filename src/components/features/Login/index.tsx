@@ -4,10 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Mail } from 'lucide-react';
-import React from 'react';
 import { useLogin } from './hooks';
 import Link from 'next/link';
-import { GoogleIcon } from './GoogleIcon';
+import { GoogleIcon } from '../../common/GoogleIcon';
 import { PagesUrls } from '@/enums';
 
 export const Login = () => {
@@ -19,7 +18,12 @@ export const Login = () => {
         <h1 className="text-2xl font-bold text-gray-900">Iniciar Sesión</h1>
       </div>
 
-      <Button variant="outline" className="w-full flex items-center gap-2" onClick={onGoogleSignIn}>
+      <Button
+        variant="outline"
+        className="w-full flex items-center gap-2"
+        onClick={onGoogleSignIn}
+        disabled={loading}
+      >
         <GoogleIcon />
         Continuar con Google
       </Button>
@@ -29,7 +33,7 @@ export const Login = () => {
           <span className="w-full border-t" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-white px-2 text-gray-500">O continúa con</span>
+          <span className="px-2 text-gray-500">O continúa con</span>
         </div>
       </div>
 
@@ -51,6 +55,37 @@ export const Login = () => {
           {errors.email && <div className="text-red-500 text-sm">{errors.email.message}</div>}
         </div>
 
+        <div className="space-y-2">
+          <Label htmlFor="acceptedTerms" className="text-sm text-gray-600 flex items-start gap-2">
+            <Input
+              id="acceptedTerms"
+              type="checkbox"
+              className="mt-0.5 h-4 w-4"
+              {...register('acceptedTerms')}
+            />
+            <span>
+              Acepto los
+              <Link
+                href={PagesUrls.TERMS_AND_CONDITIONS}
+                className="text-blue-600 hover:bg-transparent underline px-1"
+              >
+                terminos y condiciones
+              </Link>
+              y la{' '}
+              <Link
+                href={PagesUrls.PRIVACY_POLICY}
+                className="text-blue-600 hover:bg-transparent underline pl-1 pr-0"
+              >
+                politica de privacidad
+              </Link>
+              .
+            </span>
+          </Label>
+          {errors.acceptedTerms && (
+            <div className="text-red-500 text-sm">{errors.acceptedTerms.message}</div>
+          )}
+        </div>
+
         <Button variant="default" type="submit" disabled={loading} className="w-full">
           {loading ? (
             <>
@@ -64,20 +99,7 @@ export const Login = () => {
       </form>
 
       <div className="text-center text-xs text-gray-500 space-y-1">
-        Al continuar, aceptas los{' '}
-        <Link
-          href={PagesUrls.TERMS_AND_CONDITIONS}
-          className="text-blue-600 hover:text-blue-800 underline"
-        >
-          términos y condiciones
-        </Link>{' '}
-        y la{' '}
-        <Link
-          href={PagesUrls.PRIVACY_POLICY}
-          className="text-blue-600 hover:text-blue-800 underline"
-        >
-          política de privacidad
-        </Link>
+        Si ya aceptaste anteriormente, no necesitas volver a marcarlo.
       </div>
     </div>
   );

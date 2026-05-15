@@ -3,7 +3,6 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
-import React from 'react';
 import { PageWithSidebar } from '@/components/common';
 
 export const NoAuthenticated = () => {

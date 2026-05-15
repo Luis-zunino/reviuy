@@ -1,14 +1,13 @@
 import { TabsContent } from '@/components/ui/tabs';
-import React from 'react';
 import { TabDetailsSkeleton } from '../../../TabDetailsSkeleton';
 import { Card, CardContent } from '@/components/ui/card';
-import { Calendar, Eye, MapPin, ThumbsDown, ThumbsUp } from 'lucide-react';
+import { Calendar, Eye, MapPin, MessageSquare, ThumbsDown, ThumbsUp } from 'lucide-react';
 import { StarRatingDisplay } from '@/components/common';
-import { ReviewWithVotesPublic } from '@/types';
 import { Button } from '@/components/ui/button';
 import { PagesUrls } from '@/enums';
 import { useRouter } from 'next/navigation';
 import { Separator } from '@/components/ui/separator';
+import { ReviewWithVotesPublic } from '@/modules/property-reviews';
 
 export interface RealEstateUserExperienceTabContentProps {
   reviews: ReviewWithVotesPublic[];
@@ -18,12 +17,20 @@ export const RealEstateUserExperienceTabContent = (
   props: RealEstateUserExperienceTabContentProps
 ) => {
   const { reviews, isLoadingReviews } = props;
-  const router = useRouter();
+  const { push } = useRouter();
+
   return (
     <TabsContent value="realEstateUserExperience" className="mt-6">
       <section>
         {isLoadingReviews ? (
           <TabDetailsSkeleton />
+        ) : reviews?.length === 0 ? (
+          <Card>
+            <div className="text-center py-8">
+              <MessageSquare className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <p className="mb-4">Aún no hay reseñas para esta inmobiliaria</p>
+            </div>
+          </Card>
         ) : reviews?.length > 0 ? (
           <Card>
             <CardContent>
@@ -48,7 +55,7 @@ export const RealEstateUserExperienceTabContent = (
                       <Button
                         variant="seeMore"
                         onClick={() =>
-                          router.push(PagesUrls.REVIEW_DETAILS.replace(':id', review.id ?? ''))
+                          push(PagesUrls.REVIEW_DETAILS.replace(':id', review.id ?? ''))
                         }
                         icon={Eye}
                         size="sm"

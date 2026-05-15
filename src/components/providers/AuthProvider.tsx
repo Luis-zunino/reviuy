@@ -1,14 +1,21 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { supabaseClient } from '@/lib/supabase';
-import type { AuthProviderProps } from './types';
-import { getSession } from '@/services/apis/user/getSession.api';
+import type { AuthProviderProps, TermsAcceptancePayload } from './types';
 import { useRouter } from 'next/navigation';
 import { PagesUrls } from '@/enums';
-import { AppSession } from '@/services/apis/user/types';
+import type { AppSession } from '@/modules/profiles/domain';
 import { sessionMapped } from '@/utils';
 import { AuthContext } from './constants';
+import { createGetSessionQuery } from '@/modules/profiles/application';
+import { SupabaseProfileAuthReadRepository } from '@/modules/profiles/infrastructure';
+import { buildSiteUrl } from '@/lib/site-url';
+
+const profileAuthReadRepository = new SupabaseProfileAuthReadRepository();
+const getSession = createGetSessionQuery({
+  profileAuthReadRepository,
+});
 
 /**
  * Proveedor de autenticación para la aplicación.
@@ -44,48 +51,73 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [session, setSession] = useState<AppSession | null>(null);
   const [loading, setLoading] = useState(true);
   const { push } = useRouter();
+  const authCallbackUrl = buildSiteUrl('/auth/callback');
 
-  const signInWithGoogle = async () => {
-    setLoading(true);
-    const { error } = await supabaseClient.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
-      },
-    });
-    setLoading(false);
-    if (error) {
-      throw error;
-    }
-  };
+  const buildAuthCallbackUrl = useCallback(
+    (payload?: TermsAcceptancePayload) => {
+      const url = new URL(authCallbackUrl);
 
-  const signInWithEmail = async (email: string) => {
-    setLoading(true);
-    const emailRedirectTo = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
-    const { error } = await supabaseClient.auth.signInWithOtp({
-      email,
-      options: {
-        emailRedirectTo,
-      },
-    });
-    setLoading(false);
+      if (payload?.acceptedTerms) {
+        url.searchParams.set('terms_accepted', '1');
+        url.searchParams.set(
+          'terms_accepted_at',
+          payload.termsAcceptedAt ?? new Date().toISOString()
+        );
+        url.searchParams.set('terms_version', payload.termsVersion ?? 'v1');
+      }
 
-    if (error) {
-      throw error;
-    }
-  };
+      return url.toString();
+    },
+    [authCallbackUrl]
+  );
 
-  const signOut = async () => {
+  const signInWithGoogle = useCallback(
+    async (payload?: TermsAcceptancePayload) => {
+      setLoading(true);
+      const { error } = await supabaseClient.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: buildAuthCallbackUrl(payload),
+        },
+      });
+      setLoading(false);
+      if (error) {
+        throw error;
+      }
+    },
+    [buildAuthCallbackUrl]
+  );
+
+  const signInWithEmail = useCallback(
+    async (email: string, payload?: TermsAcceptancePayload) => {
+      setLoading(true);
+      const emailRedirectTo = buildAuthCallbackUrl(payload);
+      const { error } = await supabaseClient.auth.signInWithOtp({
+        email,
+        options: {
+          emailRedirectTo,
+        },
+      });
+      setLoading(false);
+
+      if (error) {
+        throw error;
+      }
+    },
+    [buildAuthCallbackUrl]
+  );
+
+  const signOut = useCallback(async () => {
     const { error } = await supabaseClient.auth.signOut();
     if (error) {
       throw error;
     }
     push(PagesUrls.HOME);
-  };
+  }, [push]);
 
   useEffect(() => {
     const getInitialSession = async () => {
-      const { session } = await getSession();
+      const { session } = await getSession({});
 
       setSession(session);
       setLoading(false);
@@ -105,13 +137,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     return () => subscription.unsubscribe();
   }, []);
 
-  const value = {
-    loading,
-    isAuthenticated: !!session,
-    signInWithEmail,
-    signOut,
-    signInWithGoogle,
-  };
+  const value = useMemo(() => {
+    return {
+      loading,
+      isAuthenticated: !!session,
+      signInWithEmail,
+      signOut,
+      signInWithGoogle,
+    };
+  }, [loading, session, signInWithEmail, signOut, signInWithGoogle]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

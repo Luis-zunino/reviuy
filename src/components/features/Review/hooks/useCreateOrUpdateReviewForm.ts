@@ -4,8 +4,6 @@ import { useEffect, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { useParams, useRouter } from 'next/navigation';
-import { useCreateReview, useUpdateReview, useCheckUserReviewForAddress } from '@/services';
-import type { NominatimEntity, RealEstateWitheVotes } from '@/types';
 import { PagesUrls } from '@/enums';
 import type { UseCreateOrUpdateReviewFormProps } from './types';
 import { useAuthContext } from '@/components/providers/AuthProvider';
@@ -13,6 +11,14 @@ import { formReviewSchema, FormReviewSchema } from '@/schemas';
 import { formatDataToBackend, getDefaultValues } from '../utils';
 import { getAddressOsmId } from '@/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  useCheckUserReviewForAddress,
+  useCreateReview,
+  useUploadReviewImage,
+  useUpdateReview,
+} from '@/modules/property-reviews';
+import { type NominatimEntity } from '@/modules/addresses';
+import { type RealEstateWitheVotes } from '@/modules/real-estates';
 
 export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormProps) => {
   const { defaultValues } = props;
@@ -23,7 +29,7 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
   const { id: reviewId } = useParams<{ id: string }>();
   const isUpdate = Boolean(defaultValues);
 
-  const form = useForm<FormReviewSchema>({
+  const form = useForm<FormReviewSchema, undefined, FormReviewSchema>({
     defaultValues: getDefaultValues(defaultValues),
     resolver: zodResolver(formReviewSchema),
   });
@@ -39,9 +45,35 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
   });
   const { mutateAsync: mutationCreate, isPending } = useCreateReview();
   const { mutateAsync: mutationUpdate, isPending: isUpdatePending } = useUpdateReview();
+  const { mutateAsync: uploadReviewImage, isPending: isUploadingImages } = useUploadReviewImage();
+
+  const uploadImages = async (reviewId: string, osmId: string, images: File[] = []) => {
+    if (!images.length) {
+      return { uploadedCount: 0, failedCount: 0 };
+    }
+
+    const results = await Promise.allSettled(
+      images.map((file) =>
+        uploadReviewImage({
+          reviewId,
+          osmId,
+          file,
+        })
+      )
+    );
+
+    const uploadedCount = results.filter((result) => result.status === 'fulfilled').length;
+    const failedCount = results.length - uploadedCount;
+
+    return {
+      uploadedCount,
+      failedCount,
+    };
+  };
 
   const handleClearAddress = () => {
     setValue('address_text', '');
+
     setOpen(false);
   };
 
@@ -49,9 +81,11 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
     setValue('address_text', item.display_name, {
       shouldValidate: true,
     });
+
     setValue('osm_id', String(item.osm_id), {
       shouldValidate: true,
     });
+
     setValue('osm_type', String(item.osm_type), {
       shouldValidate: true,
     });
@@ -67,71 +101,131 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
     setOpen(false);
   };
 
+  const handleUpdateReview = async (
+    formData: ReturnType<typeof formatDataToBackend>,
+    selectedImages: File[],
+    loadingToast: string | number
+  ) => {
+    if (!defaultValues?.id) return;
+
+    const response = await mutationUpdate({
+      reviewId: defaultValues.id,
+      updateData: formData,
+    });
+
+    if (!response.success) {
+      toast.dismiss(loadingToast);
+
+      toast.error('Error inesperado', {
+        description: response.message,
+      });
+
+      return;
+    }
+
+    const updatedReviewId = response.data?.id ?? defaultValues.id;
+
+    const { failedCount } = await uploadImages(
+      updatedReviewId,
+      formData.address_osm_id,
+      selectedImages
+    );
+
+    toast.dismiss(loadingToast);
+
+    toast.success('Reseña actualizada', {
+      description:
+        failedCount > 0
+          ? `La reseña se actualizó, pero ${failedCount} imagen${
+              failedCount === 1 ? '' : 'es'
+            } no se pudieron subir.`
+          : 'Cambios guardados correctamente.',
+    });
+
+    router.push(PagesUrls.REVIEW_DETAILS.replace(':id', updatedReviewId));
+  };
+
+  const handleCreateReview = async (
+    formData: ReturnType<typeof formatDataToBackend>,
+    selectedImages: File[],
+    loadingToast: string | number
+  ) => {
+    const response = await mutationCreate(formData);
+
+    if (!response.success || !response.data?.id) {
+      toast.dismiss(loadingToast);
+
+      toast.error('Error inesperado', {
+        description: response.message || 'No se pudo crear la reseña. Inténtalo de nuevo.',
+      });
+
+      return;
+    }
+
+    const createdReviewId = response.data.id;
+
+    const { failedCount } = await uploadImages(
+      createdReviewId,
+      formData.address_osm_id,
+      selectedImages
+    );
+
+    toast.dismiss(loadingToast);
+
+    toast.success('¡Reseña publicada!', {
+      description:
+        failedCount > 0
+          ? `Tu reseña fue publicada, pero ${failedCount} imagen${
+              failedCount === 1 ? '' : 'es'
+            } no se pudieron subir.`
+          : 'Tu experiencia ha sido compartida con la comunidad',
+    });
+
+    router.push(PagesUrls.REVIEW_DETAILS.replace(':id', createdReviewId));
+  };
+
   const onSubmit = async (formData: FormReviewSchema) => {
     if (!defaultValues?.is_mine && isUpdate) {
       toast.error('No tienes permisos para editar esta reseña');
+
       router.push(PagesUrls.HOME);
+
       return;
     }
 
     const loadingToast = toast.loading(
       isUpdate ? 'Actualizando tu reseña...' : 'Publicando tu reseña...',
-      { id: `${isUpdate ? 'update' : 'create'}-review` }
+      {
+        id: `${isUpdate ? 'update' : 'create'}-review`,
+      }
     );
+
     const data = formatDataToBackend(formData);
 
-    if (defaultValues && defaultValues.id) {
-      mutationUpdate(
-        {
-          reviewId: defaultValues.id,
-          updateData: data,
-        },
-        {
-          onSuccess: ({ data, success, message }) => {
-            toast.dismiss(loadingToast);
+    const selectedImages = formData.images ?? [];
 
-            if (!success) {
-              toast.error('Error inesperado', { description: message });
-              return;
-            }
-            toast.dismiss(loadingToast);
-            toast.success('Reseña actualizada');
-            router.push(PagesUrls.REVIEW_DETAILS.replace(':id', data?.id ?? ''));
-          },
-          onError: () => {
-            toast.error('Error inesperado', {
-              description: 'No se pudo actualizar la reseña. Inténtalo de nuevo.',
-            });
-          },
-        }
-      );
-    } else {
-      mutationCreate(data, {
-        onSuccess: ({ data, success }) => {
-          toast.dismiss(loadingToast);
-          if (!success) {
-            toast.error('Error inesperado', {
-              description: 'No se pudo crear la reseña. Inténtalo de nuevo.',
-            });
-            return;
-          }
-          toast.success('¡Reseña publicada!', {
-            description: 'Tu experiencia ha sido compartida con la comunidad',
-          });
+    try {
+      if (isUpdate) {
+        await handleUpdateReview(data, selectedImages, loadingToast);
 
-          router.push(PagesUrls.REVIEW_DETAILS.replace(':id', data?.id ?? ''));
-        },
-        onError: () => {
-          toast.error('Error inesperado', {
-            description: 'No se pudo crear la reseña. Inténtalo de nuevo.',
-          });
-        },
+        return;
+      }
+
+      await handleCreateReview(data, selectedImages, loadingToast);
+    } catch {
+      toast.dismiss(loadingToast);
+
+      toast.error('Error inesperado', {
+        description: isUpdate
+          ? 'No se pudo actualizar la reseña. Inténtalo de nuevo.'
+          : 'No se pudo crear la reseña. Inténtalo de nuevo.',
       });
     }
   };
 
   const handleClearRealEstate = () => {
     setValue('real_estate_id', '');
+
     setValue('real_estate_name', '');
 
     setOpenRealEstateModal(false);
@@ -141,6 +235,7 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
     setValue('real_estate_id', item.id ?? '', {
       shouldValidate: true,
     });
+
     setValue('real_estate_name', String(item.name), {
       shouldValidate: true,
     });
@@ -161,7 +256,11 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
   }, [defaultValues, router]);
 
   useEffect(() => {
-    if (defaultValues) reset(getDefaultValues(defaultValues), { keepDirty: false });
+    if (defaultValues) {
+      reset(getDefaultValues(defaultValues), {
+        keepDirty: false,
+      });
+    }
   }, [defaultValues, reset]);
 
   useEffect(() => {
@@ -183,7 +282,7 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
     onSubmit,
     errors: formState.errors,
     router,
-    isSubmitting: isPending || isUpdatePending,
+    isSubmitting: isPending || isUpdatePending || isUploadingImages,
     form,
     fields,
     append,

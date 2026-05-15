@@ -2,7 +2,7 @@ import { useForm } from 'react-hook-form';
 import { useAuthContext } from '@/components/providers/AuthProvider';
 import { FormContactSchema, formContactSchema } from './types';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useSendContactMessage } from '@/services';
+import { useSendContactMessage } from '@/modules/content/presentation';
 import { toast } from 'sonner';
 
 export const useContactForm = () => {

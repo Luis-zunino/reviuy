@@ -3,9 +3,9 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useState } from 'react';
-import { NominatimEntity } from '@/types';
 import { formSchema, FormSearcherAddressHome } from '../constants';
 import { getAddressOsmId } from '@/utils';
+import { type NominatimEntity } from '@/modules/addresses';
 
 export const useSearcherAddressHome = () => {
   const [open, setOpen] = useState(false);

@@ -3,7 +3,7 @@
 import { useCreateRealEstateReview } from './hooks';
 import { RealEstateReviewForm } from '../RealEstateReviewForm';
 import { useParams } from 'next/navigation';
-import { useGetRealEstateById } from '@/services';
+import { useGetRealEstateById } from '@/modules/real-estates';
 
 export const CreateRealEstateReview = () => {
   const { form, handleSubmit, isSubmitting } = useCreateRealEstateReview();

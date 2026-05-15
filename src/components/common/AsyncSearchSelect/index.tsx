@@ -1,6 +1,5 @@
 'use client';
 
-import * as React from 'react';
 import { FieldValues } from 'react-hook-form';
 import { Input } from '@/components/ui/input';
 import {
@@ -17,6 +16,26 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { AsyncSearchSelectProps } from './types';
 
+/**
+ * AsyncSearchSelect - Componente de selección con búsqueda asíncrona
+ * @template T - Tipo de los valores del formulario
+ * @template V - Tipo de las opciones de búsqueda, debe tener al menos 'id' y 'name'
+ * @param props - Props del componente, incluyendo configuración de formulario, opciones, estado de carga, etc.
+ * @description Este componente combina un campo de entrada con un popover que muestra resultados de búsqueda asíncrona. Permite a los usuarios escribir para buscar opciones, muestra un indicador de carga mientras se obtienen los resultados y maneja la selección de una opción. También incluye validación y manejo de errores del formulario.
+ * @example
+ * <AsyncSearchSelect
+ *   label="Ciudad"
+ *   name="city"
+ *   form={form}
+ *   options={cityOptions}
+ *   isFetching={isFetchingCities}
+ *   handleClear={() => form.setValue('city', '')}
+ *   onSelect={(option) => form.setValue('city', option.name)}
+ * />
+ * @returns El componente AsyncSearchSelect listo para ser utilizado en formularios con búsqueda asíncrona.
+ * @see {@link AsyncSearchSelectProps} para más detalles sobre las props.
+ * @see {@link FormField}, {@link Popover}, {@link Command} para la implementación interna.
+ */
 export const AsyncSearchSelect = <
   T extends FieldValues,
   V extends { id?: string | null; name?: string | null },
@@ -122,7 +141,7 @@ export const AsyncSearchSelect = <
                           field.value &&
                           field.value.length >= 3 ? (
                           <CommandEmpty>
-                            {emptyComponent || 'No se encontraron resultados'}
+                            {emptyComponent ?? 'No se encontraron resultados'}
                           </CommandEmpty>
                         ) : null}
                         {isFetching ? (
