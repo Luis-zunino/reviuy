@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
 import { ReportRealEstateTemplate } from '@/components/common/Emails';
 import { getAuthenticatedUser, parseAndValidateBody, sendEmail } from '../_utils';
-import { AppError, createError, withRateLimit } from '@/lib';
+import { AppError, createError, withRateLimit, RateLimitType } from '@/lib';
 import { reportRealEstateApiSchema } from '@/schemas';
+import { createReportRealEstateByNameUseCase } from '@/modules/moderation/application';
 
 export async function GET() {
   return NextResponse.json(
@@ -22,10 +23,17 @@ export async function POST(req: Request) {
       throw createError('UNAUTHORIZED', 'No autorizado');
     }
 
-    await withRateLimit(`api-report-real-estate:${user.id}`, 'sensitive');
+    const reportRealEstateByNameUseCase = createReportRealEstateByNameUseCase({
+      getCurrentUserId: async () => user.id,
+      rateLimit: async (key: string, scope: RateLimitType) => {
+        await withRateLimit(key, scope);
+      },
+    });
 
     const body = await parseAndValidateBody(req, reportRealEstateApiSchema);
     const { realEstateName, reason, message } = body;
+
+    await reportRealEstateByNameUseCase(body);
 
     if (!user.email) {
       throw createError('INVALID_INPUT', 'El email del usuario no se encontro');

@@ -1,10 +1,11 @@
 import { ListRealEstates } from '@/components/features/RealEstate';
-import { Metadata } from 'next';
+import { generatePageMetadata } from '@/lib/metadata';
 
-export const metadata: Metadata = {
+export const metadata = generatePageMetadata({
   title: 'Propiedades | ReviUy',
   description: 'Administra tus propiedades en ReviUy.',
-};
+  path: '/real-estate',
+});
 
 const RealEstatesPage = () => {
   return <ListRealEstates />;

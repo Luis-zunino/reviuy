@@ -1,10 +1,11 @@
 import { PrivacyPolicyComponent } from '@/components/features';
-import { Metadata } from 'next';
+import { generatePageMetadata } from '@/lib/metadata';
 
-export const metadata: Metadata = {
+export const metadata = generatePageMetadata({
   title: 'Política de privacidad | ReviUy',
   description: 'Conoce nuestra política de privacidad y protección de datos.',
-};
+  path: '/privacidad',
+});
 
 export default function PrivacidadPage() {
   return <PrivacyPolicyComponent />;
