@@ -26,7 +26,7 @@ jobs:
       - name: Validate secrets
         run: |
           if [ -z "${{ secrets.GOOGLE_AI_STUDIO_KEY }}" ]; then
-            echo "❌ Error: GOOGLE_AI_STUDIO_KEY no está configurado"
+            echo "❌ Error: GOOGLE_AI_STUDIO_KEY no está configurado en GitHub Secrets"
             exit 1
           fi
           echo "✅ Secretos configurados correctamente"
@@ -34,11 +34,12 @@ jobs:
       - name: Run PR Agent
         uses: the-pr-agent/pr-agent@main
         env:
-          GOOGLE_AI_STUDIO_KEY: ${{ secrets.GOOGLE_AI_STUDIO_KEY }}
+          GOOGLE_AI_STUDIO__GEMINI_API_KEY: ${{ secrets.GOOGLE_AI_STUDIO_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
           CONFIG__MODEL: 'gemini/gemini-1.5-flash'
           PR_AGENT__MODEL: 'gemini/gemini-1.5-flash'
+          CONFIG__FALLBACK_MODELS: '[]'
 
           GITHUB_ACTION__AUTO_DESCRIBE: 'true'
           GITHUB_ACTION__AUTO_REVIEW: 'true'
