@@ -1,0 +1,1 @@
+export const NOMINATIM_URL = 'https://nominatim.openstreetmap.org';

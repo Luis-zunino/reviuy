@@ -2,12 +2,9 @@
 -- ÍNDICES PARA TABLAS BASE
 -- =============================================================================
 -- Índices básicos para rate_limits
-create index IF not exists idx_rate_limits_user_endpoint on public.rate_limits (user_id, endpoint);
+create index IF not exists idx_rate_limits_user_endpoint_window on public.rate_limits (user_id, endpoint, window_start);
 
 create index IF not exists idx_rate_limits_window on public.rate_limits (window_start);
-
--- Índice compuesto optimizado para check_rate_limit
-create index IF not exists idx_rate_limits_user_endpoint_window on public.rate_limits (user_id, endpoint, window_start);
 
 -- Índices básicos para security_logs
 create index IF not exists idx_security_logs_user on public.security_logs (user_id);
@@ -125,7 +122,6 @@ where
 -- Índice compuesto para optimizar consultas por review, usuario y tipo de voto
 create index IF not exists idx_review_votes_composite on public.review_votes (review_id, user_id, vote_type);
 
-
 -- Índices para review_reports
 create index IF not exists idx_review_reports_review_id on public.review_reports (review_id);
 
@@ -161,7 +157,6 @@ create index IF not exists idx_real_estate_reviews_real_estate_rating on public.
 -- Índices para real_estate_review_votes
 -- Índice compuesto para optimizar consultas por review, usuario y tipo de voto
 create index IF not exists idx_real_estate_review_votes_composite on public.real_estate_review_votes (real_estate_review_id, user_id, vote_type);
-
 
 -- Índices para real_estate_review_reports
 create index IF not exists idx_real_estate_review_reports_review_id on public.real_estate_review_reports (real_estate_review_id);
@@ -228,116 +223,26 @@ BEGIN
     END IF;
 END $$;
 
--- Eliminar índice antiguo si fue creado por error (preparar para 054)
-do $$
-BEGIN
-    IF EXISTS (
-        SELECT 1 FROM pg_indexes 
-        WHERE schemaname = 'public' 
-        AND indexname = 'idx_reviews_unique_user_property'
-    ) THEN
-        DROP INDEX CONCURRENTLY IF EXISTS public.idx_reviews_unique_user_property;
-        RAISE NOTICE 'Índice antiguo idx_reviews_unique_user_property eliminado (será reemplazado por 054)';
-    END IF;
-EXCEPTION
-    WHEN OTHERS THEN
-        RAISE WARNING 'Error eliminando índice antiguo: %', SQLERRM;
-END $$;
+-- Eliminar índice antiguo si fue creado por error
+drop index IF exists public.idx_reviews_unique_user_property;
 
--- Add missing indexes for foreign keys to improve join performance and avoid linter warnings.
--- Uses CONCURRENTLY to avoid locking tables in production
--- NOTA: CONCURRENTLY + IF NOT EXISTS no funciona bien en transacciones, por eso usamos bloques DO
--- 1. review_audit.changed_by
-do $$
-BEGIN
-    IF NOT EXISTS (
-        SELECT 1 FROM pg_indexes 
-        WHERE schemaname = 'public' 
-        AND indexname = 'idx_review_audit_changed_by'
-    ) THEN
-        EXECUTE 'CREATE INDEX CONCURRENTLY idx_review_audit_changed_by ON public.review_audit(changed_by)';
-        RAISE NOTICE 'Índice idx_review_audit_changed_by creado';
-    ELSE
-        RAISE NOTICE 'Índice idx_review_audit_changed_by ya existe';
-    END IF;
-EXCEPTION
-    WHEN OTHERS THEN
-        RAISE WARNING 'Error creando índice idx_review_audit_changed_by: %', SQLERRM;
-END $$;
-
--- 2. review_reports.reported_by_user_id
-do $$
-BEGIN
-    IF NOT EXISTS (
-        SELECT 1 FROM pg_indexes 
-        WHERE schemaname = 'public' 
-        AND indexname = 'idx_review_reports_reported_by_user_id'
-    ) THEN
-        EXECUTE 'CREATE INDEX CONCURRENTLY idx_review_reports_reported_by_user_id ON public.review_reports(reported_by_user_id)';
-        RAISE NOTICE 'Índice idx_review_reports_reported_by_user_id creado';
-    ELSE
-        RAISE NOTICE 'Índice idx_review_reports_reported_by_user_id ya existe';
-    END IF;
-EXCEPTION
-    WHEN OTHERS THEN
-        RAISE WARNING 'Error creando índice idx_review_reports_reported_by_user_id: %', SQLERRM;
-END $$;
-
--- 3. review_rooms.review_id
-do $$
-BEGIN
-    IF NOT EXISTS (
-        SELECT 1 FROM pg_indexes 
-        WHERE schemaname = 'public' 
-        AND indexname = 'idx_review_rooms_review_id'
-    ) THEN
-        EXECUTE 'CREATE INDEX CONCURRENTLY idx_review_rooms_review_id ON public.review_rooms(review_id)';
-        RAISE NOTICE 'Índice idx_review_rooms_review_id creado';
-    ELSE
-        RAISE NOTICE 'Índice idx_review_rooms_review_id ya existe';
-    END IF;
-EXCEPTION
-    WHEN OTHERS THEN
-        RAISE WARNING 'Error creando índice idx_review_rooms_review_id: %', SQLERRM;
-END $$;
-
+-- NOTA: Los índices idx_review_audit_changed_by, idx_review_reports_reported_by_user_id
+-- e idx_review_rooms_review_id ya están creados arriba con CREATE INDEX IF NOT EXISTS.
+-- Se eliminaron los bloques DO redundantes con CONCURRENTLY que fallaban en transacciones.
 -- Enforce 1 review per user per property at the Database level (Review uniqueness constraints)
--- Uses CONCURRENTLY to avoid locking tables in production
--- NOTA: CONCURRENTLY + IF NOT EXISTS no funciona bien en transacciones, por eso usamos bloques DO
 -- 1. Uniqueness for Reviews based on OSM ID
+drop index IF exists idx_reviews_user_address_osm_unique;
 
-DROP INDEX IF EXISTS idx_reviews_user_address_osm_unique;
-CREATE UNIQUE INDEX idx_reviews_user_address_osm_unique
-ON public.reviews(user_id, address_osm_id)
-WHERE deleted_at IS NULL;
-
+create unique INDEX idx_reviews_user_address_osm_unique on public.reviews (user_id, address_osm_id)
+where
+  deleted_at is null;
 
 -- 2. Uniqueness for Real Estate Reviews table
-do $$
-BEGIN
-    -- Primero eliminar índice antiguo si existe
-    IF EXISTS (
-        SELECT 1 FROM pg_indexes 
-        WHERE schemaname = 'public' 
-        AND indexname = 'idx_real_estate_reviews_user_re_unique'
-    ) THEN
-        EXECUTE 'DROP INDEX CONCURRENTLY public.idx_real_estate_reviews_user_re_unique';
-        RAISE NOTICE 'Índice antiguo idx_real_estate_reviews_user_re_unique eliminado';
-    END IF;
-    
-    -- Crear nuevo índice
-    IF NOT EXISTS (
-        SELECT 1 FROM pg_indexes 
-        WHERE schemaname = 'public' 
-        AND indexname = 'idx_real_estate_reviews_user_re_unique'
-    ) THEN
-        EXECUTE 'CREATE UNIQUE INDEX CONCURRENTLY idx_real_estate_reviews_user_re_unique ON public.real_estate_reviews(user_id, real_estate_id) WHERE deleted_at IS NULL';
-        RAISE NOTICE 'Índice idx_real_estate_reviews_user_re_unique creado';
-    END IF;
-EXCEPTION
-    WHEN OTHERS THEN
-        RAISE WARNING 'Error manejando índice idx_real_estate_reviews_user_re_unique: %', SQLERRM;
-END $$;
+drop index IF exists idx_real_estate_reviews_user_re_unique;
+
+create unique INDEX idx_real_estate_reviews_user_re_unique on public.real_estate_reviews (user_id, real_estate_id)
+where
+  deleted_at is null;
 
 -- Enforce 1 review per user per property at the Database level (Review uniqueness constraints)
 -- 1. Uniqueness for Reviews based on OSM ID
@@ -370,81 +275,25 @@ BEGIN
 END $$;
 
 -- =============================================================================
--- Usa CONCURRENTLY para evitar locks en tablas con datos existentes
--- NOTA: CONCURRENTLY + IF NOT EXISTS no funciona bien en transacciones, por eso usamos bloques DO
+-- Índices adicionales para rendimiento de queries comunes
 -- =============================================================================
 -- Índice para búsquedas "Mis reseñas" (user_id + ordenado por created_at DESC)
-do $$
-BEGIN
-    IF NOT EXISTS (
-        SELECT 1 FROM pg_indexes 
-        WHERE schemaname = 'public' 
-        AND indexname = 'idx_reviews_user_created_at'
-    ) THEN
-        EXECUTE 'CREATE INDEX CONCURRENTLY idx_reviews_user_created_at ON public.reviews(user_id, created_at DESC) WHERE deleted_at IS NULL';
-        RAISE NOTICE 'Índice idx_reviews_user_created_at creado';
-    ELSE
-        RAISE NOTICE 'Índice idx_reviews_user_created_at ya existe';
-    END IF;
-EXCEPTION
-    WHEN OTHERS THEN
-        RAISE WARNING 'Error creando índice idx_reviews_user_created_at: %', SQLERRM;
-END $$;
+create index if not exists idx_reviews_user_created_at on public.reviews (user_id, created_at desc)
+where
+  deleted_at is null;
 
 -- Índice para búsquedas de reseñas recientes por propiedad
-do $$
-BEGIN
-    IF NOT EXISTS (
-        SELECT 1 FROM pg_indexes 
-        WHERE schemaname = 'public' 
-        AND indexname = 'idx_real_estate_reviews_re_created'
-    ) THEN
-        EXECUTE 'CREATE INDEX CONCURRENTLY idx_real_estate_reviews_re_created ON public.real_estate_reviews(real_estate_id, created_at DESC) WHERE deleted_at IS NULL';
-        RAISE NOTICE 'Índice idx_real_estate_reviews_re_created creado';
-    ELSE
-        RAISE NOTICE 'Índice idx_real_estate_reviews_re_created ya existe';
-    END IF;
-EXCEPTION
-    WHEN OTHERS THEN
-        RAISE WARNING 'Error creando índice idx_real_estate_reviews_re_created: %', SQLERRM;
-END $$;
-
+create index if not exists idx_real_estate_reviews_re_created on public.real_estate_reviews (real_estate_id, created_at desc)
+where
+  deleted_at is null;
 
 -- Índice para búsquedas en reported_by_user_id
-do $$
-BEGIN
-    IF NOT EXISTS (
-        SELECT 1 FROM pg_indexes 
-        WHERE schemaname = 'public' 
-        AND indexname = 'idx_real_estate_votes_reported_by'
-    ) THEN
-        EXECUTE 'CREATE INDEX CONCURRENTLY idx_real_estate_votes_reported_by ON public.real_estate_reports(reported_by_user_id)';
-        RAISE NOTICE 'Índice idx_real_estate_votes_reported_by creado';
-    ELSE
-        RAISE NOTICE 'Índice idx_real_estate_votes_reported_by ya existe';
-    END IF;
-EXCEPTION
-    WHEN OTHERS THEN
-        RAISE WARNING 'Error creando índice idx_real_estate_votes_reported_by: %', SQLERRM;
-END $$;
+drop index IF exists idx_real_estate_votes_reported_by;
+
+create index if not exists idx_real_estate_reports_reported_by on public.real_estate_reports (reported_by_user_id);
 
 -- Índice para búsquedas por status en reports
-do $$
-BEGIN
-    IF NOT EXISTS (
-        SELECT 1 FROM pg_indexes 
-        WHERE schemaname = 'public' 
-        AND indexname = 'idx_real_estate_reports_status'
-    ) THEN
-        EXECUTE 'CREATE INDEX CONCURRENTLY idx_real_estate_reports_status ON public.real_estate_reports(status)';
-        RAISE NOTICE 'Índice idx_real_estate_reports_status creado';
-    ELSE
-        RAISE NOTICE 'Índice idx_real_estate_reports_status ya existe';
-    END IF;
-EXCEPTION
-    WHEN OTHERS THEN
-        RAISE WARNING 'Error creando índice idx_real_estate_reports_status: %', SQLERRM;
-END $$;
+create index if not exists idx_real_estate_reports_status on public.real_estate_reports (status);
 
 -- =============================================================================
 -- =============================================================================
@@ -485,6 +334,8 @@ EXCEPTION
 END $$;
 
 -- 2. Índice para cleanup eficiente
+-- NOTA: Se usa índice completo sobre window_start (no parcial con NOW())
+-- porque NOW() se evalúa estáticamente al crear el índice, haciéndolo inútil para nuevas filas.
 do $$
 BEGIN
     -- Eliminar índice antiguo si existe
@@ -497,13 +348,13 @@ BEGIN
         RAISE NOTICE 'Índice antiguo idx_rate_limits_cleanup eliminado';
     END IF;
     
-    -- Crear nuevo índice
+    -- Crear nuevo índice (sin condición parcial con NOW())
     IF NOT EXISTS (
         SELECT 1 FROM pg_indexes 
         WHERE schemaname = 'public' 
         AND indexname = 'idx_rate_limits_cleanup'
     ) THEN
-        EXECUTE 'CREATE INDEX idx_rate_limits_cleanup ON public.rate_limits(window_start) WHERE window_start < NOW() - INTERVAL ''24 hours''';
+        EXECUTE 'CREATE INDEX idx_rate_limits_cleanup ON public.rate_limits(window_start)';
         RAISE NOTICE 'Índice idx_rate_limits_cleanup creado';
     END IF;
 EXCEPTION
