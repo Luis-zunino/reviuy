@@ -10,7 +10,6 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import React from 'react';
 import { useCreateRealEstateModal } from './hook';
 import type { CreateRealEstateModalProps } from './types';
 

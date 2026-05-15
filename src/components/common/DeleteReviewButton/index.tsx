@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Trash2 } from 'lucide-react';
 import { DeleteReviewDialog } from '@/components/common';
-import { useDeleteReview } from '@/services/apis/reviews';
+import { useDeleteReview } from '@/modules/property-reviews/presentation';
 import { useRouter } from 'next/navigation';
 import type { DeleteReviewButtonProps } from './types';
 import { toast } from 'sonner';

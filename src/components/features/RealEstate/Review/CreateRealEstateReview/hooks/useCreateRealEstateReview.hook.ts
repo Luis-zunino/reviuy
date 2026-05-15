@@ -1,7 +1,7 @@
 'use client';
 
 import { PagesUrls } from '@/enums';
-import { useCreateRealEstateReviewHook } from '@/services';
+import { useCreateRealEstateReviewHook } from '@/modules/real-estates/presentation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useParams, useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';

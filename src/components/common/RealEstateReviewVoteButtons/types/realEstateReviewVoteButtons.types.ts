@@ -1,4 +1,5 @@
-import type { RealEstateReviewWithVotesPublic, VoteType } from '@/types';
+import { RealEstateReviewWithVotesPublic } from '@/modules/real-estates';
+import type { VoteType } from '@/types';
 import type { QueryObserverResult, RefetchOptions } from '@tanstack/react-query';
 
 export interface RealEstateReviewVoteButtonsProps {

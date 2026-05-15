@@ -1,4 +1,4 @@
-import type { ReviewWithVotes } from '@/types';
+import { ReviewWithVotes } from '@/modules/property-reviews';
 
 export interface ReviewCardProps {
   review: ReviewWithVotes;

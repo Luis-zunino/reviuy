@@ -1,5 +1,3 @@
-import React from 'react';
-
 export const TabDetailsSkeleton = () => {
   return (
     <div className="space-y-4">

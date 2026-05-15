@@ -1,12 +1,13 @@
 import {
   useHasUserReportedRealEstateReview,
   useReportRealEstateReview,
-  useSendReportRealEstateReviewMessage,
-} from '@/services';
+} from '@/modules/real-estates/presentation';
+import { useSendReportRealEstateReviewMessage } from '@/modules/moderation/presentation';
 import React, { useState } from 'react';
 import { validateText } from '@/utils';
 import { toast } from 'sonner';
 import type { UseReportRealEstateReviewButtonProps } from './types';
+import { reportReviewReasons } from '@/constants';
 
 export const useReportRealEstateReviewButton = (props: UseReportRealEstateReviewButtonProps) => {
   const { review } = props;
@@ -17,16 +18,6 @@ export const useReportRealEstateReviewButton = (props: UseReportRealEstateReview
   const { mutateAsync, isPending } = useReportRealEstateReview();
   const { mutateAsync: sendMessage } = useSendReportRealEstateReviewMessage();
   const { data: hasReported } = useHasUserReportedRealEstateReview(review?.id ?? '');
-
-  const reportReasons = [
-    { value: 'spam', label: 'Spam o contenido promocional no solicitado' },
-    { value: 'inappropriate', label: 'Contenido inapropiado o ofensivo' },
-    { value: 'false_info', label: 'Información falsa o engañosa' },
-    { value: 'harassment', label: 'Acoso o intimidación' },
-    { value: 'hate_speech', label: 'Discurso de odio' },
-    { value: 'fake_review', label: 'Reseña falsa o fraudulenta' },
-    { value: 'other', label: 'Otro motivo' },
-  ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -88,6 +79,6 @@ export const useReportRealEstateReviewButton = (props: UseReportRealEstateReview
     isPending,
     showReportedButton: !review?.is_mine,
     hasReported,
-    reportReasons,
+    reportReasons: reportReviewReasons,
   };
 };

@@ -1,10 +1,11 @@
 'use client';
 
-import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Heart } from 'lucide-react';
-import { useToggleFavoriteReview } from '@/services/apis/reviews/useToggleFavoriteReview.hook';
-import { useIsReviewFavorite } from '@/services/apis/reviews/useIsReviewFavorite.hook';
+import {
+  useToggleFavoriteReview,
+  useIsReviewFavorite,
+} from '@/modules/property-reviews/presentation';
 import type { FavoriteReviewButtonProps } from './types';
 
 export const FavoriteReviewButton: React.FC<FavoriteReviewButtonProps> = ({

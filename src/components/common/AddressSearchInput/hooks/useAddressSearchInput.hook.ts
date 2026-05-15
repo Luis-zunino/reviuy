@@ -1,5 +1,5 @@
 import { useDebounce } from '@/hooks';
-import { useGetAddressListByName } from '@/services';
+import { useGetAddressListByName } from '@/modules/addresses/presentation';
 import type { UseAddressSearchInputProps } from './types';
 
 export const useAddressSearchInput = (props: UseAddressSearchInputProps) => {

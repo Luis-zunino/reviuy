@@ -90,6 +90,7 @@ type StructuredDataSchema =
 
 interface StructuredDataProps {
   data: StructuredDataSchema | StructuredDataSchema[];
+  nonce?: string;
 }
 
 /**

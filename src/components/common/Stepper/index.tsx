@@ -1,6 +1,5 @@
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
-import React from 'react';
 
 export interface StepperProps {
   stepLabels: string[] | undefined;
