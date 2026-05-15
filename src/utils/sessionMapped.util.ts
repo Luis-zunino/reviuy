@@ -1,4 +1,4 @@
-import type { AppSession } from '@/modules/profiles/domain';
+import type { AppSession } from '@/services/apis/user/types';
 import { Session } from '@supabase/supabase-js';
 
 export const sessionMapped = (session: Session | null): AppSession | null => {
