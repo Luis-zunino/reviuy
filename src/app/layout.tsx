@@ -1,11 +1,13 @@
 import type { Metadata } from 'next';
 import { Toaster } from '@/components/ui/sonner';
 import { AuthProvider } from '@/components/providers/AuthProvider';
+import { ThemeProvider } from '@/components/providers/ThemeProvider';
 import { WebVitals } from '@/components/common/WebVitals';
 import { StructuredData, createWebSiteSchema } from '@/components/seo';
 import { Geist, Geist_Mono, Inter } from 'next/font/google';
 import './globals.css';
 import { NOMINATIM_URL } from '@/constants';
+import { getSiteOrigin } from '@/lib/site-url';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -20,7 +22,7 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://reviuy.vercel.app';
+const siteUrl = getSiteOrigin();
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -101,13 +103,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es">
+    <html lang="es" suppressHydrationWarning data-scroll-behavior="smooth">
       <head>
         {/* Resource hints para optimizar performance */}
         <link rel="preconnect" href={NOMINATIM_URL} />
@@ -116,7 +118,7 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://tile.openstreetmap.org" />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${inter.className} antialiased bg-blue-50 relative overflow-x-hidden`}
+        className={`${geistSans.variable} ${geistMono.variable} ${inter.className} antialiased bg-background relative overflow-x-hidden`}
       >
         <WebVitals />
         <StructuredData
@@ -126,10 +128,17 @@ export default function RootLayout({
             searchUrl: `${siteUrl}/buscar?q=`,
           })}
         />
-        <AuthProvider>
-          {children}
-          <Toaster richColors />
-        </AuthProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <AuthProvider>
+            {children}
+            <Toaster richColors />
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

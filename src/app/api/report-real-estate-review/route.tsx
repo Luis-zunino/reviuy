@@ -1,8 +1,11 @@
 import { NextResponse } from 'next/server';
 import { ReportRealEstateReviewTemplate } from '@/components/common/Emails';
 import { getAuthenticatedUser, parseAndValidateBody, sendEmail } from '../_utils';
-import { AppError, createError, withRateLimit } from '@/lib';
+import { AppError, createError, withRateLimit, RateLimitType } from '@/lib';
 import { reportRealEstateReviewApiSchema } from '@/schemas';
+import { createSupabaseServerClient } from '@/lib/supabase/server';
+import { createReportRealEstateReviewUseCase } from '@/modules/moderation/application';
+import { SupabaseModerationCommandRepository } from '@/modules/moderation/infrastructure';
 
 export async function GET() {
   return NextResponse.json(
@@ -17,15 +20,28 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const user = await getAuthenticatedUser();
+    const supabase = await createSupabaseServerClient();
 
     if (!user) {
       throw createError('UNAUTHORIZED', 'No autorizado');
     }
 
-    await withRateLimit(`api-report-real-estate-review:${user.id}`, 'sensitive');
+    const reportRealEstateReviewUseCase = createReportRealEstateReviewUseCase({
+      getCurrentUserId: async () => user.id,
+      rateLimit: async (key: string, scope: RateLimitType) => {
+        await withRateLimit(key, scope);
+      },
+      repository: new SupabaseModerationCommandRepository(supabase),
+    });
 
     const body = await parseAndValidateBody(req, reportRealEstateReviewApiSchema);
     const { realEstateReviewUuid, reason, message } = body;
+
+    await reportRealEstateReviewUseCase({
+      review_id: realEstateReviewUuid,
+      reason,
+      description: message,
+    });
 
     if (!user.email) {
       throw createError('INVALID_INPUT', 'El email del usuario no se encontro');

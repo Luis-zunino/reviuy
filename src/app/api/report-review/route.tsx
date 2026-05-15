@@ -1,8 +1,11 @@
 import { NextResponse } from 'next/server';
 import { getAuthenticatedUser, parseAndValidateBody, sendEmail } from '../_utils';
 import { ReportReviewTemplate } from '@/components/common/Emails';
-import { AppError, createError, withRateLimit } from '@/lib';
+import { AppError, createError, withRateLimit, RateLimitType } from '@/lib';
 import { reportReviewApiSchema } from '@/schemas';
+import { createSupabaseServerClient } from '@/lib/supabase/server';
+import { createReportReviewUseCase } from '@/modules/moderation/application';
+import { SupabaseModerationCommandRepository } from '@/modules/moderation/infrastructure';
 
 export async function GET() {
   return NextResponse.json(
@@ -17,15 +20,28 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const user = await getAuthenticatedUser();
+    const supabase = await createSupabaseServerClient();
 
     if (!user) {
       throw createError('UNAUTHORIZED', 'No autorizado');
     }
 
-    await withRateLimit(`api-report-review:${user.id}`, 'sensitive');
+    const reportReviewUseCase = createReportReviewUseCase({
+      getCurrentUserId: async () => user.id,
+      rateLimit: async (key: string, scope: RateLimitType) => {
+        await withRateLimit(key, scope);
+      },
+      repository: new SupabaseModerationCommandRepository(supabase),
+    });
 
     const body = await parseAndValidateBody(req, reportReviewApiSchema);
     const { reviewUuid, reason, message } = body;
+
+    await reportReviewUseCase({
+      review_id: reviewUuid,
+      reason,
+      description: message,
+    });
 
     if (!user.email) {
       throw createError('INVALID_INPUT', 'El email del usuario no se encontró');
