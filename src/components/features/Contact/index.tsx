@@ -17,7 +17,7 @@ export const Contact = () => {
         <div className="flex gap-4 flex-1">
           <div className="flex flex-col flex-1">
             <Label className="text-sm font-medium" htmlFor="email">
-              Email <span className="text-xs text-red-500">*</span>
+              Correo electrónico <span className="text-xs text-red-500">*</span>
             </Label>
             <Input
               type="email"

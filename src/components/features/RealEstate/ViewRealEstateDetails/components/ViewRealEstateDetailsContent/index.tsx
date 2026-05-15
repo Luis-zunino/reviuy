@@ -18,7 +18,7 @@ export const ViewRealEstateDetailsContent = (props: ViewRealEstateDetailsContent
     <Tabs
       value={activeTab}
       onValueChange={setActiveTab}
-      className="flex flex-col min-h-245 md:min-h-215"
+      className="flex flex-col min-h-screen md:min-h-215"
     >
       <TabsList className="grid grid-cols-2 mb-6">
         <TabsTrigger value="realEstateReview" className="flex md:items-center gap-2">
