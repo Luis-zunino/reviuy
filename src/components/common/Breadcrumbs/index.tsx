@@ -3,6 +3,7 @@ import { ChevronRight, Home } from 'lucide-react';
 import { StructuredData } from '@/components/seo';
 import { BreadcrumbsProps } from './types';
 import { useBreadcrumbs } from './hooks';
+import { cn } from '@/lib/utils';
 
 /**
  * Breadcrumbs Component
@@ -20,7 +21,7 @@ import { useBreadcrumbs } from './hooks';
  * />
  * ```
  */
-export function Breadcrumbs({ items, className = '' }: BreadcrumbsProps) {
+export function Breadcrumbs({ items, className = '' }: Readonly<BreadcrumbsProps>) {
   const { allItems, breadcrumbSchema } = useBreadcrumbs({ items });
 
   return (
@@ -28,7 +29,7 @@ export function Breadcrumbs({ items, className = '' }: BreadcrumbsProps) {
       <StructuredData data={breadcrumbSchema} />
       <nav
         aria-label="Breadcrumb"
-        className={`flex items-center space-x-1 text-sm text-muted-foreground ${className}`}
+        className={cn('flex items-center space-x-1 text-sm text-muted-foreground', className)}
       >
         <ol className="flex items-center space-x-1">
           {allItems.map((item, index) => {
@@ -36,13 +37,13 @@ export function Breadcrumbs({ items, className = '' }: BreadcrumbsProps) {
             const isFirst = index === 0;
 
             return (
-              <li key={index} className="flex items-center">
+              <li key={item.label} className="flex items-center">
                 {index > 0 && (
                   <ChevronRight className="h-4 w-4 mx-1 text-gray-400" aria-hidden="true" />
                 )}
 
                 {isLast ? (
-                  <span className="font-medium text-foreground" aria-current="page">
+                  <span className="font-medium text-foreground py-2 px-3" aria-current="page">
                     {isFirst && <Home className="h-4 w-4 inline mr-1" aria-hidden="true" />}
                     {item.label}
                   </span>
