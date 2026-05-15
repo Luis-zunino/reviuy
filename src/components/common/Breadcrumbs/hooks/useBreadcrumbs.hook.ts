@@ -1,6 +1,7 @@
 import { BreadcrumbItem } from '../types';
 import { createBreadcrumbSchema } from '@/components/seo';
 import { PagesUrls } from '@/enums';
+import { getSiteOrigin } from '@/lib/site-url';
 
 /**
  * Hook to generate breadcrumbs
@@ -13,7 +14,7 @@ import { PagesUrls } from '@/enums';
  * @returns All items and breadcrumb schema
  */
 export const useBreadcrumbs = ({ items }: { items: BreadcrumbItem[] }) => {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://reviuy.vercel.app';
+  const baseUrl = getSiteOrigin();
 
   // Always include home as first item
   const allItems: BreadcrumbItem[] = [{ label: 'Inicio', href: PagesUrls.HOME }, ...items];

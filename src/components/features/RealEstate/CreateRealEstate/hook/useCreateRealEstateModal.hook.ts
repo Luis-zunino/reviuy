@@ -1,4 +1,4 @@
-import { useCreateRealEstateHook } from '@/services';
+import { useCreateRealEstateHook } from '@/modules/real-estates/presentation';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import type { UseCreateRealEstateModalProps } from './types';

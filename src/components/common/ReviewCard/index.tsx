@@ -61,7 +61,7 @@ export const ReviewCard = ({ review }: ReviewCardProps) => {
       className="min-w-80 flex flex-col overflow-hidden transition-shadow hover:shadow-md group"
       role="article"
     >
-      <Link href={reviewUrl} className="flex flex-col flex-1">
+      <div className="flex flex-col flex-1">
         {/* HEADER */}
         <CardHeader className="pb-3 w-full">
           <div className="flex items-start justify-between gap-2">
@@ -102,11 +102,9 @@ export const ReviewCard = ({ review }: ReviewCardProps) => {
             </div>
           </div>
 
-          <p className="text-sm text-gray-700 line-clamp-3">{review.description}</p>
+          <p className="text-sm line-clamp-3">{review.description}</p>
         </CardContent>
-      </Link>
-
-      {/* FOOTER */}
+      </div>
       <CardFooter className="flex items-end justify-end">
         <Link
           href={reviewUrl}

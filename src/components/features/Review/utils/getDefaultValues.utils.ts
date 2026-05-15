@@ -1,7 +1,7 @@
-import { ReviewPublicWithRelations } from '@/types';
 import { FormReviewSchema } from '@/schemas';
 import { normalizeNullable } from '@/utils';
 import { PropertyType } from '@/enums';
+import { ReviewPublicWithRelations } from '@/modules/property-reviews';
 
 export const getDefaultValues = (
   defaultValues?: ReviewPublicWithRelations | null
@@ -28,6 +28,7 @@ export const getDefaultValues = (
     real_estate_id: normalizedValues.real_estate_id ?? undefined,
     real_estate_name: normalizedValues.real_estates?.name ?? undefined,
     real_estate_experience: normalizedValues.real_estate_experience ?? '',
+    images: [],
     review_rooms:
       normalizedValues.review_rooms?.map((room) => ({
         id: room.id,

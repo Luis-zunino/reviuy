@@ -3,7 +3,6 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Plus, Trash2 } from 'lucide-react';
-import React from 'react';
 import { Controller } from 'react-hook-form';
 import {
   Select,

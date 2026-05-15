@@ -1,7 +1,6 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { LucideIcon } from 'lucide-react';
 import Link from 'next/link';
-import React from 'react';
 
 export interface EmptySectionProps {
   title: string;

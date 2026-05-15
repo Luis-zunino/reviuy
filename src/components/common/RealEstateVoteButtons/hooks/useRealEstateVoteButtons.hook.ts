@@ -1,4 +1,4 @@
-import { useVoteRealEstate } from '@/services';
+import { useVoteRealEstate } from '@/modules/real-estates/presentation';
 import { VoteType } from '@/types';
 import { useState } from 'react';
 import { toast } from 'sonner';

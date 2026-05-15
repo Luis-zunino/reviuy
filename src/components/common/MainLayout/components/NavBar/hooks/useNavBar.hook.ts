@@ -5,18 +5,18 @@ export const useNavBar = () => {
   const { isAuthenticated, signOut } = useAuthContext();
   const [isOpen, setIsOpen] = useState(false);
   const [opacity, setOpacity] = useState(0);
-  const sharedStyles =
-    'flex items-center gap-2 px-3 py-2 rounded-lg transition-colors text-gray-700 hover:text-gray-900';
+  const sharedStyles = 'flex items-center gap-2 transition-colors';
+
   useEffect(() => {
     const handleScroll = () => {
-      const newOpacity = Math.min(window.scrollY / 100, 1);
+      const newOpacity = Math.min(globalThis.scrollY / 100, 1);
 
-      setOpacity((prev) => (prev !== newOpacity ? newOpacity : prev));
+      setOpacity((prev) => (prev === newOpacity ? prev : newOpacity));
     };
 
     handleScroll();
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    globalThis.addEventListener('scroll', handleScroll, { passive: true });
+    return () => globalThis.removeEventListener('scroll', handleScroll);
   }, []);
 
   return {
