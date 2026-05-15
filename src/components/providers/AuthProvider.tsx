@@ -117,7 +117,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   useEffect(() => {
     const getInitialSession = async () => {
-      const { session } = await getSession({});
+      const { session } = await getSession();
 
       setSession(session);
       setLoading(false);

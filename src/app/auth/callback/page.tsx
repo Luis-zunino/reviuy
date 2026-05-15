@@ -21,7 +21,7 @@ export default function AuthCallback() {
   useEffect(() => {
     const handleAuthCallback = async () => {
       try {
-        const { session, error } = await getSession({});
+        const { session, error } = await getSession();
 
         if (error) {
           console.error('Error durante la autenticación:', error);
