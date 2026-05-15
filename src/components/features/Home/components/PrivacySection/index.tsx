@@ -132,10 +132,7 @@ export const PrivacySection = () => {
                       'inline-flex items-center gap-2 text-sm font-semibold text-reviuy-primary-600 dark:text-reviuy-primary-400 transition-colors hover:text-reviuy-primary-700 dark:hover:text-reviuy-primary-300'
                     )}
                   >
-                    Conoce nuestra politica de privacidad
-                    <span className="transition-transform duration-200 hover:translate-x-1">
-                      &rarr;
-                    </span>
+                    Conoce nuestra politica de privacidad<span className="transition-transform duration-200 hover:translate-x-1">&rarr;</span>
                   </Link>
                 </motion.div>
               </motion.div>

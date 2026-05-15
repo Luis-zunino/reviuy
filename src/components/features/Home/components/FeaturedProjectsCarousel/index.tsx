@@ -81,6 +81,10 @@ export const FeaturedProjectsCarousel = () => {
           className="relative"
           onMouseEnter={() => setIsAutoPlaying(false)}
           onMouseLeave={() => setIsAutoPlaying(true)}
+          onFocus={() => setIsAutoPlaying(false)}
+          onBlur={() => setIsAutoPlaying(true)}
+          tabIndex={0}
+          aria-label="Carrusel de edificios destacados"
         >
           <AnimatePresence initial={false} custom={direction} mode="wait">
             <motion.div

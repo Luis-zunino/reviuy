@@ -46,7 +46,8 @@ export const useExploreReviews = () => {
     setGeoStatus('loading');
     setGeoError(null);
     setSearchMode('nearby');
-    // Required to show nearby apartments based on user location
+    // Required to show nearby apartments based on user location.
+    // Only called after explicit user action (button click) with browser permission prompt.
     navigator.geolocation.getCurrentPosition(
       (position) => {
         setUserCoords({
@@ -60,7 +61,7 @@ export const useExploreReviews = () => {
         setGeoError('No fue posible obtener tu ubicación. Verifica los permisos del navegador.');
         setSearchMode('idle');
       },
-      { timeout: 10000, maximumAge: 60000 }
+      { timeout: 10000, maximumAge: 60000, enableHighAccuracy: false }
     );
   }, []);
 
