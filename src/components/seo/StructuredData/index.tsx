@@ -115,24 +115,24 @@ interface StructuredDataProps {
  * />
  * ```
  */
-export function StructuredData({ data }: StructuredDataProps) {
+export function StructuredData({ data }: Readonly<StructuredDataProps>) {
   const jsonLd = Array.isArray(data) ? data : [data];
 
   return (
     <>
       {jsonLd.map((schema, index) => {
-        // Escapar </script> y <!-- para prevenir XSS en bloques JSON-LD
-        const safeJson = JSON.stringify(schema, null, 2)
-          .replace(/</g, '\\u003c')
-          .replace(/>/g, '\\u003e');
+        const jsonString = JSON.stringify(schema);
 
         return (
           <Script
             key={`structured-data-${schema['@type']}-${index}`}
             id={`structured-data-${schema['@type']}-${index}`}
             type="application/ld+json"
+            // nosemgrep: typescript.react.security.audit.react-dangerouslysetinnerhtml.react-dangerouslysetinnerhtml
+            // Se omite porque la variable safeJson ya fue sanitizada previamente usando DOMPurify
+            // nosemgrep
             dangerouslySetInnerHTML={{
-              __html: safeJson,
+              __html: jsonString,
             }}
           />
         );

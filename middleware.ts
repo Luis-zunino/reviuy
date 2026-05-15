@@ -18,10 +18,30 @@ const matchesRoute = (pathname: string, patterns: RegExp[]) => {
   return patterns.some((pattern) => pattern.test(pathname));
 };
 
+const buildCsp = () => {
+  return `
+    default-src 'self';
+    script-src 'self' 'unsafe-inline' https://apis.google.com https://va.vercel-scripts.com;
+    style-src 'self' 'unsafe-inline';
+    img-src 'self' data: blob: https://placehold.co https://firebasestorage.googleapis.com https://lh3.googleusercontent.com https://*.tile.openstreetmap.org;
+    font-src 'self' data:;
+    connect-src 'self' https://*.supabase.co https://firebasestorage.googleapis.com https://vitals.vercel-insights.com https://nominatim.openstreetmap.org;
+    object-src 'none';
+    base-uri 'self';
+    frame-ancestors 'none';
+  `
+    .replaceAll(/\s{2,}/g, ' ')
+    .trim();
+};
+
+const withSecurityHeaders = (response: NextResponse) => {
+  response.headers.set('Content-Security-Policy', buildCsp());
+  response.headers.set('Cache-Control', 'public, max-age=0, must-revalidate');
+  return response;
+};
+
 export async function middleware(request: NextRequest) {
-  let supabaseResponse = NextResponse.next({
-    request,
-  });
+  let supabaseResponse = NextResponse.next();
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -32,12 +52,20 @@ export async function middleware(request: NextRequest) {
           return request.cookies.getAll();
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
-          supabaseResponse = NextResponse.next({
-            request,
+          // 1. Para la petición entrante pasamos solo propiedades válidas de RequestCookie
+          cookiesToSet.forEach(({ name, value }) => {
+            request.cookies.set({ name, value });
           });
+
+          supabaseResponse = NextResponse.next();
+
+          // 2. Para la respuesta saliente sí aplicamos las políticas SameSite exigidas por Semgrep
           cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
+            supabaseResponse.cookies.set(name, value, {
+              ...options,
+              sameSite: 'lax',
+              secure: process.env.NODE_ENV === 'production',
+            })
           );
         },
       },
@@ -54,14 +82,14 @@ export async function middleware(request: NextRequest) {
   if (isProtected && !user) {
     const redirectUrl = new URL(PagesUrls.LOGIN, request.url);
     redirectUrl.searchParams.set('redirectTo', request.nextUrl.pathname);
-    return NextResponse.redirect(redirectUrl);
+    return withSecurityHeaders(NextResponse.redirect(redirectUrl));
   }
 
   if (user && matchesRoute(pathname, AUTH_ROUTE_PATTERNS)) {
-    return NextResponse.redirect(new URL(PagesUrls.HOME, request.url));
+    return withSecurityHeaders(NextResponse.redirect(new URL(PagesUrls.HOME, request.url)));
   }
 
-  return supabaseResponse;
+  return withSecurityHeaders(supabaseResponse);
 }
 
 export const config = {
@@ -73,6 +101,6 @@ export const config = {
      * - favicon.ico (archivo favicon)
      * Siéntete libre de modificar este patrón para incluir más rutas.
      */
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    String.raw`/((?!_next/static|_next/image|favicon.ico|.*\.(?:svg|png|jpg|jpeg|gif|webp)$).*)`,
   ],
 };

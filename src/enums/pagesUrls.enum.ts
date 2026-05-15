@@ -22,4 +22,5 @@ export enum PagesUrls {
   REAL_ESTATE_UPDATE_REVIEW = '/real-estate/:id/review/:reviewId/update',
   REAL_ESTATE_VIEW_REVIEW = '/real-estate/:id/review/:reviewId/view',
   REAL_ESTATE_UPDATE = '/real-estate/[id]/update',
+  EXPLORE_REVIEWS = '/explorar',
 }

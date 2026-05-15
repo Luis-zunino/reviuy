@@ -32,6 +32,15 @@ BEGIN
     WHERE
         review_id = p_review_id
         AND user_id = v_user_id;
+    
+    -- M11: Verificar que la review exista y esté activa (no soft-deleted)
+    IF NOT EXISTS (
+        SELECT 1 FROM public.reviews
+        WHERE id = p_review_id AND deleted_at IS NULL
+    ) THEN
+        PERFORM log_security_event('vote_review', 'error', 'Review no existe o fue eliminada');
+        RETURN json_build_object('success', FALSE, 'error', 'La reseña no existe o fue eliminada');
+    END IF;
     -- Si existe y es del mismo tipo, eliminar (toggle off)
     IF v_existing_vote = p_vote_type THEN
         DELETE FROM public.review_votes
@@ -59,7 +68,7 @@ EXCEPTION
     WHEN OTHERS THEN
         PERFORM
             log_security_event ('vote_review', 'error', SQLERRM);
-            RETURN json_build_object('success', FALSE, 'error', 'Error al registrar el voto: ' || SQLERRM);
+            RETURN json_build_object('success', FALSE, 'error', 'Error interno del servidor');
 END;
 
 $$;
@@ -112,11 +121,11 @@ IF NOT EXISTS (
     FROM
         public.reviews
     WHERE
-        id = p_review_id) THEN
+        id = p_review_id AND deleted_at IS NULL) THEN
 PERFORM
-    log_security_event ('report_review', 'error', 'Review not found');
+    log_security_event ('report_review', 'error', 'Review not found or deleted');
 
-RETURN json_build_object('success', FALSE, 'error', 'La reseña no existe');
+RETURN json_build_object('success', FALSE, 'error', 'La reseña no existe o fue eliminada');
 
 END IF;
 
@@ -165,7 +174,7 @@ END;
 $$;
 
 -- Función para verificar si usuario ya reportóuna review 
-create or replace function has_user_reported_review (p_review_id UUID) RETURNS BOOLEAN LANGUAGE plpgsql SECURITY DEFINER
+create or replace function has_user_reported_review (p_review_id UUID) RETURNS BOOLEAN LANGUAGE plpgsql SECURITY INVOKER
 set
   search_path = public as $$ DECLARE v_user_id UUID;
 
@@ -215,14 +224,16 @@ BEGIN
                 FROM
                     public.real_estate_reviews
                 WHERE
-                    real_estate_id = COALESCE(NEW.real_estate_id, OLD.real_estate_id)),
+                    real_estate_id = COALESCE(NEW.real_estate_id, OLD.real_estate_id)
+                    AND deleted_at IS NULL),
             review_count = (
                 SELECT
                     COUNT(*)
                 FROM
                     public.real_estate_reviews
                 WHERE
-                    real_estate_id = COALESCE(NEW.real_estate_id, OLD.real_estate_id))
+                    real_estate_id = COALESCE(NEW.real_estate_id, OLD.real_estate_id)
+                    AND deleted_at IS NULL)
         WHERE
             id = COALESCE(NEW.real_estate_id, OLD.real_estate_id);
 
@@ -299,7 +310,8 @@ BEGIN
             public.real_estate_reviews
         WHERE
             real_estate_id = p_real_estate_id
-            AND user_id = v_user_id;
+            AND user_id = v_user_id
+            AND deleted_at IS NULL;
 
             IF v_existing_review IS NOT NULL THEN
                 RETURN json_build_object('success', FALSE, 'error', 'Ya has escrito una reseña para esta inmobiliaria');
@@ -316,7 +328,7 @@ RETURN json_build_object('success', TRUE, 'review_id', v_review_id, 'message', '
 
 EXCEPTION
     WHEN OTHERS THEN
-        RETURN json_build_object('success', FALSE, 'error', 'Error al crear la reseña: ' || SQLERRM);
+        RETURN json_build_object('success', FALSE, 'error', 'Error interno del servidor');
 
 END;
 
@@ -366,7 +378,7 @@ BEGIN
     RETURN json_build_object('success', TRUE, 'message', 'Voto registrado exitosamente');
 EXCEPTION
     WHEN OTHERS THEN
-        RETURN json_build_object('success', FALSE, 'error', 'Error al registrar el voto: ' || SQLERRM);
+        RETURN json_build_object('success', FALSE, 'error', 'Error interno del servidor');
 END;
 
 $$;
@@ -416,14 +428,17 @@ END IF;
             AND user_id = auth.uid ()) THEN
     RETURN json_build_object('success', FALSE, 'error', 'No puedes reportar tu propia reseña');
 END IF;
+-- Verificar reporte duplicado
+IF EXISTS (
+    SELECT 1 FROM public.real_estate_review_reports
+    WHERE real_estate_review_id = p_real_estate_review_id
+      AND reported_by_user_id = v_user_id
+) THEN
+    RETURN json_build_object('success', FALSE, 'error', 'Ya has reportado esta reseña anteriormente');
+END IF;
+
 INSERT INTO public.real_estate_review_reports (real_estate_review_id, reported_by_user_id, reason, description)
     VALUES (p_real_estate_review_id, v_user_id, p_reason, p_description)
-ON CONFLICT (real_estate_review_id, reported_by_user_id)
-    DO UPDATE SET
-        reason = EXCLUDED.reason,
-        description = EXCLUDED.description,
-        status = 'pending',
-        updated_at = now()
     RETURNING
         id INTO v_report_id;
     RETURN json_build_object('success', TRUE, 'report_id', v_report_id, 'message', 'Reporte enviado exitosamente');
@@ -437,7 +452,7 @@ $$;
 -- ============================================================================= 
 -- FUNCIÓN PARA VERIFICAR SI USUARIO YA REPORTÓUNA RESEÑA DE INMOBILIARIA 
 -- =============================================================================
-create or replace function public.has_user_reported_real_estate_review (p_review_id UUID) RETURNS BOOLEAN LANGUAGE plpgsql SECURITY DEFINER
+create or replace function public.has_user_reported_real_estate_review (p_review_id UUID) RETURNS BOOLEAN LANGUAGE plpgsql SECURITY INVOKER
 set
   search_path = public as $$ DECLARE v_user_id UUID;
 
@@ -464,14 +479,3 @@ $$;
 
 grant
 execute on FUNCTION public.has_user_reported_real_estate_review (UUID) to authenticated;
-
-drop function IF exists public.sync_user_snapshot () CASCADE;
-
-create or replace function public.sync_user_snapshot () RETURNS TRIGGER as $$
-BEGIN
-    NEW.user_id_snapshot := COALESCE(NEW.user_id_snapshot, NEW.user_id);
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER
-set
-  search_path = public;
