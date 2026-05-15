@@ -52,10 +52,20 @@ export async function middleware(request: NextRequest) {
           return request.cookies.getAll();
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
+          // 1. Para la petición entrante pasamos solo propiedades válidas de RequestCookie
+          cookiesToSet.forEach(({ name, value }) => {
+            request.cookies.set({ name, value });
+          });
+
           supabaseResponse = NextResponse.next();
+
+          // 2. Para la respuesta saliente sí aplicamos las políticas SameSite exigidas por Semgrep
           cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
+            supabaseResponse.cookies.set(name, value, {
+              ...options,
+              sameSite: 'lax',
+              secure: process.env.NODE_ENV === 'production',
+            })
           );
         },
       },
@@ -91,6 +101,6 @@ export const config = {
      * - favicon.ico (archivo favicon)
      * Siéntete libre de modificar este patrón para incluir más rutas.
      */
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    String.raw`/((?!_next/static|_next/image|favicon.ico|.*\.(?:svg|png|jpg|jpeg|gif|webp)$).*)`,
   ],
 };
