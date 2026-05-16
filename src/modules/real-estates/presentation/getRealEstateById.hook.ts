@@ -4,13 +4,13 @@ import { supabaseClient } from '@/lib/supabase';
 import {
   createGetRealEstateByIdQuery,
   SupabaseRealEstateReadRepository,
-  RealEstateWitheVotes,
+  RealEstateWithVotesPublic,
 } from '@/modules/real-estates';
 
 const repository = new SupabaseRealEstateReadRepository(supabaseClient);
 const getRealEstateById = createGetRealEstateByIdQuery({ repository });
 
-export const useGetRealEstateById = (id: string): UseQueryResult<RealEstateWitheVotes | null> => {
+export const useGetRealEstateById = (id: string): UseQueryResult<RealEstateWithVotesPublic | null> => {
   return useQuery({
     queryKey: [REAL_ESTATE_REVIEWS.getRealEstateById, id],
     queryFn: () => getRealEstateById({ id }),

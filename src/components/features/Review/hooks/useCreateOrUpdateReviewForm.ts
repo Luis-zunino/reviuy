@@ -18,7 +18,7 @@ import {
   useUpdateReview,
 } from '@/modules/property-reviews';
 import { type NominatimEntity } from '@/modules/addresses';
-import { type RealEstateWitheVotes } from '@/modules/real-estates';
+import { type RealEstateWithVotesPublic } from '@/modules/real-estates';
 
 const pluralizeImage = (count: number) => (count === 1 ? '' : 'es');
 
@@ -229,7 +229,7 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
     setOpenRealEstateModal(false);
   };
 
-  const onSelectRealEstate = (item: RealEstateWitheVotes) => {
+  const onSelectRealEstate = (item: RealEstateWithVotesPublic) => {
     setValue('real_estate_id', item.id ?? '', {
       shouldValidate: true,
     });

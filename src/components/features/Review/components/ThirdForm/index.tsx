@@ -7,7 +7,7 @@ import { CreateRealEstateModal } from '@/components/features/RealEstate/CreateRe
 import { useThirdForm } from './hooks';
 import { Building2, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { type RealEstateWitheVotes } from '@/modules/real-estates';
+import { type RealEstateWithVotesPublic } from '@/modules/real-estates';
 
 export const ThirdForm = (props: ThirdFormProps) => {
   const { form, open, setOpen, handleClear, onSelect, queryValue } = props;
@@ -21,7 +21,7 @@ export const ThirdForm = (props: ThirdFormProps) => {
     <div className="space-y-6">
       <div className="space-y-2">
         <div className="relative w-full">
-          <AsyncSearchSelect<FormReviewSchema, RealEstateWitheVotes>
+          <AsyncSearchSelect<FormReviewSchema, RealEstateWithVotesPublic>
             name="real_estate_name"
             options={data}
             isFetching={isLoading}

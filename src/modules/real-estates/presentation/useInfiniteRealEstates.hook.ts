@@ -2,7 +2,7 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import { supabaseClient } from '@/lib/supabase';
 import {
   createGetAllRealEstatesPaginatedQuery,
-  type RealEstateWitheVotes,
+  type RealEstateWithVotesPublic,
   SupabaseRealEstateReadRepository,
 } from '@/modules/real-estates';
 
@@ -16,7 +16,7 @@ export interface UseInfiniteRealEstatesParams {
 }
 
 export type RealEstatesPage = {
-  data: RealEstateWitheVotes[];
+  data: RealEstateWithVotesPublic[];
   nextOffset: number | null;
 };
 
