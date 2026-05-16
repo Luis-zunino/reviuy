@@ -4,7 +4,7 @@ import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { supabaseClient } from '@/lib/supabase';
 import {
   createSearchRealEstatesQuery,
-  RealEstateWitheVotes,
+  RealEstateWithVotesPublic,
   SupabaseRealEstateReadRepository,
 } from '@/modules/real-estates';
 
@@ -14,7 +14,7 @@ const searchRealEstates = createSearchRealEstatesQuery({ repository });
 export const useSearchRealEstates = ({
   query,
   limit,
-}: SearchRealEstatesParams): UseQueryResult<RealEstateWitheVotes[]> => {
+}: SearchRealEstatesParams): UseQueryResult<RealEstateWithVotesPublic[]> => {
   return useQuery({
     queryKey: [REAL_ESTATE_REVIEWS.searchRealEstates, query, limit],
     queryFn: () => searchRealEstates({ query, limit }),

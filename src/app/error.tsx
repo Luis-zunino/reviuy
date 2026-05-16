@@ -1,19 +1,12 @@
 'use client';
 
-import { useEffect } from 'react';
 import Link from 'next/link';
 
 export default function GlobalError({
-  error,
   reset,
 }: Readonly<{
-  error: Error & { digest?: string };
   reset: () => void;
 }>) {
-  useEffect(() => {
-    console.error('Global app error:', error);
-  }, [error]);
-
   return (
     <html lang="es" data-scroll-behavior="smooth">
       <body className="min-h-screen flex items-center justify-center bg-slate-50 p-6">

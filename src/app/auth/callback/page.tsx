@@ -24,7 +24,6 @@ export default function AuthCallback() {
         const { session, error } = await getSession();
 
         if (error) {
-          console.error('Error durante la autenticación:', error);
           toast.error('Error de autenticación', {
             description: 'Hubo un problema al procesar tu autenticación. Inténtalo de nuevo.',
           });
@@ -80,8 +79,7 @@ export default function AuthCallback() {
         } else {
           router.push(PagesUrls.LOGIN);
         }
-      } catch (error) {
-        console.error('Error inesperado:', error);
+      } catch {
         toast.error('Error inesperado', {
           description: 'Ocurrió un error inesperado durante la autenticación.',
         });

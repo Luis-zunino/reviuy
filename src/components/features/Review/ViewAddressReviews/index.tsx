@@ -1,11 +1,10 @@
 'use client';
 
-import { PageWithSidebar, StarRatingDisplay } from '@/components/common';
+import { PageWithSidebar, StarRatingDisplay, LazyMapComponent } from '@/components/common';
 import { Plus } from 'lucide-react';
 import { useViewAddressReviews } from './hooks';
 import { AddressReviewCard } from './components/AddressReviewCard';
 import { Button } from '@/components/ui/button';
-import { LazyMapComponent } from '@/components/common';
 
 export const ViewAddressReviews = () => {
   const { data, reviews, isLoading, isError, handleCreateReview, averageRating } =

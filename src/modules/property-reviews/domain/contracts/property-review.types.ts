@@ -1,4 +1,4 @@
-import { type RealEstateWitheVotes } from '@/modules/real-estates';
+import { type RealEstateWithVotesPublic } from '@/modules/real-estates';
 import type { VoteType, Database } from '@/types';
 
 // Tabla reviews
@@ -22,7 +22,7 @@ export type ReviewWithVotesPublic = Database['public']['Views']['reviews_with_vo
  */
 export type ReviewPublicWithRelations = ReviewWithVotesPublic & {
   review_rooms: ReviewRoom[];
-  real_estates: RealEstateWitheVotes | null;
+  real_estates: RealEstateWithVotesPublic | null;
 };
 
 export interface PropertyReviewRoomDraft {

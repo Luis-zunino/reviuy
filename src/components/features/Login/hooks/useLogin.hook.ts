@@ -36,7 +36,6 @@ export const useLogin = () => {
         termsVersion: TERMS_VERSION,
       });
     } catch (error: unknown) {
-      console.error('Error al iniciar sesión con Google:', error);
       const errorMessage =
         error instanceof Error
           ? error.message
@@ -68,8 +67,6 @@ export const useLogin = () => {
 
       reset();
     } catch (error: unknown) {
-      console.error('Error al enviar magic link:', error);
-
       const errorMessage =
         error instanceof Error
           ? error.message

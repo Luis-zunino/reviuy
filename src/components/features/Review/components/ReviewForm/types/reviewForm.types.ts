@@ -9,7 +9,7 @@ import type {
 import { Dispatch, SetStateAction } from 'react';
 import { FormReviewSchema } from '@/schemas';
 import { type NominatimEntity } from '@/modules/addresses';
-import { type RealEstateWitheVotes } from '@/modules/real-estates';
+import { type RealEstateWithVotesPublic } from '@/modules/real-estates';
 
 export interface ReviewFormProps {
   isLoading?: boolean;
@@ -29,6 +29,6 @@ export interface ReviewFormProps {
   openRealEstateModal: boolean;
   setOpenRealEstateModal: Dispatch<SetStateAction<boolean>>;
   handleClearRealEstate: () => void;
-  onSelectRealEstate: (item: RealEstateWitheVotes) => void;
+  onSelectRealEstate: (item: RealEstateWithVotesPublic) => void;
   queryValueRealEstate?: string;
 }

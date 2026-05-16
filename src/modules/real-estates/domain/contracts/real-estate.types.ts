@@ -7,6 +7,12 @@ export type RealEstateWitheVotes = Database['public']['Views']['real_estates_wit
 export type RealEstateReviewWithVotes =
   Database['public']['Views']['real_estate_reviews_with_votes']['Row'];
 /**
+ * Versión pública de RealEstateWitheVotes sin created_by (user_id).
+ * Usar para queries públicos donde no se debe exponer la identidad del creador.
+ */
+export type RealEstateWithVotesPublic = Omit<RealEstateWitheVotes, 'created_by'>;
+
+/**
  * Vista pública de reseñas de inmobiliarias con estadísticas de votos, sin user_id.
  * Usar para mostrar reseñas en listados públicos con likes/dislikes.
  */
@@ -90,7 +96,7 @@ export interface GetRealEstateByIdInput {
   id: string;
 }
 
-export type GetRealEstateByIdOutput = RealEstateWitheVotes | null;
+export type GetRealEstateByIdOutput = RealEstateWithVotesPublic | null;
 
 export interface GetAllRealEstateReviewsInput {
   id: string;
@@ -122,7 +128,7 @@ export interface SearchRealEstatesInput {
   limit?: number;
 }
 
-export type SearchRealEstatesOutput = RealEstateWitheVotes[];
+export type SearchRealEstatesOutput = RealEstateWithVotesPublic[];
 
 export interface GetAllRealEstatesPaginatedInput {
   limit?: number;
@@ -132,11 +138,11 @@ export interface GetAllRealEstatesPaginatedInput {
 }
 
 export interface GetAllRealEstatesPaginatedOutput {
-  data: RealEstateWitheVotes[];
+  data: RealEstateWithVotesPublic[];
   nextOffset: number | null;
 }
 
-export type GetUserFavoriteRealEstatesOutput = RealEstateWitheVotes[];
+export type GetUserFavoriteRealEstatesOutput = RealEstateWithVotesPublic[];
 
 export interface IsRealEstateFavoriteInput {
   realEstateId: string;
