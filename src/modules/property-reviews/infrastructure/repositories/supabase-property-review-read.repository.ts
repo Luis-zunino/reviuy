@@ -44,7 +44,9 @@ export class SupabasePropertyReviewReadRepository implements PropertyReviewReadR
   async getById({ reviewId }: GetReviewByIdInput): Promise<GetReviewByIdOutput> {
     const { data, error } = await this.supabase
       .from('reviews_with_votes_public')
-      .select('*,review_rooms:review_rooms(*),real_estates:real_estates_with_votes(id, name, description, rating, review_count, created_at, updated_at, deleted_at, dislikes, likes, total_votes)')
+      .select(
+        '*,review_rooms:review_rooms(*),real_estates:real_estates_with_votes(id, name, description, rating, review_count, created_at, updated_at, deleted_at, dislikes, likes, total_votes)'
+      )
       .eq('id', reviewId)
       .single();
 

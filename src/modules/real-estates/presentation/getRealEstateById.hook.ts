@@ -10,7 +10,9 @@ import {
 const repository = new SupabaseRealEstateReadRepository(supabaseClient);
 const getRealEstateById = createGetRealEstateByIdQuery({ repository });
 
-export const useGetRealEstateById = (id: string): UseQueryResult<RealEstateWithVotesPublic | null> => {
+export const useGetRealEstateById = (
+  id: string
+): UseQueryResult<RealEstateWithVotesPublic | null> => {
   return useQuery({
     queryKey: [REAL_ESTATE_REVIEWS.getRealEstateById, id],
     queryFn: () => getRealEstateById({ id }),
