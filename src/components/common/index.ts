@@ -19,6 +19,7 @@ export { FavoriteReviewButton } from './FavoriteReviewButton';
 export { EditReviewButton } from './EditReviewButton';
 export { ReportReviewButton } from './ReportReviewButton';
 export { ReviewLikesButtons } from './ReviewLikesButtons';
+export { VoteButtons } from './VoteButtons';
 export { PageWithSidebar } from './PageWithSidebar';
 export * from './PageWithSidebar/components';
 export * from './Emails';
