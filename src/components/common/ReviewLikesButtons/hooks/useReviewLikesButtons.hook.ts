@@ -1,58 +1,32 @@
-import { useGetReviewVote, useVoteReview } from '@/modules/property-reviews/presentation';
+import { useQueryClient } from '@tanstack/react-query';
+import { useGetReviewVote } from '@/modules/property-reviews/presentation';
+import { REVIEW_KEYS } from '@/constants';
+import { voteAction } from '../../VoteButtons/actions';
 import { VoteType } from '@/types';
-import { useState } from 'react';
-import type { ReviewLikesButtonsProps } from '../types';
-import type { AddVoteParams } from './types';
 import { toast } from 'sonner';
+import { usePathname } from 'next/navigation';
 
-export const useReviewLikesButtons = (props: ReviewLikesButtonsProps) => {
-  const { id, likes: initialLikes, dislikes: initialDislikes } = props;
+export const useReviewLikesButtons = (props: { id: string }) => {
+  const { id: reviewId } = props;
+  const path = usePathname();
+  const queryClient = useQueryClient();
+  const { data, refetch } = useGetReviewVote({ reviewId });
 
-  const { mutateAsync, isPending: isVoting } = useVoteReview();
-  const { data, isLoading, refetch } = useGetReviewVote({
-    reviewId: id,
-  });
-  const [clickedButton, setClickedButton] = useState<VoteType | null>(null);
+  const addVote = async (voteType: VoteType) => {
+    try {
+      // Ejecutar la Server Action (revalidatePath actualiza props)
+      await voteAction(reviewId, voteType, path);
 
-  const [optimisticLikes, setOptimisticLikes] = useState(initialLikes);
-  const [optimisticDislikes, setOptimisticDislikes] = useState(initialDislikes);
+      // Refetch optional: si quieres asegurar que los datos estén sincronizados
+      // (useOptimistic + revalidatePath ya manejan la UI)
+      await refetch();
 
-  const addVote = async ({ id, voteType }: AddVoteParams) => {
-    setClickedButton(voteType);
-    setTimeout(() => setClickedButton(null), 300);
-
-    if (voteType === VoteType.LIKE) {
-      if (data === VoteType.LIKE) {
-        setOptimisticLikes((prev) => prev - 1);
-      } else if (data === VoteType.DISLIKE) {
-        setOptimisticDislikes((prev) => prev - 1);
-        setOptimisticLikes((prev) => prev + 1);
-      } else {
-        setOptimisticLikes((prev) => prev + 1);
-      }
+      // Invalidar queries relacionadas (opcional, revalidatePath ya lo hace)
+      await queryClient.invalidateQueries({ queryKey: [REVIEW_KEYS.getReviewById, reviewId] });
+    } catch (error) {
+      // Mostrar error (useOptimistic ya hizo rollback automático)
+      toast.warning(error instanceof Error ? error.message : 'Vote failed');
     }
-
-    if (data === VoteType.DISLIKE) {
-      setOptimisticDislikes((prev) => prev - 1);
-    } else if (data === VoteType.LIKE) {
-      setOptimisticLikes((prev) => prev - 1);
-      setOptimisticDislikes((prev) => prev + 1);
-    } else {
-      setOptimisticDislikes((prev) => prev + 1);
-    }
-
-    await mutateAsync(
-      { reviewId: id, voteType },
-      {
-        onError: (error: Error) => {
-          setOptimisticLikes(initialLikes);
-          setOptimisticDislikes(initialDislikes);
-          toast.warning(error.message);
-        },
-      }
-    );
-
-    await refetch();
   };
 
   const getLikeTooltip = () => {
@@ -69,11 +43,6 @@ export const useReviewLikesButtons = (props: ReviewLikesButtonsProps) => {
     addVote,
     getLikeTooltip,
     getDislikeTooltip,
-    isVoting,
-    clickedButton,
-    optimisticLikes,
-    optimisticDislikes,
-    userVoteType: data ?? VoteType.NONE,
-    userVoteTypeIsLoading: isLoading,
+    userVote: data ?? VoteType.NONE,
   };
 };

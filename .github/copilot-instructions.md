@@ -73,6 +73,24 @@ Aplica estas reglas en cualquier cambio de código de este repositorio.
 - Introducir dependencias circulares.
 - Usar `dangerouslySetInnerHTML` sin un caso justificado y seguro.
 
+## Estándares de Testing
+
+- **Frameworks**: Usar Vitest para ejecución y React Testing Library para componentes/hooks.
+- **Nomenclatura**:
+  - Archivos: `*.test.ts` para lógica/utils y `*.test.tsx` para componentes.
+  - Descripciones: Usar `describe` e `it` en español (ej: `it('debe mostrar un error si...')`).
+- **Patrones de Test**:
+  - **Mocks**: Usar siempre `vi.mock` al inicio del archivo para dependencias externas (Supabase, librerías de terceros).
+  - **Hooks**: Usar `renderHook` de `@testing-library/react`. Envolver acciones que muten estado en `act()`.
+  - **Timers**: Si hay animaciones o `setTimeout`, usar `vi.useFakeTimers()` y `vi.advanceTimersByTime()`.
+  - **Limpieza**: Usar `beforeEach(() => { vi.clearAllMocks(); })` para asegurar aislamiento entre tests.
+- **Cobertura de Casos**:
+  - Probar siempre el "camino feliz" (success).
+  - Probar manejo de errores (catches, errores de servidor).
+  - Probar límites (valores vacíos, negativos, etc.).
+  - No testear detalles de implementación, sino comportamiento (inputs -> outputs).
+- **Localización**: Los tests deben vivir en una carpeta `__tests__` adyacente al archivo que prueban o con el sufijo `.test.ts` en la misma carpeta.
+
 ## Referencias del repositorio
 
 - Guía detallada de estándares: [../.copilot/coding-standards.md](../.copilot/coding-standards.md)

@@ -32,9 +32,9 @@ const buttonVariants = cva(
         share:
           'bg-violet-50 text-violet-700 border border-violet-200 hover:border-violet-400 hover:bg-violet-100 hover:text-violet-600 dark:bg-violet-500/10 dark:text-violet-300 dark:border-violet-500/30 dark:hover:bg-violet-500/20 dark:hover:border-violet-400 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 hover:cursor-pointer',
         report:
-          'bg-yellow-50 text-yellow-700 border border-yellow-200 hover:border-yellow-400 hover:bg-yellow-100 hover:text-yellow-600 dark:bg-yellow-500/10 dark:text-yellow-300 dark:border-yellow-500/30 dark:hover:bg-yellow-500/20 dark:hover:border-yellow-400 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 hover:cursor-pointer',
+          'text-yellow-700 hover:text-yellow-600 dark:text-yellow-300 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 hover:cursor-pointer',
         seeMore:
-          'bg-green-50 text-green-700 border border-green-200 hover:bg-green-100 hover:border-green-400 dark:bg-green-500/10 dark:text-green-300 dark:border-green-500/30 dark:hover:bg-green-500/20 dark:hover:border-green-400 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 hover:cursor-pointer',
+          'text-green-700 dark:text-green-300 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 hover:cursor-pointer',
       },
       size: {
         xs: 'h-8 px-3 py-1.5 text-xs rounded-lg gap-1.5',
