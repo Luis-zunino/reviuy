@@ -31,13 +31,8 @@ export const VoteButtons: FC<VoteButtonsProps> = ({
   dislikeTooltipActive = 'Ya votaste no útil',
   ...hookProps
 }: VoteButtonsProps) => {
-  const {
-    handleVote,
-    clickedButton,
-    optimisticLikes,
-    optimisticDislikes,
-    optimisticUserVote,
-  } = useVoteButtons({ ...hookProps });
+  const { handleVote, clickedButton, optimisticLikes, optimisticDislikes, optimisticUserVote } =
+    useVoteButtons({ ...hookProps });
 
   const getLikeTooltip = () =>
     optimisticUserVote === VoteType.LIKE ? likeTooltipActive : likeTooltip;

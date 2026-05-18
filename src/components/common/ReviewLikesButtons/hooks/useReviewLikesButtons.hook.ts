@@ -4,17 +4,18 @@ import { REVIEW_KEYS } from '@/constants';
 import { voteAction } from '../../VoteButtons/actions';
 import { VoteType } from '@/types';
 import { toast } from 'sonner';
+import { usePathname } from 'next/navigation';
 
 export const useReviewLikesButtons = (props: { id: string }) => {
   const { id: reviewId } = props;
-
+  const path = usePathname();
   const queryClient = useQueryClient();
   const { data, refetch } = useGetReviewVote({ reviewId });
 
   const addVote = async (voteType: VoteType) => {
     try {
       // Ejecutar la Server Action (revalidatePath actualiza props)
-      await voteAction(reviewId, voteType);
+      await voteAction(reviewId, voteType, path);
 
       // Refetch optional: si quieres asegurar que los datos estén sincronizados
       // (useOptimistic + revalidatePath ya manejan la UI)

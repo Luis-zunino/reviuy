@@ -16,15 +16,21 @@ import { voteReviewAction } from '@/modules/property-reviews/presentation';
  *
  * @param reviewId - ID de la reseña
  * @param voteType - Tipo de voto (LIKE, DISLIKE)
+ * @param path -
  * @throws Error si la votación falla
  */
-export async function voteAction(reviewId: string, voteType: VoteType): Promise<void> {
+export async function voteAction(
+  reviewId: string,
+  voteType: VoteType,
+  path: string = '/'
+): Promise<void> {
   try {
     // Ejecutar la acción de voto en el servidor
     await voteReviewAction(reviewId, voteType);
 
-    // Revalidar el caché de Next.js para que las props se refresquen
-    revalidatePath('/');
+    // Optimización: Revalidar solo el path necesario en lugar de toda la app
+    // Si se pasa el path específico (ej. /real-estate/id), el refresh es más eficiente
+    revalidatePath(path);
   } catch (error) {
     // Propagar el error para que el cliente lo capture y haga rollback
     throw error instanceof Error ? error : new Error('Vote action failed');

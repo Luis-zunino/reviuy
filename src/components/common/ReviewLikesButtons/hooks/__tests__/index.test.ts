@@ -21,6 +21,11 @@ vi.mock('sonner', () => ({
     warning: vi.fn(),
   },
 }));
+vi.mock('next/navigation', () => ({
+  usePathname: vi.fn().mockReturnValue('/'),
+}));
+
+// Tests)
 
 describe('useReviewLikesButtons', () => {
   const mockReviewId = 'review-123';
@@ -89,7 +94,7 @@ describe('useReviewLikesButtons', () => {
         await result.current.addVote(VoteType.LIKE);
       });
 
-      expect(voteAction).toHaveBeenCalledWith(mockReviewId, VoteType.LIKE);
+      expect(voteAction).toHaveBeenCalledWith(mockReviewId, VoteType.LIKE, '/');
       expect(mockRefetch).toHaveBeenCalled();
       expect(mockInvalidateQueries).toHaveBeenCalledWith({
         queryKey: [REVIEW_KEYS.getReviewById, mockReviewId],
