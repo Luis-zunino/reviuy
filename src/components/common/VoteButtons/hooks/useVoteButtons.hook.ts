@@ -18,7 +18,7 @@ import { handleOptimisticVote } from './utils';
  * FLUJO:
  * 1. Usuario hace clic → setClickedButton inicia animación (300ms)
  * 2. startTransition inicia transición
- * 3. addOptimisticState aplica nueva lógica de negocio inmediatamente
+ * 3. addOptimisticState envía la acción al reductor para actualizar la UI inmediatamente
  * 4. onVote (Server Action) ejecuta en el servidor
  * 5. Si tiene éxito → revalidatePath actualiza props del servidor
  * 6. Si falla → useOptimistic rollback automático a props del servidor
@@ -47,7 +47,8 @@ export const useVoteButtons = ({
   // El reducer (segundo argumento) calcula el nuevo estado optimista basado en la acción
   const [optimisticState, addOptimisticState] = useOptimistic(
     initialState,
-    (_currentState: VoteState, newState: VoteState) => newState
+    (currentState: VoteState, voteType: VoteType) =>
+      handleOptimisticVote({ voteType, currentState })
   );
 
   /**
@@ -66,15 +67,8 @@ export const useVoteButtons = ({
       // Iniciar transición para que React sepa que es una operación asincrónica
       startTransition(async () => {
         try {
-          // Calcular el nuevo estado optimista basado en la lógica de negocio
-          const nextState = handleOptimisticVote({
-            voteType,
-            currentState: optimisticState,
-          });
-
-          // Aplicar el nuevo estado optimista inmediatamente
-          // Si onVote falla, useOptimistic hará rollback automático al initialState
-          addOptimisticState(nextState);
+          // Aplicar el nuevo estado optimista enviando el tipo de voto al reductor
+          addOptimisticState(voteType);
 
           // Ejecutar la Server Action (revalidatePath actualiza props del servidor)
           await onVote(voteType);
@@ -86,7 +80,7 @@ export const useVoteButtons = ({
         }
       });
     },
-    [optimisticState, addOptimisticState, onVote, onError]
+    [addOptimisticState, onVote, onError]
   );
 
   return {
