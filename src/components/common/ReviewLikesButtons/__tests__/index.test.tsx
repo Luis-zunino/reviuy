@@ -30,6 +30,7 @@ describe('ReviewLikesButtons Component', () => {
     getLikeTooltip: vi.fn(() => 'Ya votaste útil' as const),
     getDislikeTooltip: vi.fn(() => 'Ya votaste no útil' as const),
     userVote: VoteType.NONE,
+    isPending: false,
   };
 
   beforeEach(() => {

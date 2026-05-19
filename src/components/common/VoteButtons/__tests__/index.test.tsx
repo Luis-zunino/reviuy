@@ -18,6 +18,7 @@ describe('VoteButtons Component', () => {
     optimisticLikes: 10,
     optimisticDislikes: 5,
     optimisticUserVote: VoteType.NONE,
+    isPending: false,
   };
 
   beforeEach(() => {
