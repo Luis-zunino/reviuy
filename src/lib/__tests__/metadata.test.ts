@@ -1,6 +1,5 @@
 import { describe, expect, it, beforeEach, vi } from 'vitest';
 import { generatePageMetadata } from '../metadata';
-import { getSiteOrigin } from '../site-url';
 
 vi.mock('../site-url', () => ({
   getSiteOrigin: vi.fn(() => 'https://reviuy.vercel.app'),
