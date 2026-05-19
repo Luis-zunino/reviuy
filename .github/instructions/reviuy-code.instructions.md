@@ -24,5 +24,5 @@ Esta instruccion define la capa comun del repositorio. Las reglas especificas po
 
 Referencias:
 
-- [../../.copilot/coding-standards.md](../../.copilot/coding-standards.md)
-- [../../.copilot/security-analysis-anonimato.md](../../.copilot/security-analysis-anonimato.md)
+- [../../docs/coding-standards.md](../../docs/coding-standards.md)
+- [../../docs/security/anonimato.md](../../docs/security/anonimato.md)

@@ -93,6 +93,6 @@ Aplica estas reglas en cualquier cambio de código de este repositorio.
 
 ## Referencias del repositorio
 
-- Guía detallada de estándares: [../.copilot/coding-standards.md](../.copilot/coding-standards.md)
-- Análisis de anonimato y privacidad: [../.copilot/security-analysis-anonimato.md](../.copilot/security-analysis-anonimato.md)
-- Análisis de seguridad general: [../.copilot/analisis-seguridad.md](../.copilot/analisis-seguridad.md)
+- Guía detallada de estándares: [../docs/coding-standards.md](../docs/coding-standards.md)
+- Análisis de anonimato y privacidad: [../docs/security/anonimato.md](../docs/security/anonimato.md)
+- Análisis de seguridad general: [../docs/security/auditoria.md](../docs/security/auditoria.md)
