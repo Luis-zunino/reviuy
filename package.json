@@ -31,7 +31,7 @@
     "lint:fix": "eslint --fix .",
     "precommit": "python -m pre_commit run --all-files",
     "security:semgrep": "semgrep scan --config p/owasp-top-ten --config p/javascript --config p/typescript --config p/secrets --error --exclude node_modules --exclude .next .",
-    "security:deps": "pnpm audit",
+    "security:deps": "pnpm audit --audit-level high",
     "security:owasp": "pnpm security:semgrep && pnpm security:deps"
   },
   "dependencies": {
