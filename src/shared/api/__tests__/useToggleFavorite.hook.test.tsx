@@ -59,8 +59,6 @@ describe('useToggleFavorite', () => {
   });
 
   it('shows toast error when toggle fails', async () => {
-    const mutationFn = vi.fn().mockResolvedValue({ success: false, error: 'Already exists' });
-
     mockUseAuthMutation.mockImplementation(({ mutationFn: fn, onSuccess }: any) => ({
       mutateAsync: async (vars: any) => {
         const result = await fn(vars);

@@ -29,7 +29,7 @@ describe('useApiMutation', () => {
   it('calls useAuthMutation with fetch to the given endpoint', async () => {
     const { useApiMutation } = await import('../useApiMutation.hook');
 
-    const { result } = renderHook(() => useApiMutation('/api/contact'), {
+    renderHook(() => useApiMutation('/api/contact'), {
       wrapper: createWrapper(),
     });
 
