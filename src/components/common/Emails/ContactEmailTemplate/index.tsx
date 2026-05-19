@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Html, Text, Section, Heading } from '@react-email/components';
+import { Html, Text, Section, Heading } from 'react-email';
 import { ContactEmailTemplateProps } from './types';
 
 export const ContactEmailTemplate: React.FC<Readonly<ContactEmailTemplateProps>> = async ({

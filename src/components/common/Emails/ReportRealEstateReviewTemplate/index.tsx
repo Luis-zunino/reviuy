@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Html, Text, Section, Heading } from '@react-email/components';
+import { Html, Text, Section, Heading } from 'react-email';
 import { ReportRealEstateReviewTemplateProps } from './types';
 
 export const ReportRealEstateReviewTemplate: React.FC<
