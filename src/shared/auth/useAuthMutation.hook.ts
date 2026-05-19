@@ -2,6 +2,7 @@ import { useMutation, type UseMutationResult } from '@tanstack/react-query';
 import { useVerifyAuthentication } from '@/modules/profiles/presentation';
 import type { UseAuthMutationConfig } from './useAuthMutation.types';
 import { ErrorMessages } from '@/lib';
+import { toast } from 'sonner';
 
 export const useAuthMutation = <TData, TError = Error, TVariables = void>(
   config: UseAuthMutationConfig<TData, TError, TVariables>
@@ -53,7 +54,7 @@ export const useAuthMutation = <TData, TError = Error, TVariables = void>(
     mutationFn: authenticatedMutationFn,
     onError: (mutationError, variables, onMutateResult, context) => {
       if (shouldToastError(mutationError)) {
-        throw new Error(getErrorMessage(mutationError));
+        toast.error(getErrorMessage(mutationError));
       }
 
       onError?.(mutationError, variables, onMutateResult, context);
