@@ -10,6 +10,7 @@ export * from './queries/get-all-real-estate-reviews.query';
 export * from './queries/get-real-estate-review-by-id.query';
 export * from './queries/get-real-estate-review-by-user-id.query';
 export * from './queries/get-user-real-estate-vote.query';
+export * from './queries/get-user-real-estate-review-vote.query';
 export * from './queries/get-user-favorite-real-estates.query';
 export * from './queries/is-real-estate-favorite.query';
 export * from './queries/has-user-reported-real-estate.query';

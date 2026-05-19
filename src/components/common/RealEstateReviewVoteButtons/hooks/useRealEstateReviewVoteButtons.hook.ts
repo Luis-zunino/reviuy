@@ -1,53 +1,35 @@
-import { RealEstateReviewWithVotesPublic } from '@/modules/real-estates';
-import { useVoteRealEstateReview } from '@/modules/real-estates/presentation';
+import {
+  useVoteRealEstateReview,
+  useGetUserRealEstateReviewVote,
+} from '@/modules/real-estates/presentation';
 import { VoteType } from '@/types';
-import { QueryObserverResult, RefetchOptions } from '@tanstack/react-query';
-import { useState } from 'react';
 import { toast } from 'sonner';
+import type { QueryObserverResult, RefetchOptions } from '@tanstack/react-query';
+import type { RealEstateReviewWithVotesPublic } from '@/modules/real-estates';
 
-export interface RealEstateReviewVoteButtonsProps {
+export interface UseRealEstateReviewVoteButtonsOptions {
   reviewId: string;
-  userVote?: VoteType | null;
-  refetchRealEstateReview:
-    | ((
-        options?: RefetchOptions | undefined
-      ) => Promise<QueryObserverResult<RealEstateReviewWithVotesPublic | null, Error>>)
-    | undefined;
+  refetchRealEstateReview?: (
+    options?: RefetchOptions
+  ) => Promise<QueryObserverResult<RealEstateReviewWithVotesPublic | null, Error>>;
 }
 
-export const useRealEstateReviewVoteButtons = (props: RealEstateReviewVoteButtonsProps) => {
-  const { reviewId, userVote, refetchRealEstateReview } = props;
+export const useRealEstateReviewVoteButtons = (props: UseRealEstateReviewVoteButtonsOptions) => {
+  const { reviewId, refetchRealEstateReview } = props;
   const { mutateAsync, isPending } = useVoteRealEstateReview();
-  const [clickedButton, setClickedButton] = useState<VoteType | null>(null);
+  const { data: userVote, refetch } = useGetUserRealEstateReviewVote({ reviewId });
 
   const handleVote = async (voteType: VoteType) => {
-    setClickedButton(voteType);
-    setTimeout(() => setClickedButton(null), 300);
-
-    await mutateAsync(
-      { reviewId, voteType },
-      {
-        onSuccess: () => {
-          return refetchRealEstateReview?.();
-        },
-
-        onError: () => {
-          toast.error('Error inesperado', {
-            description: 'No se pudo actualizar la reseña. Inténtalo de nuevo.',
-          });
-        },
-      }
-    );
+    try {
+      await mutateAsync({ reviewId, voteType });
+      await refetchRealEstateReview?.();
+      await refetch();
+    } catch {
+      toast.error('Error inesperado', {
+        description: 'No se pudo actualizar la reseña. Inténtalo de nuevo.',
+      });
+    }
   };
 
-  const getLikeTooltip = () => {
-    if (userVote === VoteType.LIKE) return 'Ya votaste útil';
-    return 'Marcar como útil';
-  };
-
-  const getDislikeTooltip = () => {
-    if (userVote === VoteType.DISLIKE) return 'Ya votaste no útil';
-    return 'Marcar como no útil';
-  };
-  return { handleVote, isPending, clickedButton, getLikeTooltip, getDislikeTooltip };
+  return { handleVote, isPending, userVote: userVote ?? VoteType.NONE };
 };

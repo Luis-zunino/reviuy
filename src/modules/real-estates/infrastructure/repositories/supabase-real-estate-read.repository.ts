@@ -11,6 +11,8 @@ import type {
   GetRealEstateReviewByUserIdOutput,
   GetUserRealEstateVoteInput,
   GetUserRealEstateVoteOutput,
+  GetUserRealEstateReviewVoteInput,
+  GetUserRealEstateReviewVoteOutput,
   SearchRealEstatesInput,
   SearchRealEstatesOutput,
   GetAllRealEstatesPaginatedInput,
@@ -96,6 +98,18 @@ export class SupabaseRealEstateReadRepository implements RealEstateReadRepositor
     if (error) throw handleSupabaseError(error);
 
     return data as GetUserRealEstateVoteOutput;
+  }
+
+  async getUserReviewVote({
+    reviewId,
+  }: GetUserRealEstateReviewVoteInput): Promise<GetUserRealEstateReviewVoteOutput> {
+    const { data, error } = await this.supabase.rpc('get_user_vote_on_real_estate_review', {
+      p_real_estate_review_id: reviewId,
+    });
+
+    if (error) throw handleSupabaseError(error);
+
+    return data as GetUserRealEstateReviewVoteOutput;
   }
 
   async search({ query, limit = 10 }: SearchRealEstatesInput): Promise<SearchRealEstatesOutput> {

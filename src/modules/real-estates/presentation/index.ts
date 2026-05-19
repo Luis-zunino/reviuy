@@ -9,6 +9,7 @@ export * from './getRealEstateReviewById.hook';
 export * from './getRealEstateReviewByUserId.hook';
 export * from './getUserFavoriteRealEstates.hook';
 export * from './getUserRealEstateVote.hook';
+export * from './getUserRealEstateReviewVote.hook';
 export * from './isRealEstateFavorite.hook';
 export * from './reportRealEstate.hook';
 export * from './reportRealEstateReview.hook';

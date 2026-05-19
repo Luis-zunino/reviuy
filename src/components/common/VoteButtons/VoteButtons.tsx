@@ -31,8 +31,16 @@ export const VoteButtons: FC<VoteButtonsProps> = ({
   dislikeTooltipActive = 'Ya votaste no útil',
   ...hookProps
 }: VoteButtonsProps) => {
-  const { handleVote, clickedButton, optimisticLikes, optimisticDislikes, optimisticUserVote } =
-    useVoteButtons({ ...hookProps });
+  const {
+    handleVote,
+    clickedButton,
+    optimisticLikes,
+    optimisticDislikes,
+    optimisticUserVote,
+    isPending,
+  } = useVoteButtons({ ...hookProps });
+
+  const isDisabled = disabled || isPending;
 
   const getLikeTooltip = () =>
     optimisticUserVote === VoteType.LIKE ? likeTooltipActive : likeTooltip;
@@ -47,7 +55,7 @@ export const VoteButtons: FC<VoteButtonsProps> = ({
 
         <VoteButton
           handleOnClick={() => handleVote(VoteType.LIKE)}
-          disabled={disabled}
+          disabled={isDisabled}
           isActive={optimisticUserVote === VoteType.LIKE}
           icon={ThumbsUp}
           clickedButton={clickedButton === VoteType.LIKE}
@@ -57,7 +65,7 @@ export const VoteButtons: FC<VoteButtonsProps> = ({
 
         <VoteButton
           handleOnClick={() => handleVote(VoteType.DISLIKE)}
-          disabled={disabled}
+          disabled={isDisabled}
           isActive={optimisticUserVote === VoteType.DISLIKE}
           icon={ThumbsDown}
           clickedButton={clickedButton === VoteType.DISLIKE}

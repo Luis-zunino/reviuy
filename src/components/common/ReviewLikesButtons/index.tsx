@@ -38,9 +38,9 @@ import { VoteButtons } from '../VoteButtons';
  */
 export const ReviewLikesButtons = (props: ReviewLikesButtonsProps) => {
   const { id, likes, dislikes, className } = props;
-  const { addVote, getLikeTooltip, getDislikeTooltip, userVote } = useReviewLikesButtons({
-    id,
-  });
+  const { addVote, getLikeTooltip, getDislikeTooltip, userVote, isPending } = useReviewLikesButtons(
+    { id }
+  );
 
   return (
     <VoteButtons
@@ -48,6 +48,7 @@ export const ReviewLikesButtons = (props: ReviewLikesButtonsProps) => {
       dislikes={dislikes}
       className={className}
       onVote={addVote}
+      disabled={isPending}
       likeTooltip={getLikeTooltip()}
       dislikeTooltip={getDislikeTooltip()}
       userVote={userVote}

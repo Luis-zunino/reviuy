@@ -9,6 +9,8 @@ import type {
   GetRealEstateReviewByUserIdOutput,
   GetUserRealEstateVoteInput,
   GetUserRealEstateVoteOutput,
+  GetUserRealEstateReviewVoteInput,
+  GetUserRealEstateReviewVoteOutput,
   SearchRealEstatesInput,
   SearchRealEstatesOutput,
   GetAllRealEstatesPaginatedInput,
@@ -27,6 +29,9 @@ export interface RealEstateReadRepository {
     input: GetRealEstateReviewByUserIdInput
   ): Promise<GetRealEstateReviewByUserIdOutput>;
   getUserVote(input: GetUserRealEstateVoteInput): Promise<GetUserRealEstateVoteOutput>;
+  getUserReviewVote(
+    input: GetUserRealEstateReviewVoteInput
+  ): Promise<GetUserRealEstateReviewVoteOutput>;
   search(input: SearchRealEstatesInput): Promise<SearchRealEstatesOutput>;
   getRealEstatesWithVotesPaginated(
     input: GetAllRealEstatesPaginatedInput
