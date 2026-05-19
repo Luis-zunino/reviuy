@@ -1,28 +1,10 @@
 'use client';
 
 import { VoteType } from '@/types';
-import { useOptimistic, useCallback, useState, startTransition } from 'react';
+import { useOptimistic, useCallback, useState, useRef, startTransition } from 'react';
 import { UseVoteButtonsOptions, UseVoteButtonsReturn, VoteState } from './types';
 import { handleOptimisticVote } from './utils';
 
-/**
- * Hook que gestiona la lógica de votación con actualización optimista usando useOptimistic de React.
- *
- * ARQUITECTURA:
- * - Estado Base: Viene directamente de props del servidor (likes, dislikes, userVote)
- * - No hay useEffect residual que sincronice estados antiguos
- * - useOptimistic aplica transformaciones matemáticas inmediatamente
- * - Rollback automático al estado del servidor si la Server Action falla
- * - Animaciones visuales (clickedButton) están separadas de la lógica de contadores
- *
- * FLUJO:
- * 1. Usuario hace clic → setClickedButton inicia animación (300ms)
- * 2. startTransition inicia transición
- * 3. addOptimisticState envía la acción al reductor para actualizar la UI inmediatamente
- * 4. onVote (Server Action) ejecuta en el servidor
- * 5. Si tiene éxito → revalidatePath actualiza props del servidor
- * 6. Si falla → useOptimistic rollback automático a props del servidor
- */
 export const useVoteButtons = ({
   likes,
   dislikes,
@@ -30,53 +12,42 @@ export const useVoteButtons = ({
   onVote,
   onError,
 }: UseVoteButtonsOptions): UseVoteButtonsReturn => {
-  // Normalizar null/undefined a VoteType.NONE
-  const normalizedUserVote = userVote ?? VoteType.NONE;
-
-  // Estado para animación visual de clic (300ms, separado del contador)
   const [clickedButton, setClickedButton] = useState<VoteType | null>(null);
+  const [isPending, setIsPending] = useState(false);
+  const isPendingRef = useRef(false);
 
-  // Estado base inicial desde props del servidor
   const initialState: VoteState = {
     likesCount: likes,
     dislikesCount: dislikes,
-    currentVote: normalizedUserVote,
+    currentVote: userVote,
   };
 
-  // useOptimistic: mantiene la UI actualizada mientras la Server Action se ejecuta
-  // El reducer (segundo argumento) calcula el nuevo estado optimista basado en la acción
   const [optimisticState, addOptimisticState] = useOptimistic(
     initialState,
     (currentState: VoteState, voteType: VoteType) =>
       handleOptimisticVote({ voteType, currentState })
   );
 
-  /**
-   * Maneja el clic en un botón de voto.
-   * Dispara la animación visual, actualiza el estado optimista y ejecuta la Server Action.
-   */
   const handleVote = useCallback(
     (voteType: VoteType) => {
-      // No permitir votar con VoteType.NONE
-      if (voteType === VoteType.NONE) return;
+      if (voteType === VoteType.NONE || isPendingRef.current) return;
 
-      // Animación visual: pulso durante 300ms
+      isPendingRef.current = true;
+      setIsPending(true);
+
       setClickedButton(voteType);
       const animationTimer = setTimeout(() => setClickedButton(null), 300);
 
-      // Iniciar transición para que React sepa que es una operación asincrónica
       startTransition(async () => {
         try {
-          // Aplicar el nuevo estado optimista enviando el tipo de voto al reductor
           addOptimisticState(voteType);
-
-          // Ejecutar la Server Action (revalidatePath actualiza props del servidor)
           await onVote(voteType);
         } catch (error) {
-          // Limpiar timer si hay error
           clearTimeout(animationTimer);
-          // Notificar del error (useOptimistic ya hizo rollback)
           onError?.(error instanceof Error ? error : new Error('Vote failed'));
+        } finally {
+          isPendingRef.current = false;
+          setIsPending(false);
         }
       });
     },
@@ -89,5 +60,6 @@ export const useVoteButtons = ({
     optimisticLikes: optimisticState.likesCount,
     optimisticDislikes: optimisticState.dislikesCount,
     optimisticUserVote: optimisticState.currentVote,
+    isPending,
   };
 };

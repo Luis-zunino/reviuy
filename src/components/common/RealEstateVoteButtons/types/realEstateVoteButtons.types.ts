@@ -4,7 +4,7 @@ export interface RealEstateVoteButtonsProps {
   realEstateId: string;
   likes: number;
   dislikes: number;
-  userVote?: VoteType | null;
+  userVote: VoteType;
   className?: string;
   refetchRealEstate: () => Promise<void>;
   isLoading: boolean;

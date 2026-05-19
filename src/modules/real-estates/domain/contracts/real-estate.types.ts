@@ -123,6 +123,12 @@ export interface GetUserRealEstateVoteInput {
 
 export type GetUserRealEstateVoteOutput = VoteType | null;
 
+export interface GetUserRealEstateReviewVoteInput {
+  reviewId: string;
+}
+
+export type GetUserRealEstateReviewVoteOutput = VoteType | null;
+
 export interface SearchRealEstatesInput {
   query: string;
   limit?: number;

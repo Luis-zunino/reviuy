@@ -5,6 +5,7 @@ import { voteAction } from '../../VoteButtons/actions';
 import { VoteType } from '@/types';
 import { toast } from 'sonner';
 import { usePathname } from 'next/navigation';
+import { useState, useRef } from 'react';
 
 export const useReviewLikesButtons = (props: { id: string }) => {
   const { id: reviewId } = props;
@@ -12,20 +13,23 @@ export const useReviewLikesButtons = (props: { id: string }) => {
   const queryClient = useQueryClient();
   const { data, refetch } = useGetReviewVote({ reviewId });
 
+  const [isPending, setIsPending] = useState(false);
+  const isPendingRef = useRef(false);
+
   const addVote = async (voteType: VoteType) => {
+    if (isPendingRef.current) return;
+    isPendingRef.current = true;
+    setIsPending(true);
+
     try {
-      // Ejecutar la Server Action (revalidatePath actualiza props)
       await voteAction(reviewId, voteType, path);
-
-      // Refetch optional: si quieres asegurar que los datos estén sincronizados
-      // (useOptimistic + revalidatePath ya manejan la UI)
       await refetch();
-
-      // Invalidar queries relacionadas (opcional, revalidatePath ya lo hace)
       await queryClient.invalidateQueries({ queryKey: [REVIEW_KEYS.getReviewById, reviewId] });
     } catch (error) {
-      // Mostrar error (useOptimistic ya hizo rollback automático)
       toast.warning(error instanceof Error ? error.message : 'Vote failed');
+    } finally {
+      isPendingRef.current = false;
+      setIsPending(false);
     }
   };
 
@@ -44,5 +48,6 @@ export const useReviewLikesButtons = (props: { id: string }) => {
     getLikeTooltip,
     getDislikeTooltip,
     userVote: data ?? VoteType.NONE,
+    isPending,
   };
 };

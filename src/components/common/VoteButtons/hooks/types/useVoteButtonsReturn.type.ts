@@ -6,4 +6,5 @@ export interface UseVoteButtonsReturn {
   optimisticLikes: number;
   optimisticDislikes: number;
   optimisticUserVote: VoteType;
+  isPending: boolean;
 }

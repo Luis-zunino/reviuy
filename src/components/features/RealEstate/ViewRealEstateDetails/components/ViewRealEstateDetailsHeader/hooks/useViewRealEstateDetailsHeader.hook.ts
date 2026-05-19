@@ -5,6 +5,7 @@ import {
   useGetRealEstateReviewByUserId,
   useGetUserRealEstateVote,
 } from '@/modules/real-estates';
+import { VoteType } from '@/types';
 import { useParams, useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
@@ -42,7 +43,7 @@ export const useViewRealEstateDetailsHeader = () => {
     realEstateId,
     realEstate,
     hasRealEstateReview,
-    userRealEstateVote,
+    userRealEstateVote: userRealEstateVote ?? VoteType.NONE,
     refetchRealEstate,
     refetchRealEstateVote,
     isLoading,
@@ -50,5 +51,3 @@ export const useViewRealEstateDetailsHeader = () => {
     handleOnCreateReview,
   };
 };
-
-export default useViewRealEstateDetailsHeader;
