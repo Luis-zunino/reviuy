@@ -35,7 +35,7 @@
     "security:owasp": "pnpm security:semgrep && pnpm security:deps"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.1048.0",
+    "@aws-sdk/client-s3": "^3.1050.0",
     "@hookform/resolvers": "^5.2.2",
     "@next/bundle-analyzer": "^16.2.6",
     "@radix-ui/react-accordion": "^1.2.12",
