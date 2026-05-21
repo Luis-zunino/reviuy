@@ -72,21 +72,18 @@ const iconSizeMap = {
   icon: 18, // Para botones de solo icono, un poco más grande
 } as const;
 
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  (
-    {
-      className,
-      variant,
-      size,
-      asChild = false,
-      icon: Icon,
-      iconPosition = 'left',
-      children,
-      ...props
-    },
-    ref
-  ) => {
-    const Comp = asChild ? Slot : 'button';
+const Button = ({
+  ref,
+  className,
+  variant,
+  size,
+  asChild = false,
+  icon: Icon,
+  iconPosition = 'left',
+  children,
+  ...props
+}: ButtonProps & { ref?: React.Ref<HTMLButtonElement> }) => {
+  const Comp = asChild ? Slot : 'button';
 
     // Si no hay children y hay icono, es un botón de solo icono
     const isIconOnly = !children && Icon;
@@ -110,8 +107,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {Icon && iconPosition === 'right' && <Icon size={iconSize} />}
       </Comp>
     );
-  }
-);
+};
 
 Button.displayName = 'Button';
 
