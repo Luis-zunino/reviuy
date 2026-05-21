@@ -33,11 +33,11 @@ vi.mock('@/lib/site-url', () => ({
   buildSiteUrl: () => 'https://reviuy.vercel.app/auth/callback',
 }));
 
-vi.mock('@/utils', () => ({
+vi.mock('@/utils/sessionMapped.util', () => ({
   sessionMapped: sessionMappedMock,
 }));
 
-vi.mock('@/lib/supabase', () => ({
+vi.mock('@/lib/supabase/client', () => ({
   supabaseClient: {
     auth: {
       signInWithOAuth: signInWithOAuthMock,

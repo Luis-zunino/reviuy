@@ -8,7 +8,7 @@ const mockToastError = vi.fn();
 
 const mockUseAuthMutation = vi.fn();
 
-vi.mock('@/shared/auth', () => ({
+vi.mock('@/shared/auth/useAuthMutation.hook', () => ({
   useAuthMutation: mockUseAuthMutation,
 }));
 

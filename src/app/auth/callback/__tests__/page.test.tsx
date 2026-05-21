@@ -23,7 +23,7 @@ vi.mock('@/modules/profiles/infrastructure', () => ({
   SupabaseProfileAuthReadRepository: class SupabaseProfileAuthReadRepository {},
 }));
 
-vi.mock('@/lib/supabase', () => ({
+vi.mock('@/lib/supabase/client', () => ({
   supabaseClient: {
     auth: {
       getUser: getUserMock,
@@ -91,7 +91,7 @@ describe('AuthCallback terms persistence', () => {
   });
 
   it('updates metadata from redirect params and redirects home for first acceptance', async () => {
-    (globalThis.location as Record<string, unknown>).search =
+    (globalThis.location as unknown as Record<string, unknown>).search =
       '?terms_accepted=1&terms_accepted_at=2026-04-11T10:00:00.000Z&terms_version=v1';
 
     render(<AuthCallback />);

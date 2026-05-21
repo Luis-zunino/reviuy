@@ -7,7 +7,7 @@ const { useDebounceMock, useGetAddressListByNameMock } = vi.hoisted(() => ({
   useGetAddressListByNameMock: vi.fn(),
 }));
 
-vi.mock('@/hooks', () => ({
+vi.mock('@/hooks/useDebounce.hook', () => ({
   useDebounce: useDebounceMock,
 }));
 
