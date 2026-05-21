@@ -1,6 +1,6 @@
 'use client';
 
-import { manrope } from '@/constants';
+import { manrope } from '@/constants/fonts.constant';
 import {
   HeroSection,
   SocialProofSection,
