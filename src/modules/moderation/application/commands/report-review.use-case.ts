@@ -1,8 +1,8 @@
 import { z } from 'zod';
-import { createError } from '@/lib';
-import type { UseCaseHandler } from '@/shared/kernel/contracts';
-import { reportReviewApiSchema } from '@/schemas';
-import type { ReportActionResponse, ReportReviewInput } from '../../domain';
+import { assertAuthenticated } from '@/shared/auth/assert-authenticated.util';
+import type { UseCaseHandler } from '@/shared/kernel/contracts/use-case.contract';
+import { reportReviewApiSchema } from '@/schemas/api-request.schema';
+import type { ReportActionResponse } from '../../domain';
 import { ModerationCommandBase } from './interfaces';
 
 const reportReviewActionSchema = reportReviewApiSchema
@@ -20,15 +20,11 @@ export const createReportReviewUseCase = (
   dependencies: ModerationCommandBase
 ): UseCaseHandler<unknown, ReportActionResponse> => {
   return async (input) => {
-    const userId = await dependencies.getCurrentUserId();
-
-    if (!userId) {
-      throw createError('UNAUTHORIZED');
-    }
+    const userId = await assertAuthenticated(dependencies.getCurrentUserId);
 
     await dependencies.rateLimit(`report-review:${userId}`, 'sensitive');
 
-    const payload = reportReviewActionSchema.parse(input) as ReportReviewInput;
+    const payload = reportReviewActionSchema.parse(input);
 
     return dependencies.repository.reportReview(payload);
   };

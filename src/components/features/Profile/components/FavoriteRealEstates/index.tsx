@@ -17,7 +17,7 @@ export interface FavoriteRealEstatesProps {
 }
 export const FavoriteRealEstates = (props: FavoriteRealEstatesProps) => {
   const { favorites, loadingFavorites } = props;
-  const router = useRouter();
+  const { push } = useRouter();
 
   if (loadingFavorites) {
     return <SkeletonSection />;
@@ -52,7 +52,7 @@ export const FavoriteRealEstates = (props: FavoriteRealEstatesProps) => {
           <CardContent className="space-y-3">
             <div className="pt-2">
               <Button
-                onClick={() => router.push(`${PagesUrls.REAL_ESTATE}${realEstate.id}`)}
+                onClick={() => push(`${PagesUrls.REAL_ESTATE}${realEstate.id}`)}
                 className="w-full"
                 variant="outline"
               >

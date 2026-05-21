@@ -7,9 +7,15 @@ import {
 } from '../application';
 import { SupabaseRealEstateCommandRepository } from '../infrastructure';
 import { createServerActionDeps } from '@/shared/auth/create-server-action-deps.util';
+import { createError } from '@/lib/errors';
 
 export async function createRealEstateReviewAction(input: unknown) {
   const { supabase, getCurrentUserId, rateLimit } = await createServerActionDeps();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw createError('UNAUTHORIZED', 'Debés iniciar sesión.');
 
   const createRealEstateReviewUseCase = createCreateRealEstateReviewUseCase({
     getCurrentUserId,
@@ -22,6 +28,11 @@ export async function createRealEstateReviewAction(input: unknown) {
 
 export async function updateRealEstateReviewAction(reviewId: string, updateData: unknown) {
   const { supabase, getCurrentUserId, rateLimit } = await createServerActionDeps();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw createError('UNAUTHORIZED', 'Debés iniciar sesión.');
 
   const updateRealEstateReviewUseCase = createUpdateRealEstateReviewUseCase({
     getCurrentUserId,
@@ -37,6 +48,11 @@ export async function updateRealEstateReviewAction(reviewId: string, updateData:
 
 export async function deleteRealEstateReviewAction(reviewId: string) {
   const { supabase, getCurrentUserId, rateLimit } = await createServerActionDeps();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw createError('UNAUTHORIZED', 'Debés iniciar sesión.');
 
   const deleteRealEstateReviewUseCase = createDeleteRealEstateReviewUseCase({
     getCurrentUserId,

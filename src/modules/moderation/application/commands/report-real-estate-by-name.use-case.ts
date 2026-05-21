@@ -1,6 +1,7 @@
-import { createError, RateLimitType } from '@/lib';
-import { reportRealEstateApiSchema } from '@/schemas';
-import type { UseCaseHandler } from '@/shared/kernel/contracts';
+import { RateLimitType } from '@/lib/redis';
+import { assertAuthenticated } from '@/shared/auth/assert-authenticated.util';
+import { reportRealEstateApiSchema } from '@/schemas/api-request.schema';
+import type { UseCaseHandler } from '@/shared/kernel/contracts/use-case.contract';
 import type { ReportActionResponse } from '../../domain';
 
 export interface ReportRealEstateByNameUseCaseDependencies {
@@ -12,11 +13,7 @@ export const createReportRealEstateByNameUseCase = (
   dependencies: ReportRealEstateByNameUseCaseDependencies
 ): UseCaseHandler<unknown, ReportActionResponse> => {
   return async (input) => {
-    const userId = await dependencies.getCurrentUserId();
-
-    if (!userId) {
-      throw createError('UNAUTHORIZED');
-    }
+    const userId = await assertAuthenticated(dependencies.getCurrentUserId);
 
     await dependencies.rateLimit(`report-real-estate:${userId}`, 'sensitive');
 

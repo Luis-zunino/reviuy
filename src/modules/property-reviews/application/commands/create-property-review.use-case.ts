@@ -1,6 +1,8 @@
-import { createError, RateLimitType } from '@/lib';
-import { backendReviewSchema } from '@/schemas';
-import type { UseCaseHandler } from '@/shared/kernel/contracts';
+import { createError } from '@/lib/errors';
+import { RateLimitType } from '@/lib/redis';
+import { assertAuthenticated } from '@/shared/auth/assert-authenticated.util';
+import { backendReviewSchema } from '@/schemas/review.schema';
+import type { UseCaseHandler } from '@/shared/kernel/contracts/use-case.contract';
 import { ZodError } from 'zod';
 import type {
   CreatePropertyReviewInput,
@@ -27,20 +29,14 @@ export const createCreatePropertyReviewUseCase = (
   dependencies: CreatePropertyReviewUseCaseDependencies
 ): UseCaseHandler<unknown, CreatePropertyReviewResult> => {
   return async (input) => {
-    const userId = await dependencies.getCurrentUserId();
-
-    if (!userId) {
-      throw createError('UNAUTHORIZED');
-    }
+    const userId = await assertAuthenticated(dependencies.getCurrentUserId);
 
     await dependencies.rateLimit(`create-review:${userId}`, 'write');
 
     let validatedInput: CreatePropertyReviewInput;
 
     try {
-      validatedInput = backendReviewSchema.parse(
-        unwrapCreatePropertyReviewInput(input)
-      ) as CreatePropertyReviewInput;
+      validatedInput = backendReviewSchema.parse(unwrapCreatePropertyReviewInput(input));
     } catch (error) {
       if (error instanceof ZodError) {
         const firstError = error.issues[0];

@@ -4,18 +4,20 @@ import { createServerActionDeps } from '@/shared/auth/create-server-action-deps.
 import { createError } from '@/lib/errors';
 import { SupabaseReviewImageRepository } from '../infrastructure/repositories/supabase-review-image.repository';
 import { processImageForUpload } from '@/lib/storage';
-
-const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
-const MAX_INPUT_FILE_SIZE_BYTES = 15 * 1024 * 1024; // 15 MB antes de optimizar
-const MAX_OUTPUT_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB después de optimizar
+import {
+  ALLOWED_MIME_TYPES,
+  MAX_INPUT_FILE_SIZE_BYTES,
+  MAX_OUTPUT_FILE_SIZE_BYTES,
+} from '@/constants/review-images.constants';
 
 export async function uploadReviewImageAction(reviewId: string, osmId: string, formData: FormData) {
-  const { supabase, getCurrentUserId, rateLimit } = await createServerActionDeps();
+  const { supabase, rateLimit } = await createServerActionDeps();
 
-  const userId = await getCurrentUserId();
-  if (!userId) {
-    throw createError('UNAUTHORIZED', 'Debés iniciar sesión para subir imágenes.');
-  }
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw createError('UNAUTHORIZED', 'Debés iniciar sesión para subir imágenes.');
+  const userId = user.id;
 
   await rateLimit(`upload_review_image:${userId}`, 'write');
 
@@ -58,12 +60,12 @@ export async function uploadReviewImageAction(reviewId: string, osmId: string, f
 }
 
 export async function deleteReviewImageAction(imageId: string, reviewId: string) {
-  const { supabase, getCurrentUserId } = await createServerActionDeps();
+  const { supabase } = await createServerActionDeps();
 
-  const userId = await getCurrentUserId();
-  if (!userId) {
-    throw createError('UNAUTHORIZED', 'Debés iniciar sesión para eliminar imágenes.');
-  }
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw createError('UNAUTHORIZED', 'Debés iniciar sesión para eliminar imágenes.');
 
   const repository = new SupabaseReviewImageRepository(supabase);
 
@@ -72,6 +74,11 @@ export async function deleteReviewImageAction(imageId: string, reviewId: string)
 
 export async function getReviewImagesAction(reviewId: string) {
   const { supabase } = await createServerActionDeps();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw createError('UNAUTHORIZED', 'Debés iniciar sesión para ver imágenes.');
 
   const repository = new SupabaseReviewImageRepository(supabase);
 

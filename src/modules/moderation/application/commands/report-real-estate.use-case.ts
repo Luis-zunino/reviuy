@@ -1,8 +1,8 @@
 import { z } from 'zod';
-import { createError } from '@/lib';
-import type { UseCaseHandler } from '@/shared/kernel/contracts';
-import { reportRealEstateApiSchema } from '@/schemas';
-import type { ReportActionResponse, ReportRealEstateInput } from '../../domain';
+import { assertAuthenticated } from '@/shared/auth/assert-authenticated.util';
+import type { UseCaseHandler } from '@/shared/kernel/contracts/use-case.contract';
+import { reportRealEstateApiSchema } from '@/schemas/api-request.schema';
+import type { ReportActionResponse } from '../../domain';
 import { ModerationCommandBase } from './interfaces';
 
 const reportRealEstateActionSchema = reportRealEstateApiSchema
@@ -20,15 +20,11 @@ export const createReportRealEstateUseCase = (
   dependencies: ModerationCommandBase
 ): UseCaseHandler<unknown, ReportActionResponse> => {
   return async (input) => {
-    const userId = await dependencies.getCurrentUserId();
-
-    if (!userId) {
-      throw createError('UNAUTHORIZED');
-    }
+    const userId = await assertAuthenticated(dependencies.getCurrentUserId);
 
     await dependencies.rateLimit(`report-real-estate:${userId}`, 'sensitive');
 
-    const payload = reportRealEstateActionSchema.parse(input) as ReportRealEstateInput;
+    const payload = reportRealEstateActionSchema.parse(input);
 
     return dependencies.repository.reportRealEstate(payload);
   };
