@@ -71,7 +71,7 @@ export const ReviewCard = ({ review }: ReviewCardProps) => {
               </CardTitle>
 
               <CardDescription className="mt-1 grid grid-cols-[auto_minmax(0,1fr)] items-center gap-2 text-sm">
-                <MapPin className="h-4 w-4 shrink-0" aria-hidden="true" />
+                <MapPin className="size-4 shrink-0" aria-hidden="true" />
                 <span className="truncate">{review.address_text}</span>
               </CardDescription>
             </div>

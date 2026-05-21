@@ -12,10 +12,9 @@ describe('Skeleton', () => {
   });
 
   it('applies custom classes', () => {
-    const { container } = render(<Skeleton className="h-10 w-10" />);
+    const { container } = render(<Skeleton className="size-10" />);
     const skeleton = container.firstElementChild;
 
-    expect(skeleton).toHaveClass('h-10');
-    expect(skeleton).toHaveClass('w-10');
+    expect(skeleton).toHaveClass('size-10');
   });
 });

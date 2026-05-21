@@ -114,11 +114,11 @@ export const WhySection = () => {
                 >
                   <div
                     className={cn(
-                      'mb-5 inline-flex h-12 w-12 items-center justify-center rounded-xl transition-transform duration-300 group-hover:scale-110',
+                      'mb-5 inline-flex size-12 items-center justify-center rounded-xl transition-transform duration-300 group-hover:scale-110',
                       feature.bgColor
                     )}
                   >
-                    <feature.icon className={cn('h-6 w-6', feature.color)} />
+                    <feature.icon className={cn('size-6', feature.color)} />
                   </div>
 
                   <h3
@@ -152,7 +152,7 @@ export const WhySection = () => {
                 )}
               >
                 Escribi tu primera reseña
-                <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
+                <ArrowRight className="size-4 transition-transform duration-200 group-hover:translate-x-1" />
               </Link>
             </m.div>
           </Box>

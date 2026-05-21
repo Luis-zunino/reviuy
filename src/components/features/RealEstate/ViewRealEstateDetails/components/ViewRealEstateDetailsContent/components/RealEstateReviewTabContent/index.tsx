@@ -32,7 +32,7 @@ export const RealEstateReviewTabContent = (props: RealEstateReviewTabContentProp
           <CardContent>
             {realEstateReview?.length === 0 ? (
               <div className="text-center py-8">
-                <MessageSquare className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                <MessageSquare className="size-12 text-gray-400 mx-auto mb-4" />
                 <p className="mb-4">Aún no hay reseñas para esta inmobiliaria</p>
                 <Button
                   onClick={() =>
@@ -94,15 +94,15 @@ export const RealEstateReviewTabContent = (props: RealEstateReviewTabContentProp
                       <Separator className="my-2" />
                       <div className="flex items-center gap-2 justify-between">
                         <div className="flex items-center gap-1 text-sm text-gray-500">
-                          <Calendar className="h-4 w-4" />
+                          <Calendar className="size-4" />
                           <DateDisplay date={rer.created_at} />
                         </div>
                         <div className="flex items-center gap-2 text-sm text-gray-500">
                           <span className="flex items-center gap-1">
-                            <ThumbsUp className="h-4 w-4" /> {rer.likes}
+                            <ThumbsUp className="size-4" /> {rer.likes}
                           </span>
                           <span className="flex items-center gap-1">
-                            <ThumbsDown className="h-4 w-4" /> {rer.dislikes}
+                            <ThumbsDown className="size-4" /> {rer.dislikes}
                           </span>
                         </div>
                       </div>

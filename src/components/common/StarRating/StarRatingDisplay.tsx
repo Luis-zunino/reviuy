@@ -6,15 +6,15 @@ import type { StarRatingDisplayProps } from './types';
 
 const sizeConfig = {
   sm: {
-    star: 'h-3 w-3',
+    star: 'size-3',
     text: 'text-xs',
   },
   md: {
-    star: 'h-4 w-4',
+    star: 'size-4',
     text: 'text-sm',
   },
   lg: {
-    star: 'h-5 w-5',
+    star: 'size-5',
     text: 'text-base',
   },
 };

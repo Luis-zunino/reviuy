@@ -15,7 +15,7 @@ export const ProfileSectionList = (props: ProfileSectionListProps) => {
         <h2 className="text-2xl font-semibold">{title}</h2>
         {actionButton ? (
           <Button onClick={actionButton} variant="outline" size="sm">
-            <RefreshCw className="h-4 w-4 mr-2" />
+            <RefreshCw className="size-4 mr-2" />
             <span className="hidden md:flex">{actionButtonLabel || 'Action'}</span>
           </Button>
         ) : null}

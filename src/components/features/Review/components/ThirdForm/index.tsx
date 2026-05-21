@@ -42,7 +42,7 @@ export const ThirdForm = (props: ThirdFormProps) => {
                 triggerComponentModal={() => (
                   <div className="z-10 mt-1 w-full min-w-87.5 rounded-md ">
                     <div className="p-4 text-center">
-                      <Building2 className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                      <Building2 className="size-8 text-gray-400 mx-auto mb-2" />
                       <p className="text-sm text-gray-600 mb-3">
                         No encontramos la inmobiliaria {watch('real_estate_name')}
                       </p>

@@ -8,15 +8,15 @@ import { Button } from '@/components/ui/button';
 
 const sizeConfig = {
   sm: {
-    star: 'h-4 w-4',
+    star: 'size-4',
     text: 'text-xs',
   },
   md: {
-    star: 'h-5 w-5',
+    star: 'size-5',
     text: 'text-sm',
   },
   lg: {
-    star: 'h-6 w-6',
+    star: 'size-6',
     text: 'text-base',
   },
 };

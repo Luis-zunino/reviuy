@@ -43,7 +43,7 @@ export const FavoriteRealEstates = (props: FavoriteRealEstatesProps) => {
           <CardHeader className="pb-3">
             <div className="flex justify-between items-start">
               <CardTitle className="text-lg flex items-center gap-2">
-                <Building2 className="h-5 w-5 text-blue-600" />
+                <Building2 className="size-5 text-blue-600" />
                 {realEstate.name}
               </CardTitle>
               <FavoriteRealEstateButton realEstateId={realEstate.id ?? ''} />

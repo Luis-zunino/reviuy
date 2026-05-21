@@ -19,7 +19,7 @@ export function ThemeToggle() {
         <Button
           variant="ghost"
           size="icon"
-          className="h-9 w-9 rounded-full"
+          className="size-9 rounded-full"
           aria-label="Cambiar tema"
         >
           <Sun
@@ -35,15 +35,15 @@ export function ThemeToggle() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={() => setTheme('light')}>
-          <Sun className="mr-2 h-4 w-4" />
+          <Sun className="mr-2 size-4" />
           Claro
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setTheme('dark')}>
-          <Moon className="mr-2 h-4 w-4" />
+          <Moon className="mr-2 size-4" />
           Oscuro
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setTheme('system')}>
-          <LaptopMinimal className="mr-2 h-4 w-4" />
+          <LaptopMinimal className="mr-2 size-4" />
           Sistema
         </DropdownMenuItem>
       </DropdownMenuContent>

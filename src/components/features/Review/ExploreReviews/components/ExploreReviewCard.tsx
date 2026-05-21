@@ -48,7 +48,7 @@ export const ExploreReviewCard = ({ review }: ExploreReviewCardProps) => {
           aria-label={`Ver todas las reseñas de ${review.address_text}`}
         >
           <MapPin
-            className="h-3 w-3 mt-0.5 shrink-0 group-hover/addr:text-primary"
+            className="size-3 mt-0.5 shrink-0 group-hover/addr:text-primary"
             aria-hidden="true"
           />
           <span className="line-clamp-2 leading-relaxed">{review.address_text}</span>
@@ -68,7 +68,7 @@ export const ExploreReviewCard = ({ review }: ExploreReviewCardProps) => {
 
       <CardFooter className="pt-3 pb-3 flex justify-between items-center">
         <div className="flex items-center gap-1 text-xs text-muted-foreground">
-          <Calendar className="h-3 w-3" aria-hidden="true" />
+          <Calendar className="size-3" aria-hidden="true" />
           <span>Hace {daysSinceCreated}d</span>
         </div>
         <Button onClick={handleViewMore} variant="seeMore" size="sm">

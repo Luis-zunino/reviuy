@@ -99,7 +99,7 @@ const ReviewCard = ({ review, className }: ReviewCardProps) => {
       )}
     >
       {/* Quote icon */}
-      <Quote className="absolute right-4 top-4 h-6 w-6 text-reviuy-gray-100 dark:text-reviuy-gray-700 transition-colors duration-300 group-hover:text-reviuy-primary-100 dark:group-hover:text-reviuy-primary-800" />
+      <Quote className="absolute right-4 top-4 size-6 text-reviuy-gray-100 dark:text-reviuy-gray-700 transition-colors duration-300 group-hover:text-reviuy-primary-100 dark:group-hover:text-reviuy-primary-800" />
 
       {/* Rating */}
       <div className="mb-3 flex items-center gap-1">
@@ -107,7 +107,7 @@ const ReviewCard = ({ review, className }: ReviewCardProps) => {
           <Star
             key={element}
             className={cn(
-              'h-4 w-4',
+              'size-4',
               i < review.rating
                 ? 'fill-reviuy-secondary-400 text-reviuy-secondary-400'
                 : 'fill-reviuy-gray-100 dark:fill-reviuy-gray-700 text-reviuy-gray-200 dark:text-reviuy-gray-600'
@@ -134,12 +134,12 @@ const ReviewCard = ({ review, className }: ReviewCardProps) => {
           <span
             className={`${manrope.className} flex items-center gap-1 text-sm font-medium text-reviuy-gray-800 dark:text-reviuy-gray-200`}
           >
-            <MapPin className="h-3 w-3" />
+            <MapPin className="size-3" />
             {review.location}
           </span>
         </div>
         <div className="flex items-center gap-1 rounded-full bg-reviuy-gray-50 dark:bg-reviuy-gray-700/50 px-2.5 py-1 text-xs font-medium text-reviuy-gray-600 dark:text-reviuy-gray-300">
-          <ThumbsUp className="h-3 w-3" />
+          <ThumbsUp className="size-3" />
           {review.likes}
         </div>
       </div>

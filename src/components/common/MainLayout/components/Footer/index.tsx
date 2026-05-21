@@ -44,9 +44,9 @@ export const Footer = () => {
                     rel="noreferrer"
                     aria-label={name}
                     title={name}
-                    className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-reviuy-gray-700 bg-reviuy-gray-900/70 text-reviuy-gray-200 transition-colors hover:border-reviuy-primary-500 hover:text-white"
+                    className="inline-flex size-9 items-center justify-center rounded-full border border-reviuy-gray-700 bg-reviuy-gray-900/70 text-reviuy-gray-200 transition-colors hover:border-reviuy-primary-500 hover:text-white"
                   >
-                    <Icon className="h-4 w-4" />
+                    <Icon className="size-4" />
                   </a>
                 ))}
               </div>

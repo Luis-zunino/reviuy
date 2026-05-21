@@ -99,7 +99,7 @@ export const SocialProofSection = () => {
                 <div
                   className={`mb-4 rounded-xl ${stat.bgColor} p-3 transition-transform duration-300 group-hover:scale-110`}
                 >
-                  <stat.icon className={`h-6 w-6 ${stat.color}`} />
+                  <stat.icon className={`size-6 ${stat.color}`} />
                 </div>
                 <span className={`${playfair.className} text-2xl font-bold  md:text-3xl`}>
                   {stat.value}

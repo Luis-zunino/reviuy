@@ -15,7 +15,7 @@ export const EmptySection = (props: EmptySectionProps) => {
       <CardContent className="text-center py-8">
         <p className="text-gray-600 mb-4">{title}</p>
         <Link href={link} className="flex items-center gap-2">
-          {Icon && <Icon className="h-4 w-4" />}
+          {Icon && <Icon className="size-4" />}
           {description}
         </Link>
       </CardContent>

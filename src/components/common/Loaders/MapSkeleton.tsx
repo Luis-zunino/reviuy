@@ -7,14 +7,14 @@ export const MapSkeleton: React.FC = () => {
 
       {/* Map controls skeleton */}
       <div className="absolute top-4 right-4 space-y-2">
-        <Skeleton className="h-10 w-10 rounded" />
-        <Skeleton className="h-10 w-10 rounded" />
+        <Skeleton className="size-10 rounded" />
+        <Skeleton className="size-10 rounded" />
       </div>
 
       {/* Zoom controls skeleton */}
       <div className="absolute bottom-8 right-4 space-y-1">
-        <Skeleton className="h-8 w-8 rounded" />
-        <Skeleton className="h-8 w-8 rounded" />
+        <Skeleton className="size-8 rounded" />
+        <Skeleton className="size-8 rounded" />
       </div>
 
       {/* Loading indicator in center */}

@@ -39,12 +39,12 @@ export function Breadcrumbs({ items, className = '' }: Readonly<BreadcrumbsProps
             return (
               <li key={item.label} className="flex items-center">
                 {index > 0 && (
-                  <ChevronRight className="h-4 w-4 mx-1 text-gray-400" aria-hidden="true" />
+                  <ChevronRight className="size-4 mx-1 text-gray-400" aria-hidden="true" />
                 )}
 
                 {isLast ? (
                   <span className="font-medium text-foreground py-2 px-3" aria-current="page">
-                    {isFirst && <Home className="h-4 w-4 inline mr-1" aria-hidden="true" />}
+                    {isFirst && <Home className="size-4 inline mr-1" aria-hidden="true" />}
                     {item.label}
                   </span>
                 ) : (
@@ -52,7 +52,7 @@ export function Breadcrumbs({ items, className = '' }: Readonly<BreadcrumbsProps
                     href={item.href || '/'}
                     className="hover:text-foreground transition-colors inline-flex items-center"
                   >
-                    {isFirst && <Home className="h-4 w-4 mr-1" aria-hidden="true" />}
+                    {isFirst && <Home className="size-4 mr-1" aria-hidden="true" />}
                     {item.label}
                   </Link>
                 )}

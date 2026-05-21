@@ -24,7 +24,7 @@ export const DeleteReviewDialog: React.FC<DeleteReviewDialogProps> = ({
       <DialogContent className="sm:max-w-106.25">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-red-600">
-            <AlertTriangle className="h-5 w-5" />
+            <AlertTriangle className="size-5" />
             Eliminar reseña
           </DialogTitle>
           <DialogDescription asChild>
@@ -44,7 +44,7 @@ export const DeleteReviewDialog: React.FC<DeleteReviewDialogProps> = ({
         <div className="py-4">
           <div className="bg-red-50 border border-red-200 rounded-md p-3">
             <div className="flex">
-              <AlertTriangle className="h-5 w-5 text-red-400 mt-0.5 mr-2" />
+              <AlertTriangle className="size-5 text-red-400 mt-0.5 mr-2" />
               <div className="text-sm text-red-700">
                 <p className="font-medium">Esta acción no se puede deshacer.</p>
                 <p className="mt-1">

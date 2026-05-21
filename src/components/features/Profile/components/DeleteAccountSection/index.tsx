@@ -21,7 +21,7 @@ export const DeleteAccountSection = () => {
   return (
     <div className="mt-8 border border-red-200 rounded-lg bg-red-50 p-6">
       <div className="flex items-center gap-2 mb-4">
-        <AlertTriangle className="h-5 w-5 text-red-600" />
+        <AlertTriangle className="size-5 text-red-600" />
         <h3 className="text-lg font-semibold text-red-900">Zona de Peligro</h3>
       </div>
 

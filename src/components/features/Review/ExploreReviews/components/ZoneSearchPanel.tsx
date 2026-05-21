@@ -42,7 +42,7 @@ export const ZoneSearchPanel = ({
           disabled={geoStatus === 'loading'}
           aria-label="Detectar mi ubicación actual"
         >
-          <LocateFixed className="h-4 w-4 shrink-0" aria-hidden="true" />
+          <LocateFixed className="size-4 shrink-0" aria-hidden="true" />
           {geoStatus === 'loading' ? 'Detectando...' : 'Usar mi ubicación'}
         </Button>
 
@@ -68,7 +68,7 @@ export const ZoneSearchPanel = ({
         <p className="text-xs text-muted-foreground mt-0.5 mb-3">Ingresa un barrio o ciudad.</p>
         <div className="relative">
           <Search
-            className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"
+            className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground"
             aria-hidden="true"
           />
           <Input
@@ -95,7 +95,7 @@ export const ZoneSearchPanel = ({
             className="w-full gap-2 text-muted-foreground"
             onClick={onClearSearch}
           >
-            <X className="h-4 w-4" />
+            <X className="size-4" />
             Limpiar búsqueda
           </Button>
         </>

@@ -39,7 +39,7 @@ function ReviewListCard({
           <p className="text-gray-600 mb-2 truncate">{review.title}</p>
           <StarRatingDisplay rating={review.rating ?? 0} />
           <div className="flex items-center gap-2">
-            <MapPin className="h-4 w-4" color="gray" />
+            <MapPin className="size-4" color="gray" />
             <p className="text-gray-600 truncate"> {review.address_text}</p>
           </div>
         </div>
@@ -50,15 +50,15 @@ function ReviewListCard({
       <Separator className="my-2" />
       <div className="flex items-start justify-between mb-2">
         <div className="flex items-center gap-1 text-sm text-gray-500">
-          <Calendar className="h-4 w-4" />
+          <Calendar className="size-4" />
           <DateDisplay date={review.created_at} />
         </div>
         <div className="flex items-center gap-2 text-sm text-gray-500">
           <span className="flex items-center gap-1">
-            <ThumbsUp className="h-4 w-4" /> {review.likes}
+            <ThumbsUp className="size-4" /> {review.likes}
           </span>
           <span className="flex items-center gap-1">
-            <ThumbsDown className="h-4 w-4" /> {review.dislikes}
+            <ThumbsDown className="size-4" /> {review.dislikes}
           </span>
         </div>
       </div>
@@ -77,7 +77,7 @@ function ReviewListContent({
     return (
       <Card>
         <div className="text-center py-8">
-          <MessageSquare className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+          <MessageSquare className="size-12 text-gray-400 mx-auto mb-4" />
           <p className="mb-4">Aún no hay reseñas para esta inmobiliaria</p>
         </div>
       </Card>

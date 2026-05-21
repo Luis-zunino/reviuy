@@ -68,7 +68,7 @@ export const PrivacySection = () => {
                   transition={{ duration: 0.5 }}
                 >
                   <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-reviuy-success-200 dark:border-reviuy-success-500/30 bg-reviuy-success-50 dark:bg-reviuy-success-500/10 px-4 py-2 text-sm font-medium text-reviuy-success-700 dark:text-reviuy-success-400">
-                    <Shield className="h-4 w-4" />
+                    <Shield className="size-4" />
                     Cumplimiento normativa uruguaya
                   </div>
 
@@ -100,8 +100,8 @@ export const PrivacySection = () => {
                         variants={itemVariants}
                         className="flex items-start gap-4"
                       >
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-reviuy-primary-50 dark:bg-reviuy-primary-500/10 text-reviuy-primary-600 dark:text-reviuy-primary-400">
-                          <feature.icon className="h-5 w-5" />
+                        <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-reviuy-primary-50 dark:bg-reviuy-primary-500/10 text-reviuy-primary-600 dark:text-reviuy-primary-400">
+                          <feature.icon className="size-5" />
                         </div>
                         <div>
                           <h3
@@ -153,17 +153,17 @@ export const PrivacySection = () => {
                 <div className="relative">
                   {/* Background circles */}
                   <div className="absolute inset-0 -z-10">
-                    <div className="absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-reviuy-primary-100/40 dark:bg-reviuy-primary-500/10 blur-3xl" />
-                    <div className="absolute left-1/3 top-1/3 h-32 w-32 -translate-x-1/2 -translate-y-1/2 rounded-full bg-reviuy-success-100/50 dark:bg-reviuy-success-500/10 blur-2xl" />
+                    <div className="absolute left-1/2 top-1/2 size-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-reviuy-primary-100/40 dark:bg-reviuy-primary-500/10 blur-3xl" />
+                    <div className="absolute left-1/3 top-1/3 size-32 -translate-x-1/2 -translate-y-1/2 rounded-full bg-reviuy-success-100/50 dark:bg-reviuy-success-500/10 blur-2xl" />
                   </div>
 
                   {/* Main shield icon */}
                   <m.div
                     whileHover={{ scale: 1.05 }}
                     transition={{ duration: 0.3 }}
-                    className="relative flex h-48 w-48 items-center justify-center rounded-3xl border border-reviuy-gray-200/60 dark:border-reviuy-gray-700/50  dark:bg-reviuy-gray-800/80 shadow-xl shadow-reviuy-primary-100/20 dark:shadow-reviuy-primary-900/10 md:h-64 md:w-64"
+                    className="relative flex size-48 items-center justify-center rounded-3xl border border-reviuy-gray-200/60 dark:border-reviuy-gray-700/50  dark:bg-reviuy-gray-800/80 shadow-xl shadow-reviuy-primary-100/20 dark:shadow-reviuy-primary-900/10 size-64"
                   >
-                    <Shield className="h-24 w-24 text-reviuy-primary-500 dark:text-reviuy-primary-400 md:h-32 md:w-32" />
+                    <Shield className="size-24 text-reviuy-primary-500 dark:text-reviuy-primary-400 size-32" />
                     {/* Floating badges */}
                     <m.div
                       initial={{ opacity: 0, x: 20 }}
@@ -172,7 +172,7 @@ export const PrivacySection = () => {
                       transition={{ duration: 0.5, delay: 0.4 }}
                       className="absolute -right-4 -top-4 flex items-center gap-1.5 rounded-full border border-reviuy-success-200 dark:border-reviuy-success-500/30  dark:bg-reviuy-gray-800 px-3 py-1.5 shadow-lg md:-right-6"
                     >
-                      <CheckCircle2 className="h-4 w-4 text-reviuy-success-500" />
+                      <CheckCircle2 className="size-4 text-reviuy-success-500" />
                       <span
                         className={`${manrope.className} text-xs font-semibold text-reviuy-success-700 dark:text-reviuy-success-400`}
                       >
@@ -187,7 +187,7 @@ export const PrivacySection = () => {
                       transition={{ duration: 0.5, delay: 0.5 }}
                       className="absolute -bottom-4 -left-4 flex items-center gap-1.5 rounded-full border border-reviuy-primary-200 dark:border-reviuy-primary-500/30  dark:bg-reviuy-gray-800 px-3 py-1.5 shadow-lg md:-left-6"
                     >
-                      <Lock className="h-4 w-4 text-reviuy-primary-500 dark:text-reviuy-primary-400" />
+                      <Lock className="size-4 text-reviuy-primary-500 dark:text-reviuy-primary-400" />
                       <span
                         className={`${manrope.className} text-xs font-semibold text-reviuy-primary-700 dark:text-reviuy-primary-400`}
                       >
