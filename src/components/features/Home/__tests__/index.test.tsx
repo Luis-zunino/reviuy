@@ -30,6 +30,6 @@ describe('Home', () => {
     expect(screen.getByText('FeaturedProjectsCarousel')).toBeInTheDocument();
     expect(screen.getByText('Tips')).toBeInTheDocument();
 
-    expect(container.firstChild).toHaveClass('mock-manrope');
+    expect(container.firstChild).toHaveClass('mocked-manrope-font relative flex flex-col');
   });
 });
