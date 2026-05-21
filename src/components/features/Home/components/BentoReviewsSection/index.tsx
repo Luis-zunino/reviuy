@@ -1,9 +1,9 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { LazyMotion, m, domAnimation } from 'framer-motion';
 import { Star, MapPin, ThumbsUp, Quote } from 'lucide-react';
-import { manrope, playfair } from '@/constants';
-import { cn } from '@/lib/utils';
+import { manrope, playfair } from '@/constants/fonts.constant';
+import { cn } from '@/lib/utils/cn';
 
 // Mock data for featured reviews
 const featuredReviews = [
@@ -86,7 +86,7 @@ interface ReviewCardProps {
 
 const ReviewCard = ({ review, className }: ReviewCardProps) => {
   return (
-    <motion.article
+    <m.article
       variants={cardVariants}
       whileHover={{
         y: -6,
@@ -143,7 +143,7 @@ const ReviewCard = ({ review, className }: ReviewCardProps) => {
           {review.likes}
         </div>
       </div>
-    </motion.article>
+    </m.article>
   );
 };
 
@@ -153,64 +153,66 @@ const ReviewCard = ({ review, className }: ReviewCardProps) => {
  */
 export const BentoReviewsSection = () => {
   return (
-    <section className="py-16 md:py-24">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-100px' }}
-          transition={{ duration: 0.5 }}
-          className="mb-12"
-        >
-          <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-            <div>
-              <h2
-                className={`${playfair.className} text-3xl font-bold text-reviuy-gray-900 dark:text-white md:text-4xl`}
+    <LazyMotion features={domAnimation}>
+      <section className="py-16 md:py-24">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          {/* Header */}
+          <m.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-100px' }}
+            transition={{ duration: 0.5 }}
+            className="mb-12"
+          >
+            <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+              <div>
+                <h2
+                  className={`${playfair.className} text-3xl font-bold text-reviuy-gray-900 dark:text-white md:text-4xl`}
+                >
+                  Reseñas destacadas
+                </h2>
+                <p
+                  className={`${manrope.className} mt-3 max-w-xl text-reviuy-gray-600 dark:text-reviuy-gray-400`}
+                >
+                  Experiencias reales de inquilinos que ya encontraron su hogar
+                </p>
+              </div>
+              <m.a
+                href="/review"
+                whileHover={{ x: 4 }}
+                className={`${manrope.className} group inline-flex items-center gap-2 text-sm font-semibold text-reviuy-primary-600 dark:text-reviuy-primary-400 transition-colors hover:text-reviuy-primary-700 dark:hover:text-reviuy-primary-300`}
               >
-                Reseñas destacadas
-              </h2>
-              <p
-                className={`${manrope.className} mt-3 max-w-xl text-reviuy-gray-600 dark:text-reviuy-gray-400`}
-              >
-                Experiencias reales de inquilinos que ya encontraron su hogar
-              </p>
+                Ver todas las reseñas{' '}
+                <span className="transition-transform duration-200 group-hover:translate-x-1">
+                  &rarr;
+                </span>
+              </m.a>
             </div>
-            <motion.a
-              href="/review"
-              whileHover={{ x: 4 }}
-              className={`${manrope.className} group inline-flex items-center gap-2 text-sm font-semibold text-reviuy-primary-600 dark:text-reviuy-primary-400 transition-colors hover:text-reviuy-primary-700 dark:hover:text-reviuy-primary-300`}
-            >
-              Ver todas las reseñas{' '}
-              <span className="transition-transform duration-200 group-hover:translate-x-1">
-                &rarr;
-              </span>
-            </motion.a>
-          </div>
-        </motion.div>
+          </m.div>
 
-        {/* Bento Grid */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-50px' }}
-          className="grid auto-rows-fr grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:grid-rows-2"
-        >
-          {/* Large card - spans 2 rows on lg */}
-          <ReviewCard
-            review={featuredReviews[0]}
-            className="sm:col-span-2 lg:col-span-1 lg:row-span-2"
-          />
+          {/* Bento Grid */}
+          <m.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-50px' }}
+            className="grid auto-rows-fr grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:grid-rows-2"
+          >
+            {/* Large card - spans 2 rows on lg */}
+            <ReviewCard
+              review={featuredReviews[0]}
+              className="sm:col-span-2 lg:col-span-1 lg:row-span-2"
+            />
 
-          {/* Small cards */}
-          <ReviewCard review={featuredReviews[1]} />
-          <ReviewCard review={featuredReviews[2]} />
+            {/* Small cards */}
+            <ReviewCard review={featuredReviews[1]} />
+            <ReviewCard review={featuredReviews[2]} />
 
-          {/* Medium card - spans 2 columns on lg */}
-          <ReviewCard review={featuredReviews[3]} className="lg:col-span-2" />
-        </motion.div>
-      </div>
-    </section>
+            {/* Medium card - spans 2 columns on lg */}
+            <ReviewCard review={featuredReviews[3]} className="lg:col-span-2" />
+          </m.div>
+        </div>
+      </section>
+    </LazyMotion>
   );
 };

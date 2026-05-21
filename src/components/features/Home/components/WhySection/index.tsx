@@ -1,9 +1,9 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { LazyMotion, m, domAnimation } from 'framer-motion';
 import { Search, Star, Users, ArrowRight } from 'lucide-react';
-import { manrope, playfair } from '@/constants';
-import { cn } from '@/lib/utils';
+import { manrope, playfair } from '@/constants/fonts.constant';
+import { cn } from '@/lib/utils/cn';
 import Link from 'next/link';
 import { PagesUrls } from '@/enums';
 import { Box } from '@/components/common';
@@ -65,97 +65,99 @@ const itemVariants = {
  */
 export const WhySection = () => {
   return (
-    <section className="py-16 md:py-24">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <Box className="rounded-3xl border border-reviuy-gray-200/60 dark:border-reviuy-gray-700/50  p-8 shadow-sm md:p-12 lg:p-16">
-          {/* Header */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-100px' }}
-            transition={{ duration: 0.5 }}
-            className="mb-12 max-w-2xl"
-          >
-            <h2
-              className={`${playfair.className} text-3xl font-bold text-reviuy-gray-900 dark:text-white md:text-4xl`}
+    <LazyMotion features={domAnimation}>
+      <section className="py-16 md:py-24">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <Box className="rounded-3xl border border-reviuy-gray-200/60 dark:border-reviuy-gray-700/50  p-8 shadow-sm md:p-12 lg:p-16">
+            {/* Header */}
+            <m.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-100px' }}
+              transition={{ duration: 0.5 }}
+              className="mb-12 max-w-2xl"
             >
-              Por que ReviUy funciona
-            </h2>
-            <p
-              className={`${manrope.className} mt-4 text-lg leading-relaxed text-reviuy-gray-600 dark:text-reviuy-gray-400`}
-            >
-              Tomamos reseñas reales y las convertimos en una decision clara para tu proximo
-              alquiler.
-            </p>
-          </motion.div>
-
-          {/* Features grid */}
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-50px' }}
-            className="grid gap-6 md:grid-cols-3"
-          >
-            {features.map((feature) => (
-              <motion.div
-                key={feature.title}
-                variants={itemVariants}
-                whileHover={{
-                  y: -6,
-                  transition: { duration: 0.25, ease: 'easeOut' },
-                }}
-                className={cn(
-                  'group relative flex flex-col rounded-2xl border  dark:bg-reviuy-gray-800/80 p-6 transition-all duration-300',
-                  feature.borderColor,
-                  'hover:shadow-lg hover:border-opacity-70'
-                )}
+              <h2
+                className={`${playfair.className} text-3xl font-bold text-reviuy-gray-900 dark:text-white md:text-4xl`}
               >
-                <div
+                Por que ReviUy funciona
+              </h2>
+              <p
+                className={`${manrope.className} mt-4 text-lg leading-relaxed text-reviuy-gray-600 dark:text-reviuy-gray-400`}
+              >
+                Tomamos reseñas reales y las convertimos en una decision clara para tu proximo
+                alquiler.
+              </p>
+            </m.div>
+
+            {/* Features grid */}
+            <m.div
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: '-50px' }}
+              className="grid gap-6 md:grid-cols-3"
+            >
+              {features.map((feature) => (
+                <m.div
+                  key={feature.title}
+                  variants={itemVariants}
+                  whileHover={{
+                    y: -6,
+                    transition: { duration: 0.25, ease: 'easeOut' },
+                  }}
                   className={cn(
-                    'mb-5 inline-flex h-12 w-12 items-center justify-center rounded-xl transition-transform duration-300 group-hover:scale-110',
-                    feature.bgColor
+                    'group relative flex flex-col rounded-2xl border  dark:bg-reviuy-gray-800/80 p-6 transition-all duration-300',
+                    feature.borderColor,
+                    'hover:shadow-lg hover:border-opacity-70'
                   )}
                 >
-                  <feature.icon className={cn('h-6 w-6', feature.color)} />
-                </div>
+                  <div
+                    className={cn(
+                      'mb-5 inline-flex h-12 w-12 items-center justify-center rounded-xl transition-transform duration-300 group-hover:scale-110',
+                      feature.bgColor
+                    )}
+                  >
+                    <feature.icon className={cn('h-6 w-6', feature.color)} />
+                  </div>
 
-                <h3
-                  className={`${manrope.className} mb-3 text-lg font-bold text-reviuy-gray-900 dark:text-white`}
-                >
-                  {feature.title}
-                </h3>
+                  <h3
+                    className={`${manrope.className} mb-3 text-lg font-bold text-reviuy-gray-900 dark:text-white`}
+                  >
+                    {feature.title}
+                  </h3>
 
-                <p
-                  className={`${manrope.className} flex-1 text-sm leading-relaxed text-reviuy-gray-600 dark:text-reviuy-gray-400`}
-                >
-                  {feature.description}
-                </p>
-              </motion.div>
-            ))}
-          </motion.div>
+                  <p
+                    className={`${manrope.className} flex-1 text-sm leading-relaxed text-reviuy-gray-600 dark:text-reviuy-gray-400`}
+                  >
+                    {feature.description}
+                  </p>
+                </m.div>
+              ))}
+            </m.div>
 
-          {/* CTA */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            className="mt-10 flex justify-center"
-          >
-            <Link
-              href={PagesUrls.REVIEW_CREATE}
-              className={cn(
-                manrope.className,
-                'group inline-flex items-center gap-2 rounded-xl bg-reviuy-primary-600 dark:bg-reviuy-primary-500 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-reviuy-primary-700 dark:hover:bg-reviuy-primary-600 hover:shadow-md'
-              )}
+            {/* CTA */}
+            <m.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              className="mt-10 flex justify-center"
             >
-              Escribi tu primera reseña
-              <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
-            </Link>
-          </motion.div>
-        </Box>
-      </div>
-    </section>
+              <Link
+                href={PagesUrls.REVIEW_CREATE}
+                className={cn(
+                  manrope.className,
+                  'group inline-flex items-center gap-2 rounded-xl bg-reviuy-primary-600 dark:bg-reviuy-primary-500 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-reviuy-primary-700 dark:hover:bg-reviuy-primary-600 hover:shadow-md'
+                )}
+              >
+                Escribi tu primera reseña
+                <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
+              </Link>
+            </m.div>
+          </Box>
+        </div>
+      </section>
+    </LazyMotion>
   );
 };

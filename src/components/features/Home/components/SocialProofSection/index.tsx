@@ -1,8 +1,8 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { LazyMotion, m, domAnimation } from 'framer-motion';
 import { Star, Building2, Users, Shield } from 'lucide-react';
-import { manrope, playfair } from '@/constants';
+import { manrope, playfair } from '@/constants/fonts.constant';
 
 const stats = [
   {
@@ -64,50 +64,54 @@ const itemVariants = {
  */
 export const SocialProofSection = () => {
   return (
-    <section className="py-16 md:py-24">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-100px' }}
-          transition={{ duration: 0.5 }}
-          className="mb-12 text-center "
-        >
-          <h2 className={`${playfair.className} text-2xl font-bold  md:text-3xl`}>
-            La confianza de la comunidad
-          </h2>
-          <p className={`${manrope.className} mt-3`}>
-            Miles de uruguayos ya comparten sus experiencias
-          </p>
-        </motion.div>
+    <LazyMotion features={domAnimation}>
+      <section className="py-16 md:py-24">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <m.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-100px' }}
+            transition={{ duration: 0.5 }}
+            className="mb-12 text-center "
+          >
+            <h2 className={`${playfair.className} text-2xl font-semibold  md:text-3xl`}>
+              La confianza de la comunidad
+            </h2>
+            <p className={`${manrope.className} mt-3`}>
+              Miles de uruguayos ya comparten sus experiencias
+            </p>
+          </m.div>
 
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-50px' }}
-          className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6"
-        >
-          {stats.map((stat) => (
-            <motion.div
-              key={stat.label}
-              variants={itemVariants}
-              whileHover={{ y: -4, transition: { duration: 0.2 } }}
-              className="group flex flex-col items-center rounded-2xl border border-reviuy-gray-200/60  dark:bg-reviuy-gray-800/50  p-6 shadow-sm transition-all duration-300 hover:border-reviuy-gray-300 hover:shadow-lg md:p-8"
-            >
-              <div
-                className={`mb-4 rounded-xl ${stat.bgColor} p-3 transition-transform duration-300 group-hover:scale-110`}
+          <m.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-50px' }}
+            className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6"
+          >
+            {stats.map((stat) => (
+              <m.div
+                key={stat.label}
+                variants={itemVariants}
+                whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                className="group flex flex-col items-center rounded-2xl border border-reviuy-gray-200/60  dark:bg-reviuy-gray-800/50  p-6 shadow-sm transition-all duration-300 hover:border-reviuy-gray-300 hover:shadow-lg md:p-8"
               >
-                <stat.icon className={`h-6 w-6 ${stat.color}`} />
-              </div>
-              <span className={`${playfair.className} text-2xl font-bold  md:text-3xl`}>
-                {stat.value}
-              </span>
-              <span className={`${manrope.className} mt-1 text-center text-sm`}>{stat.label}</span>
-            </motion.div>
-          ))}
-        </motion.div>
-      </div>
-    </section>
+                <div
+                  className={`mb-4 rounded-xl ${stat.bgColor} p-3 transition-transform duration-300 group-hover:scale-110`}
+                >
+                  <stat.icon className={`h-6 w-6 ${stat.color}`} />
+                </div>
+                <span className={`${playfair.className} text-2xl font-bold  md:text-3xl`}>
+                  {stat.value}
+                </span>
+                <span className={`${manrope.className} mt-1 text-center text-sm`}>
+                  {stat.label}
+                </span>
+              </m.div>
+            ))}
+          </m.div>
+        </div>
+      </section>
+    </LazyMotion>
   );
 };
