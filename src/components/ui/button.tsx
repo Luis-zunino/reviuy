@@ -72,46 +72,42 @@ const iconSizeMap = {
   icon: 18, // Para botones de solo icono, un poco más grande
 } as const;
 
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  (
-    {
-      className,
-      variant,
-      size,
-      asChild = false,
-      icon: Icon,
-      iconPosition = 'left',
-      children,
-      ...props
-    },
-    ref
-  ) => {
-    const Comp = asChild ? Slot : 'button';
+const Button = ({
+  ref,
+  className,
+  variant,
+  size,
+  asChild = false,
+  icon: Icon,
+  iconPosition = 'left',
+  children,
+  ...props
+}: ButtonProps & { ref?: React.Ref<HTMLButtonElement> }) => {
+  const Comp = asChild ? Slot : 'button';
 
-    // Si no hay children y hay icono, es un botón de solo icono
-    const isIconOnly = !children && Icon;
-    const effectiveSize = isIconOnly ? 'icon' : size;
+  // Si no hay children y hay icono, es un botón de solo icono
+  const isIconOnly = !children && Icon;
+  const effectiveSize = isIconOnly ? 'icon' : size;
 
-    // Obtener el tamaño del icono basado en el tamaño del botón
-    const iconSize = iconSizeMap[effectiveSize || 'default'];
+  // Obtener el tamaño del icono basado en el tamaño del botón
+  const iconSize = iconSizeMap[effectiveSize || 'default'];
 
-    return (
-      <Comp
-        ref={ref}
-        data-slot="button"
-        className={cn(
-          'flex items-center gap-2',
-          buttonVariants({ variant, size: effectiveSize, className })
-        )}
-        {...props}
-      >
-        {Icon && iconPosition === 'left' && <Icon size={iconSize} />}
-        {children}
-        {Icon && iconPosition === 'right' && <Icon size={iconSize} />}
-      </Comp>
-    );
-  }
-);
+  return (
+    <Comp
+      ref={ref}
+      data-slot="button"
+      className={cn(
+        'flex items-center gap-2',
+        buttonVariants({ variant, size: effectiveSize, className })
+      )}
+      {...props}
+    >
+      {Icon && iconPosition === 'left' && <Icon size={iconSize} />}
+      {children}
+      {Icon && iconPosition === 'right' && <Icon size={iconSize} />}
+    </Comp>
+  );
+};
 
 Button.displayName = 'Button';
 
