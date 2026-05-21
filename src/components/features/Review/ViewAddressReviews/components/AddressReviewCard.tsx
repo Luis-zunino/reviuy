@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Calendar } from 'lucide-react';
@@ -14,11 +14,10 @@ export const AddressReviewCard = ({ review }: AddressReviewCardProps) => {
   const { push } = useRouter();
   const recommended = (review.rating ?? 0) >= 3.5;
 
-  const [daysSinceCreated, setDaysSinceCreated] = useState(0);
-
-  useEffect(() => {
-    setDaysSinceCreated(
-      Math.floor((Date.now() - new Date(review.created_at ?? '').getTime()) / (1000 * 60 * 60 * 24))
+  const daysSinceCreated = useMemo(() => {
+    const now = new Date();
+    return Math.floor(
+      (now.getTime() - new Date(review.created_at ?? '').getTime()) / (1000 * 60 * 60 * 24)
     );
   }, [review.created_at]);
 

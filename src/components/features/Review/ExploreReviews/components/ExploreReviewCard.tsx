@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
@@ -18,12 +18,12 @@ export const ExploreReviewCard = ({ review }: ExploreReviewCardProps) => {
   const { push } = useRouter();
   const recommended = (review.rating ?? 0) >= 3.5;
 
-  const [daysSinceCreated, setDaysSinceCreated] = useState(0);
-
-  useEffect(() => {
-    setDaysSinceCreated(
-      Math.floor((Date.now() - new Date(review.created_at ?? '').getTime()) / (1000 * 60 * 60 * 24))
+  const daysSinceCreated = useMemo(() => {
+    const now = new Date();
+    const days = Math.floor(
+      (now.getTime() - new Date(review.created_at ?? '').getTime()) / (1000 * 60 * 60 * 24)
     );
+    return days;
   }, [review.created_at]);
 
   const handleViewMore = () => {
