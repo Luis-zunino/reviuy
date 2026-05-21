@@ -10,12 +10,10 @@ export default function AddressError({
   return (
     <main className="flex min-h-[60vh] items-center justify-center p-6">
       <div className="max-w-md rounded-xl border border-slate-200 bg-white p-8 text-center shadow-sm">
-        <h1 className="text-xl font-semibold text-slate-900">
-          Error al cargar la direccion
-        </h1>
+        <h1 className="text-xl font-semibold text-slate-900">Error al cargar la direccion</h1>
         <p className="mt-2 text-sm text-slate-600">
-          No pudimos obtener la informacion de esta direccion. Es posible que
-          el recurso no exista o haya ocurrido un error temporal.
+          No pudimos obtener la informacion de esta direccion. Es posible que el recurso no exista o
+          haya ocurrido un error temporal.
         </p>
         <div className="mt-6 flex justify-center gap-3">
           <button

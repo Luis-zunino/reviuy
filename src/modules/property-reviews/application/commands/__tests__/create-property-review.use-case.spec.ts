@@ -82,7 +82,9 @@ describe('createCreatePropertyReviewUseCase', () => {
     getCurrentUserId.mockResolvedValueOnce(null);
     const execute = createCreatePropertyReviewUseCase(dependencies);
 
-    await expect(execute(validInput)).rejects.toThrow('UNAUTHORIZED');
+    await expect(execute(validInput)).rejects.toThrow(
+      'Debes iniciar sesión para realizar esta acción'
+    );
     expect(rateLimit).not.toHaveBeenCalled();
     expect(createReview).not.toHaveBeenCalled();
   });
