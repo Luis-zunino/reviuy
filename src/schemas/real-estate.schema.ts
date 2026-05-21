@@ -1,4 +1,4 @@
-import { validateText } from '@/utils';
+import { validateText } from '@/utils/textValidation.util';
 import * as z from 'zod';
 
 export const formCreateRealEstateSchema = z.object({

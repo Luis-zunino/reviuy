@@ -1,11 +1,11 @@
 import { useAuthContext } from '@/components/providers/AuthProvider';
-import { PagesUrls } from '@/enums';
+import { PagesUrls } from '@/enums/pagesUrls.enum';
 import {
   useGetRealEstateById,
   useGetRealEstateReviewByUserId,
   useGetUserRealEstateVote,
 } from '@/modules/real-estates';
-import { VoteType } from '@/types';
+import { VoteType } from '@/types/vote-type';
 import { useParams, useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 

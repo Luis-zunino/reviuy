@@ -46,11 +46,11 @@ export const SecondForm = (props: SecondFormProps) => {
                 className="flex flex-wrap gap-6"
                 id="winter-comfort"
               >
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center gap-x-2">
                   <RadioGroupItem value="cold" id="winter-cold" />
                   <FormLabel htmlFor="winter-cold" label="Frío" className="text-muted-foreground" />
                 </div>
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center gap-x-2">
                   <RadioGroupItem value="comfortable" id="winter-comfortable" />
                   <FormLabel
                     htmlFor="winter-comfortable"
@@ -58,7 +58,7 @@ export const SecondForm = (props: SecondFormProps) => {
                     className="text-muted-foreground"
                   />
                 </div>
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center gap-x-2">
                   <RadioGroupItem value="hot" id="winter-hot" />
                   <FormLabel
                     htmlFor="winter-hot"
@@ -81,11 +81,11 @@ export const SecondForm = (props: SecondFormProps) => {
                 onValueChange={field.onChange}
                 className="flex flex-wrap gap-6"
               >
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center gap-x-2">
                   <RadioGroupItem value="cold" id="summer-cold" />
                   <FormLabel htmlFor="summer-cold" label="Frío" className="text-muted-foreground" />
                 </div>
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center gap-x-2">
                   <RadioGroupItem value="comfortable" id="summer-comfortable" />
                   <FormLabel
                     htmlFor="summer-comfortable"
@@ -93,7 +93,7 @@ export const SecondForm = (props: SecondFormProps) => {
                     className="text-muted-foreground"
                   />
                 </div>
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center gap-x-2">
                   <RadioGroupItem value="hot" id="summer-hot" />
                   <FormLabel
                     htmlFor="summer-hot"
@@ -117,7 +117,7 @@ export const SecondForm = (props: SecondFormProps) => {
                 onValueChange={field.onChange}
                 className="flex flex-wrap gap-6"
               >
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center gap-x-2">
                   <RadioGroupItem value="low" id="humidity-low" />
                   <FormLabel
                     htmlFor="humidity-low"
@@ -125,7 +125,7 @@ export const SecondForm = (props: SecondFormProps) => {
                     className="text-muted-foreground"
                   />
                 </div>
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center gap-x-2">
                   <RadioGroupItem value="normal" id="humidity-normal" />
                   <FormLabel
                     htmlFor="humidity-normal"
@@ -133,7 +133,7 @@ export const SecondForm = (props: SecondFormProps) => {
                     className="text-muted-foreground"
                   />
                 </div>
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center gap-x-2">
                   <RadioGroupItem value="high" id="humidity-high" />
                   <FormLabel
                     htmlFor="humidity-high"
@@ -150,7 +150,7 @@ export const SecondForm = (props: SecondFormProps) => {
         <div className="flex items-center justify-between">
           <FormLabel label="Habitaciones" />
           <Button type="button" onClick={addRoom} variant="outline" size="sm">
-            <Plus className="w-4 h-4 mr-2" />
+            <Plus className="size-4 mr-2" />
             Agregar habitación
           </Button>
         </div>
@@ -227,7 +227,7 @@ export const SecondForm = (props: SecondFormProps) => {
                   size="icon"
                   className="text-red-500 hover:text-red-700 hover:bg-red-50"
                 >
-                  <Trash2 className="w-4 h-4" />
+                  <Trash2 className="size-4" />
                 </Button>
               </div>
             ))}

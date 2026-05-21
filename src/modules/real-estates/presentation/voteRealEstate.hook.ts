@@ -1,5 +1,5 @@
 import { voteRealEstateAction } from '@/modules/real-estates/presentation';
-import { useAuthMutation } from '@/shared/auth';
+import { useAuthMutation } from '@/shared/auth/useAuthMutation.hook';
 import { VoteRealEstateParams } from './types';
 
 export const useVoteRealEstate = () => {

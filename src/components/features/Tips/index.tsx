@@ -34,7 +34,7 @@ export const TipsPageComponent = () => {
                     </span>
                     <span className="text-xs text-muted-foreground">{tip.readTime}</span>
                   </div>
-                  <h2 className="text-xl font-bold text-foreground mb-2 group-hover:text-blue-600">
+                  <h2 className="text-xl font-semibold text-foreground mb-2 group-hover:text-blue-600">
                     {tip.title}
                   </h2>
                   <p className="text-muted-foreground text-sm mb-4">{tip.excerpt}</p>
@@ -42,11 +42,11 @@ export const TipsPageComponent = () => {
                 <div className="flex items-center justify-between text-sm text-muted-foreground">
                   <div className="flex items-center gap-4">
                     <div className="flex items-center gap-1">
-                      <Calendar className="w-4 h-4" />
+                      <Calendar className="size-4" />
                       {tip.date}
                     </div>
                     <div className="flex items-center gap-1">
-                      <User className="w-4 h-4" />
+                      <User className="size-4" />
                       {tip.category}
                     </div>
                   </div>
@@ -55,7 +55,7 @@ export const TipsPageComponent = () => {
                     className="hover:shadow-lg transition-shadow"
                     title="Ver detalles"
                   >
-                    <ArrowRight className="w-4 h-4 text-blue-600 group-hover:translate-x-1 transition-transform" />{' '}
+                    <ArrowRight className="size-4 text-blue-600 group-hover:translate-x-1 transition-transform" />{' '}
                   </Link>
                 </div>
               </div>

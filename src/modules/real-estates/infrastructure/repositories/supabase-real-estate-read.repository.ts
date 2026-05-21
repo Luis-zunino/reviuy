@@ -189,9 +189,10 @@ export class SupabaseRealEstateReadRepository implements RealEstateReadRepositor
     if (error) throw handleSupabaseError(error);
 
     return (
-      data
-        ?.map((item) => item.real_estates)
-        .filter((item): item is GetUserFavoriteRealEstatesOutput[number] => item !== null) ?? []
+      data?.reduce<GetUserFavoriteRealEstatesOutput>((acc, item) => {
+        if (item.real_estates) acc.push(item.real_estates);
+        return acc;
+      }, []) ?? []
     );
   }
 

@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { createGetUserRealEstateReviewVoteQuery } from '../get-user-real-estate-review-vote.query';
-import { VoteType } from '@/types';
+import { VoteType } from '@/types/vote-type';
 import type { RealEstateReadRepository } from '@/modules/real-estates/domain';
 
 describe('createGetUserRealEstateReviewVoteQuery', () => {

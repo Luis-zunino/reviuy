@@ -1,4 +1,4 @@
-import { VoteType } from '@/types';
+import { VoteType } from '@/types/vote-type';
 import { VoteState } from '../types';
 
 /**

@@ -15,7 +15,7 @@ export const Login = () => {
   return (
     <div className="space-y-6 mx-auto">
       <div className="text-center space-y-2">
-        <h1 className="text-2xl font-bold text-gray-900">Iniciar Sesión</h1>
+        <h1 className="text-2xl font-semibold text-gray-900">Iniciar Sesión</h1>
       </div>
 
       <Button
@@ -90,7 +90,7 @@ export const Login = () => {
           {loading ? (
             <>
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-              Enviando enlace...
+              Enviando enlace…
             </>
           ) : (
             'Enviar enlace mágico'

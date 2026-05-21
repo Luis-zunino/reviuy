@@ -1,3 +1,6 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import { FeedBackBadge } from '@/components/common';
 import { Button } from '@/components/ui/button';
 import { ReviewCardProps } from '../../types';
@@ -5,8 +8,14 @@ import { ReviewCardProps } from '../../types';
 export const AddressReviewCard = ({ review }: ReviewCardProps) => {
   const addressText = review.address_text || 'Dirección no disponible';
   const cityText = addressText.includes(',') ? addressText.split(',').slice(-1)[0].trim() : '';
-
   const isRecommended = review.rating >= 3;
+  const [formattedDate, setFormattedDate] = useState('');
+
+  useEffect(() => {
+    if (review.created_at) {
+      setFormattedDate(new Date(review.created_at).toLocaleDateString('es-ES'));
+    }
+  }, [review.created_at]);
 
   return (
     <div className="relative border border-gray-300 rounded-md overflow-hidden my-6">
@@ -21,7 +30,7 @@ export const AddressReviewCard = ({ review }: ReviewCardProps) => {
             </span>
             {review.property_type && (
               <div className="flex items-center">
-                <div className="flex w-5 h-5">
+                <div className="flex size-5">
                   <svg
                     stroke="currentColor"
                     fill="currentColor"
@@ -41,7 +50,7 @@ export const AddressReviewCard = ({ review }: ReviewCardProps) => {
               </div>
             )}
             <div className="flex items-center">
-              <div className="flex w-5 h-5">
+              <div className="flex size-5">
                 <svg
                   stroke="currentColor"
                   fill="currentColor"
@@ -56,7 +65,7 @@ export const AddressReviewCard = ({ review }: ReviewCardProps) => {
                 </svg>
               </div>
               <p className="text-neutral-400 ml-2 text-xs md:text-sm ">
-                Publicado el {new Date(review.created_at).toLocaleDateString('es-ES')}
+                Publicado el {formattedDate}
               </p>
             </div>
           </div>

@@ -2,13 +2,18 @@ import { renderHook } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useGetUserRealEstateReviewVote } from '../getUserRealEstateReviewVote.hook';
 import { useQuery } from '@tanstack/react-query';
-import { VoteType } from '@/types';
-import { REAL_ESTATE_REVIEWS } from '@/constants';
+import { VoteType } from '@/types/vote-type';
+import { REAL_ESTATE_REVIEWS } from '@/constants/query-keys.constant';
 
 vi.mock('@tanstack/react-query');
 vi.mock('@/lib/supabase/client', () => ({
   createClient: vi.fn(),
   supabaseClient: {},
+}));
+vi.mock('@/modules/real-estates', () => ({
+  createGetUserRealEstateReviewVoteQuery: vi.fn(),
+  SupabaseRealEstateReadRepository: vi.fn(),
+  createGetAllRealEstateReviewsQuery: vi.fn(),
 }));
 
 describe('useGetUserRealEstateReviewVote', () => {

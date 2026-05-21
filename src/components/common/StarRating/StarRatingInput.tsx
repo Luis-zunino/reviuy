@@ -2,7 +2,7 @@
 
 import { Star } from 'lucide-react';
 import React, { useState } from 'react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/cn';
 import type { StarRatingInputProps } from './types';
 import { Button } from '@/components/ui/button';
 

@@ -1,4 +1,4 @@
-import { createError, handleSupabaseError } from '@/lib';
+import { createError, handleSupabaseError } from '@/lib/errors';
 import type { createSupabaseServerClient } from '@/lib/supabase/server';
 import type {
   CreateRealEstateInput,

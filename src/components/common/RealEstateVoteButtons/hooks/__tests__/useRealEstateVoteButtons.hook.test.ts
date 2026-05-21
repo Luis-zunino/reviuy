@@ -2,14 +2,20 @@ import { renderHook, act } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useRealEstateVoteButtons } from '../useRealEstateVoteButtons.hook';
 import { useVoteRealEstate } from '@/modules/real-estates/presentation';
-import { VoteType } from '@/types';
+import { VoteType } from '@/types/vote-type';
 import { toast } from 'sonner';
 
 vi.mock('@/lib/supabase/client', () => ({
   createClient: vi.fn(),
   supabaseClient: {},
 }));
-vi.mock('@/modules/real-estates/presentation');
+vi.mock('@/modules/real-estates', () => ({
+  createGetAllRealEstateReviewsQuery: vi.fn(),
+  SupabaseRealEstateReadRepository: vi.fn(),
+}));
+vi.mock('@/modules/real-estates/presentation', () => ({
+  useVoteRealEstate: vi.fn(),
+}));
 vi.mock('sonner', () => ({
   toast: {
     error: vi.fn(),

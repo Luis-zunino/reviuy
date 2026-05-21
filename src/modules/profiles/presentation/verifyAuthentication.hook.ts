@@ -1,4 +1,4 @@
-import { USER_KEYS } from '@/constants';
+import { USER_KEYS } from '@/constants/query-keys.constant';
 import { AuthError } from '@supabase/supabase-js';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { createVerifyAuthenticationQuery } from '@/modules/profiles/application';

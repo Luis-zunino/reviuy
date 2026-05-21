@@ -31,7 +31,7 @@ export const ProfileComponent = () => {
         description="Gestiona tus reseñas y favoritos"
         sidebar={
           <div className="h-24 lg:h-72">
-            <h3 className="font-bold text-foreground mb-6">Categorías</h3>
+            <h3 className="font-semibold text-foreground mb-6">Categorías</h3>
             <TabsList className="grid w-full grid-cols-3 lg:grid-cols-1 gap-2">
               <TabsTrigger value="reviews" className="flex justify-center">
                 Mis reseñas

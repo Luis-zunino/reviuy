@@ -1,4 +1,4 @@
-import { RateLimitType } from '@/lib';
+import { RateLimitType } from '@/lib/redis';
 import { RealEstateCommandRepository } from '@/modules/real-estates/domain';
 
 export interface RealEstateCommandoBase {

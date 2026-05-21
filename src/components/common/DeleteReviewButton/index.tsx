@@ -16,7 +16,7 @@ export const DeleteReviewButton: React.FC<DeleteReviewButtonProps> = ({
   size = 'sm',
   className = '',
 }) => {
-  const router = useRouter();
+  const { back } = useRouter();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const { mutateAsync, isPending } = useDeleteReview();
@@ -44,7 +44,7 @@ export const DeleteReviewButton: React.FC<DeleteReviewButtonProps> = ({
             toast.success('Reseña eliminada', {
               description: data.message,
             });
-            router.back();
+            back();
             setShowDeleteDialog(false);
           } else {
             toast.error('Error al eliminar', {

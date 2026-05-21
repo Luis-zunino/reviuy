@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { translateRoomType } from '../translateRoomType.util';
-import { RoomType } from '@/enums';
+import { RoomType } from '@/enums/roomType.enum';
 
 describe('translateRoomType', () => {
   it('returns "Baño" for BATHROOM', () => {

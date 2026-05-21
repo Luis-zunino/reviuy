@@ -1,4 +1,4 @@
-import { useAuthMutation } from '@/shared/auth';
+import { useAuthMutation } from '@/shared/auth/useAuthMutation.hook';
 
 export const useApiMutation = <TPayload extends Record<string, unknown>>(
   endpoint: string,

@@ -1,7 +1,7 @@
-import { REAL_ESTATE_REVIEWS } from '@/constants';
+import { REAL_ESTATE_REVIEWS } from '@/constants/query-keys.constant';
 import { SearchRealEstatesParams } from './types';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
-import { supabaseClient } from '@/lib/supabase';
+import { supabaseClient } from '@/lib/supabase/client';
 import {
   createSearchRealEstatesQuery,
   RealEstateWithVotesPublic,

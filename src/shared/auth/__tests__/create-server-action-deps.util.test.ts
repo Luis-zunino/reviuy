@@ -12,7 +12,7 @@ vi.mock('@/lib/supabase/server', () => ({
   createSupabaseServerClient: mockCreateSupabaseServerClient,
 }));
 
-vi.mock('@/lib', () => ({
+vi.mock('@/lib/redis', () => ({
   withRateLimit: mockWithRateLimit,
 }));
 

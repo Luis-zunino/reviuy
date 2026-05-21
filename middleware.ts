@@ -1,4 +1,4 @@
-import { PagesUrls } from '@/enums';
+import { PagesUrls } from '@/enums/pagesUrls.enum';
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 

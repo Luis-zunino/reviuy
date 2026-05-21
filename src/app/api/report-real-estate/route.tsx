@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
 import { ReportRealEstateTemplate } from '@/components/common/Emails';
 import { getAuthenticatedUser, parseAndValidateBody, sendEmail } from '../_utils';
-import { AppError, createError, withRateLimit, RateLimitType } from '@/lib';
-import { reportRealEstateApiSchema } from '@/schemas';
+import { AppError, createError } from '@/lib/errors';
+import { withRateLimit, RateLimitType } from '@/lib/redis';
+import { reportRealEstateApiSchema } from '@/schemas/api-request.schema';
 import { createReportRealEstateByNameUseCase } from '@/modules/moderation/application';
 
 export async function GET() {
@@ -23,6 +24,13 @@ export async function POST(req: Request) {
       throw createError('UNAUTHORIZED', 'No autorizado');
     }
 
+    if (!user.email) {
+      throw createError('INVALID_INPUT', 'El email del usuario no se encontro');
+    }
+
+    const body = await parseAndValidateBody(req, reportRealEstateApiSchema);
+    const { realEstateName, reason, message } = body;
+
     const reportRealEstateByNameUseCase = createReportRealEstateByNameUseCase({
       getCurrentUserId: async () => user.id,
       rateLimit: async (key: string, scope: RateLimitType) => {
@@ -30,14 +38,7 @@ export async function POST(req: Request) {
       },
     });
 
-    const body = await parseAndValidateBody(req, reportRealEstateApiSchema);
-    const { realEstateName, reason, message } = body;
-
     await reportRealEstateByNameUseCase(body);
-
-    if (!user.email) {
-      throw createError('INVALID_INPUT', 'El email del usuario no se encontro');
-    }
 
     await sendEmail({
       to: [process.env.CONTACT_EMAIL!],

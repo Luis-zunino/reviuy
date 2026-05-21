@@ -3,7 +3,7 @@ import { ChevronRight, Home } from 'lucide-react';
 import { StructuredData } from '@/components/seo';
 import { BreadcrumbsProps } from './types';
 import { useBreadcrumbs } from './hooks';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/cn';
 
 /**
  * Breadcrumbs Component
@@ -29,9 +29,9 @@ export function Breadcrumbs({ items, className = '' }: Readonly<BreadcrumbsProps
       <StructuredData data={breadcrumbSchema} />
       <nav
         aria-label="Breadcrumb"
-        className={cn('flex items-center space-x-1 text-sm text-muted-foreground', className)}
+        className={cn('flex items-center gap-x-1 text-sm text-muted-foreground', className)}
       >
-        <ol className="flex items-center space-x-1">
+        <ol className="flex items-center gap-x-1">
           {allItems.map((item, index) => {
             const isLast = index === allItems.length - 1;
             const isFirst = index === 0;

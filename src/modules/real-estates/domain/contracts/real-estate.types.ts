@@ -1,4 +1,5 @@
-import type { Database, VoteType } from '@/types';
+import type { VoteType } from '@/types/vote-type';
+import type { Database } from '@/types/supabase';
 
 export type RealEstateReviewInsert = Database['public']['Tables']['real_estate_reviews']['Insert'];
 export type RealEstate = Database['public']['Tables']['real_estates']['Row'];

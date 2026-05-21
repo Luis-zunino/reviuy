@@ -1,8 +1,9 @@
 'use client';
 
-import { REVIEW_KEYS, UUID_REGEX } from '@/constants';
+import { REVIEW_KEYS } from '@/constants/query-keys.constant';
+import { UUID_REGEX } from '@/constants/uuid-regex.constant';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
-import { supabaseClient } from '@/lib/supabase';
+import { supabaseClient } from '@/lib/supabase/client';
 import {
   createGetReviewsByRealEstateIdQuery,
   ReviewWithVotesPublic,

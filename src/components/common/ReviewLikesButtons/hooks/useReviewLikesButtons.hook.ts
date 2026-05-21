@@ -1,11 +1,10 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { useGetReviewVote } from '@/modules/property-reviews/presentation';
-import { REVIEW_KEYS } from '@/constants';
-import { voteAction } from '../../VoteButtons/actions';
-import { VoteType } from '@/types';
+import { useGetReviewVote, voteReviewAction } from '@/modules/property-reviews/presentation';
+import { REVIEW_KEYS } from '@/constants/query-keys.constant';
+import { VoteType } from '@/types/vote-type';
 import { toast } from 'sonner';
 import { usePathname } from 'next/navigation';
-import { useState, useRef } from 'react';
+import { useRef, useTransition } from 'react';
 
 export const useReviewLikesButtons = (props: { id: string }) => {
   const { id: reviewId } = props;
@@ -13,24 +12,26 @@ export const useReviewLikesButtons = (props: { id: string }) => {
   const queryClient = useQueryClient();
   const { data, refetch } = useGetReviewVote({ reviewId });
 
-  const [isPending, setIsPending] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const isPendingRef = useRef(false);
 
   const addVote = async (voteType: VoteType) => {
     if (isPendingRef.current) return;
     isPendingRef.current = true;
-    setIsPending(true);
 
-    try {
-      await voteAction(reviewId, voteType, path);
-      await refetch();
-      await queryClient.invalidateQueries({ queryKey: [REVIEW_KEYS.getReviewById, reviewId] });
-    } catch (error) {
-      toast.warning(error instanceof Error ? error.message : 'Vote failed');
-    } finally {
-      isPendingRef.current = false;
-      setIsPending(false);
-    }
+    startTransition(async () => {
+      try {
+        await voteReviewAction(reviewId, voteType, path);
+        await Promise.all([
+          refetch(),
+          queryClient.invalidateQueries({ queryKey: [REVIEW_KEYS.getReviewById, reviewId] }),
+        ]);
+      } catch (error) {
+        toast.warning(error instanceof Error ? error.message : 'Vote failed');
+      } finally {
+        isPendingRef.current = false;
+      }
+    });
   };
 
   const getLikeTooltip = () => {

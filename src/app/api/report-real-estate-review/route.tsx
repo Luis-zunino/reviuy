@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
 import { ReportRealEstateReviewTemplate } from '@/components/common/Emails';
 import { getAuthenticatedUser, parseAndValidateBody, sendEmail } from '../_utils';
-import { AppError, createError, withRateLimit, RateLimitType } from '@/lib';
-import { reportRealEstateReviewApiSchema } from '@/schemas';
+import { AppError, createError } from '@/lib/errors';
+import { withRateLimit, RateLimitType } from '@/lib/redis';
+import { reportRealEstateReviewApiSchema } from '@/schemas/api-request.schema';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { createReportRealEstateReviewUseCase } from '@/modules/moderation/application';
 import { SupabaseModerationCommandRepository } from '@/modules/moderation/infrastructure';
@@ -20,11 +21,19 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const user = await getAuthenticatedUser();
-    const supabase = await createSupabaseServerClient();
 
     if (!user) {
       throw createError('UNAUTHORIZED', 'No autorizado');
     }
+
+    if (!user.email) {
+      throw createError('INVALID_INPUT', 'El email del usuario no se encontro');
+    }
+
+    const supabase = await createSupabaseServerClient();
+
+    const body = await parseAndValidateBody(req, reportRealEstateReviewApiSchema);
+    const { realEstateReviewUuid, reason, message } = body;
 
     const reportRealEstateReviewUseCase = createReportRealEstateReviewUseCase({
       getCurrentUserId: async () => user.id,
@@ -34,18 +43,11 @@ export async function POST(req: Request) {
       repository: new SupabaseModerationCommandRepository(supabase),
     });
 
-    const body = await parseAndValidateBody(req, reportRealEstateReviewApiSchema);
-    const { realEstateReviewUuid, reason, message } = body;
-
     await reportRealEstateReviewUseCase({
       review_id: realEstateReviewUuid,
       reason,
       description: message,
     });
-
-    if (!user.email) {
-      throw createError('INVALID_INPUT', 'El email del usuario no se encontro');
-    }
 
     await sendEmail({
       to: [process.env.CONTACT_EMAIL!],

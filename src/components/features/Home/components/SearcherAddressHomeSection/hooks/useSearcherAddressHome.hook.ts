@@ -1,10 +1,11 @@
-import { OsmType, PagesUrls } from '@/enums';
+import { OsmType } from '@/enums/osmType.enum';
+import { PagesUrls } from '@/enums/pagesUrls.enum';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useState } from 'react';
 import { formSchema, FormSearcherAddressHome } from '../constants';
-import { getAddressOsmId } from '@/utils';
+import { getAddressOsmId } from '@/utils/getAddressOsmId.util';
 import { type NominatimEntity } from '@/modules/addresses';
 
 export const useSearcherAddressHome = () => {

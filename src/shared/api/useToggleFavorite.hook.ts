@@ -1,6 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { useAuthMutation } from '@/shared/auth';
+import { useAuthMutation } from '@/shared/auth/useAuthMutation.hook';
 
 type ToggleFavoriteResponse = {
   success?: boolean | null;

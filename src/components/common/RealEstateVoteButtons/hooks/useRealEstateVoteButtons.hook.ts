@@ -1,5 +1,5 @@
 import { useVoteRealEstate } from '@/modules/real-estates/presentation';
-import { VoteType } from '@/types';
+import { VoteType } from '@/types/vote-type';
 import { toast } from 'sonner';
 
 export interface UseRealEstateVoteButtonsOptions {

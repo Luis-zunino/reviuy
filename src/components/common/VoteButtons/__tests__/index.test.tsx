@@ -3,7 +3,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { VoteButtons } from '../VoteButtons';
 import { useVoteButtons } from '../hooks';
-import { VoteType } from '@/types';
+import { VoteType } from '@/types/vote-type';
 
 vi.mock('../hooks', () => ({
   useVoteButtons: vi.fn(),

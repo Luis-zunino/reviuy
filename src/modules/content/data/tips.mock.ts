@@ -1,5 +1,5 @@
-import type { Tip } from '@/types';
-import { TipType, ContentType } from '@/types';
+import type { Tip } from '@/types/article';
+import { TipType, ContentType } from '@/types/article';
 
 export const tips: Tip[] = [
   {

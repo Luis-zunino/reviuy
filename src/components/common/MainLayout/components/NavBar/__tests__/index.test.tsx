@@ -20,7 +20,11 @@ vi.mock('next/link', () => ({
 vi.mock('@/components/ui/dropdown-menu', () => ({
   DropdownMenu: (props: any) => <div data-testid="dropdown-menu">{props.children}</div>,
   DropdownMenuTrigger: (props: any) => <div>{props.children}</div>,
-  DropdownMenuContent: (props: any) => <div onClick={props.onClick}>{props.children}</div>,
+  DropdownMenuContent: (props: any) => (
+    <div onClick={props.onClick} onKeyDown={() => {}} role="button" tabIndex={0}>
+      {props.children}
+    </div>
+  ),
   DropdownMenuItem: (props: any) => <div>{props.children}</div>,
 }));
 

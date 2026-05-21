@@ -2,7 +2,7 @@ import { FormLabel } from '@/components/common/Form';
 import { Textarea } from '@/components/ui/textarea';
 import type { ThirdFormProps } from './types';
 import { AsyncSearchSelect } from '@/components/common/AsyncSearchSelect';
-import { FormReviewSchema } from '@/schemas';
+import { FormReviewSchema } from '@/schemas/review.schema';
 import { CreateRealEstateModal } from '@/components/features/RealEstate/CreateRealEstate/CreateRealEstateModal';
 import { useThirdForm } from './hooks';
 import { Building2, Plus } from 'lucide-react';

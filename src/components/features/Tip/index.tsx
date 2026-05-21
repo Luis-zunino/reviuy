@@ -2,7 +2,7 @@
 
 import { useTip } from './hooks';
 import { PageWithSidebar } from '@/components/common';
-import type { ContentBlock, ContentSection } from '@/types';
+import type { ContentBlock, ContentSection } from '@/types/article';
 import { PagesUrls } from '@/enums';
 
 const renderContentBlock = (block: ContentBlock, index: number): React.ReactNode => {
@@ -11,13 +11,13 @@ const renderContentBlock = (block: ContentBlock, index: number): React.ReactNode
   switch (block.type) {
     case 'h1':
       return (
-        <h1 key={key} className="text-4xl font-bold text-foreground mb-6 mt-8">
+        <h1 key={key} className="text-4xl font-semibold text-foreground mb-6 mt-8">
           {block.text}
         </h1>
       );
     case 'h2':
       return (
-        <h2 key={key} className="text-3xl font-bold text-foreground mb-4 mt-6">
+        <h2 key={key} className="text-3xl font-semibold text-foreground mb-4 mt-6">
           {block.text}
         </h2>
       );

@@ -4,7 +4,7 @@ import { ChevronDown } from 'lucide-react';
 import { Box, PageWithSidebar } from '@/components/common';
 import { FAQSidebar } from './components/FAQSidebar';
 import { useFAQComponent } from './hooks';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/cn';
 
 export const FAQComponent = () => {
   const {
@@ -39,7 +39,7 @@ export const FAQComponent = () => {
             >
               <h3 className="text-lg font-semibold text-left">{item.question}</h3>
               <ChevronDown
-                className={cn('w-5 h-5 text-gray-500 transition-transform shrink-0 ml-4', {
+                className={cn('size-5 text-gray-500 transition-transform shrink-0 ml-4', {
                   'rotate-180': openId === item.id,
                 })}
               />

@@ -1,12 +1,12 @@
 'use client';
 
-import { PagesUrls } from '@/enums';
+import { PagesUrls } from '@/enums/pagesUrls.enum';
 import { useCreateRealEstateReviewHook } from '@/modules/real-estates/presentation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useParams, useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { formRealEstateSchema, FormRealEstateSchema } from '@/schemas';
+import { formRealEstateSchema, FormRealEstateSchema } from '@/schemas/real-estate-review.schema';
 
 export const useCreateRealEstateReview = () => {
   const { realEstateId } = useParams<{ realEstateId: string }>();

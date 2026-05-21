@@ -1,6 +1,6 @@
 'use client';
 
-import { useAuthMutation } from '@/shared/auth';
+import { useAuthMutation } from '@/shared/auth/useAuthMutation.hook';
 import { updateRealEstateReviewAction } from '@/modules/real-estates/presentation';
 import { UseRealEstateReviewUpdate } from './types';
 

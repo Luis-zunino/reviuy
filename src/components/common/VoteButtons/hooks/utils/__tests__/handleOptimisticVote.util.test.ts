@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { VoteType } from '@/types';
+import { VoteType } from '@/types/vote-type';
 import { handleOptimisticVote } from '../handleOptimisticVote.util';
 import { VoteState } from '../../types';
 

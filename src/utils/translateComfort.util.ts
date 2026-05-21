@@ -1,4 +1,4 @@
-import { ComfortValue } from '@/enums';
+import { ComfortValue } from '@/enums/comfortType.enum';
 
 export const translateComfort = (value?: string | null) => {
   switch (value) {

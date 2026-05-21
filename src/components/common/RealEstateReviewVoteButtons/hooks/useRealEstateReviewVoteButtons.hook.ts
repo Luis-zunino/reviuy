@@ -2,7 +2,7 @@ import {
   useVoteRealEstateReview,
   useGetUserRealEstateReviewVote,
 } from '@/modules/real-estates/presentation';
-import { VoteType } from '@/types';
+import { VoteType } from '@/types/vote-type';
 import { toast } from 'sonner';
 import type { QueryObserverResult, RefetchOptions } from '@tanstack/react-query';
 import type { RealEstateReviewWithVotesPublic } from '@/modules/real-estates';
@@ -22,8 +22,7 @@ export const useRealEstateReviewVoteButtons = (props: UseRealEstateReviewVoteBut
   const handleVote = async (voteType: VoteType) => {
     try {
       await mutateAsync({ reviewId, voteType });
-      await refetchRealEstateReview?.();
-      await refetch();
+      await Promise.all([refetchRealEstateReview?.(), refetch()]);
     } catch {
       toast.error('Error inesperado', {
         description: 'No se pudo actualizar la reseña. Inténtalo de nuevo.',

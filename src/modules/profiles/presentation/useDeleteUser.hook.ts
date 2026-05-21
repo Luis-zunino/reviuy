@@ -1,7 +1,7 @@
 'use client';
 
 import { deleteAccountAction } from '@/modules/profiles/presentation';
-import { useAuthMutation } from '@/shared/auth';
+import { useAuthMutation } from '@/shared/auth/useAuthMutation.hook';
 
 export const useDeleteAccount = () => {
   return useAuthMutation({

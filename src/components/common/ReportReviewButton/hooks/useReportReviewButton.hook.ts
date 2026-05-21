@@ -1,9 +1,9 @@
 import { useHasUserReportedReview, useReportReview } from '@/modules/property-reviews/presentation';
 import React, { useState } from 'react';
-import { validateText } from '@/utils';
+import { validateText } from '@/utils/textValidation.util';
 import { toast } from 'sonner';
 import type { UseReportReviewButtonProps } from './types';
-import { reportReviewReasons } from '@/constants';
+import { reportReviewReasons } from '@/constants/report-review-reasons.constant';
 
 export const useReportReviewButton = (props: UseReportReviewButtonProps) => {
   const { review } = props;

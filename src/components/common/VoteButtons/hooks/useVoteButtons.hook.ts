@@ -1,7 +1,7 @@
 'use client';
 
-import { VoteType } from '@/types';
-import { useOptimistic, useCallback, useState, useRef, startTransition } from 'react';
+import { VoteType } from '@/types/vote-type';
+import { useOptimistic, useCallback, useState, useRef, useTransition } from 'react';
 import { UseVoteButtonsOptions, UseVoteButtonsReturn, VoteState } from './types';
 import { handleOptimisticVote } from './utils';
 
@@ -13,7 +13,7 @@ export const useVoteButtons = ({
   onError,
 }: UseVoteButtonsOptions): UseVoteButtonsReturn => {
   const [clickedButton, setClickedButton] = useState<VoteType | null>(null);
-  const [isPending, setIsPending] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const isPendingRef = useRef(false);
 
   const initialState: VoteState = {
@@ -33,22 +33,22 @@ export const useVoteButtons = ({
       if (voteType === VoteType.NONE || isPendingRef.current) return;
 
       isPendingRef.current = true;
-      setIsPending(true);
 
       setClickedButton(voteType);
       const animationTimer = setTimeout(() => setClickedButton(null), 300);
 
-      startTransition(async () => {
-        try {
-          addOptimisticState(voteType);
-          await onVote(voteType);
-        } catch (error) {
-          clearTimeout(animationTimer);
-          onError?.(error instanceof Error ? error : new Error('Vote failed'));
-        } finally {
-          isPendingRef.current = false;
-          setIsPending(false);
-        }
+      startTransition(() => {
+        (async () => {
+          try {
+            addOptimisticState(voteType);
+            await onVote(voteType);
+          } catch (error) {
+            clearTimeout(animationTimer);
+            onError?.(error instanceof Error ? error : new Error('Vote failed'));
+          } finally {
+            isPendingRef.current = false;
+          }
+        })();
       });
     },
     [addOptimisticState, onVote, onError]

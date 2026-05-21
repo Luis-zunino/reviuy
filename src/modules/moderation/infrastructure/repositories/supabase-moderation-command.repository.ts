@@ -1,4 +1,4 @@
-import { handleSupabaseError } from '@/lib';
+import { handleSupabaseError } from '@/lib/errors';
 import type { createSupabaseServerClient } from '@/lib/supabase/server';
 import type {
   ModerationCommandRepository,

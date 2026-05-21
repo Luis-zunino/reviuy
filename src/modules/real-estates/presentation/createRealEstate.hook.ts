@@ -1,6 +1,6 @@
 'use client';
 
-import { useAuthMutation } from '@/shared/auth';
+import { useAuthMutation } from '@/shared/auth/useAuthMutation.hook';
 import { createRealEstateAction } from '@/modules/real-estates/presentation';
 
 export const useCreateRealEstateHook = () => {

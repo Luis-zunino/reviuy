@@ -1,6 +1,7 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
-import { supabaseClient } from '@/lib/supabase';
-import { REAL_ESTATE_REVIEWS, UUID_REGEX } from '@/constants';
+import { supabaseClient } from '@/lib/supabase/client';
+import { REAL_ESTATE_REVIEWS } from '@/constants/query-keys.constant';
+import { UUID_REGEX } from '@/constants/uuid-regex.constant';
 import { GetAllRealEstateReviews } from './types';
 import {
   createGetAllRealEstateReviewsQuery,

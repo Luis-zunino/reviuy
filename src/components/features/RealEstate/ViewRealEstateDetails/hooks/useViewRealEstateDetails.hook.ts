@@ -1,6 +1,6 @@
 import { useGetReviewsByRealEstateId } from '@/modules/property-reviews';
 import { useGetAllRealEstateReviews } from '@/modules/real-estates';
-import { UUID_REGEX } from '@/constants';
+import { UUID_REGEX } from '@/constants/uuid-regex.constant';
 import { useMemo } from 'react';
 
 export const useViewRealEstateDetails = (props: { realEstateId: string }) => {

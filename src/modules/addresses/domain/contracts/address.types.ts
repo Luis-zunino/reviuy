@@ -1,4 +1,4 @@
-import { OsmType } from '@/enums';
+import { OsmType } from '@/enums/osmType.enum';
 
 export interface NominatimEntity {
   place_id: number;

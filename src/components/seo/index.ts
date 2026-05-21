@@ -1,7 +1,7 @@
+export { StructuredData } from './StructuredData';
 export {
-  StructuredData,
   createReviewSchema,
   createLocalBusinessSchema,
   createBreadcrumbSchema,
   createWebSiteSchema,
-} from './StructuredData';
+} from './StructuredData/helpers';

@@ -36,7 +36,7 @@ export const FAQSidebar = (props: FAQSidebarProps) => {
 
       {/* Desktop: Sidebar buttons */}
       <div className="hidden lg:block">
-        <h3 className="font-bold text-foreground mb-6">Categorías</h3>
+        <h3 className="font-semibold text-foreground mb-6">Categorías</h3>
         <div>
           {categories.map((category) => (
             <Button

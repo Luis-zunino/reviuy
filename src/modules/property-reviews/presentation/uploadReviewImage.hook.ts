@@ -1,7 +1,7 @@
 'use client';
 
 import { uploadReviewImageAction } from './review-images.actions';
-import { useAuthMutation } from '@/shared/auth';
+import { useAuthMutation } from '@/shared/auth/useAuthMutation.hook';
 
 interface UploadReviewImageVariables {
   reviewId: string;

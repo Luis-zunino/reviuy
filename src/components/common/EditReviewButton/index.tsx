@@ -8,14 +8,14 @@ import type { EditReviewButtonProps } from './types';
 
 export const EditReviewButton = (props: EditReviewButtonProps) => {
   const { review, showText = false, variant = 'ghost', size = 'sm' } = props;
-  const router = useRouter();
+  const { push } = useRouter();
 
   if (!review.is_mine) {
     return null;
   }
 
   const handleEdit = () => {
-    router.push(PagesUrls.EDIT_REVIEW.replace(':id', String(review.id)));
+    push(PagesUrls.EDIT_REVIEW.replace(':id', String(review.id)));
   };
 
   return (

@@ -1,5 +1,5 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { supabaseClient } from '@/lib/supabase';
+import { supabaseClient } from '@/lib/supabase/client';
 import {
   createGetAllRealEstatesPaginatedQuery,
   type RealEstateWithVotesPublic,

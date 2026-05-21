@@ -30,7 +30,7 @@ export const NavBarItem = (props: NavBarItemProps) => {
         onClick={onClick}
         data-variant={variant}
       >
-        {Icon && <Icon className="w-4 h-4" />}
+        {Icon && <Icon className="size-4" />}
         {label}
       </Link>
     </DropdownMenuItem>

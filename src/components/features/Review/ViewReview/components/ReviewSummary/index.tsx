@@ -15,12 +15,10 @@ import { PagesUrls, RoomType } from '@/enums';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import Link from 'next/link';
-import {
-  translateComfort,
-  translateHumidity,
-  translatePropertyType,
-  translateRoomType,
-} from '@/utils';
+import { translateComfort } from '@/utils/translateComfort.util';
+import { translateHumidity } from '@/utils/translateHumidity.util';
+import { translatePropertyType } from '@/utils/translatePropertyType.util';
+import { translateRoomType } from '@/utils/translateRoomType.util';
 
 export const ReviewSummary = ({ review }: ReviewSummaryProps) => {
   const recommended = (review.rating ?? 0) >= 3.5;
@@ -44,7 +42,9 @@ export const ReviewSummary = ({ review }: ReviewSummaryProps) => {
         <Separator />
         <CardContent className="pt-6 space-y-6">
           <div>
-            <h3 className="font-bold text-lg mb-3 text-foreground text-balance">{review?.title}</h3>
+            <h3 className="font-semibold text-lg mb-3 text-foreground text-balance">
+              {review?.title}
+            </h3>
             <p className="text-base text-muted-foreground leading-relaxed text-pretty">
               {review?.description}
             </p>

@@ -1,7 +1,7 @@
 'use client';
 
 import { createReviewAction } from '@/modules/property-reviews/presentation';
-import { useAuthMutation } from '@/shared/auth';
+import { useAuthMutation } from '@/shared/auth/useAuthMutation.hook';
 
 export const useCreateReview = () => {
   return useAuthMutation({

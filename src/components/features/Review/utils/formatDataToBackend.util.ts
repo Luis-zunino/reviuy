@@ -1,6 +1,6 @@
 import type { CreatePropertyReviewInput } from '@/modules/property-reviews';
-import { FormReviewSchema } from '@/schemas';
-import { getAddressOsmId } from '@/utils';
+import { FormReviewSchema } from '@/schemas/review.schema';
+import { getAddressOsmId } from '@/utils/getAddressOsmId.util';
 
 const normalizeOptionalText = (value?: string): string | undefined => {
   if (!value) {

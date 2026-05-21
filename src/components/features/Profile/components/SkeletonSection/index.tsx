@@ -3,8 +3,8 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 export const SkeletonSection = () => {
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-      {[1, 2, 3].map((i) => (
-        <Card key={i}>
+      {['skeleton-1', 'skeleton-2', 'skeleton-3'].map((key) => (
+        <Card key={key}>
           <CardHeader>
             <div className="h-6 bg-gray-200 rounded animate-pulse"></div>
           </CardHeader>

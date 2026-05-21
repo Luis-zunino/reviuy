@@ -6,7 +6,7 @@ import type { ReactNode } from 'react';
 const mockMutateAsync = vi.fn();
 const mockUseAuthMutation = vi.fn(() => ({ mutateAsync: mockMutateAsync }));
 
-vi.mock('@/shared/auth', () => ({
+vi.mock('@/shared/auth/useAuthMutation.hook', () => ({
   useAuthMutation: mockUseAuthMutation,
 }));
 

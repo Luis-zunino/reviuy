@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { createGetAddressInfoQuery } from '../get-address-info.query';
 import type { AddressReadRepository, GetAddressInfoOutput } from '../../../domain';
-import { OsmType } from '@/enums';
+import { OsmType } from '@/enums/osmType.enum';
 
 describe('createGetAddressInfoQuery', () => {
   it('delegates address info lookup to the read repository', async () => {

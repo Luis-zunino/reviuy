@@ -1,4 +1,4 @@
-import { VoteType } from '@/types';
+import { VoteType } from '@/types/vote-type';
 
 export interface UseVoteButtonsOptions {
   likes: number;

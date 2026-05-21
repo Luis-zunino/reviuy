@@ -4,12 +4,12 @@ import { useEffect, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { useParams, useRouter } from 'next/navigation';
-import { PagesUrls } from '@/enums';
+import { PagesUrls } from '@/enums/pagesUrls.enum';
 import type { UseCreateOrUpdateReviewFormProps } from './types';
 import { useAuthContext } from '@/components/providers/AuthProvider';
-import { formReviewSchema, FormReviewSchema } from '@/schemas';
+import { formReviewSchema, FormReviewSchema } from '@/schemas/review.schema';
 import { formatDataToBackend, getDefaultValues } from '../utils';
-import { getAddressOsmId } from '@/utils';
+import { getAddressOsmId } from '@/utils/getAddressOsmId.util';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   useCheckUserReviewForAddress,
@@ -243,7 +243,7 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
 
   useEffect(() => {
     if (defaultValues && !defaultValues.is_mine) {
-      router.push(PagesUrls.HOME);
+      globalThis.location.href = PagesUrls.HOME;
 
       const timer = setTimeout(() => {
         toast.error('No tienes permisos para editar esta reseña');
@@ -270,7 +270,9 @@ export const useCreateOrUpdateReviewForm = (props: UseCreateOrUpdateReviewFormPr
       description: 'Puedes editar tu reseña existente desde tu perfil.',
       action: {
         label: 'Ir a la reseña',
-        onClick: () => router.push(PagesUrls.REVIEW_DETAILS.replace(':id', existingReview.id)),
+        onClick: () => {
+          globalThis.location.href = PagesUrls.REVIEW_DETAILS.replace(':id', existingReview.id);
+        },
       },
     });
   }, [existingReview, isAuthenticated, reviewId, router]);

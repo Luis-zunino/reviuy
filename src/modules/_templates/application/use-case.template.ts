@@ -1,4 +1,4 @@
-import type { UseCaseHandler } from '@/shared/kernel/contracts';
+import type { UseCaseHandler } from '@/shared/kernel/contracts/use-case.contract';
 
 export interface ExampleUseCaseInput {
   exampleId: string;

@@ -1,12 +1,12 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { supabaseClient } from '@/lib/supabase';
+import { supabaseClient } from '@/lib/supabase/client';
 import type { AuthProviderProps, TermsAcceptancePayload } from './types';
 import { useRouter } from 'next/navigation';
 import { PagesUrls } from '@/enums';
 import type { AppSession } from '@/modules/profiles/domain';
-import { sessionMapped } from '@/utils';
+import { sessionMapped } from '@/utils/sessionMapped.util';
 import { AuthContext } from './constants';
 import { createGetSessionQuery } from '@/modules/profiles/application';
 import { SupabaseProfileAuthReadRepository } from '@/modules/profiles/infrastructure';

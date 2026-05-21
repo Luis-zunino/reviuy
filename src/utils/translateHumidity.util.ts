@@ -1,4 +1,4 @@
-import { HumidityValue } from '@/enums';
+import { HumidityValue } from '@/enums/humidityValue.enum';
 
 export const translateHumidity = (value?: string | null) => {
   switch (value) {

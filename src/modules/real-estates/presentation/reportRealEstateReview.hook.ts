@@ -1,7 +1,7 @@
-import { useAuthMutation } from '@/shared/auth';
+import { useAuthMutation } from '@/shared/auth/useAuthMutation.hook';
 import { useQuery } from '@tanstack/react-query';
 import { reportRealEstateReviewAction } from '@/modules/moderation/presentation';
-import { supabaseClient } from '@/lib/supabase';
+import { supabaseClient } from '@/lib/supabase/client';
 import {
   createHasUserReportedRealEstateReviewQuery,
   SupabaseRealEstateReadRepository,

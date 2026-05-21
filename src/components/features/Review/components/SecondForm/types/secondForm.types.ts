@@ -5,7 +5,7 @@ import type {
   UseFieldArrayRemove,
   UseFieldArrayReplace,
 } from 'react-hook-form';
-import { FormReviewSchema } from '@/schemas';
+import { FormReviewSchema } from '@/schemas/review.schema';
 
 export interface SecondFormProps {
   control: Control<FormReviewSchema>;

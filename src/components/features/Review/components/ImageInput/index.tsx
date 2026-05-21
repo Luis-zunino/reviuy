@@ -1,12 +1,13 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import Image from 'next/image';
 import { useDropzone, type FileRejection } from 'react-dropzone';
 import { AlertCircle, ImagePlus, Upload } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/cn';
 
 const DEFAULT_ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
@@ -140,7 +141,11 @@ export const ImageInput = ({
         );
       }
 
-      setFiles([...files, ...nextAcceptedFiles]);
+      setInternalFiles((prev) => {
+        const updated = [...prev, ...nextAcceptedFiles];
+        onChange?.(updated);
+        return updated;
+      });
     },
     [disabled, files, maxFiles, maxSizeBytes, setFiles]
   );
@@ -233,10 +238,12 @@ export const ImageInput = ({
               key={preview.key}
               className="max-w-50 overflow-hidden rounded-2xl border bg-muted/30"
             >
-              <img
+              <Image
                 src={preview.previewUrl}
                 alt={preview.file.name}
                 className="aspect-square max-w-50"
+                width={200}
+                height={200}
               />
 
               <div className="space-y-2 p-2">

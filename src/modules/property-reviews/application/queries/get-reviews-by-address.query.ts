@@ -1,5 +1,5 @@
-import { createError } from '@/lib';
-import type { QueryHandler } from '@/shared/kernel/contracts';
+import { createError } from '@/lib/errors';
+import type { QueryHandler } from '@/shared/kernel/contracts/query.contract';
 import { z, ZodError } from 'zod';
 import type {
   GetReviewsByAddressInput,

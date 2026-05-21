@@ -1,4 +1,4 @@
-import { PagesUrls } from '@/enums';
+import { PagesUrls } from '@/enums/pagesUrls.enum';
 import { useGetAddressInfo } from '@/modules/addresses/presentation';
 import { useRouter, useParams } from 'next/navigation';
 import { toast } from 'sonner';

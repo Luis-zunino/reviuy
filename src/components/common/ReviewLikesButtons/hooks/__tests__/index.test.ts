@@ -2,11 +2,10 @@ import { renderHook, act } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useReviewLikesButtons } from '../useReviewLikesButtons.hook';
 import { useQueryClient } from '@tanstack/react-query';
-import { useGetReviewVote } from '@/modules/property-reviews/presentation';
-import { voteAction } from '../../../VoteButtons/actions';
-import { VoteType } from '@/types';
+import { useGetReviewVote, voteReviewAction } from '@/modules/property-reviews/presentation';
+import { VoteType } from '@/types/vote-type';
 import { toast } from 'sonner';
-import { REVIEW_KEYS } from '@/constants';
+import { REVIEW_KEYS } from '@/constants/query-keys.constant';
 
 // Mock de dependencias externas
 vi.mock('@/lib/supabase/client', () => ({
@@ -14,8 +13,14 @@ vi.mock('@/lib/supabase/client', () => ({
   supabaseClient: {},
 }));
 vi.mock('@tanstack/react-query');
-vi.mock('@/modules/property-reviews/presentation');
-vi.mock('../../../VoteButtons/actions');
+vi.mock('@/modules/property-reviews', () => ({
+  createCheckUserReviewForAddressQuery: vi.fn(),
+  SupabasePropertyReviewReadRepository: vi.fn(),
+}));
+vi.mock('@/modules/property-reviews/presentation', () => ({
+  useGetReviewVote: vi.fn(),
+  voteReviewAction: vi.fn(),
+}));
 vi.mock('sonner', () => ({
   toast: {
     warning: vi.fn(),
@@ -86,7 +91,7 @@ describe('useReviewLikesButtons', () => {
         data: VoteType.NONE,
         refetch: mockRefetch,
       } as any);
-      vi.mocked(voteAction).mockResolvedValue(undefined);
+      vi.mocked(voteReviewAction).mockResolvedValue({ success: true, message: 'Votado' });
 
       const { result } = renderHook(() => useReviewLikesButtons({ id: mockReviewId }));
 
@@ -94,7 +99,7 @@ describe('useReviewLikesButtons', () => {
         await result.current.addVote(VoteType.LIKE);
       });
 
-      expect(voteAction).toHaveBeenCalledWith(mockReviewId, VoteType.LIKE, '/');
+      expect(voteReviewAction).toHaveBeenCalledWith(mockReviewId, VoteType.LIKE, '/');
       expect(mockRefetch).toHaveBeenCalled();
       expect(mockInvalidateQueries).toHaveBeenCalledWith({
         queryKey: [REVIEW_KEYS.getReviewById, mockReviewId],
@@ -104,7 +109,7 @@ describe('useReviewLikesButtons', () => {
     it('debe mostrar un toast de advertencia cuando la Server Action falla', async () => {
       const mockError = new Error('Error de conexión');
       vi.mocked(useGetReviewVote).mockReturnValue({ data: null, refetch: mockRefetch } as any);
-      vi.mocked(voteAction).mockRejectedValue(mockError);
+      vi.mocked(voteReviewAction).mockRejectedValue(mockError);
 
       const { result } = renderHook(() => useReviewLikesButtons({ id: mockReviewId }));
 

@@ -20,7 +20,7 @@ export const MapSkeleton: React.FC = () => {
       {/* Loading indicator in center */}
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="bg-background/80 backdrop-blur-sm px-4 py-2 rounded-lg">
-          <p className="text-sm text-muted-foreground">Cargando mapa...</p>
+          <p className="text-sm text-muted-foreground">Cargando mapa…</p>
         </div>
       </div>
     </div>

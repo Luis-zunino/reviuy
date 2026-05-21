@@ -14,7 +14,7 @@ import {
 import { LazyMapComponent } from '@/components/common';
 import type { FirstFormProps } from './types';
 import { PropertyType } from '@/enums';
-import { FormReviewSchema } from '@/schemas';
+import { FormReviewSchema } from '@/schemas/review.schema';
 
 export const FirstForm = (props: FirstFormProps) => {
   const { form, onSelectAddress, ...rest } = props;

@@ -1,5 +1,5 @@
 import { Progress } from '@/components/ui/progress';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/cn';
 
 export interface StepperProps {
   stepLabels: string[] | undefined;
@@ -29,7 +29,7 @@ export const Stepper = (props: StepperProps) => {
           <div key={index} className="flex items-center">
             <div
               className={cn(
-                'w-8 h-8 rounded-full transition-all duration-300 ease-in-out',
+                'size-8 rounded-full transition-all duration-300 ease-in-out',
                 'flex items-center justify-center text-xs font-semibold',
                 index === step && 'bg-primary text-primary-foreground ring-4 ring-primary/20',
                 index < step && 'bg-primary text-primary-foreground',
@@ -50,7 +50,7 @@ export const Stepper = (props: StepperProps) => {
                   strokeWidth="3"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  className="w-4 h-4"
+                  className="size-4"
                 >
                   <polyline points="20 6 9 17 4 12" />
                 </svg>

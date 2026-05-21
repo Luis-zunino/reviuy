@@ -21,7 +21,7 @@ import type {
   GetReviewsNearbyOutput,
   PropertyReviewReadRepository,
 } from '../../domain';
-import { normalizeSearchText } from '@/utils';
+import { normalizeSearchText } from '@/utils/normalizeSearchText.util';
 type SupabaseBrowserClient = typeof supabaseClient;
 
 export class SupabasePropertyReviewReadRepository implements PropertyReviewReadRepository {
