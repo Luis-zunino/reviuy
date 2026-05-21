@@ -41,7 +41,7 @@ export const TipsSidebar: React.FC<TipsSidebarProps> = ({
 
       {/* Desktop: Sidebar buttons */}
       <div className="hidden lg:block">
-        <h3 className="font-bold text-foreground mb-6">Categorías</h3>
+        <h3 className="font-semibold text-foreground mb-6">Categorías</h3>
         <div className="space-y-3">
           {categories.map((cat) => {
             return (

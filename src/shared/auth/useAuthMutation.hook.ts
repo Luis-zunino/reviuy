@@ -1,7 +1,7 @@
 import { useMutation, type UseMutationResult } from '@tanstack/react-query';
 import { useVerifyAuthentication } from '@/modules/profiles/presentation';
 import type { UseAuthMutationConfig } from './useAuthMutation.types';
-import { ErrorMessages } from '@/lib';
+import { ErrorMessages } from '@/lib/errors';
 import { toast } from 'sonner';
 
 export const useAuthMutation = <TData, TError = Error, TVariables = void>(

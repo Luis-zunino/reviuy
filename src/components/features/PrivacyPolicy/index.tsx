@@ -4,11 +4,11 @@ export const PrivacyPolicyComponent = () => {
   return (
     <PageWithSidebar
       title="Política de privacidad"
-      description={`Última actualización: ${new Date().toLocaleDateString('es-ES')}`}
+      description="Última actualización: 21 de mayo de 2026"
     >
       <div className="mx-auto px-4 sm:px-6 lg:px-8">
         <div className="rounded-lg shadow-sm p-8 space-y-6">
-          <h1 className="text-2xl font-bold mb-6">Política de Privacidad</h1>
+          <h1 className="text-2xl font-semibold mb-6">Política de Privacidad</h1>
           <p className="text-sm  italic">Última actualización: 12 de febrero de 2026</p>
 
           <section>

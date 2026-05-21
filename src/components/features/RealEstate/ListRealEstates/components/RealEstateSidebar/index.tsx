@@ -15,7 +15,7 @@ export const RealEstateSidebar: React.FC<RealEstateSidebarProps> = ({
     <Form {...form}>
       <form onSubmit={form.handleSubmit(() => {})}>
         <div className="flex items-center gap-2 font-bold text-foreground mb-6">
-          <Filter className="w-5 h-5 " />
+          <Filter className="size-5 " />
           <h2>Filtros</h2>
         </div>
         <div className="mb-2">

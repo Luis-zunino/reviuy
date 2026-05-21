@@ -1,9 +1,9 @@
-import { supabaseClient } from '@/lib/supabase';
+import { supabaseClient } from '@/lib/supabase/client';
 import {
   createHasUserReportedReviewQuery,
   SupabasePropertyReviewReadRepository,
 } from '@/modules/property-reviews';
-import { useAuthMutation } from '@/shared/auth';
+import { useAuthMutation } from '@/shared/auth/useAuthMutation.hook';
 import { useQuery } from '@tanstack/react-query';
 import { reportReviewAction } from '@/modules/moderation/presentation';
 

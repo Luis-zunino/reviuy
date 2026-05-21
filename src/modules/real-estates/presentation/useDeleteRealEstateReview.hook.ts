@@ -1,7 +1,7 @@
 'use client';
 
 import { deleteRealEstateReviewAction } from '@/modules/real-estates/presentation';
-import { useAuthMutation } from '@/shared/auth';
+import { useAuthMutation } from '@/shared/auth/useAuthMutation.hook';
 
 export const useDeleteRealEstateReview = () => {
   return useAuthMutation<

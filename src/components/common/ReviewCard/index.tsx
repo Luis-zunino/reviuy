@@ -76,7 +76,12 @@ export const ReviewCard = ({ review }: ReviewCardProps) => {
               </CardDescription>
             </div>
 
-            <div onClick={(e) => e.preventDefault()}>
+            {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */}
+            <div
+              onClick={(e) => e.preventDefault()}
+              onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()}
+              role="none"
+            >
               <FavoriteReviewButton reviewId={review.id ?? ''} />
             </div>
           </div>

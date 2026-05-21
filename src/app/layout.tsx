@@ -6,7 +6,7 @@ import { WebVitals } from '@/components/common/WebVitals';
 import { StructuredData, createWebSiteSchema } from '@/components/seo';
 import { Geist, Geist_Mono, Inter } from 'next/font/google';
 import './globals.css';
-import { NOMINATIM_URL } from '@/constants';
+import { NOMINATIM_URL } from '@/constants/nominatim-url.constant';
 import { getSiteOrigin } from '@/lib/site-url';
 
 const inter = Inter({

@@ -1,4 +1,4 @@
-import { NOMINATIM_URL } from '@/constants';
+import { NOMINATIM_URL } from '@/constants/nominatim-url.constant';
 import { createError } from '@/lib/errors';
 import type {
   AddressReadRepository,

@@ -1,5 +1,6 @@
 import { type RealEstateWithVotesPublic } from '@/modules/real-estates';
-import type { VoteType, Database } from '@/types';
+import type { VoteType } from '@/types/vote-type';
+import type { Database } from '@/types/supabase';
 
 // Tabla reviews
 export type Review = Database['public']['Tables']['reviews']['Row'];

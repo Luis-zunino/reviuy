@@ -1,13 +1,13 @@
 import { createError } from '@/lib/errors';
 import { contactApiSchema } from '@/schemas/api-request.schema';
-import type { UseCaseHandler } from '@/shared/kernel/contracts';
+import type { UseCaseHandler } from '@/shared/kernel/contracts/use-case.contract';
 import type {
   AuthenticatedContactUser,
   ContentCommandRepository,
   SendContactMessageInput,
   SendContactMessageOutput,
 } from '../../domain';
-import { RateLimitType } from '@/lib';
+import { RateLimitType } from '@/lib/redis';
 
 export interface SendContactMessageUseCaseDependencies {
   getCurrentUser: () => Promise<AuthenticatedContactUser | null>;

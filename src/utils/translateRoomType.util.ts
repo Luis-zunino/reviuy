@@ -1,4 +1,4 @@
-import { RoomType } from '@/enums';
+import { RoomType } from '@/enums/roomType.enum';
 
 export const translateRoomType = (value?: RoomType | null) => {
   if (!value) return '';

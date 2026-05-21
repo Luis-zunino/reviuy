@@ -1,6 +1,6 @@
 'use client';
 
-import { REVIEW_KEYS } from '@/constants';
+import { REVIEW_KEYS } from '@/constants/query-keys.constant';
 import { useQuery } from '@tanstack/react-query';
 import { createSearchAddressByNameQuery } from '@/modules/addresses/application';
 import { NominatimAddressReadRepository } from '@/modules/addresses/infrastructure';

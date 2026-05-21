@@ -1,4 +1,4 @@
-import { useDebounce } from '@/hooks';
+import { useDebounce } from '@/hooks/useDebounce.hook';
 import { useGetAddressListByName } from '@/modules/addresses/presentation';
 import type { UseAddressSearchInputProps } from './types';
 

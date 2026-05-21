@@ -94,8 +94,8 @@ export const getDoubtsItems = () => {
             propietarios, inmobiliarias y zonas, basándose en la opinión de los usuarios.
           </p>
           <p>
-            Sin embargo, entendemos que en algunas situaciones —como conflictos contractuales, dudas
-            legales o reclamos formales— puede ser necesario contar con apoyo profesional.Por ese
+            Sin embargo, entendemos que en algunas situaciones, como conflictos contractuales, dudas
+            legales o reclamos formales, puede ser necesario contar con apoyo profesional.Por ese
             motivo, podemos recomendar servicios de asesoría legal especializados, con el fin de
             orientar a los usuarios sobre los pasos a seguir.
           </p>

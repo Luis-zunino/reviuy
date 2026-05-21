@@ -1,7 +1,7 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
-import { supabaseClient } from '@/lib/supabase';
-import { VoteType } from '@/types';
-import { REVIEW_KEYS } from '@/constants';
+import { supabaseClient } from '@/lib/supabase/client';
+import { VoteType } from '@/types/vote-type';
+import { REVIEW_KEYS } from '@/constants/query-keys.constant';
 import {
   createGetUserReviewVoteQuery,
   SupabasePropertyReviewReadRepository,

@@ -1,5 +1,5 @@
 import { ContactEmailTemplate } from '@/components/common/Emails';
-import { createError } from '@/lib';
+import { createError } from '@/lib/errors';
 import { sendEmail } from '@/app/api/_utils';
 import { createElement } from 'react';
 import type {

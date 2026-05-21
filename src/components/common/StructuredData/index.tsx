@@ -1,19 +1,16 @@
-import Script from 'next/script';
+'use client';
+
+import { useEffect, useRef } from 'react';
 import type { StructuredDataProps } from './types';
 
-/**
- * Componente para agregar datos estructurados JSON-LD para SEO
- */
 export const StructuredData: React.FC<StructuredDataProps> = ({ data }) => {
-  const jsonString = JSON.stringify(data);
+  const scriptRef = useRef<HTMLScriptElement>(null);
 
-  return (
-    <Script
-      id="structured-data"
-      type="application/ld+json"
-      // nosemgrep: typescript.react.security.audit.react-dangerouslysetinnerhtml.react-dangerouslysetinnerhtml
-      // Se omite porque la variable safeJson ya fue sanitizada previamente usando DOMPurify
-      dangerouslySetInnerHTML={{ __html: jsonString }} // nosemgrep
-    />
-  );
+  useEffect(() => {
+    if (scriptRef.current) {
+      scriptRef.current.textContent = JSON.stringify(data);
+    }
+  }, [data]);
+
+  return <script id="structured-data" type="application/ld+json" ref={scriptRef} />;
 };

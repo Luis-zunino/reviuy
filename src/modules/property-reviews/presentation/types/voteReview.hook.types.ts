@@ -1,4 +1,4 @@
-import type { VoteType } from '@/types';
+import type { VoteType } from '@/types/vote-type';
 
 export interface VoteReviewParams {
   reviewId: string;

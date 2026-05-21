@@ -1,6 +1,6 @@
 import { BreadcrumbItem } from '../types';
 import { createBreadcrumbSchema } from '@/components/seo';
-import { PagesUrls } from '@/enums';
+import { PagesUrls } from '@/enums/pagesUrls.enum';
 import { getSiteOrigin } from '@/lib/site-url';
 
 /**

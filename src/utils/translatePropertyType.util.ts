@@ -1,4 +1,4 @@
-import { PropertyType } from '@/enums';
+import { PropertyType } from '@/enums/propertyType.enum';
 
 export const translatePropertyType = (value?: string | null) => {
   if (!value) return '';

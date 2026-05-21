@@ -1,13 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { PagesUrls } from '@/enums';
 import { Loader } from '@/components/common/Loaders';
 import { toast } from 'sonner';
 import { createGetSessionQuery } from '@/modules/profiles/application';
 import { SupabaseProfileAuthReadRepository } from '@/modules/profiles/infrastructure';
-import { supabaseClient } from '@/lib/supabase';
+import { supabaseClient } from '@/lib/supabase/client';
 
 const profileAuthReadRepository = new SupabaseProfileAuthReadRepository();
 const getSession = createGetSessionQuery({
@@ -15,7 +14,6 @@ const getSession = createGetSessionQuery({
 });
 
 export default function AuthCallback() {
-  const router = useRouter();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -27,7 +25,7 @@ export default function AuthCallback() {
           toast.error('Error de autenticación', {
             description: 'Hubo un problema al procesar tu autenticación. Inténtalo de nuevo.',
           });
-          router.push(PagesUrls.LOGIN);
+          globalThis.location.assign(PagesUrls.LOGIN);
           return;
         }
 
@@ -50,7 +48,7 @@ export default function AuthCallback() {
             if (!termsAcceptedFromRedirect) {
               await supabaseClient.auth.signOut();
               toast.error('Debes aceptar términos y privacidad para continuar.');
-              router.push(PagesUrls.LOGIN);
+              globalThis.location.assign(PagesUrls.LOGIN);
               return;
             }
 
@@ -75,29 +73,29 @@ export default function AuthCallback() {
           toast.success('¡Bienvenido!', {
             description: 'Has iniciado sesión correctamente.',
           });
-          router.push(PagesUrls.HOME);
+          globalThis.location.assign(PagesUrls.HOME);
         } else {
-          router.push(PagesUrls.LOGIN);
+          globalThis.location.assign(PagesUrls.LOGIN);
         }
       } catch {
         toast.error('Error inesperado', {
           description: 'Ocurrió un error inesperado durante la autenticación.',
         });
-        router.push(PagesUrls.LOGIN);
+        globalThis.location.assign(PagesUrls.LOGIN);
       } finally {
         setLoading(false);
       }
     };
 
     handleAuthCallback();
-  }, [router]);
+  }, []);
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-blue-50">
         <div className="text-center">
           <Loader />
-          <p className="mt-4 text-gray-600">Procesando tu autenticación...</p>
+          <p className="mt-4 text-gray-600">Procesando tu autenticación…</p>
         </div>
       </div>
     );

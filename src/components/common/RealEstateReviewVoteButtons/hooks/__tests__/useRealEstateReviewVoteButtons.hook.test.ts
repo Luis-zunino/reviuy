@@ -5,14 +5,21 @@ import {
   useVoteRealEstateReview,
   useGetUserRealEstateReviewVote,
 } from '@/modules/real-estates/presentation';
-import { VoteType } from '@/types';
+import { VoteType } from '@/types/vote-type';
 import { toast } from 'sonner';
 
 vi.mock('@/lib/supabase/client', () => ({
   createClient: vi.fn(),
   supabaseClient: {},
 }));
-vi.mock('@/modules/real-estates/presentation');
+vi.mock('@/modules/real-estates', () => ({
+  createGetAllRealEstateReviewsQuery: vi.fn(),
+  SupabaseRealEstateReadRepository: vi.fn(),
+}));
+vi.mock('@/modules/real-estates/presentation', () => ({
+  useVoteRealEstateReview: vi.fn(),
+  useGetUserRealEstateReviewVote: vi.fn(),
+}));
 vi.mock('sonner', () => ({
   toast: {
     error: vi.fn(),

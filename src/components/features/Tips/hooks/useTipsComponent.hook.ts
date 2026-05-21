@@ -1,5 +1,5 @@
 import { tips } from '@/modules/content/data';
-import { TipType } from '@/types';
+import { TipType } from '@/types/article';
 import { useState } from 'react';
 /**
  *

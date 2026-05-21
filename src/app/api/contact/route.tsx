@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getAuthenticatedUser } from '../_utils';
-import { AppError, createError, withRateLimit, RateLimitType } from '@/lib';
+import { AppError, createError } from '@/lib/errors';
+import { withRateLimit, RateLimitType } from '@/lib/redis';
 import { createSendContactMessageUseCase } from '@/modules/content/application';
 import { ResendContentCommandRepository } from '@/modules/content/infrastructure';
 

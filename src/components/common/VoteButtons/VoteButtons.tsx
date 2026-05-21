@@ -2,8 +2,8 @@
 
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { ThumbsUp, ThumbsDown } from 'lucide-react';
-import { VoteType } from '@/types';
-import { cn } from '@/lib/utils';
+import { VoteType } from '@/types/vote-type';
+import { cn } from '@/lib/utils/cn';
 import { useVoteButtons } from './hooks';
 import { VoteButtonsProps } from './types';
 import { FC } from 'react';

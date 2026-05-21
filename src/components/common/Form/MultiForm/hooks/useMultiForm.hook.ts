@@ -12,7 +12,7 @@ export const useMultiForm = <T extends FieldValues = FieldValues>(props: {
 
   const handleBack = () => {
     if (step > 0) {
-      setStep(step - 1);
+      setStep((prev) => prev - 1);
     }
   };
 
@@ -25,7 +25,7 @@ export const useMultiForm = <T extends FieldValues = FieldValues>(props: {
     }
 
     if (step < totalSteps - 1) {
-      setStep(step + 1);
+      setStep((prev) => prev + 1);
     } else {
       setStep(0);
       toast.success('Form successfully submitted');

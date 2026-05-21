@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { translatePropertyType } from '../translatePropertyType.util';
-import { PropertyType } from '@/enums';
+import { PropertyType } from '@/enums/propertyType.enum';
 
 describe('translatePropertyType', () => {
   it('returns "Apartamento" for APARTMENT', () => {

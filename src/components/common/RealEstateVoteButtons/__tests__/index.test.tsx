@@ -4,11 +4,19 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { RealEstateVoteButtons } from '../index';
 import { useRealEstateVoteButtons } from '../hooks';
 import { VoteButtons } from '../../VoteButtons';
-import { VoteType } from '@/types';
+import { VoteType } from '@/types/vote-type';
 
 vi.mock('@/lib/supabase/client', () => ({
   createClient: vi.fn(),
   supabaseClient: {},
+}));
+vi.mock('@/modules/real-estates', () => ({
+  createGetAllRealEstateReviewsQuery: vi.fn(),
+  SupabaseRealEstateReadRepository: vi.fn(),
+}));
+vi.mock('@/modules/real-estates/presentation', () => ({
+  useVoteRealEstate: vi.fn(),
+  useGetUserRealEstateVote: vi.fn(),
 }));
 vi.mock('../hooks');
 vi.mock('../../VoteButtons');

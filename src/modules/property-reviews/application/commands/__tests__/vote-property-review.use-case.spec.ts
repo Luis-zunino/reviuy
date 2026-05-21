@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 // Mock server-only to prevent resolution errors in Vitest environment
 vi.mock('server-only', () => ({}));
 
-import { VoteType } from '@/types';
+import { VoteType } from '@/types/vote-type';
 import type {
   PropertyReviewCommandRepository,
   VotePropertyReviewInput,

@@ -1,11 +1,11 @@
-import type { UseCaseHandler } from '@/shared/kernel/contracts';
-import { backendReviewSchema } from '@/schemas';
+import type { UseCaseHandler } from '@/shared/kernel/contracts/use-case.contract';
+import { backendReviewSchema } from '@/schemas/review.schema';
 import {
   type UpdatePropertyReviewInput,
   type UpdatePropertyReviewResult,
   type PropertyReviewCommandRepository,
 } from '../../domain';
-import { RateLimitType } from '@/lib';
+import { RateLimitType } from '@/lib/redis';
 
 type RateLimitFunction = (key: string, scope: RateLimitType) => Promise<void>;
 type GetCurrentUserIdFunction = () => Promise<string | null>;

@@ -1,4 +1,4 @@
-import { sessionMapped } from '@/utils';
+import { sessionMapped } from '@/utils/sessionMapped.util';
 import { supabaseClient } from '@/lib/supabase/client';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type {

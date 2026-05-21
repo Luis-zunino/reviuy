@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { StarRatingDisplay } from '@/components/common';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -11,6 +12,14 @@ import { useRouter } from 'next/navigation';
 export interface RealEstateReviewTabContentProps {
   realEstateReview?: RealEstateReviewWithVotesPublic[] | null;
   realEstateId: string;
+}
+
+function DateDisplay({ date }: { date: string | null | undefined }) {
+  const [formatted, setFormatted] = useState('');
+  useEffect(() => {
+    if (date) setFormatted(new Date(date).toLocaleDateString());
+  }, [date]);
+  return <>{formatted}</>;
 }
 
 export const RealEstateReviewTabContent = (props: RealEstateReviewTabContentProps) => {
@@ -86,7 +95,7 @@ export const RealEstateReviewTabContent = (props: RealEstateReviewTabContentProp
                       <div className="flex items-center gap-2 justify-between">
                         <div className="flex items-center gap-1 text-sm text-gray-500">
                           <Calendar className="h-4 w-4" />
-                          {new Date(rer.created_at ?? '').toLocaleDateString()}
+                          <DateDisplay date={rer.created_at} />
                         </div>
                         <div className="flex items-center gap-2 text-sm text-gray-500">
                           <span className="flex items-center gap-1">

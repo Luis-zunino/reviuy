@@ -61,7 +61,7 @@ export const ReportRealEstateButton = ({
             <Label htmlFor="reason">Motivo del reporte *</Label>
             <RadioGroup value={selectedReason} onValueChange={setSelectedReason} required>
               {reportReasons.map((reason) => (
-                <div key={reason.value} className="flex items-center space-x-2">
+                <div key={reason.value} className="flex items-center gap-x-2">
                   <RadioGroupItem value={reason.value} id={reason.value} />
                   <Label htmlFor={reason.value} className="text-sm font-normal cursor-pointer">
                     {reason.label}

@@ -1,7 +1,7 @@
 import { renderHook, act } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useVoteButtons } from '../useVoteButtons.hook';
-import { VoteType } from '@/types';
+import { VoteType } from '@/types/vote-type';
 
 // Habilitamos timers falsos para controlar los setTimeout de las animaciones
 vi.useFakeTimers();

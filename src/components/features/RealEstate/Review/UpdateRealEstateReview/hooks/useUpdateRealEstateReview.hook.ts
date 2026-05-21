@@ -9,7 +9,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { FormRealEstateSchema, formRealEstateSchema } from '@/schemas';
+import { FormRealEstateSchema, formRealEstateSchema } from '@/schemas/real-estate-review.schema';
 
 export const useUpdateRealEstateReview = () => {
   const { reviewId } = useParams<{ realEstateId: string; reviewId: string }>();

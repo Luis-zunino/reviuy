@@ -1,6 +1,6 @@
 import { voteReviewAction } from '@/modules/property-reviews/presentation';
-import { useAuthMutation } from '@/shared/auth';
-import { VoteType } from '@/types';
+import { useAuthMutation } from '@/shared/auth/useAuthMutation.hook';
+import { VoteType } from '@/types/vote-type';
 
 export interface UseVoteReviewProps {
   reviewId: string;

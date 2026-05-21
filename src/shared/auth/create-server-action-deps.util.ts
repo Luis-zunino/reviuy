@@ -1,4 +1,4 @@
-import { RateLimitType, withRateLimit } from '@/lib';
+import { RateLimitType, withRateLimit } from '@/lib/redis';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 
 export const createServerActionDeps = async () => {

@@ -13,7 +13,7 @@ import { Popover, PopoverContent, PopoverAnchor } from '@/components/ui/popover'
 import { FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { Loader2, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/cn';
 import { AsyncSearchSelectProps } from './types';
 
 /**

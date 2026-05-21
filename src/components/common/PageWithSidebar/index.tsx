@@ -1,6 +1,6 @@
 'use client';
 
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/cn';
 import type { PageWithSidebarProps } from './types';
 import { useAuthContext } from '@/components/providers/AuthProvider';
 import { Loader } from '../Loaders';
@@ -74,7 +74,7 @@ export const PageWithSidebar: React.FC<PageWithSidebarProps> = (props) => {
       >
         <div className="max-w-md md:max-w-7xl mx-auto flex items-start gap-4">
           <div>
-            <h1 className="text-4xl font-bold text-foreground mb-3">{title}</h1>
+            <h1 className="text-4xl font-semibold text-foreground mb-3">{title}</h1>
             <p className="text-muted-foreground text-lg">{description}</p>
           </div>
           {headerAction}

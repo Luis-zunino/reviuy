@@ -2,7 +2,10 @@ import { useCreateRealEstateHook } from '@/modules/real-estates/presentation';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import type { UseCreateRealEstateModalProps } from './types';
-import { formCreateRealEstateSchema, FormCreateRealEstateSchema } from '@/schemas';
+import {
+  formCreateRealEstateSchema,
+  FormCreateRealEstateSchema,
+} from '@/schemas/real-estate.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 export const useCreateRealEstateModal = (props: UseCreateRealEstateModalProps) => {

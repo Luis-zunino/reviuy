@@ -1,4 +1,4 @@
-import type { VoidQueryHandler } from '@/shared/kernel/contracts';
+import type { VoidQueryHandler } from '@/shared/kernel/contracts/query.contract';
 import type { GetCurrentUserReviewsOutput, ProfileReadRepository } from '../../domain';
 
 export interface GetCurrentUserReviewsQueryDependencies {

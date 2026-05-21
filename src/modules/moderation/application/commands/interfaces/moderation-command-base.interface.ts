@@ -1,4 +1,4 @@
-import { RateLimitType } from '@/lib';
+import { RateLimitType } from '@/lib/redis';
 import { ModerationCommandRepository } from '@/modules/moderation/domain';
 
 /**

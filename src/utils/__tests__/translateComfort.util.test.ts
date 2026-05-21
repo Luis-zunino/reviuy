@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { translateComfort } from '../translateComfort.util';
-import { ComfortValue } from '@/enums';
+import { ComfortValue } from '@/enums/comfortType.enum';
 
 describe('translateComfort', () => {
   it('returns "Caluroso" for HOT', () => {

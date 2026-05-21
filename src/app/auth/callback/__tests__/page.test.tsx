@@ -3,19 +3,17 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import AuthCallback from '../page';
 import { PagesUrls } from '@/enums';
 
-const { pushMock, getSessionMock, getUserMock, updateUserMock, signOutMock } = vi.hoisted(() => ({
-  pushMock: vi.fn(),
-  getSessionMock: vi.fn(),
-  getUserMock: vi.fn(),
-  updateUserMock: vi.fn(),
-  signOutMock: vi.fn(),
-}));
+const { locationAssignMock, getSessionMock, getUserMock, updateUserMock, signOutMock } = vi.hoisted(
+  () => ({
+    locationAssignMock: vi.fn(),
+    getSessionMock: vi.fn(),
+    getUserMock: vi.fn(),
+    updateUserMock: vi.fn(),
+    signOutMock: vi.fn(),
+  })
+);
 
-vi.mock('next/navigation', () => ({
-  useRouter: () => ({
-    push: pushMock,
-  }),
-}));
+vi.stubGlobal('location', { assign: locationAssignMock, search: '' });
 
 vi.mock('@/modules/profiles/application', () => ({
   createGetSessionQuery: () => getSessionMock,
@@ -45,6 +43,11 @@ vi.mock('sonner', () => ({
 describe('AuthCallback terms persistence', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.stubGlobal('location', {
+      assign: locationAssignMock,
+      search: '',
+      href: '',
+    });
     globalThis.history.pushState({}, '', '/auth/callback');
 
     getSessionMock.mockResolvedValue({
@@ -80,7 +83,7 @@ describe('AuthCallback terms persistence', () => {
     render(<AuthCallback />);
 
     await waitFor(() => {
-      expect(pushMock).toHaveBeenCalledWith(PagesUrls.HOME);
+      expect(locationAssignMock).toHaveBeenCalledWith(PagesUrls.HOME);
     });
 
     expect(updateUserMock).not.toHaveBeenCalled();
@@ -88,11 +91,8 @@ describe('AuthCallback terms persistence', () => {
   });
 
   it('updates metadata from redirect params and redirects home for first acceptance', async () => {
-    globalThis.history.pushState(
-      {},
-      '',
-      '/auth/callback?terms_accepted=1&terms_accepted_at=2026-04-11T10%3A00%3A00.000Z&terms_version=v1'
-    );
+    (globalThis.location as Record<string, unknown>).search =
+      '?terms_accepted=1&terms_accepted_at=2026-04-11T10:00:00.000Z&terms_version=v1';
 
     render(<AuthCallback />);
 
@@ -108,7 +108,7 @@ describe('AuthCallback terms persistence', () => {
       },
     });
 
-    expect(pushMock).toHaveBeenCalledWith(PagesUrls.HOME);
+    expect(locationAssignMock).toHaveBeenCalledWith(PagesUrls.HOME);
     expect(signOutMock).not.toHaveBeenCalled();
   });
 
@@ -119,7 +119,7 @@ describe('AuthCallback terms persistence', () => {
       expect(signOutMock).toHaveBeenCalledTimes(1);
     });
 
-    expect(pushMock).toHaveBeenCalledWith(PagesUrls.LOGIN);
+    expect(locationAssignMock).toHaveBeenCalledWith(PagesUrls.LOGIN);
     expect(updateUserMock).not.toHaveBeenCalled();
   });
 
@@ -132,7 +132,7 @@ describe('AuthCallback terms persistence', () => {
     render(<AuthCallback />);
 
     await waitFor(() => {
-      expect(pushMock).toHaveBeenCalledWith(PagesUrls.LOGIN);
+      expect(locationAssignMock).toHaveBeenCalledWith(PagesUrls.LOGIN);
     });
   });
 });

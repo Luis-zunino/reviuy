@@ -19,6 +19,13 @@ vi.mock('next/font/google', () => ({
   }),
 }));
 
+// Mock presentation layers to prevent module-level side effects in hooks
+vi.mock('@/modules/property-reviews/presentation', () => ({}));
+vi.mock('@/modules/profiles/presentation', () => ({}));
+vi.mock('@/modules/real-estates', () => ({
+  SupabaseRealEstateReadRepository: vi.fn(),
+}));
+
 // Mock @supabase/ssr to prevent actual client initialization in tests
 vi.mock('@supabase/ssr', () => ({
   createBrowserClient: vi.fn(() => ({

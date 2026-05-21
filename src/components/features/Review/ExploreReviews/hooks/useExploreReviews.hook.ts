@@ -4,7 +4,7 @@ import { useState, useCallback } from 'react';
 import { useGetReviewsByZone } from '@/modules/property-reviews/presentation/getReviewsByZone.hook';
 import { useGetReviewsNearby } from '@/modules/property-reviews/presentation/getReviewsNearby.hook';
 import { useReverseGeocode } from '@/modules/addresses/presentation/reverseGeocode.hook';
-import { useDebounce } from '@/hooks';
+import { useDebounce } from '@/hooks/useDebounce.hook';
 
 type SearchMode = 'idle' | 'zone' | 'nearby';
 type GeoStatus = 'idle' | 'loading' | 'success' | 'error';

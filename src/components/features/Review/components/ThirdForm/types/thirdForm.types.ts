@@ -1,5 +1,5 @@
 import type { UseFormReturn } from 'react-hook-form';
-import { FormReviewSchema } from '@/schemas';
+import { FormReviewSchema } from '@/schemas/review.schema';
 import { Dispatch, SetStateAction } from 'react';
 import { type RealEstateWithVotesPublic } from '@/modules/real-estates';
 

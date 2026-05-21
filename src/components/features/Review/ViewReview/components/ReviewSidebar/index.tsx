@@ -1,12 +1,28 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import { LazyMapComponent, StarRatingDisplay } from '@/components/common';
 import { MapPinned, Calendar, Home, DoorClosed } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import type { ReviewSidebarProps } from './types';
 import { PropertyType } from '@/enums';
-import { translatePropertyType } from '@/utils';
+import { translatePropertyType } from '@/utils/translatePropertyType.util';
 
 export const ReviewSidebar = ({ review }: ReviewSidebarProps) => {
   const addressText = review?.address_text;
+  const [formattedDate, setFormattedDate] = useState('');
+
+  useEffect(() => {
+    if (review?.created_at) {
+      setFormattedDate(
+        new Date(review.created_at).toLocaleDateString('es-ES', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        })
+      );
+    }
+  }, [review?.created_at]);
 
   return (
     <div className="space-y-6">
@@ -58,13 +74,7 @@ export const ReviewSidebar = ({ review }: ReviewSidebarProps) => {
               <div className="flex flex-col gap-1">
                 <span className="text-xs text-muted-foreground">Fecha de publicación</span>
                 <span className="text-sm font-medium text-foreground">
-                  {review?.created_at
-                    ? new Date(review.created_at).toLocaleDateString('es-ES', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                      })
-                    : 'Sin fecha'}
+                  {formattedDate || 'Sin fecha'}
                 </span>
               </div>
             </div>

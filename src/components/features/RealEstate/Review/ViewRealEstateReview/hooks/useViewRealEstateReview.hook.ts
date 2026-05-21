@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FormRealEstateSchema, formRealEstateSchema } from '@/schemas';
+import { FormRealEstateSchema, formRealEstateSchema } from '@/schemas/real-estate-review.schema';
 import { useForm } from 'react-hook-form';
 import {
   useGetRealEstateById,

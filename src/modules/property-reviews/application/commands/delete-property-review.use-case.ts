@@ -1,10 +1,10 @@
-import type { UseCaseHandler } from '@/shared/kernel/contracts';
+import type { UseCaseHandler } from '@/shared/kernel/contracts/use-case.contract';
 import {
   type DeletePropertyReviewInput,
   type DeletePropertyReviewResult,
   type PropertyReviewCommandRepository,
 } from '../../domain';
-import { RateLimitType } from '@/lib';
+import { RateLimitType } from '@/lib/redis';
 
 type RateLimitFunction = (key: string, scope: RateLimitType) => Promise<void>;
 type GetCurrentUserIdFunction = () => Promise<string | null>;

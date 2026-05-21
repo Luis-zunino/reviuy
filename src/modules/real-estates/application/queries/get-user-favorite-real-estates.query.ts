@@ -1,4 +1,4 @@
-import type { VoidQueryHandler } from '@/shared/kernel/contracts';
+import type { VoidQueryHandler } from '@/shared/kernel/contracts/query.contract';
 import type { GetUserFavoriteRealEstatesOutput } from '../../domain';
 import { RealEstateQueryBase } from './interfaces';
 

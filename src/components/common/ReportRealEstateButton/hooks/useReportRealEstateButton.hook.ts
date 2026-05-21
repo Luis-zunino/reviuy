@@ -4,7 +4,7 @@ import {
 } from '@/modules/real-estates/presentation';
 import { useSendReportRealEstateMessage } from '@/modules/moderation/presentation';
 import React, { useState } from 'react';
-import { validateText } from '@/utils';
+import { validateText } from '@/utils/textValidation.util';
 import { toast } from 'sonner';
 import type { UseReportRealEstateButtonProps } from './types';
 

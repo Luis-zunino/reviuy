@@ -40,7 +40,7 @@ export const ListRealEstates: React.FC = () => {
       ) : null}
       {!isLoading && displayedItems.length === 0 ? (
         <Box className="rounded-xl p-12 text-center">
-          <Building2 className="w-16 h-16  mx-auto mb-4" />
+          <Building2 className="size-16 mx-auto mb-4" />
           <h3 className="text-xl font-medium mb-2">No se encontraron inmobiliarias</h3>
           <p>Intenta ajustar tus filtros o realiza una búsqueda diferente</p>
           <div className="relative my-9">
@@ -105,7 +105,7 @@ export const ListRealEstates: React.FC = () => {
 
                   <div className="flex flex-wrap items-center gap-4">
                     <div className="flex items-center gap-2 ">
-                      <Building2 className="w-4 h-4" />
+                      <Building2 className="size-4" />
                       <span className="text-sm">
                         {realEstate.review_count || 0}{' '}
                         {realEstate.review_count === 1 ? 'reseña' : 'reseñas'}

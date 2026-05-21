@@ -1,4 +1,4 @@
-import type { VoidQueryHandler } from '@/shared/kernel/contracts';
+import type { VoidQueryHandler } from '@/shared/kernel/contracts/query.contract';
 import type { GetCurrentUserFavoriteRealEstatesOutput, ProfileReadRepository } from '../../domain';
 
 export interface GetCurrentUserFavoriteRealEstatesQueryDependencies {

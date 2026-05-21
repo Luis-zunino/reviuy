@@ -1,4 +1,4 @@
-import type { QueryHandler } from '@/shared/kernel/contracts';
+import type { QueryHandler } from '@/shared/kernel/contracts/query.contract';
 import type {
   GetRealEstateReviewByUserIdInput,
   GetRealEstateReviewByUserIdOutput,

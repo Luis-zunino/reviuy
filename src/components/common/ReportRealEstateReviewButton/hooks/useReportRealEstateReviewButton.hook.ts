@@ -4,10 +4,10 @@ import {
 } from '@/modules/real-estates/presentation';
 import { useSendReportRealEstateReviewMessage } from '@/modules/moderation/presentation';
 import React, { useState } from 'react';
-import { validateText } from '@/utils';
+import { validateText } from '@/utils/textValidation.util';
 import { toast } from 'sonner';
 import type { UseReportRealEstateReviewButtonProps } from './types';
-import { reportReviewReasons } from '@/constants';
+import { reportReviewReasons } from '@/constants/report-review-reasons.constant';
 
 export const useReportRealEstateReviewButton = (props: UseReportRealEstateReviewButtonProps) => {
   const { review } = props;

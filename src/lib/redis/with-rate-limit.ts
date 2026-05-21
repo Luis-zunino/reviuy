@@ -1,5 +1,3 @@
-'use server';
-
 import { createError } from '../errors';
 import { getRateLimiter, isRedisConfigured } from './rate-limit';
 import type { RateLimitType } from './types';

@@ -1,6 +1,6 @@
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
-import { REVIEW_KEYS } from '@/constants';
-import { supabaseClient } from '@/lib/supabase';
+import { REVIEW_KEYS } from '@/constants/query-keys.constant';
+import { supabaseClient } from '@/lib/supabase/client';
 import {
   ComposedProfileReadRepository,
   createGetCurrentUserReviewsQuery,

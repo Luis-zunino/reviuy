@@ -34,7 +34,7 @@ export const DeleteAccountSection = () => {
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
           <Button variant="destructive" className="w-full sm:w-auto">
-            <Trash2 className="w-4 h-4 mr-2" />
+            <Trash2 className="size-4 mr-2" />
             Eliminar mi cuenta
           </Button>
         </DialogTrigger>

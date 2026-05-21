@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { translateHumidity } from '../translateHumidity.util';
-import { HumidityValue } from '@/enums';
+import { HumidityValue } from '@/enums/humidityValue.enum';
 
 describe('translateHumidity', () => {
   it('returns "Alta" for HIGH', () => {

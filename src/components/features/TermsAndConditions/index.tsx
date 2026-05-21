@@ -4,7 +4,7 @@ export const TermsAndConditionsComponent = () => {
   return (
     <PageWithSidebar
       title="Términos y condiciones"
-      description={`Última actualización: ${new Date().toLocaleDateString('es-ES')}`}
+      description="Última actualización: 21 de mayo de 2026"
     >
       <div className="mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-lg shadow-sm p-8 space-y-6">

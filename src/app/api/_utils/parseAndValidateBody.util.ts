@@ -1,4 +1,4 @@
-import { createError, handleZodError } from '@/lib';
+import { createError, handleZodError } from '@/lib/errors';
 import { z } from 'zod';
 
 export async function parseAndValidateBody<TSchema extends z.ZodTypeAny>(
