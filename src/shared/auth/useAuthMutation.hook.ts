@@ -1,4 +1,4 @@
-import { useMutation, type UseMutationResult } from '@tanstack/react-query';
+import { useMutation, useQueryClient, type UseMutationResult } from '@tanstack/react-query';
 import { useVerifyAuthentication } from '@/modules/profiles/presentation';
 import type { UseAuthMutationConfig } from './useAuthMutation.types';
 import { ErrorMessages } from '@/lib/errors';
@@ -13,9 +13,12 @@ export const useAuthMutation = <TData, TError = Error, TVariables = void>(
     showErrorToast = true,
     errorToastMessage,
     onError,
+    invalidateQueryKeys,
+    onSuccess: callerOnSuccess,
     ...mutationOptions
   } = config;
 
+  const queryClient = useQueryClient();
   const { data, error } = useVerifyAuthentication();
 
   const getErrorMessage = (mutationError: TError): string => {
@@ -58,6 +61,17 @@ export const useAuthMutation = <TData, TError = Error, TVariables = void>(
       }
 
       onError?.(mutationError, variables, onMutateResult, context);
+    },
+    onSuccess: (data, variables, context) => {
+      if (invalidateQueryKeys) {
+        invalidateQueryKeys.forEach((queryKey) => {
+          queryClient.invalidateQueries({ queryKey });
+        });
+      }
+
+      // TanStack v5 tipa onSuccess con 4 params (data, variables, onMutateResult, MutationFunctionContext).
+      // Nuestro wrapper solo recibe 3, pasamos los que tenemos. JavaScript ignora los que sobran.
+      (callerOnSuccess as (...args: unknown[]) => unknown)?.(data, variables, context);
     },
     ...mutationOptions,
   });
