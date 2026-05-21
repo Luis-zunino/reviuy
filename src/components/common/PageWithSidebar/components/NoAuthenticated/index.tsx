@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { PageWithSidebar } from '@/components/common';
 
 export const NoAuthenticated = () => {
-  const router = useRouter();
+  const { push } = useRouter();
   return (
     <PageWithSidebar
       title="Acceso requerido"
@@ -16,7 +16,7 @@ export const NoAuthenticated = () => {
         <Card className="w-full mx-auto">
           <CardContent>
             <div className=" space-y-2 flex gap-2 justify-center">
-              <Button variant="ghost" onClick={() => router.push('/login')}>
+              <Button variant="ghost" onClick={() => push('/login')}>
                 Iniciar sesión
               </Button>
             </div>

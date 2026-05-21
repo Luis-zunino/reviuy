@@ -1,12 +1,13 @@
 import { createError } from '@/lib/errors';
-import type { UseCaseHandler } from '@/shared/kernel/contracts';
+import { assertAuthenticated } from '@/shared/auth/assert-authenticated.util';
+import type { UseCaseHandler } from '@/shared/kernel/contracts/use-case.contract';
 import type {
   DeleteAccountCommand,
   DeleteAccountInput,
   DeleteAccountOutput,
   ProfileCommandRepository,
 } from '../../domain';
-import { RateLimitType } from '@/lib';
+import { RateLimitType } from '@/lib/redis';
 
 const MAX_SESSION_AGE_MS = 30 * 60 * 1000;
 
@@ -20,11 +21,10 @@ export const createDeleteAccountUseCase = (
   dependencies: DeleteAccountUseCaseDependencies
 ): UseCaseHandler<DeleteAccountInput, DeleteAccountOutput> => {
   return async (input) => {
-    const userId = await dependencies.getCurrentUserId();
-
-    if (!userId) {
-      throw createError('UNAUTHORIZED', 'Debes iniciar sesión para eliminar tu cuenta.');
-    }
+    const userId = await assertAuthenticated(
+      dependencies.getCurrentUserId,
+      'Debes iniciar sesión para eliminar tu cuenta.'
+    );
 
     await dependencies.rateLimit(`delete-account:${userId}`, 'sensitive');
 

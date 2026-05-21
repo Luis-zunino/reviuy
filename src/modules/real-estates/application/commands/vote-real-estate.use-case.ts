@@ -1,9 +1,9 @@
-import { createError } from '@/lib';
-import type { UseCaseHandler } from '@/shared/kernel/contracts';
+import { assertAuthenticated } from '@/shared/auth/assert-authenticated.util';
+import type { UseCaseHandler } from '@/shared/kernel/contracts/use-case.contract';
 import { z } from 'zod';
 import { type VoteRealEstateInput, type VoteRealEstateOutput } from '../../domain';
 import { RealEstateCommandoBase } from './interfaces';
-import { VoteType } from '@/types';
+import { VoteType } from '@/types/vote-type';
 
 const voteRealEstateInputSchema = z.object({
   realEstateId: z.string().uuid('El identificador de inmobiliaria no es valido'),
@@ -21,11 +21,7 @@ export const createVoteRealEstateUseCase = (
   dependencies: RealEstateCommandoBase
 ): UseCaseHandler<VoteRealEstateInput, VoteRealEstateOutput> => {
   return async (input) => {
-    const userId = await dependencies.getCurrentUserId();
-
-    if (!userId) {
-      throw createError('UNAUTHORIZED');
-    }
+    const userId = await assertAuthenticated(dependencies.getCurrentUserId);
 
     await dependencies.rateLimit(`vote-real-estate:${userId}`, 'vote');
 

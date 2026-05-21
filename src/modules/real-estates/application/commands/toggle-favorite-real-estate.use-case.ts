@@ -1,5 +1,5 @@
-import { createError } from '@/lib';
-import type { UseCaseHandler } from '@/shared/kernel/contracts';
+import { assertAuthenticated } from '@/shared/auth/assert-authenticated.util';
+import type { UseCaseHandler } from '@/shared/kernel/contracts/use-case.contract';
 import { z } from 'zod';
 import type { ToggleFavoriteRealEstateInput, ToggleFavoriteRealEstateOutput } from '../../domain';
 import { RealEstateCommandoBase } from './interfaces';
@@ -16,11 +16,7 @@ export const createToggleFavoriteRealEstateUseCase = (
   dependencies: RealEstateCommandoBase
 ): UseCaseHandler<ToggleFavoriteRealEstateInput, ToggleFavoriteRealEstateOutput> => {
   return async (input) => {
-    const userId = await dependencies.getCurrentUserId();
-
-    if (!userId) {
-      throw createError('UNAUTHORIZED');
-    }
+    const userId = await assertAuthenticated(dependencies.getCurrentUserId);
 
     await dependencies.rateLimit(`favorite-real-estate:${userId}`, 'vote');
 

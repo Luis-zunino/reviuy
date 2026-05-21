@@ -8,9 +8,15 @@ import {
 import { SupabasePropertyReviewCommandRepository } from '../infrastructure';
 import type { CreatePropertyReviewInput } from '../domain';
 import { createServerActionDeps } from '@/shared/auth/create-server-action-deps.util';
+import { createError } from '@/lib/errors';
 
 export async function createReviewAction(input: CreatePropertyReviewInput) {
   const { supabase, getCurrentUserId, rateLimit } = await createServerActionDeps();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw createError('UNAUTHORIZED', 'Debés iniciar sesión.');
 
   const createPropertyReviewUseCase = createCreatePropertyReviewUseCase({
     getCurrentUserId,
@@ -23,6 +29,11 @@ export async function createReviewAction(input: CreatePropertyReviewInput) {
 
 export async function updateReviewAction(reviewId: string, updateData: unknown) {
   const { supabase, getCurrentUserId, rateLimit } = await createServerActionDeps();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw createError('UNAUTHORIZED', 'Debés iniciar sesión.');
 
   const updatePropertyReviewUseCase = createUpdatePropertyReviewUseCase({
     getCurrentUserId,
@@ -38,6 +49,11 @@ export async function updateReviewAction(reviewId: string, updateData: unknown) 
 
 export async function deleteReviewAction(reviewId: string) {
   const { supabase, getCurrentUserId, rateLimit } = await createServerActionDeps();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw createError('UNAUTHORIZED', 'Debés iniciar sesión.');
 
   const deletePropertyReviewUseCase = createDeletePropertyReviewUseCase({
     getCurrentUserId,

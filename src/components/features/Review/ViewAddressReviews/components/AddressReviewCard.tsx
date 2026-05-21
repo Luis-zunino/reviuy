@@ -1,5 +1,6 @@
 'use client';
 
+import { useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Calendar } from 'lucide-react';
@@ -10,15 +11,18 @@ import { PagesUrls } from '@/enums';
 import type { AddressReviewCardProps } from './types';
 
 export const AddressReviewCard = ({ review }: AddressReviewCardProps) => {
-  const router = useRouter();
+  const { push } = useRouter();
   const recommended = (review.rating ?? 0) >= 3.5;
 
-  const daysSinceCreated = Math.floor(
-    (new Date().getTime() - new Date(review.created_at ?? '').getTime()) / (1000 * 60 * 60 * 24)
-  );
+  const daysSinceCreated = useMemo(() => {
+    const now = new Date();
+    return Math.floor(
+      (now.getTime() - new Date(review.created_at ?? '').getTime()) / (1000 * 60 * 60 * 24)
+    );
+  }, [review.created_at]);
 
   const handleViewMore = () => {
-    router.push(`${PagesUrls.REVIEW_DETAILS.replace(':id', review.id ?? '')}`);
+    push(`${PagesUrls.REVIEW_DETAILS.replace(':id', review.id ?? '')}`);
   };
 
   return (

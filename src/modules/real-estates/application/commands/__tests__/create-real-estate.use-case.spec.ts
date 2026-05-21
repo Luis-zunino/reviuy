@@ -77,7 +77,9 @@ describe('createCreateRealEstateUseCase', () => {
     getCurrentUserId.mockResolvedValueOnce(null);
     const execute = createCreateRealEstateUseCase(dependencies);
 
-    await expect(execute(validInput)).rejects.toThrow('UNAUTHORIZED');
+    await expect(execute(validInput)).rejects.toThrow(
+      'Debes iniciar sesión para realizar esta acción'
+    );
     expect(rateLimit).not.toHaveBeenCalled();
   });
 

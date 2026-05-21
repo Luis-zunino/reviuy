@@ -1,6 +1,7 @@
-import { createError } from '@/lib';
-import { formCreateRealEstateSchema } from '@/schemas';
-import type { UseCaseHandler } from '@/shared/kernel/contracts';
+import { createError } from '@/lib/errors';
+import { assertAuthenticated } from '@/shared/auth/assert-authenticated.util';
+import { formCreateRealEstateSchema } from '@/schemas/real-estate.schema';
+import type { UseCaseHandler } from '@/shared/kernel/contracts/use-case.contract';
 import { ZodError } from 'zod';
 import type { CreateRealEstateInput, RealEstate } from '../../domain';
 import { RealEstateCommandoBase } from './interfaces';
@@ -17,11 +18,7 @@ export const createCreateRealEstateUseCase = (
   dependencies: RealEstateCommandoBase
 ): UseCaseHandler<unknown, RealEstate> => {
   return async (input) => {
-    const userId = await dependencies.getCurrentUserId();
-
-    if (!userId) {
-      throw createError('UNAUTHORIZED');
-    }
+    const userId = await assertAuthenticated(dependencies.getCurrentUserId);
 
     await dependencies.rateLimit(`create-real-estate:${userId}`, 'write');
 

@@ -1,5 +1,5 @@
-import { createError } from '@/lib';
-import type { UseCaseHandler } from '@/shared/kernel/contracts';
+import { assertAuthenticated } from '@/shared/auth/assert-authenticated.util';
+import type { UseCaseHandler } from '@/shared/kernel/contracts/use-case.contract';
 import type { DeleteRealEstateReviewInput, DeleteRealEstateReviewOutput } from '../../domain';
 import { RealEstateCommandoBase } from './interfaces';
 
@@ -14,11 +14,7 @@ export const createDeleteRealEstateReviewUseCase = (
   dependencies: RealEstateCommandoBase
 ): UseCaseHandler<DeleteRealEstateReviewInput, DeleteRealEstateReviewOutput> => {
   return async (input) => {
-    const userId = await dependencies.getCurrentUserId();
-
-    if (!userId) {
-      throw createError('UNAUTHORIZED');
-    }
+    const userId = await assertAuthenticated(dependencies.getCurrentUserId);
 
     await dependencies.rateLimit(`delete-re-review:${userId}`, 'write');
 

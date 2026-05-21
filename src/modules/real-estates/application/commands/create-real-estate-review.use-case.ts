@@ -1,6 +1,7 @@
-import { createError } from '@/lib';
-import { createRealEstateReviewSchema } from '@/schemas';
-import type { UseCaseHandler } from '@/shared/kernel/contracts';
+import { createError } from '@/lib/errors';
+import { assertAuthenticated } from '@/shared/auth/assert-authenticated.util';
+import { createRealEstateReviewSchema } from '@/schemas/real-estate-review.schema';
+import type { UseCaseHandler } from '@/shared/kernel/contracts/use-case.contract';
 import { ZodError } from 'zod';
 import type { CreateRealEstateReviewInput, CreateRealEstateReviewOutput } from '../../domain';
 import { RealEstateCommandoBase } from './interfaces';
@@ -17,18 +18,14 @@ export const createCreateRealEstateReviewUseCase = (
   dependencies: RealEstateCommandoBase
 ): UseCaseHandler<unknown, CreateRealEstateReviewOutput> => {
   return async (input) => {
-    const userId = await dependencies.getCurrentUserId();
-
-    if (!userId) {
-      throw createError('UNAUTHORIZED');
-    }
+    const userId = await assertAuthenticated(dependencies.getCurrentUserId);
 
     await dependencies.rateLimit(`create-re-review:${userId}`, 'write');
 
     let validatedInput: CreateRealEstateReviewInput;
 
     try {
-      validatedInput = createRealEstateReviewSchema.parse(input) as CreateRealEstateReviewInput;
+      validatedInput = createRealEstateReviewSchema.parse(input);
     } catch (error) {
       if (error instanceof ZodError) {
         const firstError = error.issues[0];

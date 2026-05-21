@@ -3,7 +3,7 @@
 import { createDeleteAccountUseCase } from '../application';
 import { SupabaseProfileCommandRepository } from '../infrastructure';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
-import { RateLimitType, withRateLimit } from '@/lib';
+import { RateLimitType, withRateLimit } from '@/lib/redis';
 
 export const deleteAccountAction = async () => {
   const supabase = await createSupabaseServerClient();
