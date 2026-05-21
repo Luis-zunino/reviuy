@@ -64,10 +64,7 @@ export const Loader: React.FC<LoadingProps> = ({
   return (
     <div className={cn('h-full w-full flex flex-col items-center justify-center', className)}>
       <div
-        className={cn(
-          'animate-spin rounded-full size-32 border-b-2 border-gray-900',
-          spinnerSize
-        )}
+        className={cn('animate-spin rounded-full size-32 border-b-2 border-gray-900', spinnerSize)}
       ></div>
       {message && <p className="text-muted-foreground">{message}</p>}
     </div>
