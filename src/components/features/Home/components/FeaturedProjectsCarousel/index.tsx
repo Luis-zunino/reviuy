@@ -59,20 +59,20 @@ export const FeaturedProjectsCarousel = () => {
                   setIsAutoPlaying(false);
                   paginate(-1);
                 }}
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-reviuy-gray-200 dark:border-reviuy-gray-700  dark:bg-reviuy-gray-800 text-reviuy-gray-600 dark:text-reviuy-gray-400 shadow-sm transition-all hover:border-reviuy-gray-300 dark:hover:border-reviuy-gray-600 hover:shadow-md"
+                className="flex size-10 items-center justify-center rounded-full border border-reviuy-gray-200 dark:border-reviuy-gray-700  dark:bg-reviuy-gray-800 text-reviuy-gray-600 dark:text-reviuy-gray-400 shadow-sm transition-all hover:border-reviuy-gray-300 dark:hover:border-reviuy-gray-600 hover:shadow-md"
                 aria-label="Proyecto anterior"
               >
-                <ChevronLeft className="h-5 w-5" />
+                <ChevronLeft className="size-5" />
               </button>
               <button
                 onClick={() => {
                   setIsAutoPlaying(false);
                   paginate(1);
                 }}
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-reviuy-gray-200 dark:border-reviuy-gray-700  dark:bg-reviuy-gray-800 text-reviuy-gray-600 dark:text-reviuy-gray-400 shadow-sm transition-all hover:border-reviuy-gray-300 dark:hover:border-reviuy-gray-600 hover:shadow-md"
+                className="flex size-10 items-center justify-center rounded-full border border-reviuy-gray-200 dark:border-reviuy-gray-700  dark:bg-reviuy-gray-800 text-reviuy-gray-600 dark:text-reviuy-gray-400 shadow-sm transition-all hover:border-reviuy-gray-300 dark:hover:border-reviuy-gray-600 hover:shadow-md"
                 aria-label="Siguiente proyecto"
               >
-                <ChevronRight className="h-5 w-5" />
+                <ChevronRight className="size-5" />
               </button>
             </div>
           </m.div>
@@ -109,11 +109,11 @@ export const FeaturedProjectsCarousel = () => {
                   {/* Image placeholder */}
                   <div className="relative aspect-4/3 overflow-hidden rounded-2xl border border-reviuy-gray-200/60 dark:border-reviuy-gray-700/50 bg-gradient-to-br from-reviuy-gray-100 to-reviuy-gray-200 dark:from-reviuy-gray-800 dark:to-reviuy-gray-700 shadow-sm md:aspect-[3/2]">
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <Building2 className="h-24 w-24 text-reviuy-gray-300 dark:text-reviuy-gray-600" />
+                      <Building2 className="size-24 text-reviuy-gray-300 dark:text-reviuy-gray-600" />
                     </div>
                     {/* Rating badge */}
                     <div className="absolute left-4 top-4 flex items-center gap-1.5 rounded-full /95 dark:bg-reviuy-gray-800/95 px-3 py-1.5 shadow-lg backdrop-blur-sm">
-                      <Star className="h-4 w-4 fill-reviuy-secondary-400 text-reviuy-secondary-400" />
+                      <Star className="size-4 fill-reviuy-secondary-400 text-reviuy-secondary-400" />
                       <span
                         className={`${manrope.className} text-sm font-semibold text-reviuy-gray-900 dark:text-white`}
                       >
@@ -133,7 +133,7 @@ export const FeaturedProjectsCarousel = () => {
                     <div
                       className={`${manrope.className} mt-2 flex items-center gap-1.5 text-sm text-reviuy-gray-600 dark:text-reviuy-gray-400`}
                     >
-                      <MapPin className="h-4 w-4" />
+                      <MapPin className="size-4" />
                       {currentProject.location}
                     </div>
 

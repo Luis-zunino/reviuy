@@ -17,9 +17,9 @@ export const Loader: React.FC<LoadingProps> = ({
   size = 'md',
 }) => {
   const sizeClasses = {
-    sm: 'h-4 w-4',
-    md: 'h-10 w-10',
-    lg: 'h-16 w-16',
+    sm: 'size-4',
+    md: 'size-10',
+    lg: 'size-16',
   };
 
   const spinnerSize = sizeClasses[size];
@@ -29,7 +29,7 @@ export const Loader: React.FC<LoadingProps> = ({
       <div className={cn('flex items-center gap-2', className)}>
         <div
           className={cn(
-            'animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900',
+            'animate-spin rounded-full size-32 border-b-2 border-gray-900',
             spinnerSize
           )}
         ></div>
@@ -50,7 +50,7 @@ export const Loader: React.FC<LoadingProps> = ({
         <div className="flex flex-col items-center gap-4 rounded-lg bg-card p-6 shadow-lg">
           <div
             className={cn(
-              'animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900',
+              'animate-spin rounded-full size-32 border-b-2 border-gray-900',
               spinnerSize
             )}
           ></div>
@@ -65,7 +65,7 @@ export const Loader: React.FC<LoadingProps> = ({
     <div className={cn('h-full w-full flex flex-col items-center justify-center', className)}>
       <div
         className={cn(
-          'animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900',
+          'animate-spin rounded-full size-32 border-b-2 border-gray-900',
           spinnerSize
         )}
       ></div>

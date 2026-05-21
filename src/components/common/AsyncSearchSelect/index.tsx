@@ -95,7 +95,7 @@ export const AsyncSearchSelect = <
                       />
                       {isFetching && (
                         <div className="absolute right-3 top-2.5">
-                          <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                          <Loader2 className="size-4 animate-spin text-muted-foreground" />
                         </div>
                       )}
                       {field.value && !isFetching && (
@@ -103,7 +103,7 @@ export const AsyncSearchSelect = <
                           type="button"
                           variant="link"
                           size="icon"
-                          className="absolute right-3 top-2.5 h-4 w-4 p-0 text-muted-foreground hover:bg-transparent hover:text-foreground"
+                          className="absolute right-3 top-2.5 size-4 p-0 text-muted-foreground hover:bg-transparent hover:text-foreground"
                           onClick={handleClear}
                           icon={X}
                         />
@@ -146,7 +146,7 @@ export const AsyncSearchSelect = <
                         ) : null}
                         {isFetching ? (
                           <div className="min-h-6 flex items-center justify-center p-2">
-                            <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                            <Loader2 className="size-4 animate-spin text-muted-foreground" />
                           </div>
                         ) : null}
                       </CommandList>

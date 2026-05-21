@@ -41,7 +41,7 @@ export const AddressReviewCard = ({ review }: AddressReviewCardProps) => {
         <Separator className="shrink-0" />
         <div className="flex justify-between align-middle w-full shrink-0">
           <div className="flex items-center gap-1">
-            <Calendar className="h-3 w-3" />
+            <Calendar className="size-3" />
             <span className="text-xs text-muted-foreground">Hace {daysSinceCreated}d</span>
           </div>
           <Button onClick={handleViewMore} variant="seeMore" size="sm">

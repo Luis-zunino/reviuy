@@ -136,7 +136,7 @@ export const ReviewSummary = ({ review }: ReviewSummaryProps) => {
                       <p className="text-base capitalize text-muted-foreground">
                         {review?.real_estates.name}
                       </p>
-                      <SquareArrowRight className="h-5 w-5 text-base capitalize text-muted-foreground" />
+                      <SquareArrowRight className="size-5 text-base capitalize text-muted-foreground" />
                     </Link>
                   </div>
                 </div>

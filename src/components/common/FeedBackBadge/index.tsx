@@ -12,12 +12,12 @@ export const FeedBackBadge = (props: FeedBackBadgeProps) => {
       >
         {recommended ? (
           <>
-            <ThumbsUp className="h-3 w-3" />
+            <ThumbsUp className="size-3" />
             Recomiendo
           </>
         ) : (
           <>
-            <ThumbsDown className="h-3 w-3" />
+            <ThumbsDown className="size-3" />
             No recomiendo
           </>
         )}

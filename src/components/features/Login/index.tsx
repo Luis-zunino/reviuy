@@ -43,7 +43,7 @@ export const Login = () => {
             Te enviaremos un enlace mágico al correo que ingreses para acceder a la plataforma{' '}
           </Label>
           <div className="relative">
-            <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+            <Mail className="absolute left-3 top-3 size-4 text-gray-400" />
             <Input
               type="email"
               id="email"
@@ -60,7 +60,7 @@ export const Login = () => {
             <Input
               id="acceptedTerms"
               type="checkbox"
-              className="mt-0.5 h-4 w-4"
+              className="mt-0.5 size-4"
               {...register('acceptedTerms')}
             />
             <span>
@@ -89,7 +89,7 @@ export const Login = () => {
         <Button variant="default" type="submit" disabled={loading} className="w-full">
           {loading ? (
             <>
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+              <div className="animate-spin rounded-full size-4 border-b-2 border-white mr-2"></div>
               Enviando enlace…
             </>
           ) : (

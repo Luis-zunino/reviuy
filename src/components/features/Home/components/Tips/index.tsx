@@ -84,9 +84,9 @@ export const Tips = () => {
                   'group hidden items-center gap-2 rounded-full border border-reviuy-primary-200 dark:border-reviuy-primary-500/30  dark:bg-reviuy-gray-800 px-4 py-2 text-sm font-semibold text-reviuy-primary-700 dark:text-reviuy-primary-400 shadow-sm transition-all hover:border-reviuy-primary-300 dark:hover:border-reviuy-primary-500/50 hover:shadow-md md:inline-flex'
                 )}
               >
-                <ShieldCheck className="h-4 w-4" />
+                <ShieldCheck className="size-4" />
                 Ver todos
-                <ArrowRight className="h-3 w-3 transition-transform duration-200 group-hover:translate-x-1" />
+                <ArrowRight className="size-3 transition-transform duration-200 group-hover:translate-x-1" />
               </Link>
             </m.div>
 
@@ -106,8 +106,8 @@ export const Tips = () => {
                       href={PagesUrls.TIPS_DETAILS.replace(':id', tip.id)}
                       className="group flex h-full flex-col rounded-2xl border border-reviuy-gray-200/60 dark:border-reviuy-gray-700/50  dark:bg-reviuy-gray-800/80 p-6 transition-all duration-300 hover:-translate-y-1 hover:border-reviuy-gray-300 dark:hover:border-reviuy-gray-600 hover:shadow-lg"
                     >
-                      <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-reviuy-gray-100 dark:bg-reviuy-gray-700/50 text-reviuy-gray-600 dark:text-reviuy-gray-400 transition-colors duration-300 group-hover:bg-reviuy-primary-50 dark:group-hover:bg-reviuy-primary-500/10 group-hover:text-reviuy-primary-600 dark:group-hover:text-reviuy-primary-400">
-                        <Icon className="h-6 w-6" />
+                      <div className="mb-4 flex size-12 items-center justify-center rounded-xl bg-reviuy-gray-100 dark:bg-reviuy-gray-700/50 text-reviuy-gray-600 dark:text-reviuy-gray-400 transition-colors duration-300 group-hover:bg-reviuy-primary-50 dark:group-hover:bg-reviuy-primary-500/10 group-hover:text-reviuy-primary-600 dark:group-hover:text-reviuy-primary-400">
+                        <Icon className="size-6" />
                       </div>
 
                       <h3
@@ -126,7 +126,7 @@ export const Tips = () => {
                         className={`${manrope.className} mt-4 inline-flex items-center gap-1 text-sm font-medium text-reviuy-primary-600 dark:text-reviuy-primary-400 transition-colors group-hover:text-reviuy-primary-700 dark:group-hover:text-reviuy-primary-300`}
                       >
                         Leer mas
-                        <ArrowRight className="h-3 w-3 transition-transform duration-200 group-hover:translate-x-1" />
+                        <ArrowRight className="size-3 transition-transform duration-200 group-hover:translate-x-1" />
                       </span>
                     </Link>
                   </m.div>
@@ -149,9 +149,9 @@ export const Tips = () => {
                   'group inline-flex items-center gap-2 rounded-full border border-reviuy-primary-200 dark:border-reviuy-primary-500/30  dark:bg-reviuy-gray-800 px-4 py-2 text-sm font-semibold text-reviuy-primary-700 dark:text-reviuy-primary-400 shadow-sm'
                 )}
               >
-                <ShieldCheck className="h-4 w-4" />
+                <ShieldCheck className="size-4" />
                 Ver todos los consejos
-                <ArrowRight className="h-3 w-3" />
+                <ArrowRight className="size-3" />
               </Link>
             </m.div>
           </div>

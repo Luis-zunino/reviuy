@@ -22,11 +22,11 @@ export const ViewRealEstateDetailsContent = (props: ViewRealEstateDetailsContent
     >
       <TabsList className="grid grid-cols-2 mb-6">
         <TabsTrigger value="realEstateReview" className="flex md:items-center gap-2">
-          <MessageSquare className="h-4 w-4 hidden md:block" />
+          <MessageSquare className="size-4 hidden md:block" />
           Reseñas de usuarios
         </TabsTrigger>
         <TabsTrigger value="realEstateUserExperience" className="flex md:items-center gap-2">
-          <MessageSquare className="h-4 w-4 hidden md:block" />
+          <MessageSquare className="size-4 hidden md:block" />
           Experiencias en alquileres
         </TabsTrigger>
       </TabsList>

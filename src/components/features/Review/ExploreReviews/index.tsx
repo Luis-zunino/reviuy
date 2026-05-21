@@ -115,8 +115,8 @@ export const ExploreReviews = () => {
       {/* Estado: idle — sin búsqueda activa */}
       {!isLoading && searchMode === 'idle' && (
         <div className="flex flex-col items-center justify-center py-20 text-center gap-4">
-          <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center">
-            <Search className="h-8 w-8 text-muted-foreground" aria-hidden="true" />
+          <div className="size-16 rounded-full bg-muted flex items-center justify-center">
+            <Search className="size-8 text-muted-foreground" aria-hidden="true" />
           </div>
           <div>
             <h3 className="text-lg font-semibold mb-1">Explora reseñas por zona</h3>
@@ -132,7 +132,7 @@ export const ExploreReviews = () => {
         <>
           {resultsTitle && (
             <div className="flex items-center gap-2 mb-5">
-              <MapPin className="h-4 w-4 text-muted-foreground shrink-0" aria-hidden="true" />
+              <MapPin className="size-4 text-muted-foreground shrink-0" aria-hidden="true" />
               <h2 className="text-base font-semibold text-foreground">{resultsTitle}</h2>
               {locationLabel && (
                 <span className="text-sm text-muted-foreground">&mdash; {locationLabel}</span>
@@ -148,8 +148,8 @@ export const ExploreReviews = () => {
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center py-20 text-center gap-4">
-              <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center">
-                <MapPin className="h-8 w-8 text-muted-foreground" aria-hidden="true" />
+              <div className="size-16 rounded-full bg-muted flex items-center justify-center">
+                <MapPin className="size-8 text-muted-foreground" aria-hidden="true" />
               </div>
               <div>
                 <h3 className="text-lg font-semibold mb-1">Sin reseñas en esta zona</h3>
