@@ -1,4 +1,3 @@
-export * from './email-regex.constant';
 export * from './fonts.constant';
 export * from './nominatim-url.constant';
 export * from './query-keys.constant';

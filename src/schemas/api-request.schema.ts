@@ -1,4 +1,3 @@
-import { EMAIL_REGEX } from '@/constants/email-regex.constant';
 import { z } from 'zod';
 
 export const contactApiSchema = z.object({
@@ -10,7 +9,7 @@ export const contactApiSchema = z.object({
   email: z
     .string({ message: 'El email es requerido' })
     .trim()
-    .regex(EMAIL_REGEX, 'El formato del email es invalido'),
+    .email('El formato del email es invalido'),
   message: z
     .string({ message: 'El mensaje es requerido' })
     .trim()
