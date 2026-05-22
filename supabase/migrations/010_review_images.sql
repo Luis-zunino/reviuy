@@ -1,10 +1,14 @@
 -- =============================================================================
--- MIGRACIÓN 019: IMÁGENES DE RESEÑAS (Cloudflare R2)
+-- MIGRACIÓN 010: IMÁGENES DE RESEÑAS
 -- =============================================================================
--- Las imágenes se almacenan en Cloudflare R2.
--- Supabase solo guarda la URL pública y el path para poder borrarlas del bucket.
+-- review_images: imágenes asociadas a reseñas (almacenadas en Cloudflare R2).
+-- Usa funciones SECURITY DEFINER como helpers de RLS porque SELECT está
+-- revocado en reviews y las políticas RLS necesitan verificar ownership.
 -- =============================================================================
 
+-- =============================================================================
+-- TABLA: review_images
+-- =============================================================================
 create table if not exists public.review_images (
   id          uuid primary key default gen_random_uuid(),
   review_id   uuid not null references public.reviews(id) on delete cascade,
@@ -42,8 +46,12 @@ set search_path = public as $$
   select exists (
     select 1 from public.reviews
     where id = p_review_id and user_id = auth.uid()
+      and deleted_at is null
   );
 $$;
+
+comment on function public.check_review_owner is
+  'Verifica que el usuario autenticado es el owner de la review y que ésta no está eliminada.';
 
 -- Revocar acceso directo a estas funciones auxiliares
 revoke execute on function public.check_review_active (uuid) from public, anon, authenticated;
@@ -63,8 +71,7 @@ create policy review_images_select_public on public.review_images for select
 -- Solo el owner de la reseña puede insertar imágenes
 create policy review_images_insert_own on public.review_images for insert
   with check (
-    auth.uid() is not null
-    and public.check_review_owner(review_images.review_id)
+    public.check_review_owner(review_images.review_id)
   );
 
 -- Solo el owner de la reseña puede borrar sus imágenes

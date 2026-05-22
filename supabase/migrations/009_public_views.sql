@@ -1,20 +1,26 @@
 -- =============================================================================
--- PROTECCIÓN DE PRIVACIDAD Y ANONIMATO DE USUARIOS
+-- MIGRACIÓN 009: VISTAS PÚBLICAS (_public)
 -- =============================================================================
--- Fecha: 6 de marzo de 2026
--- Propósito: Ocultar user_id de queries públicos para prevenir tracking
---           y perfilamiento de usuarios.
--- 
--- IMPORTANTE: Esta migración crea vistas que reemplazan el acceso directo
---            a las tablas para queries públicos.
+-- Única puerta de acceso público a datos.
+-- Reemplazan user_id/created_by por flag booleano is_mine.
+--
+-- DECISIÓN DE DISEÑO (supabase db advisors warning `security_definer_view`):
+--   Las vistas NO usan WITH (security_invoker = true) a propósito.
+--   SELECT está revocado de anon/authenticated en las tablas base (007_grants),
+--   entonces security_invoker rompería el acceso. Al correr como owner, las
+--   vistas pueden leer las tablas sin exponer REST endpoints crudos.
+--   auth.uid() funciona igual (lee del JWT, no de la sesión de PG).
+--   Esto NO es una vulnerabilidad: el gateway controlado es más seguro que
+--   exponer las tablas con RLS.
 -- =============================================================================
+
 -- =============================================================================
 -- VISTA SEGURA: reviews_public
 -- Oculta user_id y proporciona flag is_mine para verificar ownership
 -- =============================================================================
 drop view if exists public.reviews_public cascade;
 
-create view public.reviews_public as
+create view public.reviews_public with (security_invoker = false, security_barrier = true) as
 select
   r.id,
   r.real_estate_id,
@@ -54,7 +60,7 @@ select
 -- =============================================================================
 drop view if exists public.reviews_with_votes_public cascade;
 
-create view public.reviews_with_votes_public as
+create view public.reviews_with_votes_public with (security_invoker = false, security_barrier = true) as
 select
   r.id,
   r.real_estate_id,
@@ -114,7 +120,7 @@ select
 -- =============================================================================
 drop view if exists public.real_estate_reviews_public cascade;
 
-create view public.real_estate_reviews_public as
+create view public.real_estate_reviews_public with (security_invoker = false, security_barrier = true) as
 select
   rer.id,
   rer.real_estate_id,
@@ -143,7 +149,7 @@ select
 -- =============================================================================
 drop view if exists public.real_estate_reviews_with_votes_public cascade;
 
-create view public.real_estate_reviews_with_votes_public as
+create view public.real_estate_reviews_with_votes_public with (security_invoker = false, security_barrier = true) as
 select
   rer.id,
   rer.real_estate_id,
@@ -192,7 +198,7 @@ select
 -- =============================================================================
 drop view if exists public.real_estates_public cascade;
 
-create view public.real_estates_public as
+create view public.real_estates_public with (security_invoker = false, security_barrier = true) as
 select
   re.id,
   re.name,
@@ -216,6 +222,21 @@ select
   anon;
 
 -- =============================================================================
+-- FUNCIÓN AUXILIAR: get_user_vote_on_review
+-- Obtener el voto del usuario actual en una review
+-- =============================================================================
+create or replace function public.get_user_vote_on_review (p_review_id uuid) returns text language sql stable security invoker
+set search_path = public as $$
+  select vote_type from public.review_votes
+    where review_id = p_review_id and user_id = auth.uid()
+    limit 1;
+$$;
+
+comment on function public.get_user_vote_on_review is 'Obtiene el voto del usuario autenticado en una review';
+
+grant execute on function public.get_user_vote_on_review (uuid) to authenticated;
+
+-- =============================================================================
 -- FUNCIÓN AUXILIAR: get_user_vote_on_real_estate_review
 -- Obtener el voto del usuario actual en una reseña de inmobiliaria
 -- =============================================================================
@@ -228,23 +249,73 @@ $$;
 
 comment on function public.get_user_vote_on_real_estate_review is 'Obtiene el voto del usuario autenticado en una reseña de inmobiliaria';
 
-grant
-execute on function public.get_user_vote_on_real_estate_review (uuid) to authenticated;
+grant execute on function public.get_user_vote_on_real_estate_review (uuid) to authenticated;
 
 -- =============================================================================
--- NOTAS IMPORTANTES PARA DESARROLLO
+-- FUNCIONES PAGINADAS (F006)
+-- Límite server-side forzado para evitar queries sin paginación.
 -- =============================================================================
--- NOTA 1: Las tablas crudas (reviews, real_estates, real_estate_reviews)
--- tienen SELECT REVOCADO para anon y authenticated en 014_grants.sql.
--- El ÚNICO acceso público es vía estas vistas _public.
--- NOTA 2: Migración de queries en TypeScript
--- Antes:  await supabase.from('reviews').select('*')
---         await supabase.from('reviews_with_votes').select('*')
--- Después: await supabase.from('reviews_public').select('*')
---          await supabase.from('reviews_with_votes_public').select('*')
--- NOTA 3: Verificar ownership
--- Antes: if (review.user_id === currentUserId)
--- Después: if (review.is_mine)
--- NOTA 4: Las vistas _public NO exponen user_id/created_by.
--- Al no tener security_invoker (son gateways que corren como owner),
--- son el único camino de acceso ya que SELECT está revocado en tablas crudas.
+
+create or replace function public.get_reviews_paginated (
+  p_limit int default 50,
+  p_offset int default 0
+) returns setof public.reviews_public language sql stable security invoker
+set search_path = public as $$
+  select * from public.reviews_public
+  order by created_at desc
+  limit least(p_limit, 100)
+  offset p_offset;
+$$;
+
+comment on function public.get_reviews_paginated is
+  'Retorna reseñas paginadas con límite máximo de 100 filas.';
+
+create or replace function public.get_reviews_with_votes_paginated (
+  p_limit int default 50,
+  p_offset int default 0
+) returns setof public.reviews_with_votes_public language sql stable security invoker
+set search_path = public as $$
+  select * from public.reviews_with_votes_public
+  order by created_at desc
+  limit least(p_limit, 100)
+  offset p_offset;
+$$;
+
+comment on function public.get_reviews_with_votes_paginated is
+  'Retorna reseñas con votos paginadas con límite máximo de 100 filas.';
+
+create or replace function public.get_real_estates_paginated (
+  p_limit int default 50,
+  p_offset int default 0
+) returns setof public.real_estates_public language sql stable security invoker
+set search_path = public as $$
+  select * from public.real_estates_public
+  order by created_at desc
+  limit least(p_limit, 100)
+  offset p_offset;
+$$;
+
+comment on function public.get_real_estates_paginated is
+  'Retorna inmobiliarias paginadas con límite máximo de 100 filas.';
+
+create or replace function public.get_real_estate_reviews_paginated (
+  p_real_estate_id uuid,
+  p_limit int default 50,
+  p_offset int default 0
+) returns setof public.real_estate_reviews_with_votes_public language sql stable security invoker
+set search_path = public as $$
+  select * from public.real_estate_reviews_with_votes_public
+  where real_estate_id = p_real_estate_id
+  order by created_at desc
+  limit least(p_limit, 100)
+  offset p_offset;
+$$;
+
+comment on function public.get_real_estate_reviews_paginated is
+  'Retorna reseñas de una inmobiliaria paginadas con límite máximo de 100 filas.';
+
+-- Grants para las funciones paginadas
+grant execute on function public.get_reviews_paginated(int, int) to authenticated, anon;
+grant execute on function public.get_reviews_with_votes_paginated(int, int) to authenticated, anon;
+grant execute on function public.get_real_estates_paginated(int, int) to authenticated, anon;
+grant execute on function public.get_real_estate_reviews_paginated(uuid, int, int) to authenticated, anon;

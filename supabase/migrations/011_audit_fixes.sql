@@ -1,36 +1,20 @@
 -- =============================================================================
--- MIGRACIÓN 020: CORRECCIONES DE AUDITORÍA
+-- MIGRACIÓN 011: AUDIT Y FIXES DE SEGURIDAD
 -- =============================================================================
--- Fecha: 2026-05-21
--- Propósito: Corregir hallazgos identificados en la auditoría de seguridad
---            y mantenibilidad de la base de datos.
--- Ver: .audit-findings.json
+-- Test de regresión DO block que corre en cada deploy.
+-- Si una vista _public expone accidentalmente user_id/created_by,
+-- la migración falla y el deploy se revierte.
+--
+-- También incluye configuraciones globales y el índice compuesto
+-- para detección de actividad sospechosa.
 -- =============================================================================
-
--- =============================================================================
--- F003 (HIGH): check_review_owner debe verificar deleted_at
--- =============================================================================
--- Antes: solo verificaba user_id, permitía operaciones en imágenes de reseñas
---        soft-deleteadas. check_review_active SÍ lo verificaba, inconsistencia.
-create or replace function public.check_review_owner (p_review_id uuid)
-returns boolean language sql security definer
-set search_path = public as $$
-  select exists (
-    select 1 from public.reviews
-    where id = p_review_id and user_id = auth.uid()
-      and deleted_at is null
-  );
-$$;
-
-comment on function public.check_review_owner is
-  'Verifica que el usuario autenticado es el owner de la review y que ésta no está eliminada.';
 
 -- =============================================================================
 -- F004 (MEDIUM): log_security_event como SECURITY INVOKER
 -- =============================================================================
 -- Antes: SECURITY DEFINER + grant a authenticated permitía log forgery.
 -- Ahora: SECURITY INVOKER + RLS policy para INSERT controlado desde funciones.
-create or replace function log_security_event (
+create or replace function public.log_security_event (
   p_action text,
   p_status text default 'success',
   p_error_message text default null,
@@ -55,7 +39,7 @@ EXCEPTION
 END;
 $function$;
 
-comment on FUNCTION log_security_event is
+comment on FUNCTION public.log_security_event is
   'Logging de seguridad con SECURITY INVOKER. Las funciones que la llaman deben tener permiso de INSERT en security_logs.';
 
 -- RLS policy para permitir INSERT desde funciones SECURITY INVOKER
@@ -81,7 +65,7 @@ comment on index idx_security_logs_suspicious_activity is
 -- Antes: la rama INSERT usaba NEW.user_id (quien CREÓ la review).
 --        la rama UPDATE usaba auth.uid() (quien EJECUTÓ la acción).
 -- Ahora: ambas ramas usan auth.uid() para consistencia en auditoría.
-create or replace function log_review_changes () RETURNS TRIGGER SECURITY DEFINER
+create or replace function public.log_review_changes () RETURNS TRIGGER LANGUAGE plpgsql SECURITY DEFINER
 set search_path = public as $function$ BEGIN
   IF (TG_OP = 'UPDATE' AND OLD IS DISTINCT FROM NEW) THEN
     INSERT INTO public.review_audit (
@@ -131,75 +115,6 @@ begin
     end if;
   end if;
 end $$;
-
--- =============================================================================
--- F006 (MEDIUM): Funciones paginadas para vistas _public
--- =============================================================================
--- Proveen límite server-side forzado para evitar queries sin paginación.
-
-create or replace function public.get_reviews_paginated (
-  p_limit int default 50,
-  p_offset int default 0
-) returns setof public.reviews_public language sql stable security invoker
-set search_path = public as $$
-  select * from public.reviews_public
-  order by created_at desc
-  limit least(p_limit, 100)
-  offset p_offset;
-$$;
-
-comment on function public.get_reviews_paginated is
-  'Retorna reseñas paginadas con límite máximo de 100 filas.';
-
-create or replace function public.get_reviews_with_votes_paginated (
-  p_limit int default 50,
-  p_offset int default 0
-) returns setof public.reviews_with_votes_public language sql stable security invoker
-set search_path = public as $$
-  select * from public.reviews_with_votes_public
-  order by created_at desc
-  limit least(p_limit, 100)
-  offset p_offset;
-$$;
-
-comment on function public.get_reviews_with_votes_paginated is
-  'Retorna reseñas con votos paginadas con límite máximo de 100 filas.';
-
-create or replace function public.get_real_estates_paginated (
-  p_limit int default 50,
-  p_offset int default 0
-) returns setof public.real_estates_public language sql stable security invoker
-set search_path = public as $$
-  select * from public.real_estates_public
-  order by created_at desc
-  limit least(p_limit, 100)
-  offset p_offset;
-$$;
-
-comment on function public.get_real_estates_paginated is
-  'Retorna inmobiliarias paginadas con límite máximo de 100 filas.';
-
-create or replace function public.get_real_estate_reviews_paginated (
-  p_real_estate_id uuid,
-  p_limit int default 50,
-  p_offset int default 0
-) returns setof public.real_estate_reviews_with_votes_public language sql stable security invoker
-set search_path = public as $$
-  select * from public.real_estate_reviews_with_votes_public
-  where real_estate_id = p_real_estate_id
-  order by created_at desc
-  limit least(p_limit, 100)
-  offset p_offset;
-$$;
-
-comment on function public.get_real_estate_reviews_paginated is
-  'Retorna reseñas de una inmobiliaria paginadas con límite máximo de 100 filas.';
-
--- Grants para las funciones paginadas
-grant execute on function public.get_reviews_paginated(int, int) to authenticated, anon;
-grant execute on function public.get_reviews_with_votes_paginated(int, int) to authenticated, anon;
-grant execute on function public.get_real_estates_paginated(int, int) to authenticated, anon;
-grant execute on function public.get_real_estate_reviews_paginated(uuid, int, int) to authenticated, anon;
 
 -- =============================================================================
 -- F014 (LOW): Configuración global de timeouts
@@ -260,16 +175,3 @@ begin
     raise notice 'PRIVACY_TEST_PASSED: Ninguna vista _public expone columnas de identidad de usuario.';
   end if;
 end $$;
-
--- NOTA: Estas vistas NO tienen security_invoker = on intencionalmente.
--- Ver 017_secure_user_privacy.sql y .audit-findings.json (F001).
--- El acceso público está mediado por estas vistas que corren como owner,
--- ya que SELECT está revocado en las tablas base (014_grants.sql).
-
--- =============================================================================
--- NOTAS FINALES
--- =============================================================================
--- Hallazgos que no requirieron cambios de código:
---   F009 (LOW):  Sin estrategia de rollback - requiere proceso, no código.
---   F013 (LOW):  Numeración salta 003-007 - documentado en README.md.
--- =============================================================================
