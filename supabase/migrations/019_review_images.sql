@@ -23,6 +23,33 @@ create index if not exists idx_review_images_path
   on public.review_images (path);
 
 -- =============================================================================
+-- FUNCIONES AUXILIARES (SECURITY DEFINER) para RLS
+-- Las subqueries directas a public.reviews fallarían con SELECT revocado.
+-- Estas funciones corren como owner y verifican existencia/ownership.
+-- =============================================================================
+create or replace function public.check_review_active (p_review_id uuid)
+returns boolean language sql security definer
+set search_path = public as $$
+  select exists (
+    select 1 from public.reviews
+    where id = p_review_id and deleted_at is null
+  );
+$$;
+
+create or replace function public.check_review_owner (p_review_id uuid)
+returns boolean language sql security definer
+set search_path = public as $$
+  select exists (
+    select 1 from public.reviews
+    where id = p_review_id and user_id = auth.uid()
+  );
+$$;
+
+-- Revocar acceso directo a estas funciones auxiliares
+revoke execute on function public.check_review_active (uuid) from public, anon, authenticated;
+revoke execute on function public.check_review_owner (uuid) from public, anon, authenticated;
+
+-- =============================================================================
 -- RLS
 -- =============================================================================
 alter table public.review_images enable row level security;
@@ -30,32 +57,20 @@ alter table public.review_images enable row level security;
 -- Lectura pública: cualquiera puede ver las imágenes de reseñas no eliminadas
 create policy review_images_select_public on public.review_images for select
   using (
-    exists (
-      select 1 from public.reviews
-      where reviews.id = review_images.review_id
-        and reviews.deleted_at is null
-    )
+    public.check_review_active(review_images.review_id)
   );
 
 -- Solo el owner de la reseña puede insertar imágenes
 create policy review_images_insert_own on public.review_images for insert
   with check (
     auth.uid() is not null
-    and exists (
-      select 1 from public.reviews
-      where reviews.id = review_images.review_id
-        and reviews.user_id = auth.uid()
-    )
+    and public.check_review_owner(review_images.review_id)
   );
 
 -- Solo el owner de la reseña puede borrar sus imágenes
 create policy review_images_delete_own on public.review_images for delete
   using (
-    exists (
-      select 1 from public.reviews
-      where reviews.id = review_images.review_id
-        and reviews.user_id = auth.uid()
-    )
+    public.check_review_owner(review_images.review_id)
   );
 
 -- =============================================================================

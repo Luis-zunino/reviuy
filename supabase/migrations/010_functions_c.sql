@@ -2,7 +2,7 @@
 -- Funciones
 --=============================================================================
 -- Función para crear inmobiliaria 
-create or replace function create_real_estate (p_name text, p_description text default null) RETURNS json LANGUAGE plpgsql SECURITY DEFINER
+create or replace function create_real_estate (p_name text, p_description text default null) RETURNS json LANGUAGE plpgsql SECURITY INVOKER
 set
   search_path = public as $function$ DECLARE v_user_id uuid;
 
@@ -76,7 +76,7 @@ END;
 $function$;
 
 -- Función para votar inmobiliarias (simplificada - contadores se calculan con SELECT)
-create or replace function vote_real_estate (p_real_estate_id uuid, p_vote_type text) RETURNS json LANGUAGE plpgsql SECURITY DEFINER
+create or replace function vote_real_estate (p_real_estate_id uuid, p_vote_type text) RETURNS json LANGUAGE plpgsql SECURITY INVOKER
 set
   search_path = public as $$ DECLARE v_user_id uuid;
 
@@ -194,7 +194,7 @@ create or replace function report_real_estate (
   p_real_estate_id UUID,
   p_reason TEXT,
   p_description TEXT default null
-) RETURNS JSON LANGUAGE plpgsql SECURITY DEFINER
+) RETURNS JSON LANGUAGE plpgsql SECURITY INVOKER
 set
   search_path = public as $$ DECLARE v_user_id UUID;
 
@@ -234,7 +234,7 @@ IF NOT EXISTS (
     SELECT
         1
     FROM
-        public.real_estates
+        public.real_estates_public
     WHERE
         id = p_real_estate_id
 ) THEN RETURN json_build_object(
@@ -326,7 +326,7 @@ $$;
 -- =============================================================================
 -- FUNCIÓN PARA AGREGAR / QUITAR FAVORITO (TOGGLE)
 --=============================================================================
-create or replace function toggle_favorite_real_estate (p_real_estate_id uuid) RETURNS public.toggle_favorite_result LANGUAGE plpgsql SECURITY DEFINER
+create or replace function toggle_favorite_real_estate (p_real_estate_id uuid) RETURNS public.toggle_favorite_result LANGUAGE plpgsql SECURITY INVOKER
 set
   search_path = public as $$ DECLARE v_user_id uuid;
 
@@ -413,108 +413,79 @@ $$;
 -- =============================================================================
 -- FUNCIÓN PARA SABER EL VOTO DEL USUARIO SOBRE UNA REAL ESTATE
 --=============================================================================
-create or replace function get_user_real_estate_vote (p_real_estate_id uuid) returns text language sql as $$
-select
-    vote_type
-from
-    real_estate_votes
-where
-    real_estate_id = p_real_estate_id
+create or replace function public.get_user_real_estate_vote (p_real_estate_id uuid) returns text language sql stable security invoker
+set search_path = public as $$
+  select vote_type
+  from public.real_estate_votes
+  where real_estate_id = p_real_estate_id
     and user_id = auth.uid()
-limit
-    1;
-
+  limit 1;
 $$;
 
 -- =============================================================================
 -- FUNCIÓN PARA SABER LAS REVIEWS DEL USUARIO
 --=============================================================================
-create or replace function public.get_reviews_by_current_user () returns setof reviews_with_votes language sql security definer
-set
-  search_path = public as $$
-select
-    *
-from
-    reviews_with_votes
-where
-    user_id = auth.uid()
-order by
-    created_at desc;
-
+create or replace function public.get_reviews_by_current_user () returns setof reviews_with_votes_public language plpgsql security invoker
+set search_path = public as $$
+begin
+  return query select * from reviews_with_votes_public
+    where is_mine order by created_at desc
+    limit 200;
+end;
 $$;
 
 -- =============================================================================
 -- FUNCIÓN PARA SABER LOs FAVORITOS DEL USUARIO
 --=============================================================================
-create or replace function public.get_favorite_reviews_by_current_user () returns setof reviews_with_votes language sql security definer
-set
-  search_path = public as $$
-select
-    rwv.*
-from
-    review_favorites rf
-    join reviews_with_votes rwv on rwv.id = rf.review_id
-where
-    rf.user_id = auth.uid()
-order by
-    rf.created_at desc;
-
+create or replace function public.get_favorite_reviews_by_current_user () returns setof reviews_with_votes_public language plpgsql security invoker
+set search_path = public as $$
+begin
+  return query select rwv_p.* from review_favorites rf
+    join reviews_with_votes_public rwv_p on rwv_p.id = rf.review_id
+    where rf.user_id = auth.uid() order by rf.created_at desc
+    limit 200;
+end;
 $$;
 
 -- =============================================================================
 -- FUNCIÓN PARA SABER EL VOTO DEL USUARIO SOBRE UNA REVIEW
 --=============================================================================
-create or replace function public.get_user_review_vote (p_review_id uuid) returns text language sql stable security invoker as $$
-select
-    vote_type
-from
-    public.review_votes
-where
-    review_id = p_review_id
-    and user_id = auth.uid()
-limit
-    1;
-
+create or replace function public.get_user_review_vote (p_review_id uuid) returns text language sql stable security invoker
+set search_path = public as $$
+select vote_type from public.review_votes
+  where review_id = p_review_id and user_id = auth.uid()
+  limit 1;
 $$;
 
 -- =============================================================================
 -- FUNCIÓN PARA SABER SI EL USUARIO TIENE UNA REVIEW SEGUN LA ADDRESS
 --=============================================================================
-create or replace function public.check_user_review_for_address (p_osm_id text) returns uuid language sql stable security invoker as $$
-select
-    id
-from
-    public.reviews
-where
-    user_id = auth.uid()
-    and address_osm_id = p_osm_id
-limit
-    1;
-
+create or replace function public.check_user_review_for_address (p_osm_id text) returns uuid language plpgsql stable security invoker
+set search_path = public as $$
+declare
+  v_id uuid;
+begin
+  select id into v_id from public.reviews_public
+    where is_mine and address_osm_id = p_osm_id limit 1;
+  return v_id;
+end;
 $$;
 
 -- =============================================================================
 -- FUNCIÓN PARA SABER LA REVIEW DE UNA REAL ESTATE POR USUARIO
 --=============================================================================
-create or replace function public.get_real_estate_review_by_user (p_real_estate_id uuid) returns setof public.real_estate_reviews_with_votes language sql security definer
-set
-  search_path = public as $$
-select
-    *
-from
-    public.real_estate_reviews_with_votes
-where
-    user_id = auth.uid()
-    and real_estate_id = p_real_estate_id
-limit
-    1;
-
+create or replace function public.get_real_estate_review_by_user (p_real_estate_id uuid) returns setof public.real_estate_reviews_with_votes_public language plpgsql security invoker
+set search_path = public as $$
+begin
+  return query select * from public.real_estate_reviews_with_votes_public
+    where is_mine and real_estate_id = p_real_estate_id limit 1;
+end;
 $$;
 
 -- =============================================================================
 -- FUNCIÓN PARA AGREGAR / QUITAR FAVORITO DE RESEÑA (TOGGLE)
 --=============================================================================
-create or replace function toggle_favorite_review (p_review_id uuid) RETURNS json LANGUAGE plpgsql SECURITY DEFINER
+create or replace function toggle_favorite_review (p_review_id uuid) RETURNS json LANGUAGE plpgsql SECURITY INVOKER
 set
   search_path = public as $$ DECLARE v_user_id uuid;
 
@@ -616,21 +587,66 @@ END;
 
 $$;
 
-create or replace function moderate_reports (report_id uuid) RETURNS VOID LANGUAGE plpgsql SECURITY DEFINER
+create or replace function moderate_reports (
+  p_report_id uuid,
+  p_target_type text,
+  p_status text,
+  p_moderation_note text default null
+) RETURNS json LANGUAGE plpgsql SECURITY DEFINER
 set
-  search_path = public as $$ BEGIN -- Placeholder: mantener el parámetro como usado hasta implementar moderación.
-    PERFORM report_id;
+  search_path = public as $$
+DECLARE
+  v_updated boolean;
+BEGIN
+  IF auth.jwt() ->> 'role' != 'service_role' THEN
+    RAISE EXCEPTION 'Access denied';
+  END IF;
 
-IF auth.role () != 'service_role' THEN RAISE EXCEPTION 'Access denied';
+  IF p_status NOT IN ('reviewed', 'resolved', 'dismissed') THEN
+    RAISE EXCEPTION 'Invalid status. Use: reviewed, resolved, or dismissed';
+  END IF;
 
-END IF;
+  CASE p_target_type
+    WHEN 'review' THEN
+      UPDATE public.review_reports
+      SET status = p_status, updated_at = now()
+      WHERE id = p_report_id;
+    WHEN 'real_estate_review' THEN
+      UPDATE public.real_estate_review_reports
+      SET status = p_status, updated_at = now()
+      WHERE id = p_report_id;
+    WHEN 'real_estate' THEN
+      UPDATE public.real_estate_reports
+      SET status = p_status, updated_at = now()
+      WHERE id = p_report_id;
+    ELSE
+      RAISE EXCEPTION 'Invalid target type. Use: review, real_estate_review, or real_estate';
+  END CASE;
 
--- TODO: Implementar lógica de moderación
--- Placeholder: esta función requiere implementación antes de uso en producción
-RAISE EXCEPTION 'Función de moderación aún no implementada';
+  GET DIAGNOSTICS v_updated = ROW_COUNT;
 
+  IF NOT v_updated THEN
+    RAISE EXCEPTION 'Report not found: %', p_report_id;
+  END IF;
+
+  PERFORM log_security_event(
+    'moderate_report',
+    'success',
+    p_moderation_note,
+    jsonb_build_object(
+      'report_id', p_report_id,
+      'target_type', p_target_type,
+      'new_status', p_status
+    )
+  );
+
+  RETURN jsonb_build_object(
+    'success', true,
+    'report_id', p_report_id,
+    'target_type', p_target_type,
+    'new_status', p_status
+  );
 END;
-
 $$;
 
 -- Función para detectar actividad sospechosa 
@@ -641,7 +657,7 @@ create or replace function detect_suspicious_activity (p_user_id UUID default nu
   suspicious_score INTEGER
 ) LANGUAGE plpgsql SECURITY DEFINER
 set
-  search_path = public as $$ BEGIN IF auth.role () != 'service_role' THEN RAISE EXCEPTION 'Access denied';
+  search_path = public as $$ BEGIN IF auth.jwt() ->> 'role' != 'service_role' THEN RAISE EXCEPTION 'Access denied';
 
 END IF;
 
@@ -926,6 +942,9 @@ set
 -- =============================================================================
 -- FUNCIONES PARA CONTADORES DINÁMICOS DE VOTOS DE REAL_ESTATES
 -- =============================================================================
+-- ⚠️ ADVERTENCIA (F016): Esta función es SECURITY DEFINER con grant a anon + authenticated.
+-- NO cambiar el return type para incluir columnas de usuario (user_id, email, etc.).
+-- Si se necesitan datos sensibles, convertir a SECURITY INVOKER primero y verificar grants.
 -- Función para obtener contadores de likes/dislikes en tiempo real
 create or replace function public.get_real_estate_vote_counts (p_real_estate_id uuid) returns table (likes_count bigint, dislikes_count bigint) language plpgsql stable security definer
 set
@@ -961,6 +980,7 @@ end;
 $$;
 
 -- Función para refrescar la vista materializada de contadores
+-- NOTA: Solo se usa vía pg_cron o refresh_all_vote_stats(). No hay triggers que la llamen (ver migración 011).
 create or replace function public.refresh_real_estate_vote_stats () returns trigger language plpgsql security definer
 set
   search_path = public as $$ begin refresh materialized view concurrently public.real_estate_vote_stats;
@@ -974,6 +994,9 @@ $$;
 -- =============================================================================
 -- FUNCIONES PARA CONTADORES DINÁMICOS DE VOTOS DE REVIEWS
 -- =============================================================================
+-- ⚠️ ADVERTENCIA (F016): Esta función es SECURITY DEFINER con grant a anon + authenticated.
+-- NO cambiar el return type para incluir columnas de usuario (user_id, email, etc.).
+-- Si se necesitan datos sensibles, convertir a SECURITY INVOKER primero y verificar grants.
 -- Función para obtener contadores de likes/dislikes de reviews en tiempo real
 create or replace function public.get_review_vote_counts (p_review_id uuid) returns table (likes_count bigint, dislikes_count bigint) language plpgsql stable security definer
 set
@@ -1009,6 +1032,7 @@ end;
 $$;
 
 -- Función para refrescar la vista materializada de contadores de reviews
+-- NOTA: Solo se usa vía pg_cron o refresh_all_vote_stats(). No hay triggers que la llamen (ver migración 011).
 create or replace function public.refresh_review_vote_stats () returns trigger language plpgsql security definer
 set
   search_path = public as $$ begin refresh materialized view concurrently public.review_vote_stats;
@@ -1019,6 +1043,9 @@ end;
 
 $$;
 
+-- ⚠️ ADVERTENCIA (F016): Esta función es SECURITY DEFINER con grant a anon + authenticated.
+-- NO cambiar el return type para incluir columnas de usuario (user_id, email, etc.).
+-- Si se necesitan datos sensibles, convertir a SECURITY INVOKER primero y verificar grants.
 -- Función para obtener contadores de votos de real_estate_reviews en tiempo real
 create or replace function public.get_real_estate_review_vote_counts (p_real_estate_review_id uuid) returns table (likes_count bigint, dislikes_count bigint) language plpgsql stable security definer
 set
@@ -1054,6 +1081,7 @@ end;
 $$;
 
 -- Función para refrescar la vista materializada de contadores de real_estate_reviews
+-- NOTA: Solo se usa vía pg_cron o refresh_all_vote_stats(). No hay triggers que la llamen (ver migración 011).
 create or replace function public.refresh_real_estate_review_vote_stats () returns trigger language plpgsql security definer
 set
   search_path = public as $$ begin refresh materialized view concurrently public.real_estate_review_vote_stats;

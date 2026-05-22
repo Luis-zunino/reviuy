@@ -1,5 +1,5 @@
 --=============================================================================
--- MIGRACIÓN 002: FUNCIONES AUXILIARES
+-- MIGRACIÓN 008: FUNCIONES AUXILIARES (PARTE A)
 --=============================================================================
 -- 1.Función de rate limiting optimizada 
 drop function IF exists check_rate_limit (TEXT, INTEGER, INTEGER);
@@ -8,7 +8,7 @@ create or replace function check_rate_limit (
   p_endpoint text,
   p_max_requests integer default 10,
   p_window_minutes integer default 1
-) RETURNS boolean LANGUAGE plpgsql SECURITY DEFINER
+) RETURNS boolean LANGUAGE plpgsql SECURITY INVOKER
 set
   search_path = public as $function$ DECLARE v_user_id UUID;
 
@@ -110,7 +110,7 @@ $function$;
 drop function IF exists cleanup_rate_limits_on_insert () CASCADE;
 
 -- Nueva estrategia: Cleanup probabilístico (1% de chance por insert)
-create or replace function cleanup_rate_limits_on_insert () RETURNS TRIGGER as $function$ BEGIN
+create or replace function cleanup_rate_limits_on_insert () RETURNS TRIGGER set search_path = public as $function$ BEGIN
 -- Solo limpiar el 1% de las veces (reduce overhead)
 IF random() < 0.01 THEN -- DELETE con LIMIT para evitar locks largos
 DELETE FROM
@@ -200,7 +200,7 @@ do $do$ BEGIN IF EXISTS (
             table_name = 'rate_limits'
             AND table_schema = 'public'
     ) THEN EXECUTE '
-CREATE OR REPLACE VIEW rate_limit_stats AS
+CREATE OR REPLACE VIEW rate_limit_stats WITH (security_invoker = on) AS
 SELECT
     endpoint,
     COUNT(DISTINCT user_id) AS unique_users,
@@ -464,7 +464,7 @@ create or replace function public.create_review (
   p_real_estate_experience text default null,
   p_apartment_number text default null,
   p_review_rooms jsonb default null
-) RETURNS public.create_review_result LANGUAGE plpgsql SECURITY DEFINER
+) RETURNS public.create_review_result LANGUAGE plpgsql SECURITY INVOKER
 set
   search_path = public as $function$ DECLARE v_review_id UUID;
 
@@ -641,11 +641,10 @@ IF EXISTS (
     SELECT
         1
     FROM
-        public.reviews
+        public.reviews_public
     WHERE
-        user_id = v_user_id
+        is_mine
         AND address_osm_id = p_address_osm_id
-        AND deleted_at IS NULL
 ) THEN PERFORM log_security_event(
     'create_review',
     'blocked',
@@ -777,9 +776,9 @@ END;
 $function$;
 
 -- Función para eliminar una reseña de forma segura
-create or replace function delete_review_safe (review_id_param uuid) RETURNS boolean LANGUAGE plpgsql SECURITY DEFINER
+create or replace function delete_review_safe (review_id_param uuid) RETURNS boolean LANGUAGE plpgsql SECURITY INVOKER
 set
-  search_path = public as $function$ DECLARE review_owner UUID;
+  search_path = public as $function$ DECLARE v_is_mine boolean;
 
 
 current_user_id UUID;
@@ -797,24 +796,23 @@ IF current_user_id IS NULL THEN RAISE EXCEPTION 'Usuario no autenticado';
 END IF;
 
 SELECT
-    user_id,
-    title,
-    rating,
-    created_at INTO review_owner,
-    v_review_title,
+    rp.title,
+    rp.rating,
+    rp.created_at,
+    rp.is_mine INTO v_review_title,
     v_review_rating,
-    v_review_created_at
+    v_review_created_at,
+    v_is_mine
 FROM
-    public.reviews
+    public.reviews_public rp
 WHERE
-    id = review_id_param
-    AND deleted_at IS NULL;
+    rp.id = review_id_param;
 
-IF review_owner IS NULL THEN RAISE EXCEPTION 'Reseña no encontrada';
+IF NOT FOUND THEN RAISE EXCEPTION 'Reseña no encontrada';
 
 END IF;
 
-IF review_owner != current_user_id THEN RAISE EXCEPTION 'No tienes permisos para eliminar esta reseña';
+IF NOT v_is_mine THEN RAISE EXCEPTION 'No tienes permisos para eliminar esta reseña';
 
 END IF;
 
@@ -864,43 +862,25 @@ END;
 $function$;
 
 -- Función para obtener estadísticas antes de eliminar
-create or replace function public.get_review_delete_info (review_id_param uuid) RETURNS public.get_review_delete_info_result LANGUAGE plpgsql SECURITY DEFINER
+create or replace function public.get_review_delete_info (review_id_param uuid) RETURNS public.get_review_delete_info_result LANGUAGE plpgsql SECURITY INVOKER
 set
   search_path = public as $function$ DECLARE result public.get_review_delete_info_result;
 
-
-current_user_id uuid;
-
-BEGIN current_user_id := auth.uid();
-
-IF current_user_id IS NULL THEN result.error := 'Usuario no autenticado';
-
-RETURN result;
-
-END IF;
-
+BEGIN
 SELECT
-    r.id,
-    r.title,
-    r.created_at,
-    r.rating,
-    COALESCE(stats.likes, 0),
-    COALESCE(stats.dislikes, 0),
-    (r.user_id = current_user_id),
-    (
-        SELECT
-            COUNT(*)
-        FROM
-            public.review_votes rv
-        WHERE
-            rv.review_id = r.id
-    ),
+    rwv.id,
+    rwv.title,
+    rwv.created_at,
+    rwv.rating,
+    rwv.likes :: integer,
+    rwv.dislikes :: integer,
+    rwv.is_mine,
+    rwv.total_votes :: integer,
     NULL INTO result
 FROM
-    public.reviews r
-    LEFT JOIN public.review_vote_stats stats ON r.id = stats.review_id
+    public.reviews_with_votes_public rwv
 WHERE
-    r.id = review_id_param;
+    rwv.id = review_id_param;
 
 IF NOT FOUND THEN result.error := 'Reseña no encontrada';
 
@@ -923,12 +903,12 @@ create or replace function public.update_review (
   p_winter_comfort TEXT default null,
   p_summer_comfort TEXT default null,
   p_humidity TEXT default null
-) RETURNS json LANGUAGE plpgsql SECURITY DEFINER
+) RETURNS json LANGUAGE plpgsql SECURITY INVOKER
 set
   search_path = public as $function$ DECLARE v_user_id UUID;
 
 
-v_review_owner UUID;
+v_is_mine boolean;
 
 BEGIN -- Usuario autenticado
 v_user_id := auth.uid();
@@ -955,14 +935,13 @@ END IF;
 
 -- Verificar existencia y ownership
 SELECT
-    user_id INTO v_review_owner
+    is_mine INTO v_is_mine
 FROM
-    public.reviews
+    public.reviews_public
 WHERE
-    id = p_review_id
-    AND deleted_at IS NULL;
+    id = p_review_id;
 
-IF v_review_owner IS NULL THEN RETURN json_build_object(
+IF NOT FOUND THEN RETURN json_build_object(
     'success',
     false,
     'error',
@@ -971,11 +950,42 @@ IF v_review_owner IS NULL THEN RETURN json_build_object(
 
 END IF;
 
-IF v_review_owner <> v_user_id THEN RETURN json_build_object(
+IF NOT v_is_mine THEN RETURN json_build_object(
     'success',
     false,
     'error',
     'No tienes permisos para editar esta reseña'
+);
+
+END IF;
+
+IF p_title IS NULL
+OR char_length(trim(p_title)) = 0 THEN RETURN json_build_object(
+    'success',
+    false,
+    'error',
+    'El título no puede estar vacío'
+);
+
+END IF;
+
+IF p_description IS NULL
+OR char_length(trim(p_description)) = 0 THEN RETURN json_build_object(
+    'success',
+    false,
+    'error',
+    'La descripción no puede estar vacía'
+);
+
+END IF;
+
+IF p_rating IS NULL
+OR p_rating < 1
+OR p_rating > 5 THEN RETURN json_build_object(
+    'success',
+    false,
+    'error',
+    'La calificación debe estar entre 1 y 5'
 );
 
 END IF;

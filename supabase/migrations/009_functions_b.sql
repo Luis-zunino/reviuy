@@ -1,5 +1,5 @@
 -- Función para votar reviews (con toggle)
-create or replace function vote_review (p_review_id uuid, p_vote_type text) RETURNS json LANGUAGE plpgsql SECURITY DEFINER
+create or replace function vote_review (p_review_id uuid, p_vote_type text) RETURNS json LANGUAGE plpgsql SECURITY INVOKER
 set
   search_path = public as $$
 DECLARE
@@ -35,8 +35,8 @@ BEGIN
     
     -- M11: Verificar que la review exista y esté activa (no soft-deleted)
     IF NOT EXISTS (
-        SELECT 1 FROM public.reviews
-        WHERE id = p_review_id AND deleted_at IS NULL
+        SELECT 1 FROM public.reviews_public
+        WHERE id = p_review_id
     ) THEN
         PERFORM log_security_event('vote_review', 'error', 'Review no existe o fue eliminada');
         RETURN json_build_object('success', FALSE, 'error', 'La reseña no existe o fue eliminada');
@@ -78,7 +78,7 @@ create or replace function report_review (
   p_review_id UUID,
   p_reason TEXT,
   p_description TEXT default null
-) RETURNS JSON LANGUAGE plpgsql SECURITY DEFINER
+) RETURNS JSON LANGUAGE plpgsql SECURITY INVOKER
 set
   search_path = public as $$ DECLARE v_user_id UUID;
 
@@ -119,9 +119,9 @@ IF NOT EXISTS (
     SELECT
         1
     FROM
-        public.reviews
+        public.reviews_public
     WHERE
-        id = p_review_id AND deleted_at IS NULL) THEN
+        id = p_review_id) THEN
 PERFORM
     log_security_event ('report_review', 'error', 'Review not found or deleted');
 
@@ -251,7 +251,7 @@ create or replace function create_real_estate_review (
   p_title TEXT,
   p_description TEXT,
   p_rating INTEGER
-) RETURNS JSON LANGUAGE plpgsql SECURITY DEFINER
+) RETURNS JSON LANGUAGE plpgsql SECURITY INVOKER
 set
   search_path = public as $$ DECLARE v_review_id UUID;
 
@@ -290,7 +290,7 @@ BEGIN
                         SELECT
                             1
                         FROM
-                            public.real_estates
+                            public.real_estates_public
                         WHERE
                             id = p_real_estate_id) THEN
                     RETURN json_build_object('success', FALSE, 'error', 'La inmobiliaria no existe');
@@ -304,17 +304,15 @@ BEGIN
         END IF;
 
         -- Verificar si el usuario ya tiene una reseña para esta inmobiliaria
-        SELECT
-            id INTO v_existing_review
-        FROM
-            public.real_estate_reviews
-        WHERE
-            real_estate_id = p_real_estate_id
-            AND user_id = v_user_id
-            AND deleted_at IS NULL;
-
-            IF v_existing_review IS NOT NULL THEN
-                RETURN json_build_object('success', FALSE, 'error', 'Ya has escrito una reseña para esta inmobiliaria');
+        IF EXISTS (
+            SELECT
+                1
+            FROM
+                public.real_estate_reviews_public
+            WHERE
+                real_estate_id = p_real_estate_id
+                AND is_mine) THEN
+        RETURN json_build_object('success', FALSE, 'error', 'Ya has escrito una reseña para esta inmobiliaria');
 
                 END IF;
 
@@ -335,7 +333,7 @@ END;
 $$;
 
 -- Función para votar reseñas de inmobiliarias
-create or replace function vote_real_estate_review (p_real_estate_review_id uuid, p_vote_type text) RETURNS json LANGUAGE plpgsql SECURITY DEFINER
+create or replace function vote_real_estate_review (p_real_estate_review_id uuid, p_vote_type text) RETURNS json LANGUAGE plpgsql SECURITY INVOKER
 set
   search_path = public as $$
 DECLARE
@@ -388,7 +386,7 @@ create or replace function report_real_estate_review (
   p_real_estate_review_id uuid,
   p_reason text,
   p_description text default null
-) RETURNS json LANGUAGE plpgsql SECURITY DEFINER
+) RETURNS json LANGUAGE plpgsql SECURITY INVOKER
 set
   search_path = public as $$
 DECLARE
@@ -412,7 +410,7 @@ BEGIN
         SELECT
             1
         FROM
-            public.real_estate_reviews
+            public.real_estate_reviews_public
         WHERE
             id = p_real_estate_review_id) THEN
     RETURN json_build_object('success', FALSE, 'error', 'Reseña no encontrada');
@@ -422,10 +420,10 @@ END IF;
         SELECT
             1
         FROM
-            public.real_estate_reviews
+            public.real_estate_reviews_public
         WHERE
             id = p_real_estate_review_id
-            AND user_id = auth.uid ()) THEN
+            AND is_mine) THEN
     RETURN json_build_object('success', FALSE, 'error', 'No puedes reportar tu propia reseña');
 END IF;
 -- Verificar reporte duplicado
@@ -476,6 +474,3 @@ RETURN EXISTS (
 END;
 
 $$;
-
-grant
-execute on FUNCTION public.has_user_reported_real_estate_review (UUID) to authenticated;

@@ -130,6 +130,8 @@ create index IF not exists idx_review_reports_status on public.review_reports (s
 create index IF not exists idx_review_reports_created_at on public.review_reports (created_at);
 
 -- Índices para auditoría
+create index IF not exists idx_review_deletions_review_id on public.review_deletions (review_id);
+
 create index IF not exists idx_review_deletions_deleted_by on public.review_deletions (deleted_by);
 
 create index IF not exists idx_review_deletions_deleted_at on public.review_deletions (deleted_at);
@@ -160,6 +162,8 @@ create index IF not exists idx_real_estate_review_votes_composite on public.real
 
 -- Índices para real_estate_review_reports
 create index IF not exists idx_real_estate_review_reports_review_id on public.real_estate_review_reports (real_estate_review_id);
+
+create index IF not exists idx_real_estate_review_reports_reported_by on public.real_estate_review_reports (reported_by_user_id);
 
 create index IF not exists idx_real_estate_review_reports_status on public.real_estate_review_reports (status);
 

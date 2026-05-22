@@ -43,11 +43,6 @@ where
 
 comment on view public.reviews_public is 'Vista pública de reviews sin user_id para proteger anonimato de usuarios';
 
--- RLS para la vista
-alter view public.reviews_public
-set
-  (security_invoker = on);
-
 grant
 select
   on public.reviews_public to authenticated,
@@ -108,10 +103,6 @@ where
 
 comment on view public.reviews_with_votes_public is 'Vista pública de reviews con estadísticas de votos, sin user_id';
 
-alter view public.reviews_with_votes_public
-set
-  (security_invoker = on);
-
 grant
 select
   on public.reviews_with_votes_public to authenticated,
@@ -140,10 +131,6 @@ where
   rer.deleted_at is null;
 
 comment on view public.real_estate_reviews_public is 'Vista pública de reseñas de inmobiliarias sin user_id';
-
-alter view public.real_estate_reviews_public
-set
-  (security_invoker = on);
 
 grant
 select
@@ -194,42 +181,49 @@ where
 
 comment on view public.real_estate_reviews_with_votes_public is 'Vista pública de reseñas de inmobiliarias con votos, sin user_id';
 
-alter view public.real_estate_reviews_with_votes_public
-set
-  (security_invoker = on);
-
 grant
 select
   on public.real_estate_reviews_with_votes_public to authenticated,
   anon;
 
 -- =============================================================================
--- FUNCIÓN AUXILIAR: get_user_vote_on_review
--- Obtener el voto del usuario actual en una review específica
+-- VISTA SEGURA: real_estates_public
+-- Versión pública de real_estates sin created_by (user_id)
 -- =============================================================================
-create or replace function public.get_user_vote_on_review (p_review_id uuid) returns text language sql stable security invoker as $$
-  select vote_type
-  from public.review_votes
-  where review_id = p_review_id
-    and user_id = auth.uid()
-  limit 1;
-$$;
+drop view if exists public.real_estates_public cascade;
 
-comment on function public.get_user_vote_on_review is 'Obtiene el voto del usuario autenticado en una review específica';
+create view public.real_estates_public as
+select
+  re.id,
+  re.name,
+  re.description,
+  re.review_count,
+  re.rating,
+  re.created_at,
+  re.updated_at,
+  -- Flag is_mine (en vez de exponer created_by)
+  coalesce((re.created_by = auth.uid ()), false) as is_mine
+from
+  public.real_estates re
+where
+  re.deleted_at is null;
+
+comment on view public.real_estates_public is 'Vista pública de inmobiliarias sin created_by para proteger anonimato de usuarios';
 
 grant
-execute on function public.get_user_vote_on_review (uuid) to authenticated;
+select
+  on public.real_estates_public to authenticated,
+  anon;
 
 -- =============================================================================
 -- FUNCIÓN AUXILIAR: get_user_vote_on_real_estate_review
 -- Obtener el voto del usuario actual en una reseña de inmobiliaria
 -- =============================================================================
-create or replace function public.get_user_vote_on_real_estate_review (p_real_estate_review_id uuid) returns text language sql stable security invoker as $$
-  select vote_type
-  from public.real_estate_review_votes
-  where real_estate_review_id = p_real_estate_review_id
-    and user_id = auth.uid()
-  limit 1;
+create or replace function public.get_user_vote_on_real_estate_review (p_real_estate_review_id uuid) returns text language sql stable security invoker
+set search_path = public as $$
+  select vote_type from public.real_estate_review_votes
+    where real_estate_review_id = p_real_estate_review_id and user_id = auth.uid()
+    limit 1;
 $$;
 
 comment on function public.get_user_vote_on_real_estate_review is 'Obtiene el voto del usuario autenticado en una reseña de inmobiliaria';
@@ -240,21 +234,17 @@ execute on function public.get_user_vote_on_real_estate_review (uuid) to authent
 -- =============================================================================
 -- NOTAS IMPORTANTES PARA DESARROLLO
 -- =============================================================================
--- NOTA 1: Migración de queries en TypeScript
--- Cambiar de:
---   await supabase.from('reviews').select('*')
---   await supabase.from('reviews_with_votes').select('*')
--- 
--- A:
---   await supabase.from('reviews_public').select('*')
---   await supabase.from('reviews_with_votes_public').select('*')
--- NOTA 2: Verificar ownership
+-- NOTA 1: Las tablas crudas (reviews, real_estates, real_estate_reviews)
+-- tienen SELECT REVOCADO para anon y authenticated en 014_grants.sql.
+-- El ÚNICO acceso público es vía estas vistas _public.
+-- NOTA 2: Migración de queries en TypeScript
+-- Antes:  await supabase.from('reviews').select('*')
+--         await supabase.from('reviews_with_votes').select('*')
+-- Después: await supabase.from('reviews_public').select('*')
+--          await supabase.from('reviews_with_votes_public').select('*')
+-- NOTA 3: Verificar ownership
 -- Antes: if (review.user_id === currentUserId)
 -- Después: if (review.is_mine)
--- NOTA 3: Las vistas con _public NO exponen user_id
--- Esto previene tracking y perfilamiento de usuarios
--- NOTA 4: Para queries administrativos o del propio usuario
--- Seguir usando las tablas/vistas originales que SÍ incluyen user_id:
---   - reviews (tabla original con RLS)
---   - reviews_with_votes (vista original)
--- Estas están protegidas por RLS y solo muestran datos autorizados
+-- NOTA 4: Las vistas _public NO exponen user_id/created_by.
+-- Al no tener security_invoker (son gateways que corren como owner),
+-- son el único camino de acceso ya que SELECT está revocado en tablas crudas.

@@ -1,26 +1,17 @@
 -- =============================================================================
--- FIX: rate_limit_stats debe respetar RLS del usuario que consulta
+-- MIGRACIÓN 018: No-op confirmado
 -- =============================================================================
--- Fecha: 17 de marzo de 2026
--- Propósito: Evitar comportamiento tipo SECURITY DEFINER en la vista
---            public.rate_limit_stats.
+-- Fecha: Mayo 2026
+-- Propósito original: Agregar security_invoker = on a rate_limit_stats.
 --
--- Nota: Usamos security_invoker = on para que la vista se ejecute con
---       permisos del rol invocador y no del owner.
+-- Estado: 🔴 NO-OP CONFIRMADO (F018)
+-- La vista rate_limit_stats YA se creó con security_invoker = on en
+-- 008_functions_a.sql. Al ejecutar esta migración no hay cambio real.
+--
+-- Decisión: Se mantiene el archivo por compatibilidad con el historial
+-- de migraciones, pero no tiene efecto funcional.
 -- =============================================================================
 do $$
 begin
-  if exists (
-    select 1
-    from information_schema.views
-    where table_schema = 'public'
-      and table_name = 'rate_limit_stats'
-  ) then
-    alter view public.rate_limit_stats set (security_invoker = on);
-
-    comment on view public.rate_limit_stats is
-      'Métricas de rate limiting; usa security_invoker para respetar RLS y permisos del usuario que consulta.';
-  else
-    raise notice 'View public.rate_limit_stats no existe; se omite alter view.';
-  end if;
+  raise notice 'MIGRACIÓN 018: No-op. rate_limit_stats ya tiene security_invoker = on desde 008_functions_a.sql.';
 end $$;

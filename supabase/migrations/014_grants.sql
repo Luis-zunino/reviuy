@@ -151,25 +151,28 @@ select
 -- =============================================================================
 -- REVOKE: Funciones internas que NO deben ser invocables por usuarios
 -- =============================================================================
--- check_rate_limit: SECURITY DEFINER, un atacante puede inflar rate_limits con endpoints arbitrarios
+-- check_rate_limit: Función interna de rate limiting. Se revoca de anon/public
+-- pero NO de authenticated porque es llamada por funciones SECURITY INVOKER
+-- (create_review, vote_review, etc.). REVOKE de authenticated rompería todas
+-- esas funciones ya que las llamadas anidadas heredan permisos del invocador.
 revoke
 execute on FUNCTION public.check_rate_limit (text, integer, integer)
 from
   public,
-  anon,
-  authenticated;
+  anon;
 
--- log_security_event: SECURITY DEFINER, permite inyectar logs falsos
+-- log_security_event: SECURITY DEFINER. Se revoca de anon/public pero
+-- NO de authenticated porque es llamada por funciones SECURITY INVOKER
+-- que necesitan registrar eventos de seguridad en nombre del usuario.
 revoke
 execute on FUNCTION public.log_security_event (text, text, text, jsonb)
 from
   public,
-  anon,
-  authenticated;
+  anon;
 
 -- moderate_reports: Función admin, solo service_role
 revoke
-execute on FUNCTION public.moderate_reports (uuid)
+execute on FUNCTION public.moderate_reports (uuid, text, text, text)
 from
   public,
   anon,
@@ -274,30 +277,39 @@ from
   authenticated;
 
 -- =============================================================================
--- REVOKE: Tablas de votos y vistas con user_id para proteger privacidad
+-- REVOKE: Tablas crudas con user_id/created_by para proteger privacidad
 -- =============================================================================
--- A9: Tablas de votos exponen user_id. anon NO debe acceder directamente.
--- Los contadores se obtienen vía vistas _public (que corren como owner).
+-- Las tablas reviews, real_estates y real_estate_reviews contienen columnas
+-- con identificadores de usuario (user_id, created_by). Supabase otorga SELECT
+-- por defecto a anon/authenticated, exponiendo estos IDs via REST.
+-- El acceso público debe usar exclusivamente las vistas _public (017) que
+-- reemplazan los IDs por el flag booleano is_mine.
 revoke
 select
-  on public.review_votes
+  on public.reviews
 from
-  anon;
+  anon,
+  authenticated;
 
 revoke
 select
-  on public.real_estate_votes
+  on public.real_estates
 from
-  anon;
+  anon,
+  authenticated;
 
 revoke
 select
-  on public.real_estate_review_votes
+  on public.real_estate_reviews
 from
-  anon;
+  anon,
+  authenticated;
 
--- A2: Vistas no-_public exponen user_id/created_by. El acceso directo
--- se restringe; usar vistas _public o funciones SECURITY DEFINER.
+-- =============================================================================
+-- REVOKE: Vistas no-_public que exponen user_id/created_by
+-- =============================================================================
+-- Estas vistas usan SELECT * sobre tablas con columnas de ID de usuario.
+-- El acceso público debe usar exclusivamente las vistas _public (017).
 revoke
 select
   on public.reviews_with_votes
@@ -318,6 +330,34 @@ select
 from
   authenticated,
   anon;
+
+-- =============================================================================
+-- NOTA: Tablas con columnas user_id pero con RLS + funciones SECURITY INVOKER
+-- =============================================================================
+-- Las siguientes tablas contienen FKs a auth.users pero NO se revoca SELECT
+-- porque son consultadas por funciones SECURITY INVOKER (que se ejecutan con
+-- permisos del llamante). La protección es RLS: cada política filtra por
+-- auth.uid(), asegurando que cada usuario solo ve sus propios datos.
+--
+-- Tablas protegidas por RLS (SELECT mantenido):
+--   review_votes, real_estate_votes, real_estate_review_votes
+--   review_reports, review_deletions, review_audit
+--   review_favorites, real_estate_favorites
+--   real_estate_review_reports, real_estate_reports
+--   rate_limits
+--
+-- Si en el futuro se convierten las funciones a SECURITY DEFINER, se puede
+-- revocar SELECT de authenticated y anon como defensa en profundidad.
+
+-- =============================================================================
+-- REVOKE: Vista de monitoreo rate_limit_stats (no usada por funciones)
+-- =============================================================================
+revoke
+select
+  on public.rate_limit_stats
+from
+  anon,
+  authenticated;
 
 -- Hardening adicional: anon nunca debe mutar tablas directamente.
 -- Las operaciones de escritura deben pasar por funciones/capas de negocio.

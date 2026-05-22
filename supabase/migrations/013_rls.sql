@@ -74,6 +74,10 @@ create policy reviews_delete_own on public.reviews for delete using (user_id = a
 -- =============================================================================
 drop policy if exists review_rooms_select_public on public.review_rooms;
 
+-- NOTA: Se usa reviews_public (vista con SELECT grant) en lugar de reviews
+-- (SELECT revocado de authenticated) porque las subconsultas en políticas RLS
+-- se evalúan con permisos del usuario autenticado. reviews_public ya filtra
+-- deleted_at IS NULL y reemplaza user_id por is_mine.
 create policy review_rooms_select_public on public.review_rooms for
 select
   using (
@@ -81,10 +85,9 @@ select
       select
         1
       from
-        public.reviews
+        public.reviews_public rp
       where
-        reviews.id = review_rooms.review_id
-        and reviews.deleted_at is null
+        rp.id = review_rooms.review_id
     )
   );
 
@@ -95,10 +98,10 @@ create policy review_rooms_manage_own on public.review_rooms for all using (
     select
       1
     from
-      public.reviews
+      public.reviews_public rp
     where
-      reviews.id = review_rooms.review_id
-      and reviews.user_id = auth.uid ()
+      rp.id = review_rooms.review_id
+      and rp.is_mine
   )
 )
 with
@@ -107,10 +110,10 @@ with
       select
         1
       from
-        public.reviews
+        public.reviews_public rp
       where
-        reviews.id = review_rooms.review_id
-        and reviews.user_id = auth.uid ()
+        rp.id = review_rooms.review_id
+        and rp.is_mine
     )
   );
 
@@ -186,7 +189,7 @@ with
 
 drop policy if exists review_reports_service_role_all on public.review_reports;
 
-create policy review_reports_service_role_all on public.review_reports for all using (auth.role () = 'service_role');
+create policy review_reports_service_role_all on public.review_reports for all to service_role using (true);
 
 -- =============================================================================
 -- REVIEW DELETIONS (AUDITORÍA)
@@ -200,14 +203,18 @@ select
 drop policy if exists review_deletions_system_insert on public.review_deletions;
 
 create policy review_deletions_system_insert on public.review_deletions for insert
+to service_role
 with
-  check (auth.role () = 'service_role');
+  check (true);
 
 -- =============================================================================
 -- REVIEW AUDIT
 -- =============================================================================
 drop policy if exists review_audit_select_own on public.review_audit;
 
+-- NOTA: Se usa reviews_public en lugar de reviews por la misma razón que
+-- en las políticas de review_rooms. is_mine reemplaza user_id = auth.uid().
+-- Audit entries de reviews eliminadas no son visibles (tradeoff aceptable).
 create policy review_audit_select_own on public.review_audit for
 select
   using (
@@ -215,10 +222,10 @@ select
       select
         1
       from
-        public.reviews r
+        public.reviews_public rp
       where
-        r.id = review_audit.review_id
-        and r.user_id = auth.uid ()
+        rp.id = review_audit.review_id
+        and rp.is_mine
     )
   );
 
@@ -255,6 +262,10 @@ drop policy if exists real_estates_update_creator on public.real_estates;
 create policy real_estates_update_creator on public.real_estates
 for update
   using (
+    auth.uid () is not null
+    and created_by = auth.uid ()
+  )
+  with check (
     auth.uid () is not null
     and created_by = auth.uid ()
   );
@@ -327,6 +338,21 @@ create policy rate_limits_select_own on public.rate_limits for
 select
   using (user_id = auth.uid ());
 
+drop policy if exists rate_limits_insert_own on public.rate_limits;
+
+create policy rate_limits_insert_own on public.rate_limits for insert
+to authenticated
+with
+  check (user_id = auth.uid ());
+
+drop policy if exists rate_limits_update_own on public.rate_limits;
+
+create policy rate_limits_update_own on public.rate_limits for update
+to authenticated
+using (user_id = auth.uid ())
+with
+  check (user_id = auth.uid ());
+
 -- =============================================================================
 -- SECURITY LOGS
 -- =============================================================================
@@ -334,7 +360,7 @@ drop policy if exists security_logs_service_role on public.security_logs;
 
 create policy security_logs_service_role on public.security_logs for
 select
-  using (auth.role () = 'service_role');
+  to service_role using (true);
 
 -- =============================================================================
 -- POLÍTICAS FALTANTES - COMPLEMENTO A LA SEGUNDA VERSIÓN
@@ -411,7 +437,7 @@ with
 
 drop policy IF exists real_estate_review_reports_service_role_all on real_estate_review_reports;
 
-create policy real_estate_review_reports_service_role_all on real_estate_review_reports for all using (auth.role () = 'service_role');
+create policy real_estate_review_reports_service_role_all on real_estate_review_reports for all to service_role using (true);
 
 -- 4. REAL_ESTATE_REPORTS
 drop policy IF exists real_estate_reports_select_own on real_estate_reports;
@@ -431,9 +457,9 @@ with
 
 drop policy IF exists real_estate_reports_service_role_all on real_estate_reports;
 
-create policy real_estate_reports_service_role_all on real_estate_reports for all using (auth.role () = 'service_role');
+create policy real_estate_reports_service_role_all on real_estate_reports for all to service_role using (true);
 
 -- 5. OPCIONAL: Rate limits para el sistema
 drop policy IF exists rate_limits_system_manage on rate_limits;
 
-create policy rate_limits_system_manage on rate_limits for all using (auth.role () = 'service_role');
+create policy rate_limits_system_manage on rate_limits for all to service_role using (true);

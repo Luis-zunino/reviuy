@@ -175,7 +175,7 @@ create table if not exists public.real_estate_reviews (
   -- Timestamps
   created_at TIMESTAMPTZ not null default now(),
   updated_at TIMESTAMPTZ not null default now() check (updated_at >= created_at),
-  deleted_at TIMESTAMPTZ -- Índice condicional para soft delete (ver migración 054)
+  deleted_at TIMESTAMPTZ -- Índice condicional para soft delete (ver migración 015)
 );
 
 -- TABLA: Votos para reseñas de inmobiliarias
