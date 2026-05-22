@@ -18,7 +18,7 @@
     "db:lint": "npx supabase db lint --local --level warning --fail-on error",
     "db:test:rls": "bash scripts/db-test-rls.sh",
     "db:test:static": "bash scripts/db-test-migrations-static.sh",
-    "db:test:security": "yarn db:test:static && yarn db:test:rls",
+    "db:test:security": "pnpm db:test:static && pnpm db:test:rls",
     "db:setup": "npx supabase start && npx supabase db reset",
     "prepare": "husky",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,css,md}\"",
