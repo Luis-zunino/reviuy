@@ -161,6 +161,26 @@ export function handleSupabaseError(error: PostgrestError): AppError {
     );
   }
 
+  // PostgREST errors (PGRSTxxx)
+  if (error.code?.startsWith('PGRST')) {
+    const statusCode = parseInt(error.code.replace('PGRST', ''), 10);
+    if (statusCode === 301) {
+      return new AppError(
+        ErrorCodes.UNAUTHORIZED,
+        'Debes iniciar sesión para ver esta información.',
+        401
+      );
+    }
+    if (statusCode === 302) {
+      return new AppError(
+        ErrorCodes.FORBIDDEN,
+        'No tienes permisos para acceder a este recurso.',
+        403
+      );
+    }
+    return new AppError(ErrorCodes.DATABASE_ERROR, error.message, 500);
+  }
+
   // Error genérico de base de datos
   return new AppError(ErrorCodes.DATABASE_ERROR, 'Error inesperado en la base de datos.', 500);
 }

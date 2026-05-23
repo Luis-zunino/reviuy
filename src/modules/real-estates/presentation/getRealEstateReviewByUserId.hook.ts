@@ -3,7 +3,7 @@ import { REAL_ESTATE_REVIEWS } from '@/constants/query-keys.constant';
 import { supabaseClient } from '@/lib/supabase/client';
 import {
   createGetRealEstateReviewByUserIdQuery,
-  RealEstateReviewWithVotes,
+  RealEstateReviewWithVotesPublic,
   SupabaseRealEstateReadRepository,
 } from '@/modules/real-estates';
 
@@ -14,7 +14,7 @@ export const useGetRealEstateReviewByUserId = ({
   realEstateId,
 }: {
   realEstateId: string;
-}): UseQueryResult<RealEstateReviewWithVotes | null> => {
+}): UseQueryResult<RealEstateReviewWithVotesPublic | null> => {
   return useQuery({
     queryKey: [REAL_ESTATE_REVIEWS.getRealEstateReviewByUserId, realEstateId],
     queryFn: () => getRealEstateReviewByUserId({ realEstateId }),

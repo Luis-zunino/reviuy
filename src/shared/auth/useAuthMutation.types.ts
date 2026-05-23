@@ -1,8 +1,4 @@
-import type {
-  MutateOptions,
-  QueryKey,
-  UseMutationOptions,
-} from '@tanstack/react-query';
+import type { MutateOptions, QueryKey, UseMutationOptions } from '@tanstack/react-query';
 
 export type UseAuthMutationConfig<TData, TError, TVariables> = {
   mutationFn: (variables: TVariables) => Promise<TData>;

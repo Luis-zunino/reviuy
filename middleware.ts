@@ -25,7 +25,7 @@ const buildCsp = () => {
     style-src 'self' 'unsafe-inline';
     img-src 'self' data: blob: https://placehold.co https://firebasestorage.googleapis.com https://lh3.googleusercontent.com https://*.tile.openstreetmap.org;
     font-src 'self' data:;
-    connect-src 'self' https://*.supabase.co https://firebasestorage.googleapis.com https://vitals.vercel-insights.com https://nominatim.openstreetmap.org;
+    connect-src 'self' http://127.0.0.1:54321 https://*.supabase.co https://firebasestorage.googleapis.com https://vitals.vercel-insights.com https://nominatim.openstreetmap.org;
     object-src 'none';
     base-uri 'self';
     frame-ancestors 'none';

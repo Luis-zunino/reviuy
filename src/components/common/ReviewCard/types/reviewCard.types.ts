@@ -1,5 +1,5 @@
-import { ReviewWithVotes } from '@/modules/property-reviews';
+import { ReviewWithVotesPublic } from '@/modules/property-reviews';
 
 export interface ReviewCardProps {
-  review: ReviewWithVotes;
+  review: ReviewWithVotesPublic;
 }

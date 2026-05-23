@@ -1,9 +1,9 @@
-import { ReviewWithVotes } from '@/modules/property-reviews';
+import { ReviewWithVotesPublic } from '@/modules/property-reviews';
 import { type RealEstateWithVotesPublic } from '@/modules/real-estates';
 
-export type GetCurrentUserReviewsOutput = ReviewWithVotes[] | null;
+export type GetCurrentUserReviewsOutput = ReviewWithVotesPublic[] | null;
 
-export type GetCurrentUserFavoriteReviewsOutput = ReviewWithVotes[];
+export type GetCurrentUserFavoriteReviewsOutput = ReviewWithVotesPublic[];
 
 export type GetCurrentUserFavoriteRealEstatesOutput = RealEstateWithVotesPublic[];
 

@@ -27,7 +27,7 @@ export const useViewAddressReviews = () => {
   }
 
   if (reviewsError) {
-    toast.error('Error fetching reviews');
+    toast.error(reviewsError.message);
   }
 
   const isLoading = isLoadingAddress || isLoadingReviews;
