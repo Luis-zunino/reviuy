@@ -5,7 +5,7 @@ import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { supabaseClient } from '@/lib/supabase/client';
 import {
   createGetReviewsByUserIdQuery,
-  ReviewWithVotes,
+  ReviewWithVotesPublic,
   SupabasePropertyReviewReadRepository,
 } from '@/modules/property-reviews';
 
@@ -14,7 +14,7 @@ const getReviewByCurrentUser = createGetReviewsByUserIdQuery({
   propertyReviewReadRepository,
 });
 
-export const useGetReviewByUserId = (): UseQueryResult<ReviewWithVotes[] | null> => {
+export const useGetReviewByUserId = (): UseQueryResult<ReviewWithVotesPublic[] | null> => {
   return useQuery({
     queryKey: [REVIEW_KEYS.getReviewByUserId],
     queryFn: () => getReviewByCurrentUser(),

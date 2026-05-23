@@ -116,7 +116,7 @@ export interface GetRealEstateReviewByUserIdInput {
   realEstateId: string;
 }
 
-export type GetRealEstateReviewByUserIdOutput = RealEstateReviewWithVotes | null;
+export type GetRealEstateReviewByUserIdOutput = RealEstateReviewWithVotesPublic | null;
 
 export interface GetUserRealEstateVoteInput {
   realEstateId: string;

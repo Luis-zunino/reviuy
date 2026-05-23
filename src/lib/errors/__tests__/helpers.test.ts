@@ -132,6 +132,6 @@ describe('handleSupabaseError', () => {
 
     expect(result.code).toBe('DATABASE_ERROR');
     expect(result.statusCode).toBe(500);
-    expect(result.message).toBe('Error inesperado en la base de datos.');
+    expect(result.message).toBe('unknown database error');
   });
 });

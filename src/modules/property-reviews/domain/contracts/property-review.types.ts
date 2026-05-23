@@ -129,7 +129,7 @@ export interface GetReviewsByUserIdInput {
   userId?: string;
 }
 
-export type GetReviewsByUserIdOutput = ReviewWithVotes[] | null;
+export type GetReviewsByUserIdOutput = ReviewWithVotesPublic[] | null;
 
 export interface GetReviewsByRealEstateIdInput {
   realEstateId: string;
@@ -147,7 +147,7 @@ export interface UserReviewVote {
 
 export type GetUserReviewVoteOutput = VoteType | null;
 
-export type GetUserFavoriteReviewsOutput = ReviewWithVotes[];
+export type GetUserFavoriteReviewsOutput = ReviewWithVotesPublic[];
 
 export interface IsReviewFavoriteInput {
   reviewId: string;

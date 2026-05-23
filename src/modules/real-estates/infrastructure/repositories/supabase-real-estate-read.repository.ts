@@ -31,7 +31,7 @@ export class SupabaseRealEstateReadRepository implements RealEstateReadRepositor
 
   async getById({ id }: GetRealEstateByIdInput): Promise<GetRealEstateByIdOutput> {
     const { data, error } = await this.supabase
-      .from('real_estates_with_votes')
+      .from('real_estates_public')
       .select(
         'id, name, description, rating, review_count, created_at, updated_at, deleted_at, dislikes, likes, total_votes'
       )
@@ -116,7 +116,7 @@ export class SupabaseRealEstateReadRepository implements RealEstateReadRepositor
     if (!query || query.length < 3) return [];
 
     const { data, error } = await this.supabase
-      .from('real_estates_with_votes')
+      .from('real_estates_public')
       .select(
         'id, name, description, rating, review_count, created_at, updated_at, deleted_at, dislikes, likes, total_votes'
       )
@@ -139,7 +139,7 @@ export class SupabaseRealEstateReadRepository implements RealEstateReadRepositor
     const end = offset + limit - 1;
 
     let query = this.supabase
-      .from('real_estates_with_votes')
+      .from('real_estates_public')
       .select(
         'id, name, description, rating, review_count, created_at, updated_at, deleted_at, dislikes, likes, total_votes',
         { count: 'exact' }
@@ -178,7 +178,7 @@ export class SupabaseRealEstateReadRepository implements RealEstateReadRepositor
       .select(
         `
         real_estate_id,
-        real_estates:real_estates_with_votes (
+        real_estates:real_estates_public (
           id, name, description, rating, review_count, created_at, updated_at, deleted_at, dislikes, likes, total_votes
         )
       `
