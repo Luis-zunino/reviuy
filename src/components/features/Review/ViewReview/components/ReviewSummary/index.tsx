@@ -101,7 +101,7 @@ export const ReviewSummary = ({ review }: ReviewSummaryProps) => {
               {review.review_rooms.map((room) => (
                 <div
                   key={room.id}
-                  className="flex items-center justify-between py-3 px-4 rounded-lg bg-accent/50 hover:bg-accent transition-colors"
+                  className="flex items-center justify-between py-3 px-4 rounded-lg bg-accent/5  transition-colors"
                 >
                   <span className="text-base text-foreground capitalize">
                     {translateRoomType(room.room_type as RoomType)}
