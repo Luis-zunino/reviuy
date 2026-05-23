@@ -7,6 +7,29 @@ import { getSiteOrigin } from '@/lib/site-url';
 export const revalidate = 86400;
 const baseUrl = getSiteOrigin();
 
+/** Timeout para queries de Supabase durante el build. */
+const QUERY_TIMEOUT_MS = 5_000;
+
+/**
+ * Verifica si Supabase es accesible antes de hacer queries.
+ * Si no responde en QUERY_TIMEOUT_MS, asume que no está disponible
+ * y genera solo páginas estáticas.
+ */
+async function isSupabaseReachable(): Promise<boolean> {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  if (!url) return false;
+
+  try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), QUERY_TIMEOUT_MS);
+    await fetch(url, { method: 'HEAD', signal: controller.signal });
+    clearTimeout(timer);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 // Use a client without cookies for static sitemap generation
 const getSupabaseClient = () => {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -86,6 +109,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.3,
     },
   ];
+
+  // Si Supabase no está reachable, devolvemos solo páginas estáticas
+  if (!(await isSupabaseReachable())) {
+    console.warn('⚠️ Supabase no está disponible — generando sitemap sin rutas dinámicas');
+    return staticPages;
+  }
 
   try {
     const supabase = getSupabaseClient();
