@@ -1,4 +1,4 @@
-import { validateText } from '@/utils/textValidation.util';
+import { textValidationRefinement } from './_shared/text-validation.refinement';
 import * as z from 'zod';
 
 export const formReviewRoomSchema = z
@@ -40,31 +40,12 @@ export const formReviewSchema = z.object({
     .string({ message: 'Este campo es necesario' })
     .min(10, 'Mensaje muy corto')
     .max(100, 'El título no puede exceder 100 caracteres')
-    .superRefine((value, ctx) => {
-      if (!value) return;
-
-      const validation = validateText(value);
-      if (!validation.isValid) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: validation.message,
-        });
-      }
-    }),
+    .superRefine(textValidationRefinement),
   description: z
     .string({ message: 'Este campo es necesario' })
     .min(20, 'Mensaje muy corto')
     .max(800, 'El contenido no puede exceder los 800 caracteres')
-    .superRefine((value, ctx) => {
-      if (!value) return;
-      const validation = validateText(value);
-      if (!validation.isValid) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: validation.message,
-        });
-      }
-    }),
+    .superRefine(textValidationRefinement),
   rating: z
     .number({ message: 'Este campo es necesario' })
     .min(1, 'Asigna al menos una estrella')
@@ -86,20 +67,7 @@ export const formReviewSchema = z.object({
   humidity: z.string().optional(),
   real_estate_id: z.string().optional(),
   real_estate_name: z.string().optional(),
-  real_estate_experience: z
-    .string()
-    .optional()
-    .superRefine((value, ctx) => {
-      if (!value) return;
-
-      const validation = validateText(value);
-      if (!validation.isValid) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: validation.message,
-        });
-      }
-    }),
+  real_estate_experience: z.string().optional().superRefine(textValidationRefinement),
   apartment_number: z
     .string()
     .trim()

@@ -1,7 +1,13 @@
 import { NextResponse } from 'next/server';
 import { ReportRealEstateReviewTemplate } from '@/components/common/Emails';
-import { getAuthenticatedUser, parseAndValidateBody, sendEmail } from '../_utils';
-import { AppError, createError } from '@/lib/errors';
+import {
+  getAuthenticatedUser,
+  parseAndValidateBody,
+  sendEmail,
+  withErrorHandler,
+  methodNotAllowed,
+} from '../_utils';
+import { createError } from '@/lib/errors';
 import { withRateLimit, RateLimitType } from '@/lib/redis';
 import { reportRealEstateReviewApiSchema } from '@/schemas/api-request.schema';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
@@ -9,17 +15,11 @@ import { createReportRealEstateReviewUseCase } from '@/modules/moderation/applic
 import { SupabaseModerationCommandRepository } from '@/modules/moderation/infrastructure';
 
 export async function GET() {
-  return NextResponse.json(
-    {
-      error: 'Method not allowed',
-      message: 'This endpoint only accepts POST requests',
-    },
-    { status: 405 }
-  );
+  return methodNotAllowed();
 }
 
 export async function POST(req: Request) {
-  try {
+  return withErrorHandler(async () => {
     const user = await getAuthenticatedUser();
 
     if (!user) {
@@ -64,14 +64,5 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ success: true });
-  } catch (error: unknown) {
-    if (error instanceof AppError) {
-      return NextResponse.json(
-        { error: error.message, code: error.code },
-        { status: error.statusCode }
-      );
-    }
-
-    return NextResponse.json({ error: 'Error interno' }, { status: 500 });
-  }
+  });
 }

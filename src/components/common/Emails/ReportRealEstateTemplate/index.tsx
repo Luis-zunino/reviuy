@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Html, Text, Section, Heading } from 'react-email';
+import { ReportTemplate } from '@/components/common/Emails/ReportTemplate';
 import { ReportRealEstateTemplateProps } from './types';
 
 export const ReportRealEstateTemplate: React.FC<Readonly<ReportRealEstateTemplateProps>> = async ({
@@ -8,21 +8,11 @@ export const ReportRealEstateTemplate: React.FC<Readonly<ReportRealEstateTemplat
   message,
   loginEmail,
 }) => (
-  <Html lang="es">
-    <Section style={{ padding: '20px', backgroundColor: '#f9f9f9' }}>
-      <Heading as="h2">Nuevo mensaje de contacto</Heading>
-      <Text>
-        El usuario {loginEmail} a reportado a la inmobiliaria: <strong> {realEstateName}</strong>
-      </Text>
-      <Text>
-        <strong>Razon:</strong>
-      </Text>
-      <Text>{reason}</Text>
-
-      <Text>
-        <strong>Mensaje:</strong>
-      </Text>
-      <Text>{message}</Text>
-    </Section>
-  </Html>
+  <ReportTemplate
+    reportedBy="a la inmobiliaria"
+    reportedItem={realEstateName}
+    reason={reason}
+    message={message}
+    loginEmail={loginEmail}
+  />
 );
