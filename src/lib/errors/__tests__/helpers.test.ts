@@ -85,6 +85,16 @@ describe('handleSupabaseError', () => {
     expect(result.field).toBe('real_estate_name');
   });
 
+  it('handles unique violation (23505) with constraint that has no code', () => {
+    const error = makePostgrestError('23505', 'review_votes_review_id_user_id_key');
+    const result = handleSupabaseError(error);
+
+    expect(result.code).toBe('ALREADY_EXISTS');
+    expect(result.statusCode).toBe(409);
+    expect(result.message).toBe('Ya votaste esta reseña.');
+    expect((result as any).field).toBeUndefined();
+  });
+
   it('handles unique violation (23505) with generic message for unknown constraint', () => {
     const error = makePostgrestError('23505', 'some_unknown_constraint');
 
@@ -125,8 +135,28 @@ describe('handleSupabaseError', () => {
     expect(result.message).toBe('El valor no cumple con las restricciones.');
   });
 
-  it('handles unknown error code as generic database error', () => {
-    const error = makePostgrestError('PGRST00', 'unknown database error');
+  it('handles PGRST301 as unauthorized', () => {
+    const error = makePostgrestError('PGRST301', 'Not authenticated');
+
+    const result = handleSupabaseError(error);
+
+    expect(result.code).toBe('UNAUTHORIZED');
+    expect(result.statusCode).toBe(401);
+    expect(result.message).toBe('Debes iniciar sesión para ver esta información.');
+  });
+
+  it('handles PGRST302 as forbidden', () => {
+    const error = makePostgrestError('PGRST302', 'Not authorized');
+
+    const result = handleSupabaseError(error);
+
+    expect(result.code).toBe('FORBIDDEN');
+    expect(result.statusCode).toBe(403);
+    expect(result.message).toBe('No tienes permisos para acceder a este recurso.');
+  });
+
+  it('handles unknown PGRST error as database error with original message', () => {
+    const error = makePostgrestError('PGRST99', 'some postgrest error');
 
     const result = handleSupabaseError(error);
 

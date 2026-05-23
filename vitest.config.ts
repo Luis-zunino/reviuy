@@ -21,6 +21,14 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'html', 'lcov'],
       reportsDirectory: './coverage',
+      exclude: [
+        'coverage/**',
+        '**/node_modules/**',
+        '**/__tests__/**',
+        'src/**/*.types.ts',
+        'src/**/contracts/**',
+        'src/**/ports/**',
+      ],
       thresholds: {
         lines: 5,
         functions: 25,

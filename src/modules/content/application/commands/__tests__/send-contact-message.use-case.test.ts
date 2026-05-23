@@ -83,6 +83,47 @@ describe('createSendContactMessageUseCase', () => {
     });
   });
 
+  it('rejects when rate limit throws', async () => {
+    const contentCommandRepository: ContentCommandRepository = {
+      sendContactMessage: vi.fn(),
+    };
+
+    const useCase = createSendContactMessageUseCase({
+      getCurrentUser: vi.fn().mockResolvedValue(authenticatedUser),
+      rateLimit: vi.fn().mockRejectedValue(new Error('Rate limit exceeded')),
+      contentCommandRepository,
+    });
+
+    await expect(
+      useCase({
+        name: 'Luis',
+        email: 'luis@example.com',
+        message: 'Hola equipo',
+      })
+    ).rejects.toThrow('Rate limit exceeded');
+    expect(contentCommandRepository.sendContactMessage).not.toHaveBeenCalled();
+  });
+
+  it('rejects when repository throws', async () => {
+    const contentCommandRepository: ContentCommandRepository = {
+      sendContactMessage: vi.fn().mockRejectedValue(new Error('Resend error')),
+    };
+
+    const useCase = createSendContactMessageUseCase({
+      getCurrentUser: vi.fn().mockResolvedValue(authenticatedUser),
+      rateLimit: vi.fn().mockResolvedValue(undefined),
+      contentCommandRepository,
+    });
+
+    await expect(
+      useCase({
+        name: 'Luis',
+        email: 'luis@example.com',
+        message: 'Hola equipo',
+      })
+    ).rejects.toThrow('Resend error');
+  });
+
   it('throws a zod error when the payload is invalid', async () => {
     const contentCommandRepository: ContentCommandRepository = {
       sendContactMessage: vi.fn(),

@@ -11,9 +11,9 @@ vi.mock('@/lib/supabase/client', () => ({
   supabaseClient: {},
 }));
 vi.mock('@/modules/real-estates', () => ({
-  createGetUserRealEstateReviewVoteQuery: vi.fn(),
+  createGetUserRealEstateReviewVoteQuery: vi.fn(() => vi.fn()),
   SupabaseRealEstateReadRepository: vi.fn(),
-  createGetAllRealEstateReviewsQuery: vi.fn(),
+  createGetAllRealEstateReviewsQuery: vi.fn(() => vi.fn()),
 }));
 
 describe('useGetUserRealEstateReviewVote', () => {
@@ -64,5 +64,16 @@ describe('useGetUserRealEstateReviewVote', () => {
     const { result } = renderHook(() => useGetUserRealEstateReviewVote({ reviewId: 'review-123' }));
 
     expect(result.current.data).toBe(VoteType.DISLIKE);
+  });
+
+  it('invokes queryFn', async () => {
+    vi.mocked(useQuery).mockReturnValue({ data: undefined, isLoading: true, refetch: vi.fn() } as any);
+
+    renderHook(() => useGetUserRealEstateReviewVote({ reviewId: 'review-123' }));
+
+    const qf = (useQuery as any).mock.calls.at(-1)[0].queryFn;
+    const result = await qf();
+
+    expect(result).toBeUndefined();
   });
 });
