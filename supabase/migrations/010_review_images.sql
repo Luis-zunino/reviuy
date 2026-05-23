@@ -63,18 +63,21 @@ revoke execute on function public.check_review_owner (uuid) from public, anon, a
 alter table public.review_images enable row level security;
 
 -- Lectura pública: cualquiera puede ver las imágenes de reseñas no eliminadas
+drop policy if exists review_images_select_public on public.review_images;
 create policy review_images_select_public on public.review_images for select
   using (
     public.check_review_active(review_images.review_id)
   );
 
 -- Solo el owner de la reseña puede insertar imágenes
+drop policy if exists review_images_insert_own on public.review_images;
 create policy review_images_insert_own on public.review_images for insert
   with check (
     public.check_review_owner(review_images.review_id)
   );
 
 -- Solo el owner de la reseña puede borrar sus imágenes
+drop policy if exists review_images_delete_own on public.review_images;
 create policy review_images_delete_own on public.review_images for delete
   using (
     public.check_review_owner(review_images.review_id)

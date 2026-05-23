@@ -39,7 +39,9 @@ describe('useReportReview', () => {
   });
 
   it('calls reportReviewAction on mutate', async () => {
-    const reportMock = vi.mocked((await import('@/modules/moderation/presentation')).reportReviewAction);
+    const reportMock = vi.mocked(
+      (await import('@/modules/moderation/presentation')).reportReviewAction
+    );
 
     const { useReportReview } = await import('../reportReview.hook');
     const { result } = renderHook(() => useReportReview());

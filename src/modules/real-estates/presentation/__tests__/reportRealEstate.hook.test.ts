@@ -85,17 +85,13 @@ describe('useHasUserReportedRealEstate', () => {
 
     renderHook(() => useHasUserReportedRealEstate(undefined));
 
-    expect(useQuery).toHaveBeenCalledWith(
-      expect.objectContaining({ enabled: false })
-    );
+    expect(useQuery).toHaveBeenCalledWith(expect.objectContaining({ enabled: false }));
   });
 
   it('debe retornar el estado de reporte', () => {
     vi.mocked(useQuery).mockReturnValue({ data: true, isLoading: false } as any);
 
-    const { result } = renderHook(() =>
-      useHasUserReportedRealEstate('real-estate-123')
-    );
+    const { result } = renderHook(() => useHasUserReportedRealEstate('real-estate-123'));
 
     expect(result.current.data).toBe(true);
   });

@@ -1,7 +1,7 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { SupabasePropertyReviewReadRepository } from '../supabase-property-review-read.repository';
 
-const mockSupabaseClient = vi.hoisted(() => ({ from: vi.fn(), rpc: vi.fn() } as any));
+const mockSupabaseClient = vi.hoisted(() => ({ from: vi.fn(), rpc: vi.fn() }) as any);
 vi.mock('@/lib/supabase/client', () => ({ supabaseClient: mockSupabaseClient }));
 
 const createMockBuilder = (...dataSequence: any[]) => {
@@ -31,7 +31,9 @@ const createMockBuilder = (...dataSequence: any[]) => {
     in: vi.fn().mockReturnThis(),
     csv: vi.fn().mockResolvedValue({ data: null, error: null }),
     then: (onfulfilled: any) =>
-      Promise.resolve(resolveSequence[Math.min(callIndex++, resolveSequence.length - 1)]).then(onfulfilled),
+      Promise.resolve(resolveSequence[Math.min(callIndex++, resolveSequence.length - 1)]).then(
+        onfulfilled
+      ),
   };
 
   return chainable;
@@ -65,7 +67,10 @@ describe('SupabasePropertyReviewReadRepository', () => {
 
     it('throws on Supabase error', async () => {
       const errorBuilder = createMockBuilder(null);
-      errorBuilder.then = (onfulfilled: any) => Promise.resolve({ data: null, error: { message: 'DB error', code: 'PGRST116' } }).then(onfulfilled);
+      errorBuilder.then = (onfulfilled: any) =>
+        Promise.resolve({ data: null, error: { message: 'DB error', code: 'PGRST116' } }).then(
+          onfulfilled
+        );
       mockSupabaseClient.from.mockReturnValue(errorBuilder);
 
       await expect(repository.getByAddress({ osmId: 'N123' })).rejects.toThrow();
@@ -86,7 +91,10 @@ describe('SupabasePropertyReviewReadRepository', () => {
 
     it('returns null when not found (single error)', async () => {
       const errorBuilder = createMockBuilder(null);
-      errorBuilder.then = (onfulfilled: any) => Promise.resolve({ data: null, error: { message: 'Not found', code: 'PGRST116' } }).then(onfulfilled);
+      errorBuilder.then = (onfulfilled: any) =>
+        Promise.resolve({ data: null, error: { message: 'Not found', code: 'PGRST116' } }).then(
+          onfulfilled
+        );
       mockSupabaseClient.from.mockReturnValue(errorBuilder);
 
       const result = await repository.getById({ reviewId: 'nonexistent' });
@@ -110,7 +118,8 @@ describe('SupabasePropertyReviewReadRepository', () => {
 
     it('throws on RPC error', async () => {
       const errorBuilder = createMockBuilder(null);
-      errorBuilder.then = (onfulfilled: any) => Promise.resolve({ data: null, error: { message: 'RPC error' } }).then(onfulfilled);
+      errorBuilder.then = (onfulfilled: any) =>
+        Promise.resolve({ data: null, error: { message: 'RPC error' } }).then(onfulfilled);
       mockSupabaseClient.rpc.mockReturnValue(errorBuilder);
 
       await expect(repository.getByUserId()).rejects.toThrow();
@@ -140,7 +149,8 @@ describe('SupabasePropertyReviewReadRepository', () => {
 
     it('throws on Supabase error', async () => {
       const errorBuilder = createMockBuilder(null);
-      errorBuilder.then = (onfulfilled: any) => Promise.resolve({ data: null, error: { message: 'DB error' } }).then(onfulfilled);
+      errorBuilder.then = (onfulfilled: any) =>
+        Promise.resolve({ data: null, error: { message: 'DB error' } }).then(onfulfilled);
       mockSupabaseClient.from.mockReturnValue(errorBuilder);
 
       await expect(repository.getByRealEstateId({ realEstateId: 're1' })).rejects.toThrow();
@@ -157,12 +167,15 @@ describe('SupabasePropertyReviewReadRepository', () => {
       const result = await repository.getUserVote({ reviewId: 'r1' });
 
       expect(result).toEqual(mockVote);
-      expect(mockSupabaseClient.rpc).toHaveBeenCalledWith('get_user_review_vote', { p_review_id: 'r1' });
+      expect(mockSupabaseClient.rpc).toHaveBeenCalledWith('get_user_review_vote', {
+        p_review_id: 'r1',
+      });
     });
 
     it('throws on RPC error', async () => {
       const errorBuilder = createMockBuilder(null);
-      errorBuilder.then = (onfulfilled: any) => Promise.resolve({ data: null, error: { message: 'RPC error' } }).then(onfulfilled);
+      errorBuilder.then = (onfulfilled: any) =>
+        Promise.resolve({ data: null, error: { message: 'RPC error' } }).then(onfulfilled);
       mockSupabaseClient.rpc.mockReturnValue(errorBuilder);
 
       await expect(repository.getUserVote({ reviewId: 'r1' })).rejects.toThrow();
@@ -192,7 +205,8 @@ describe('SupabasePropertyReviewReadRepository', () => {
 
     it('throws on RPC error', async () => {
       const errorBuilder = createMockBuilder(null);
-      errorBuilder.then = (onfulfilled: any) => Promise.resolve({ data: null, error: { message: 'RPC error' } }).then(onfulfilled);
+      errorBuilder.then = (onfulfilled: any) =>
+        Promise.resolve({ data: null, error: { message: 'RPC error' } }).then(onfulfilled);
       mockSupabaseClient.rpc.mockReturnValue(errorBuilder);
 
       await expect(repository.getUserFavorites()).rejects.toThrow();
@@ -207,7 +221,9 @@ describe('SupabasePropertyReviewReadRepository', () => {
       const result = await repository.isFavorite({ reviewId: 'r1' });
 
       expect(result).toBe(true);
-      expect(mockSupabaseClient.rpc).toHaveBeenCalledWith('is_review_favorite', { p_review_id: 'r1' });
+      expect(mockSupabaseClient.rpc).toHaveBeenCalledWith('is_review_favorite', {
+        p_review_id: 'r1',
+      });
     });
 
     it('returns false when not favorited', async () => {
@@ -221,7 +237,8 @@ describe('SupabasePropertyReviewReadRepository', () => {
 
     it('throws on RPC error', async () => {
       const errorBuilder = createMockBuilder(null);
-      errorBuilder.then = (onfulfilled: any) => Promise.resolve({ data: null, error: { message: 'RPC error' } }).then(onfulfilled);
+      errorBuilder.then = (onfulfilled: any) =>
+        Promise.resolve({ data: null, error: { message: 'RPC error' } }).then(onfulfilled);
       mockSupabaseClient.rpc.mockReturnValue(errorBuilder);
 
       await expect(repository.isFavorite({ reviewId: 'r1' })).rejects.toThrow();
@@ -249,7 +266,8 @@ describe('SupabasePropertyReviewReadRepository', () => {
 
     it('throws on RPC error', async () => {
       const errorBuilder = createMockBuilder(null);
-      errorBuilder.then = (onfulfilled: any) => Promise.resolve({ data: null, error: { message: 'RPC error' } }).then(onfulfilled);
+      errorBuilder.then = (onfulfilled: any) =>
+        Promise.resolve({ data: null, error: { message: 'RPC error' } }).then(onfulfilled);
       mockSupabaseClient.rpc.mockReturnValue(errorBuilder);
 
       await expect(repository.checkUserReviewForAddress({ osmId: 'N123' })).rejects.toThrow();
@@ -264,12 +282,15 @@ describe('SupabasePropertyReviewReadRepository', () => {
       const result = await repository.hasUserReportedReview({ reviewId: 'r1' });
 
       expect(result).toBe(true);
-      expect(mockSupabaseClient.rpc).toHaveBeenCalledWith('has_user_reported_review', { p_review_id: 'r1' });
+      expect(mockSupabaseClient.rpc).toHaveBeenCalledWith('has_user_reported_review', {
+        p_review_id: 'r1',
+      });
     });
 
     it('throws on RPC error', async () => {
       const errorBuilder = createMockBuilder(null);
-      errorBuilder.then = (onfulfilled: any) => Promise.resolve({ data: null, error: { message: 'RPC error' } }).then(onfulfilled);
+      errorBuilder.then = (onfulfilled: any) =>
+        Promise.resolve({ data: null, error: { message: 'RPC error' } }).then(onfulfilled);
       mockSupabaseClient.rpc.mockReturnValue(errorBuilder);
 
       await expect(repository.hasUserReportedReview({ reviewId: 'r1' })).rejects.toThrow();
@@ -302,12 +323,8 @@ describe('SupabasePropertyReviewReadRepository', () => {
     });
 
     it('falls back to larger query when first batch has no match', async () => {
-      const firstBatch = [
-        { id: 'r1', address_text: 'Avenida Libertador 1000' },
-      ];
-      const secondBatch = [
-        { id: 'r2', address_text: 'Calle Corrientes 1234' },
-      ];
+      const firstBatch = [{ id: 'r1', address_text: 'Avenida Libertador 1000' }];
+      const secondBatch = [{ id: 'r2', address_text: 'Calle Corrientes 1234' }];
       mockBuilder = createMockBuilder(firstBatch, secondBatch);
       mockSupabaseClient.from.mockReturnValue(mockBuilder);
 
@@ -319,23 +336,24 @@ describe('SupabasePropertyReviewReadRepository', () => {
 
     it('throws on first query error', async () => {
       const errorBuilder = createMockBuilder(null);
-      errorBuilder.then = (onfulfilled: any) => Promise.resolve({ data: null, error: { message: 'DB error' } }).then(onfulfilled);
+      errorBuilder.then = (onfulfilled: any) =>
+        Promise.resolve({ data: null, error: { message: 'DB error' } }).then(onfulfilled);
       mockSupabaseClient.from.mockReturnValue(errorBuilder);
 
       await expect(repository.searchByZone({ query: 'test', limit: 10 })).rejects.toThrow();
     });
 
     it('throws on fallback query error', async () => {
-      const firstBatch = [
-        { id: 'r1', address_text: 'Avenida Libertador 1000' },
-      ];
+      const firstBatch = [{ id: 'r1', address_text: 'Avenida Libertador 1000' }];
       const errorBuilder = createMockBuilder(firstBatch);
       let callCount = 0;
       const origThen = errorBuilder.then;
       errorBuilder.then = (onfulfilled: any) => {
         callCount++;
         if (callCount === 2) {
-          return Promise.resolve({ data: null, error: { message: 'Fallback DB error' } }).then(onfulfilled);
+          return Promise.resolve({ data: null, error: { message: 'Fallback DB error' } }).then(
+            onfulfilled
+          );
         }
         return origThen.call(errorBuilder, onfulfilled);
       };
@@ -347,13 +365,16 @@ describe('SupabasePropertyReviewReadRepository', () => {
 
   describe('searchNearby', () => {
     it('filters by lat/lon bounds and returns data', async () => {
-      const mockResults = [
-        { id: 'r1', latitude: -34.6, longitude: -58.4 },
-      ];
+      const mockResults = [{ id: 'r1', latitude: -34.6, longitude: -58.4 }];
       mockBuilder = createMockBuilder(mockResults);
       mockSupabaseClient.from.mockReturnValue(mockBuilder);
 
-      const result = await repository.searchNearby({ lat: -34.6, lon: -58.4, radiusDeg: 0.02, limit: 20 });
+      const result = await repository.searchNearby({
+        lat: -34.6,
+        lon: -58.4,
+        radiusDeg: 0.02,
+        limit: 20,
+      });
 
       expect(result).toEqual(mockResults);
     });
@@ -369,7 +390,8 @@ describe('SupabasePropertyReviewReadRepository', () => {
 
     it('throws on Supabase error', async () => {
       const errorBuilder = createMockBuilder(null);
-      errorBuilder.then = (onfulfilled: any) => Promise.resolve({ data: null, error: { message: 'DB error' } }).then(onfulfilled);
+      errorBuilder.then = (onfulfilled: any) =>
+        Promise.resolve({ data: null, error: { message: 'DB error' } }).then(onfulfilled);
       mockSupabaseClient.from.mockReturnValue(errorBuilder);
 
       await expect(repository.searchNearby({ lat: -34.6, lon: -58.4 })).rejects.toThrow();

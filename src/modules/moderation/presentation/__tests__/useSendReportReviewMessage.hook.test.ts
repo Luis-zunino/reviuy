@@ -6,7 +6,9 @@ const mockUseApiMutation = vi.hoisted(() => vi.fn(() => ({ mutate: vi.fn(), isLo
 vi.mock('@/shared/api', () => ({ useApiMutation: mockUseApiMutation }));
 
 describe('useSendReportReviewMessage', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('calls useApiMutation with /api/report-review', () => {
     renderHook(() => useSendReportReviewMessage());

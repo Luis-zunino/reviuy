@@ -39,7 +39,7 @@ describe('NominatimAddressReadRepository', () => {
 
     it('returns parsed JSON array on success', async () => {
       vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-        new Response(JSON.stringify(mockEntities), { status: 200 }),
+        new Response(JSON.stringify(mockEntities), { status: 200 })
       );
 
       const result = await repository.searchByName({ query: 'Av Italia' });
@@ -48,9 +48,7 @@ describe('NominatimAddressReadRepository', () => {
     });
 
     it('returns empty array on non-ok response', async () => {
-      vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-        new Response(null, { status: 500 }),
-      );
+      vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(null, { status: 500 }));
 
       const result = await repository.searchByName({ query: 'Av Italia' });
 
@@ -60,15 +58,15 @@ describe('NominatimAddressReadRepository', () => {
     it('lets network errors propagate', async () => {
       vi.spyOn(globalThis, 'fetch').mockRejectedValue(new Error('Network failure'));
 
-      await expect(
-        repository.searchByName({ query: 'Av Italia' }),
-      ).rejects.toThrow('Network failure');
+      await expect(repository.searchByName({ query: 'Av Italia' })).rejects.toThrow(
+        'Network failure'
+      );
     });
 
     it('constructs correct URL with default parameters', async () => {
-      const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-        new Response(JSON.stringify(mockEntities), { status: 200 }),
-      );
+      const fetchSpy = vi
+        .spyOn(globalThis, 'fetch')
+        .mockResolvedValue(new Response(JSON.stringify(mockEntities), { status: 200 }));
 
       await repository.searchByName({ query: 'Av Italia' });
 
@@ -77,27 +75,27 @@ describe('NominatimAddressReadRepository', () => {
         expect.objectContaining({
           headers: { 'User-Agent': 'ReviUy/1.0' },
           signal: expect.any(AbortSignal),
-        }),
+        })
       );
     });
 
     it('uses custom parameters when provided', async () => {
-      const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-        new Response(JSON.stringify(mockEntities), { status: 200 }),
-      );
+      const fetchSpy = vi
+        .spyOn(globalThis, 'fetch')
+        .mockResolvedValue(new Response(JSON.stringify(mockEntities), { status: 200 }));
 
       await repository.searchByName({ query: 'Sarandi', countrycodes: 'ar', limit: 10 });
 
       expect(fetchSpy).toHaveBeenCalledWith(
         `${NOMINATIM_URL}/search?format=json&q=Sarandi&countrycodes=ar&limit=10`,
-        expect.anything(),
+        expect.anything()
       );
     });
 
     it('sets User-Agent header', async () => {
-      const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-        new Response(JSON.stringify(mockEntities), { status: 200 }),
-      );
+      const fetchSpy = vi
+        .spyOn(globalThis, 'fetch')
+        .mockResolvedValue(new Response(JSON.stringify(mockEntities), { status: 200 }));
 
       await repository.searchByName({ query: 'Av Italia' });
 
@@ -106,9 +104,9 @@ describe('NominatimAddressReadRepository', () => {
     });
 
     it('sets 5-second timeout via AbortSignal', async () => {
-      const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-        new Response(JSON.stringify(mockEntities), { status: 200 }),
-      );
+      const fetchSpy = vi
+        .spyOn(globalThis, 'fetch')
+        .mockResolvedValue(new Response(JSON.stringify(mockEntities), { status: 200 }));
 
       await repository.searchByName({ query: 'Av Italia' });
 
@@ -150,7 +148,7 @@ describe('NominatimAddressReadRepository', () => {
 
     it('returns parsed JSON array on success', async () => {
       vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-        new Response(JSON.stringify(mockAddressInfo), { status: 200 }),
+        new Response(JSON.stringify(mockAddressInfo), { status: 200 })
       );
 
       const result = await repository.getAddressInfo({ osmId: 'W123' });
@@ -159,9 +157,7 @@ describe('NominatimAddressReadRepository', () => {
     });
 
     it('throws AppError with INTERNAL_ERROR code on non-ok response', async () => {
-      vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-        new Response(null, { status: 404 }),
-      );
+      vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(null, { status: 404 }));
 
       let error: unknown;
       try {
@@ -180,20 +176,18 @@ describe('NominatimAddressReadRepository', () => {
     it('lets network errors propagate', async () => {
       vi.spyOn(globalThis, 'fetch').mockRejectedValue(new Error('Network failure'));
 
-      await expect(
-        repository.getAddressInfo({ osmId: 'W123' }),
-      ).rejects.toThrow('Network failure');
+      await expect(repository.getAddressInfo({ osmId: 'W123' })).rejects.toThrow('Network failure');
     });
 
     it('constructs correct URL', async () => {
-      const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-        new Response(JSON.stringify(mockAddressInfo), { status: 200 }),
-      );
+      const fetchSpy = vi
+        .spyOn(globalThis, 'fetch')
+        .mockResolvedValue(new Response(JSON.stringify(mockAddressInfo), { status: 200 }));
 
       await repository.getAddressInfo({ osmId: 'R456' });
 
       expect(fetchSpy).toHaveBeenCalledWith(
-        `${NOMINATIM_URL}/lookup?osm_ids=R456&format=json&extratags=1`,
+        `${NOMINATIM_URL}/lookup?osm_ids=R456&format=json&extratags=1`
       );
     });
   });
@@ -229,7 +223,7 @@ describe('NominatimAddressReadRepository', () => {
 
     it('returns parsed NominatimByOsmId on success', async () => {
       vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-        new Response(JSON.stringify(mockOsmResult), { status: 200 }),
+        new Response(JSON.stringify(mockOsmResult), { status: 200 })
       );
 
       const result = await repository.reverseGeocode({ lat: -34.9011, lon: -56.1645 });
@@ -239,7 +233,7 @@ describe('NominatimAddressReadRepository', () => {
 
     it('returns null when API responds with null body', async () => {
       vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-        new Response(JSON.stringify(null), { status: 200 }),
+        new Response(JSON.stringify(null), { status: 200 })
       );
 
       const result = await repository.reverseGeocode({ lat: -34.9011, lon: -56.1645 });
@@ -248,9 +242,7 @@ describe('NominatimAddressReadRepository', () => {
     });
 
     it('returns null on non-ok response', async () => {
-      vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-        new Response(null, { status: 500 }),
-      );
+      vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(null, { status: 500 }));
 
       const result = await repository.reverseGeocode({ lat: -34.9011, lon: -56.1645 });
 
@@ -260,15 +252,15 @@ describe('NominatimAddressReadRepository', () => {
     it('lets network errors propagate', async () => {
       vi.spyOn(globalThis, 'fetch').mockRejectedValue(new Error('Network failure'));
 
-      await expect(
-        repository.reverseGeocode({ lat: -34.9011, lon: -56.1645 }),
-      ).rejects.toThrow('Network failure');
+      await expect(repository.reverseGeocode({ lat: -34.9011, lon: -56.1645 })).rejects.toThrow(
+        'Network failure'
+      );
     });
 
     it('constructs correct URL', async () => {
-      const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-        new Response(JSON.stringify(mockOsmResult), { status: 200 }),
-      );
+      const fetchSpy = vi
+        .spyOn(globalThis, 'fetch')
+        .mockResolvedValue(new Response(JSON.stringify(mockOsmResult), { status: 200 }));
 
       await repository.reverseGeocode({ lat: -34.9011, lon: -56.1645 });
 
@@ -277,14 +269,14 @@ describe('NominatimAddressReadRepository', () => {
         expect.objectContaining({
           headers: { 'User-Agent': 'ReviUy/1.0' },
           signal: expect.any(AbortSignal),
-        }),
+        })
       );
     });
 
     it('sets User-Agent header', async () => {
-      const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-        new Response(JSON.stringify(mockOsmResult), { status: 200 }),
-      );
+      const fetchSpy = vi
+        .spyOn(globalThis, 'fetch')
+        .mockResolvedValue(new Response(JSON.stringify(mockOsmResult), { status: 200 }));
 
       await repository.reverseGeocode({ lat: -34.9011, lon: -56.1645 });
 
@@ -293,9 +285,9 @@ describe('NominatimAddressReadRepository', () => {
     });
 
     it('sets 5-second timeout via AbortSignal', async () => {
-      const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-        new Response(JSON.stringify(mockOsmResult), { status: 200 }),
-      );
+      const fetchSpy = vi
+        .spyOn(globalThis, 'fetch')
+        .mockResolvedValue(new Response(JSON.stringify(mockOsmResult), { status: 200 }));
 
       await repository.reverseGeocode({ lat: -34.9011, lon: -56.1645 });
 

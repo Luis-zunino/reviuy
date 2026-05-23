@@ -5,7 +5,7 @@ import type { RealEstateReadRepository } from '@/modules/real-estates/domain';
 describe('createGetRealEstateByIdQuery', () => {
   it('delegates to repository', async () => {
     const expected = { id: 're-123', name: 'Test Agency' };
-    const input = { realEstateId: 're-123' };
+    const input = { id: 're-123' };
 
     const repository: RealEstateReadRepository = {
       getById: vi.fn().mockResolvedValue(expected),

@@ -33,14 +33,21 @@ vi.mock('@/lib/redis', () => ({
   RateLimitType: { SENSITIVE: 'sensitive' },
 }));
 vi.mock('@/lib/errors', () => ({
-  createError: vi.fn((code, message) => { const err: any = new Error(message); err.code = code; return err; }),
+  createError: vi.fn((code, message) => {
+    const err: any = new Error(message);
+    err.code = code;
+    return err;
+  }),
 }));
 
 describe('deleteAccountAction', () => {
   it('returns the success result from the use case', async () => {
     mockCreateSupabaseServerClient.mockResolvedValue({
       auth: {
-        getUser: vi.fn().mockResolvedValue({ data: { user: { id: 'user-1', last_sign_in_at: new Date().toISOString() } }, error: null }),
+        getUser: vi.fn().mockResolvedValue({
+          data: { user: { id: 'user-1', last_sign_in_at: new Date().toISOString() } },
+          error: null,
+        }),
       },
     });
 

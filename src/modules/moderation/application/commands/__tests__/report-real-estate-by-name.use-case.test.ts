@@ -5,7 +5,8 @@ import { createReportRealEstateByNameUseCase } from '../report-real-estate-by-na
 vi.mock('@/shared/auth/assert-authenticated.util', () => ({
   assertAuthenticated: vi.fn(async (fn: () => Promise<string | null>) => {
     const result = await fn();
-    if (result === null || result === undefined) throw Object.assign(new Error('No autorizado'), { code: 'UNAUTHORIZED' });
+    if (result === null || result === undefined)
+      throw Object.assign(new Error('No autorizado'), { code: 'UNAUTHORIZED' });
     return result;
   }),
 }));
@@ -37,7 +38,9 @@ describe('createReportRealEstateByNameUseCase', () => {
       rateLimit: vi.fn().mockResolvedValue(undefined),
     });
 
-    await expect(useCase({ realEstateName: '', reason: '', message: '' })).rejects.toBeInstanceOf(z.ZodError);
+    await expect(useCase({ realEstateName: '', reason: '', message: '' })).rejects.toBeInstanceOf(
+      z.ZodError
+    );
   });
 
   it('returns validated response on success', async () => {

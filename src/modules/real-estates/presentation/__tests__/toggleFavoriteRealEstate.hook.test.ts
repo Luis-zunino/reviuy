@@ -25,10 +25,11 @@ describe('useToggleFavoriteRealEstate', () => {
   it('debe llamar a useToggleFavorite con los parámetros correctos', () => {
     renderHook(() => useToggleFavoriteRealEstate());
 
-    expect(useToggleFavorite).toHaveBeenCalledWith(
-      expect.any(Function),
-      [['realEstate'], ['favoriteRealEstates'], ['isFavorite']]
-    );
+    expect(useToggleFavorite).toHaveBeenCalledWith(expect.any(Function), [
+      ['realEstate'],
+      ['favoriteRealEstates'],
+      ['isFavorite'],
+    ]);
   });
 
   it('debe retornar el objeto de mutación', () => {

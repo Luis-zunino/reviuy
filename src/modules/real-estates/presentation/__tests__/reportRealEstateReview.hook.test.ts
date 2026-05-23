@@ -88,17 +88,13 @@ describe('useHasUserReportedRealEstateReview', () => {
 
     renderHook(() => useHasUserReportedRealEstateReview(''));
 
-    expect(useQuery).toHaveBeenCalledWith(
-      expect.objectContaining({ enabled: false })
-    );
+    expect(useQuery).toHaveBeenCalledWith(expect.objectContaining({ enabled: false }));
   });
 
   it('debe retornar el estado de reporte', () => {
     vi.mocked(useQuery).mockReturnValue({ data: false, isLoading: false } as any);
 
-    const { result } = renderHook(() =>
-      useHasUserReportedRealEstateReview('review-123')
-    );
+    const { result } = renderHook(() => useHasUserReportedRealEstateReview('review-123'));
 
     expect(result.current.data).toBe(false);
   });

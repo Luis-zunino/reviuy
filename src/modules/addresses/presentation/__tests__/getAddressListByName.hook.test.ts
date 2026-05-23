@@ -26,7 +26,7 @@ describe('useGetAddressListByName', () => {
       expect.objectContaining({
         queryKey: [REVIEW_KEYS.getAddressListByName, 'Avenida Italia'],
         enabled: true,
-      }),
+      })
     );
     expect(result.current.data).toEqual([]);
   });
@@ -47,7 +47,7 @@ describe('useGetAddressListByName', () => {
     expect(useQuery).toHaveBeenCalledWith(
       expect.objectContaining({
         queryKey: [REVIEW_KEYS.getAddressListByName, 'Sarandi'],
-      }),
+      })
     );
   });
 

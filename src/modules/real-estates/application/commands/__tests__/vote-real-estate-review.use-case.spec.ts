@@ -12,9 +12,7 @@ describe('createVoteRealEstateReviewUseCase', () => {
   let dependencies: RealEstateCommandoBase;
   let getCurrentUserId: Mock<() => Promise<string | null>>;
   let rateLimit: Mock<(key: string, action: string) => Promise<void>>;
-  let voteReview: Mock<
-    (input: VoteRealEstateReviewInput) => Promise<VoteRealEstateReviewOutput>
-  >;
+  let voteReview: Mock<(input: VoteRealEstateReviewInput) => Promise<VoteRealEstateReviewOutput>>;
 
   const repository = (): RealEstateCommandRepository => ({
     create: vi.fn(),
@@ -80,7 +78,7 @@ describe('createVoteRealEstateReviewUseCase', () => {
     await expect(
       execute({
         reviewId: '550e8400-e29b-41d4-a716-446655440000',
-        voteType: 'invalid_vote',
+        voteType: 'invalid_vote' as VoteType,
       })
     ).rejects.toThrow();
 

@@ -40,9 +40,7 @@ describe('useGetRealEstateById', () => {
 
     renderHook(() => useGetRealEstateById(''));
 
-    expect(useQuery).toHaveBeenCalledWith(
-      expect.objectContaining({ enabled: false })
-    );
+    expect(useQuery).toHaveBeenCalledWith(expect.objectContaining({ enabled: false }));
   });
 
   it('debe retornar los datos de la query', () => {

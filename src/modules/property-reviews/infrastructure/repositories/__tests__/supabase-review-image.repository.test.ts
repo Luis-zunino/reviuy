@@ -34,7 +34,9 @@ const createMockBuilder = (...dataSequence: any[]) => {
     in: vi.fn().mockReturnThis(),
     csv: vi.fn().mockResolvedValue({ data: null, error: null }),
     then: (onfulfilled: any) =>
-      Promise.resolve(resolveSequence[Math.min(callIndex++, resolveSequence.length - 1)]).then(onfulfilled),
+      Promise.resolve(resolveSequence[Math.min(callIndex++, resolveSequence.length - 1)]).then(
+        onfulfilled
+      ),
   };
 
   return chainable;
@@ -45,7 +47,7 @@ describe('SupabaseReviewImageRepository', () => {
   let mockBuilder: ReturnType<typeof createMockBuilder>;
   let mockSupabase: any;
 
-  const baseFile = new File(['test'], 'photo.jpg', { type: 'image/jpeg' });
+  const baseFile = Buffer.from('test');
 
   beforeEach(() => {
     mockBuilder = createMockBuilder(null);
@@ -58,8 +60,11 @@ describe('SupabaseReviewImageRepository', () => {
     };
     repository = new SupabaseReviewImageRepository(mockSupabase);
 
-    vi.mocked(uploadImage).mockResolvedValue({ url: 'https://r2.example.com/path/photo.jpg', success: true, message: '' });
-    vi.mocked(deleteImage).mockResolvedValue({ success: true, message: '' });
+    vi.mocked(uploadImage).mockResolvedValue({
+      url: 'https://r2.example.com/path/photo.jpg',
+      path: 'reviews/N123/review-1/xxx.jpg',
+    });
+    vi.mocked(deleteImage).mockResolvedValue(undefined);
   });
 
   describe('upload', () => {
@@ -76,7 +81,12 @@ describe('SupabaseReviewImageRepository', () => {
       const countResolve: any = { data: null, error: null, count: 0 };
       countBuilder.then = (onfulfilled: any) => Promise.resolve(countResolve).then(onfulfilled);
 
-      const insertBuilder = createMockBuilder({ id: 'img-1', url: 'https://r2.example.com/path/photo.jpg', path: 'reviews/N123/review-1/xxx.jpg', order: 0 });
+      const insertBuilder = createMockBuilder({
+        id: 'img-1',
+        url: 'https://r2.example.com/path/photo.jpg',
+        path: 'reviews/N123/review-1/xxx.jpg',
+        order: 0,
+      });
       mockSupabase.from
         .mockReturnValueOnce(createMockBuilder({ id: 'review-1', user_id: 'user-1' }))
         .mockReturnValueOnce(countBuilder)
@@ -85,12 +95,11 @@ describe('SupabaseReviewImageRepository', () => {
       const result = await repository.upload(validInput);
 
       expect(result.success).toBe(true);
-      expect(result.data.id).toBe('img-1');
+      expect(result.data!.id).toBe('img-1');
     });
 
     it('throws NOT_FOUND when review does not exist', async () => {
-      mockSupabase.from
-        .mockReturnValueOnce(createMockBuilder(null));
+      mockSupabase.from.mockReturnValueOnce(createMockBuilder(null));
 
       await expect(repository.upload(validInput)).rejects.toThrow('Reseña no encontrada');
     });
@@ -109,7 +118,8 @@ describe('SupabaseReviewImageRepository', () => {
 
     it('throws INTERNAL_ERROR on count query error', async () => {
       const countErrorBuilder = createMockBuilder(null);
-      countErrorBuilder.then = (onfulfilled: any) => Promise.resolve({ data: null, error: { message: 'Count error' } }).then(onfulfilled);
+      countErrorBuilder.then = (onfulfilled: any) =>
+        Promise.resolve({ data: null, error: { message: 'Count error' } }).then(onfulfilled);
 
       mockSupabase.from
         .mockReturnValueOnce(createMockBuilder({ id: 'review-1', user_id: 'user-1' }))
@@ -124,7 +134,8 @@ describe('SupabaseReviewImageRepository', () => {
       countBuilder.then = (onfulfilled: any) => Promise.resolve(countResolve).then(onfulfilled);
 
       const failedInsertBuilder = createMockBuilder(null);
-      failedInsertBuilder.then = (onfulfilled: any) => Promise.resolve({ data: null, error: { message: 'Insert failed' } }).then(onfulfilled);
+      failedInsertBuilder.then = (onfulfilled: any) =>
+        Promise.resolve({ data: null, error: { message: 'Insert failed' } }).then(onfulfilled);
 
       mockSupabase.from
         .mockReturnValueOnce(createMockBuilder({ id: 'review-1', user_id: 'user-1' }))
@@ -140,7 +151,12 @@ describe('SupabaseReviewImageRepository', () => {
       const countResolve: any = { data: null, error: null, count: 0 };
       countBuilder.then = (onfulfilled: any) => Promise.resolve(countResolve).then(onfulfilled);
 
-      const insertBuilder = createMockBuilder({ id: 'img-noext', url: 'https://r2.example.com/path/photo.jpg', path: 'reviews/N123/review-1/xxx.jpg', order: 0 });
+      const insertBuilder = createMockBuilder({
+        id: 'img-noext',
+        url: 'https://r2.example.com/path/photo.jpg',
+        path: 'reviews/N123/review-1/xxx.jpg',
+        order: 0,
+      });
       mockSupabase.from
         .mockReturnValueOnce(createMockBuilder({ id: 'review-1', user_id: 'user-1' }))
         .mockReturnValueOnce(countBuilder)
@@ -149,7 +165,7 @@ describe('SupabaseReviewImageRepository', () => {
       const result = await repository.upload({ ...validInput, filename: 'photo' });
 
       expect(result.success).toBe(true);
-      expect(result.data.id).toBe('img-noext');
+      expect(result.data!.id).toBe('img-noext');
     });
 
     it('uploads with null count', async () => {
@@ -157,7 +173,12 @@ describe('SupabaseReviewImageRepository', () => {
       const countResolve: any = { data: null, error: null, count: null };
       countBuilder.then = (onfulfilled: any) => Promise.resolve(countResolve).then(onfulfilled);
 
-      const insertBuilder = createMockBuilder({ id: 'img-nullcount', url: 'https://r2.example.com/path/photo.jpg', path: 'reviews/N123/review-1/xxx.jpg', order: 0 });
+      const insertBuilder = createMockBuilder({
+        id: 'img-nullcount',
+        url: 'https://r2.example.com/path/photo.jpg',
+        path: 'reviews/N123/review-1/xxx.jpg',
+        order: 0,
+      });
       mockSupabase.from
         .mockReturnValueOnce(createMockBuilder({ id: 'review-1', user_id: 'user-1' }))
         .mockReturnValueOnce(countBuilder)
@@ -166,7 +187,7 @@ describe('SupabaseReviewImageRepository', () => {
       const result = await repository.upload(validInput);
 
       expect(result.success).toBe(true);
-      expect(result.data.id).toBe('img-nullcount');
+      expect(result.data!.id).toBe('img-nullcount');
     });
   });
 
@@ -174,7 +195,11 @@ describe('SupabaseReviewImageRepository', () => {
     const validInput = { imageId: 'img-1', reviewId: 'review-1' };
 
     it('deletes an image successfully', async () => {
-      mockBuilder = createMockBuilder({ id: 'img-1', path: 'reviews/path/img.jpg', review_id: 'review-1' });
+      mockBuilder = createMockBuilder({
+        id: 'img-1',
+        path: 'reviews/path/img.jpg',
+        review_id: 'review-1',
+      });
       mockSupabase.from.mockReturnValue(mockBuilder);
 
       const result = await repository.delete(validInput);
@@ -191,13 +216,19 @@ describe('SupabaseReviewImageRepository', () => {
     });
 
     it('throws INTERNAL_ERROR on DB delete error', async () => {
-      const errorBuilder = createMockBuilder({ id: 'img-1', path: 'reviews/path/img.jpg', review_id: 'review-1' });
+      const errorBuilder = createMockBuilder({
+        id: 'img-1',
+        path: 'reviews/path/img.jpg',
+        review_id: 'review-1',
+      });
       const origThen = errorBuilder.then;
       let callCount = 0;
       errorBuilder.then = (onfulfilled: any) => {
         callCount++;
         if (callCount === 2) {
-          return Promise.resolve({ data: null, error: { message: 'Delete DB error' } }).then(onfulfilled);
+          return Promise.resolve({ data: null, error: { message: 'Delete DB error' } }).then(
+            onfulfilled
+          );
         }
         return origThen.call(errorBuilder, onfulfilled);
       };
@@ -233,10 +264,13 @@ describe('SupabaseReviewImageRepository', () => {
 
     it('throws on DB error', async () => {
       const errorBuilder = createMockBuilder(null);
-      errorBuilder.then = (onfulfilled: any) => Promise.resolve({ data: null, error: { message: 'DB error' } }).then(onfulfilled);
+      errorBuilder.then = (onfulfilled: any) =>
+        Promise.resolve({ data: null, error: { message: 'DB error' } }).then(onfulfilled);
       mockSupabase.from.mockReturnValue(errorBuilder);
 
-      await expect(repository.getByReviewId({ reviewId: 'review-1' })).rejects.toThrow('Error al obtener las imágenes');
+      await expect(repository.getByReviewId({ reviewId: 'review-1' })).rejects.toThrow(
+        'Error al obtener las imágenes'
+      );
     });
   });
 });

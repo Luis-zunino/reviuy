@@ -56,7 +56,9 @@ describe('createRealEstateReviewAction', () => {
   it('throws UNAUTHORIZED when no user', async () => {
     (createServerActionDeps as unknown as ReturnType<typeof vi.fn>).mockResolvedValue(
       mockDeps({
-        supabase: { auth: { getUser: vi.fn().mockResolvedValue({ data: { user: null }, error: null }) } },
+        supabase: {
+          auth: { getUser: vi.fn().mockResolvedValue({ data: { user: null }, error: null }) },
+        },
       })
     );
 
@@ -68,7 +70,14 @@ describe('createRealEstateReviewAction', () => {
     const useCase = vi.fn().mockRejectedValue(new Error('Creation failed'));
     mockCreateUseCase.mockReturnValue(useCase);
 
-    await expect(createRealEstateReviewAction({ realEstateId: 'uuid-1234', rating: 4, comment: 'Good experience overall', title: 'A title' })).rejects.toThrow('Creation failed');
+    await expect(
+      createRealEstateReviewAction({
+        realEstateId: 'uuid-1234',
+        rating: 4,
+        comment: 'Good experience overall',
+        title: 'A title',
+      })
+    ).rejects.toThrow('Creation failed');
   });
 });
 
@@ -91,11 +100,15 @@ describe('updateRealEstateReviewAction', () => {
   it('throws UNAUTHORIZED when no user', async () => {
     (createServerActionDeps as unknown as ReturnType<typeof vi.fn>).mockResolvedValue(
       mockDeps({
-        supabase: { auth: { getUser: vi.fn().mockResolvedValue({ data: { user: null }, error: null }) } },
+        supabase: {
+          auth: { getUser: vi.fn().mockResolvedValue({ data: { user: null }, error: null }) },
+        },
       })
     );
 
-    await expect(updateRealEstateReviewAction('review-1', {})).rejects.toThrow('Debés iniciar sesión.');
+    await expect(updateRealEstateReviewAction('review-1', {})).rejects.toThrow(
+      'Debés iniciar sesión.'
+    );
     expect(mockUpdateUseCase).not.toHaveBeenCalled();
   });
 
@@ -126,7 +139,9 @@ describe('deleteRealEstateReviewAction', () => {
   it('throws UNAUTHORIZED when no user', async () => {
     (createServerActionDeps as unknown as ReturnType<typeof vi.fn>).mockResolvedValue(
       mockDeps({
-        supabase: { auth: { getUser: vi.fn().mockResolvedValue({ data: { user: null }, error: null }) } },
+        supabase: {
+          auth: { getUser: vi.fn().mockResolvedValue({ data: { user: null }, error: null }) },
+        },
       })
     );
 

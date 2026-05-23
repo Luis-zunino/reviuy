@@ -1,5 +1,6 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { SupabasePropertyReviewCommandRepository } from '../supabase-property-review-command.repository';
+import { VoteType } from '@/types/vote-type';
 
 const createMockBuilder = (...dataSequence: any[]) => {
   const resolveSequence = dataSequence.map((data) => ({ data, error: null }));
@@ -28,7 +29,9 @@ const createMockBuilder = (...dataSequence: any[]) => {
     in: vi.fn().mockReturnThis(),
     csv: vi.fn().mockResolvedValue({ data: null, error: null }),
     then: (onfulfilled: any) =>
-      Promise.resolve(resolveSequence[Math.min(callIndex++, resolveSequence.length - 1)]).then(onfulfilled),
+      Promise.resolve(resolveSequence[Math.min(callIndex++, resolveSequence.length - 1)]).then(
+        onfulfilled
+      ),
   };
 
   return chainable;
@@ -75,8 +78,8 @@ describe('SupabasePropertyReviewCommandRepository', () => {
       const result = await repository.create(validInput);
 
       expect(result.success).toBe(true);
-      expect(result.data.id).toBe('new-review-1');
-      expect(result.data.review_rooms).toEqual([]);
+      expect(result.data?.id).toBe('new-review-1');
+      expect(result.data?.review_rooms).toEqual([]);
     });
 
     it('creates a review with rooms successfully', async () => {
@@ -117,7 +120,9 @@ describe('SupabasePropertyReviewCommandRepository', () => {
       errorBuilder.then = (onfulfilled: any) => {
         callCount++;
         if (callCount === 2) {
-          return Promise.resolve({ data: null, error: { message: 'Insert failed' } }).then(onfulfilled);
+          return Promise.resolve({ data: null, error: { message: 'Insert failed' } }).then(
+            onfulfilled
+          );
         }
         return origThen.call(errorBuilder, onfulfilled);
       };
@@ -134,14 +139,18 @@ describe('SupabasePropertyReviewCommandRepository', () => {
       errorBuilder.then = (onfulfilled: any) => {
         callCount++;
         if (callCount === 2) {
-          return Promise.resolve({ data: null, error: { message: 'Rooms insert failed' } }).then(onfulfilled);
+          return Promise.resolve({ data: null, error: { message: 'Rooms insert failed' } }).then(
+            onfulfilled
+          );
         }
         return origThen.call(errorBuilder, onfulfilled);
       };
       mockSupabase.from.mockReturnValue(errorBuilder);
       mockSupabase.rpc.mockReturnValue(errorBuilder);
 
-      await expect(repository.create({ ...validInput, review_rooms: [{ room_type: 'bedroom', area_m2: 20 }] })).rejects.toThrow();
+      await expect(
+        repository.create({ ...validInput, review_rooms: [{ room_type: 'bedroom', area_m2: 20 }] })
+      ).rejects.toThrow();
     });
 
     it('throws on final review fetch error', async () => {
@@ -154,7 +163,9 @@ describe('SupabasePropertyReviewCommandRepository', () => {
           return Promise.resolve({ data: null, error: null }).then(onfulfilled);
         }
         if (callCount === 3) {
-          return Promise.resolve({ data: null, error: { message: 'Fetch failed' } }).then(onfulfilled);
+          return Promise.resolve({ data: null, error: { message: 'Fetch failed' } }).then(
+            onfulfilled
+          );
         }
         return origThen.call(errorBuilder, onfulfilled);
       };
@@ -177,12 +188,13 @@ describe('SupabasePropertyReviewCommandRepository', () => {
       const result = await repository.update({ reviewId: 'review-1', ...updateData });
 
       expect(result.success).toBe(true);
-      expect(result.data.title).toBe('Updated title');
+      expect(result.data?.title).toBe('Updated title');
     });
 
     it('returns NOT_FOUND when review does not exist', async () => {
       const errorBuilder = createMockBuilder(null);
-      errorBuilder.then = (onfulfilled: any) => Promise.resolve({ data: null, error: { message: 'Not found' } }).then(onfulfilled);
+      errorBuilder.then = (onfulfilled: any) =>
+        Promise.resolve({ data: null, error: { message: 'Not found' } }).then(onfulfilled);
       mockSupabase.from.mockReturnValue(errorBuilder);
 
       const result = await repository.update({ reviewId: 'nonexistent', ...updateData });
@@ -227,7 +239,9 @@ describe('SupabasePropertyReviewCommandRepository', () => {
       errorBuilder.then = (onfulfilled: any) => {
         callCount++;
         if (callCount === 2) {
-          return Promise.resolve({ data: null, error: { message: 'Update failed' } }).then(onfulfilled);
+          return Promise.resolve({ data: null, error: { message: 'Update failed' } }).then(
+            onfulfilled
+          );
         }
         return origThen.call(errorBuilder, onfulfilled);
       };
@@ -249,17 +263,21 @@ describe('SupabasePropertyReviewCommandRepository', () => {
           return origThen.call(errorBuilder, onfulfilled);
         }
         if (callCount === 4) {
-          return Promise.resolve({ data: null, error: { message: 'Rooms insert failed' } }).then(onfulfilled);
+          return Promise.resolve({ data: null, error: { message: 'Rooms insert failed' } }).then(
+            onfulfilled
+          );
         }
         return origThen.call(errorBuilder, onfulfilled);
       };
       mockSupabase.from.mockReturnValue(errorBuilder);
 
-      await expect(repository.update({
-        reviewId: 'review-1',
-        ...updateData,
-        review_rooms: [{ room_type: 'kitchen', area_m2: 15 }],
-      })).rejects.toThrow();
+      await expect(
+        repository.update({
+          reviewId: 'review-1',
+          ...updateData,
+          review_rooms: [{ room_type: 'kitchen', area_m2: 15 }],
+        })
+      ).rejects.toThrow();
     });
 
     it('throws on final review fetch error after update', async () => {
@@ -272,7 +290,9 @@ describe('SupabasePropertyReviewCommandRepository', () => {
           return Promise.resolve({ data: null, error: null }).then(onfulfilled);
         }
         if (callCount === 3) {
-          return Promise.resolve({ data: null, error: { message: 'Fetch review failed' } }).then(onfulfilled);
+          return Promise.resolve({ data: null, error: { message: 'Fetch review failed' } }).then(
+            onfulfilled
+          );
         }
         return origThen.call(errorBuilder, onfulfilled);
       };
@@ -297,7 +317,8 @@ describe('SupabasePropertyReviewCommandRepository', () => {
 
     it('throws on fetch error', async () => {
       const errorBuilder = createMockBuilder(null);
-      errorBuilder.then = (onfulfilled: any) => Promise.resolve({ data: null, error: { message: 'DB error' } }).then(onfulfilled);
+      errorBuilder.then = (onfulfilled: any) =>
+        Promise.resolve({ data: null, error: { message: 'DB error' } }).then(onfulfilled);
       mockSupabase.from.mockReturnValue(errorBuilder);
 
       await expect(repository.delete({ reviewId: 'nonexistent' })).rejects.toThrow();
@@ -331,7 +352,9 @@ describe('SupabasePropertyReviewCommandRepository', () => {
       errorBuilder.then = (onfulfilled: any) => {
         callCount++;
         if (callCount === 2) {
-          return Promise.resolve({ data: null, error: { message: 'Delete failed' } }).then(onfulfilled);
+          return Promise.resolve({ data: null, error: { message: 'Delete failed' } }).then(
+            onfulfilled
+          );
         }
         return origThen.call(errorBuilder, onfulfilled);
       };
@@ -347,21 +370,22 @@ describe('SupabasePropertyReviewCommandRepository', () => {
       mockBuilder = createMockBuilder(rpcResult);
       mockSupabase.rpc.mockReturnValue(mockBuilder);
 
-      const result = await repository.vote({ reviewId: 'r1', voteType: 'up' });
+      const result = await repository.vote({ reviewId: 'r1', voteType: VoteType.LIKE });
 
       expect(result.success).toBe(true);
       expect(mockSupabase.rpc).toHaveBeenCalledWith('vote_review', {
         p_review_id: 'r1',
-        p_vote_type: 'up',
+        p_vote_type: VoteType.LIKE,
       });
     });
 
     it('throws on RPC error', async () => {
       const errorBuilder = createMockBuilder(null);
-      errorBuilder.then = (onfulfilled: any) => Promise.resolve({ data: null, error: { message: 'RPC error' } }).then(onfulfilled);
+      errorBuilder.then = (onfulfilled: any) =>
+        Promise.resolve({ data: null, error: { message: 'RPC error' } }).then(onfulfilled);
       mockSupabase.rpc.mockReturnValue(errorBuilder);
 
-      await expect(repository.vote({ reviewId: 'r1', voteType: 'up' })).rejects.toThrow();
+      await expect(repository.vote({ reviewId: 'r1', voteType: VoteType.LIKE })).rejects.toThrow();
     });
   });
 
@@ -382,7 +406,8 @@ describe('SupabasePropertyReviewCommandRepository', () => {
 
     it('throws on RPC error', async () => {
       const errorBuilder = createMockBuilder(null);
-      errorBuilder.then = (onfulfilled: any) => Promise.resolve({ data: null, error: { message: 'RPC error' } }).then(onfulfilled);
+      errorBuilder.then = (onfulfilled: any) =>
+        Promise.resolve({ data: null, error: { message: 'RPC error' } }).then(onfulfilled);
       mockSupabase.rpc.mockReturnValue(errorBuilder);
 
       await expect(repository.toggleFavorite({ reviewId: 'r1' })).rejects.toThrow();

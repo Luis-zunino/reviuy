@@ -1,20 +1,28 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
-import { reportReviewAction, reportRealEstateAction, reportRealEstateReviewAction } from '../report.actions';
+import {
+  reportReviewAction,
+  reportRealEstateAction,
+  reportRealEstateReviewAction,
+} from '../report.actions';
 
 vi.mock('server-only', () => ({}));
 
-const mockUseCase = vi.hoisted(() => vi.fn().mockResolvedValue({ success: true, message: 'Reporte enviado' }));
+const mockUseCase = vi.hoisted(() =>
+  vi.fn().mockResolvedValue({ success: true, message: 'Reporte enviado' })
+);
 const mockGetCurrentUserId = vi.hoisted(() => vi.fn());
 const mockRateLimit = vi.hoisted(() => vi.fn());
-const mockCreateServerActionDeps = vi.hoisted(() => vi.fn().mockResolvedValue({
-  supabase: {
-    auth: {
-      getUser: vi.fn().mockResolvedValue({ data: { user: { id: 'user-1' } }, error: null }),
+const mockCreateServerActionDeps = vi.hoisted(() =>
+  vi.fn().mockResolvedValue({
+    supabase: {
+      auth: {
+        getUser: vi.fn().mockResolvedValue({ data: { user: { id: 'user-1' } }, error: null }),
+      },
     },
-  },
-  getCurrentUserId: mockGetCurrentUserId,
-  rateLimit: mockRateLimit,
-}));
+    getCurrentUserId: mockGetCurrentUserId,
+    rateLimit: mockRateLimit,
+  })
+);
 
 vi.mock('@/shared/auth/create-server-action-deps.util', () => ({
   createServerActionDeps: mockCreateServerActionDeps,
@@ -54,7 +62,10 @@ beforeEach(() => {
 
 describe('reportReviewAction', () => {
   it('returns success on valid input', async () => {
-    const result = await reportReviewAction({ review_id: '00000000-0000-0000-0000-000000000001', reason: 'spam' });
+    const result = await reportReviewAction({
+      review_id: '00000000-0000-0000-0000-000000000001',
+      reason: 'spam',
+    });
     expect(result).toEqual({ success: true, message: 'Reporte enviado' });
   });
 
@@ -81,7 +92,10 @@ describe('reportReviewAction', () => {
 
 describe('reportRealEstateAction', () => {
   it('returns success on valid input', async () => {
-    const result = await reportRealEstateAction({ real_estate_id: '00000000-0000-0000-0000-000000000001', reason: 'spam' });
+    const result = await reportRealEstateAction({
+      real_estate_id: '00000000-0000-0000-0000-000000000001',
+      reason: 'spam',
+    });
     expect(result).toEqual({ success: true, message: 'Reporte enviado' });
   });
 
@@ -102,7 +116,10 @@ describe('reportRealEstateAction', () => {
 
 describe('reportRealEstateReviewAction', () => {
   it('returns success on valid input', async () => {
-    const result = await reportRealEstateReviewAction({ review_id: '00000000-0000-0000-0000-000000000001', reason: 'spam' });
+    const result = await reportRealEstateReviewAction({
+      review_id: '00000000-0000-0000-0000-000000000001',
+      reason: 'spam',
+    });
     expect(result).toEqual({ success: true, message: 'Reporte enviado' });
   });
 

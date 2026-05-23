@@ -25,9 +25,7 @@ describe('useGetRealEstateReviewByUserId', () => {
   it('debe llamar a useQuery con los parámetros correctos', () => {
     vi.mocked(useQuery).mockReturnValue({ data: null, isLoading: false } as any);
 
-    renderHook(() =>
-      useGetRealEstateReviewByUserId({ realEstateId: 'real-estate-123' })
-    );
+    renderHook(() => useGetRealEstateReviewByUserId({ realEstateId: 'real-estate-123' }));
 
     expect(useQuery).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -42,9 +40,7 @@ describe('useGetRealEstateReviewByUserId', () => {
 
     renderHook(() => useGetRealEstateReviewByUserId({ realEstateId: '' }));
 
-    expect(useQuery).toHaveBeenCalledWith(
-      expect.objectContaining({ enabled: false })
-    );
+    expect(useQuery).toHaveBeenCalledWith(expect.objectContaining({ enabled: false }));
   });
 
   it('debe retornar los datos de la query', () => {

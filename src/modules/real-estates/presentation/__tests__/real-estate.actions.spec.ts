@@ -48,7 +48,9 @@ describe('createRealEstateAction', () => {
   it('throws UNAUTHORIZED when no user', async () => {
     (createServerActionDeps as unknown as ReturnType<typeof vi.fn>).mockResolvedValue(
       mockDeps({
-        supabase: { auth: { getUser: vi.fn().mockResolvedValue({ data: { user: null }, error: null }) } },
+        supabase: {
+          auth: { getUser: vi.fn().mockResolvedValue({ data: { user: null }, error: null }) },
+        },
       })
     );
 
@@ -60,6 +62,8 @@ describe('createRealEstateAction', () => {
     const useCase = vi.fn().mockRejectedValue(new Error('Creation failed'));
     mockCreateUseCase.mockReturnValue(useCase);
 
-    await expect(createRealEstateAction({ name: 'Test Agency' } as any)).rejects.toThrow('Creation failed');
+    await expect(createRealEstateAction({ name: 'Test Agency' } as any)).rejects.toThrow(
+      'Creation failed'
+    );
   });
 });

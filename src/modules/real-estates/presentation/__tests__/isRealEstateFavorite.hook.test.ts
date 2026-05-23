@@ -39,9 +39,7 @@ describe('useIsRealEstateFavorite', () => {
 
     renderHook(() => useIsRealEstateFavorite({ realEstateId: '' }));
 
-    expect(useQuery).toHaveBeenCalledWith(
-      expect.objectContaining({ enabled: false })
-    );
+    expect(useQuery).toHaveBeenCalledWith(expect.objectContaining({ enabled: false }));
   });
 
   it('debe retornar el estado de favorito', () => {

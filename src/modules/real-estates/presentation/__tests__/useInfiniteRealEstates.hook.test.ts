@@ -47,9 +47,7 @@ describe('useInfiniteRealEstates', () => {
       isLoading: false,
     } as any);
 
-    renderHook(() =>
-      useInfiniteRealEstates({ search: 'test', rating: 4 })
-    );
+    renderHook(() => useInfiniteRealEstates({ search: 'test', rating: 4 }));
 
     expect(useInfiniteQuery).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -60,8 +58,7 @@ describe('useInfiniteRealEstates', () => {
 
   it('debe retornar nextOffset como nextPageParam', () => {
     const getNextPageParam = vi.fn(
-      (lastPage: { data: string[]; nextOffset: number | null }) =>
-        lastPage.nextOffset ?? undefined
+      (lastPage: { data: string[]; nextOffset: number | null }) => lastPage.nextOffset ?? undefined
     );
 
     const lastPage = { data: ['item1'], nextOffset: 10 };
@@ -72,8 +69,7 @@ describe('useInfiniteRealEstates', () => {
 
   it('debe retornar undefined cuando nextOffset es null', () => {
     const getNextPageParam = vi.fn(
-      (lastPage: { data: string[]; nextOffset: number | null }) =>
-        lastPage.nextOffset ?? undefined
+      (lastPage: { data: string[]; nextOffset: number | null }) => lastPage.nextOffset ?? undefined
     );
 
     const lastPage = { data: ['item1'], nextOffset: null };

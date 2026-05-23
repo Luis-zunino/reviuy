@@ -3,9 +3,11 @@ import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 const mockRedis = vi.hoisted(() => ({}));
 const mockRedisFromEnv = vi.hoisted(() => vi.fn().mockReturnValue(mockRedis));
 
-const mockRatelimitCtor = vi.hoisted(() => {
-  class RatelimitMock {}
-  const ctor = vi.fn().mockImplementation(RatelimitMock);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const mockRatelimitCtor: any = vi.hoisted(() => {
+  const ctor: any = vi.fn(function () {
+    return {};
+  });
   ctor.slidingWindow = vi.fn(() => ({}));
   return ctor;
 });

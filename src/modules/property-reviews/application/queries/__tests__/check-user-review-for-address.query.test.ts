@@ -21,7 +21,9 @@ describe('createCheckUserReviewForAddressQuery', () => {
       hasUserReportedReview: vi.fn(),
     };
 
-    const handler = createCheckUserReviewForAddressQuery({ propertyReviewReadRepository: repository });
+    const handler = createCheckUserReviewForAddressQuery({
+      propertyReviewReadRepository: repository,
+    });
 
     await expect(handler(input)).resolves.toEqual(expected);
     expect(repository.checkUserReviewForAddress).toHaveBeenCalledWith(input);
@@ -44,7 +46,9 @@ describe('createCheckUserReviewForAddressQuery', () => {
       hasUserReportedReview: vi.fn(),
     };
 
-    const handler = createCheckUserReviewForAddressQuery({ propertyReviewReadRepository: repository });
+    const handler = createCheckUserReviewForAddressQuery({
+      propertyReviewReadRepository: repository,
+    });
 
     await expect(handler(input)).resolves.toBeNull();
   });

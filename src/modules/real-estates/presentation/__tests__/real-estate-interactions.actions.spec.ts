@@ -50,13 +50,18 @@ describe('voteRealEstateAction', () => {
     const result = await voteRealEstateAction('real-estate-1', VoteType.LIKE);
 
     expect(result).toEqual({ success: true });
-    expect(useCase).toHaveBeenCalledWith({ realEstateId: 'real-estate-1', voteType: VoteType.LIKE });
+    expect(useCase).toHaveBeenCalledWith({
+      realEstateId: 'real-estate-1',
+      voteType: VoteType.LIKE,
+    });
   });
 
   it('throws UNAUTHORIZED when no user', async () => {
     (createServerActionDeps as unknown as ReturnType<typeof vi.fn>).mockResolvedValue(
       mockDeps({
-        supabase: { auth: { getUser: vi.fn().mockResolvedValue({ data: { user: null }, error: null }) } },
+        supabase: {
+          auth: { getUser: vi.fn().mockResolvedValue({ data: { user: null }, error: null }) },
+        },
       })
     );
 
@@ -70,9 +75,7 @@ describe('voteRealEstateAction', () => {
     const useCase = vi.fn();
     mockVoteRealEstateUseCase.mockReturnValue(useCase);
 
-    await expect(
-      voteRealEstateAction('real-estate-1', 'INVALID' as VoteType)
-    ).rejects.toThrow();
+    await expect(voteRealEstateAction('real-estate-1', 'INVALID' as VoteType)).rejects.toThrow();
     expect(useCase).not.toHaveBeenCalled();
   });
 
@@ -80,7 +83,9 @@ describe('voteRealEstateAction', () => {
     const useCase = vi.fn().mockRejectedValue(new Error('Vote failed'));
     mockVoteRealEstateUseCase.mockReturnValue(useCase);
 
-    await expect(voteRealEstateAction('real-estate-1', VoteType.LIKE)).rejects.toThrow('Vote failed');
+    await expect(voteRealEstateAction('real-estate-1', VoteType.LIKE)).rejects.toThrow(
+      'Vote failed'
+    );
   });
 });
 
@@ -103,7 +108,9 @@ describe('voteRealEstateReviewAction', () => {
   it('throws UNAUTHORIZED when no user', async () => {
     (createServerActionDeps as unknown as ReturnType<typeof vi.fn>).mockResolvedValue(
       mockDeps({
-        supabase: { auth: { getUser: vi.fn().mockResolvedValue({ data: { user: null }, error: null }) } },
+        supabase: {
+          auth: { getUser: vi.fn().mockResolvedValue({ data: { user: null }, error: null }) },
+        },
       })
     );
 
@@ -117,9 +124,7 @@ describe('voteRealEstateReviewAction', () => {
     const useCase = vi.fn();
     mockVoteRealEstateReviewUseCase.mockReturnValue(useCase);
 
-    await expect(
-      voteRealEstateReviewAction('review-1', 'INVALID' as VoteType)
-    ).rejects.toThrow();
+    await expect(voteRealEstateReviewAction('review-1', 'INVALID' as VoteType)).rejects.toThrow();
     expect(useCase).not.toHaveBeenCalled();
   });
 
@@ -127,7 +132,9 @@ describe('voteRealEstateReviewAction', () => {
     const useCase = vi.fn().mockRejectedValue(new Error('Vote failed'));
     mockVoteRealEstateReviewUseCase.mockReturnValue(useCase);
 
-    await expect(voteRealEstateReviewAction('review-1', VoteType.LIKE)).rejects.toThrow('Vote failed');
+    await expect(voteRealEstateReviewAction('review-1', VoteType.LIKE)).rejects.toThrow(
+      'Vote failed'
+    );
   });
 });
 
@@ -150,7 +157,9 @@ describe('toggleFavoriteRealEstateAction', () => {
   it('throws UNAUTHORIZED when no user', async () => {
     (createServerActionDeps as unknown as ReturnType<typeof vi.fn>).mockResolvedValue(
       mockDeps({
-        supabase: { auth: { getUser: vi.fn().mockResolvedValue({ data: { user: null }, error: null }) } },
+        supabase: {
+          auth: { getUser: vi.fn().mockResolvedValue({ data: { user: null }, error: null }) },
+        },
       })
     );
 

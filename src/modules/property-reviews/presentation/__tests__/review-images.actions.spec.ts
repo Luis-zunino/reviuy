@@ -79,7 +79,9 @@ describe('uploadReviewImageAction', () => {
   it('throws UNAUTHORIZED when no user', async () => {
     (createServerActionDeps as unknown as ReturnType<typeof vi.fn>).mockResolvedValue(
       mockDeps({
-        supabase: { auth: { getUser: vi.fn().mockResolvedValue({ data: { user: null }, error: null }) } },
+        supabase: {
+          auth: { getUser: vi.fn().mockResolvedValue({ data: { user: null }, error: null }) },
+        },
       })
     );
 
@@ -200,7 +202,9 @@ describe('deleteReviewImageAction', () => {
   it('throws UNAUTHORIZED when no user', async () => {
     (createServerActionDeps as unknown as ReturnType<typeof vi.fn>).mockResolvedValue(
       mockDeps({
-        supabase: { auth: { getUser: vi.fn().mockResolvedValue({ data: { user: null }, error: null }) } },
+        supabase: {
+          auth: { getUser: vi.fn().mockResolvedValue({ data: { user: null }, error: null }) },
+        },
       })
     );
 
@@ -215,7 +219,9 @@ describe('getReviewImagesAction', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     (createServerActionDeps as unknown as ReturnType<typeof vi.fn>).mockResolvedValue(mockDeps());
-    mockGetByReviewId.mockResolvedValue([{ id: 'img-1', url: 'https://images.example.com/1.webp' }]);
+    mockGetByReviewId.mockResolvedValue([
+      { id: 'img-1', url: 'https://images.example.com/1.webp' },
+    ]);
   });
 
   it('gets images when authenticated', async () => {
@@ -228,7 +234,9 @@ describe('getReviewImagesAction', () => {
   it('throws UNAUTHORIZED when no user', async () => {
     (createServerActionDeps as unknown as ReturnType<typeof vi.fn>).mockResolvedValue(
       mockDeps({
-        supabase: { auth: { getUser: vi.fn().mockResolvedValue({ data: { user: null }, error: null }) } },
+        supabase: {
+          auth: { getUser: vi.fn().mockResolvedValue({ data: { user: null }, error: null }) },
+        },
       })
     );
 

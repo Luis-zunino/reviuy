@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { createReverseGeocodeQuery } from '../reverse-geocode.query';
 import type { AddressReadRepository, ReverseGeocodeOutput } from '../../../domain';
+import { OsmType } from '@/enums';
 
 describe('createReverseGeocodeQuery', () => {
   it('delegates reverse geocode to the read repository', async () => {
@@ -26,7 +27,7 @@ describe('createReverseGeocodeQuery', () => {
       lon: '-56.1645',
       name: 'Avenida Italia',
       osm_id: 123,
-      osm_type: 1,
+      osm_type: OsmType.RELATION,
       place_id: 456,
       place_rank: 30,
       type: 'residential',

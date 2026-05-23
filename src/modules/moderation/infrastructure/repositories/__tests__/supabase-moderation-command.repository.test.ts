@@ -72,7 +72,8 @@ describe('SupabaseModerationCommandRepository', () => {
 
     it('throws on RPC error', async () => {
       mockSupabase.rpc.mockReturnValue({
-        then: (onfulfilled: any) => Promise.resolve({ data: null, error: { message: 'DB fail' } }).then(onfulfilled),
+        then: (onfulfilled: any) =>
+          Promise.resolve({ data: null, error: { message: 'DB fail' } }).then(onfulfilled),
       });
 
       await expect(repository.reportRealEstate(input)).rejects.toThrow();
@@ -99,7 +100,8 @@ describe('SupabaseModerationCommandRepository', () => {
 
     it('throws on RPC error', async () => {
       mockSupabase.rpc.mockReturnValue({
-        then: (onfulfilled: any) => Promise.resolve({ data: null, error: { message: 'RPC error' } }).then(onfulfilled),
+        then: (onfulfilled: any) =>
+          Promise.resolve({ data: null, error: { message: 'RPC error' } }).then(onfulfilled),
       });
 
       await expect(repository.reportRealEstateReview(input)).rejects.toThrow();

@@ -39,9 +39,7 @@ describe('useGetRealEstateReviewById', () => {
     const mockData = { id: '1', title: 'Great place' };
     vi.mocked(useQuery).mockReturnValue({ data: mockData, isLoading: false } as any);
 
-    const { result } = renderHook(() =>
-      useGetRealEstateReviewById({ reviewId: 'review-123' })
-    );
+    const { result } = renderHook(() => useGetRealEstateReviewById({ reviewId: 'review-123' }));
 
     expect(result.current.data).toEqual(mockData);
   });

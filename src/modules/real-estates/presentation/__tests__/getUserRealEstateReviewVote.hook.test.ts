@@ -67,7 +67,11 @@ describe('useGetUserRealEstateReviewVote', () => {
   });
 
   it('invokes queryFn', async () => {
-    vi.mocked(useQuery).mockReturnValue({ data: undefined, isLoading: true, refetch: vi.fn() } as any);
+    vi.mocked(useQuery).mockReturnValue({
+      data: undefined,
+      isLoading: true,
+      refetch: vi.fn(),
+    } as any);
 
     renderHook(() => useGetUserRealEstateReviewVote({ reviewId: 'review-123' }));
 

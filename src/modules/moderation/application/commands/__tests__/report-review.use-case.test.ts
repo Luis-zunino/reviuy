@@ -6,19 +6,28 @@ import type { ModerationCommandRepository, ReportActionResponse } from '../../..
 vi.mock('@/shared/auth/assert-authenticated.util', () => ({
   assertAuthenticated: vi.fn(async (fn: () => Promise<string | null>) => {
     const result = await fn();
-    if (result === null || result === undefined) throw Object.assign(new Error('No autorizado'), { code: 'UNAUTHORIZED' });
+    if (result === null || result === undefined)
+      throw Object.assign(new Error('No autorizado'), { code: 'UNAUTHORIZED' });
     return result;
   }),
 }));
 
 describe('createReportReviewUseCase', () => {
-  const validInput = { review_id: '550e8400-e29b-41d4-a716-446655440000', reason: 'spam', description: 'Es spam' };
+  const validInput = {
+    review_id: '550e8400-e29b-41d4-a716-446655440000',
+    reason: 'spam',
+    description: 'Es spam',
+  };
 
   it('rejects when user is not authenticated', async () => {
     const useCase = createReportReviewUseCase({
       getCurrentUserId: vi.fn().mockResolvedValue(null),
       rateLimit: vi.fn(),
-      repository: { reportReview: vi.fn(), reportRealEstate: vi.fn(), reportRealEstateReview: vi.fn() },
+      repository: {
+        reportReview: vi.fn(),
+        reportRealEstate: vi.fn(),
+        reportRealEstateReview: vi.fn(),
+      },
     });
 
     await expect(useCase(validInput)).rejects.toMatchObject({ code: 'UNAUTHORIZED' });
@@ -28,7 +37,11 @@ describe('createReportReviewUseCase', () => {
     const useCase = createReportReviewUseCase({
       getCurrentUserId: vi.fn().mockResolvedValue('user-1'),
       rateLimit: vi.fn().mockRejectedValue(new Error('Rate limit')),
-      repository: { reportReview: vi.fn(), reportRealEstate: vi.fn(), reportRealEstateReview: vi.fn() },
+      repository: {
+        reportReview: vi.fn(),
+        reportRealEstate: vi.fn(),
+        reportRealEstateReview: vi.fn(),
+      },
     });
 
     await expect(useCase(validInput)).rejects.toThrow('Rate limit');
@@ -38,10 +51,16 @@ describe('createReportReviewUseCase', () => {
     const useCase = createReportReviewUseCase({
       getCurrentUserId: vi.fn().mockResolvedValue('user-1'),
       rateLimit: vi.fn().mockResolvedValue(undefined),
-      repository: { reportReview: vi.fn(), reportRealEstate: vi.fn(), reportRealEstateReview: vi.fn() },
+      repository: {
+        reportReview: vi.fn(),
+        reportRealEstate: vi.fn(),
+        reportRealEstateReview: vi.fn(),
+      },
     });
 
-    await expect(useCase({ review_id: 'not-a-uuid', reason: '' })).rejects.toBeInstanceOf(z.ZodError);
+    await expect(useCase({ review_id: 'not-a-uuid', reason: '' })).rejects.toBeInstanceOf(
+      z.ZodError
+    );
   });
 
   it('validates payload and delegates to repository', async () => {

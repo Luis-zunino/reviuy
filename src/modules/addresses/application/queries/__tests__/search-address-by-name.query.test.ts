@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { createSearchAddressByNameQuery } from '../search-address-by-name.query';
 import type { AddressReadRepository, SearchAddressByNameOutput } from '../../../domain';
+import { OsmType } from '@/enums';
 
 describe('createSearchAddressByNameQuery', () => {
   it('delegates name search to the read repository', async () => {
@@ -8,7 +9,7 @@ describe('createSearchAddressByNameQuery', () => {
       {
         place_id: 1,
         licence: 'ODbL',
-        osm_type: 1,
+        osm_type: OsmType.RELATION,
         osm_id: 123,
         lat: '-34.9011',
         lon: '-56.1645',

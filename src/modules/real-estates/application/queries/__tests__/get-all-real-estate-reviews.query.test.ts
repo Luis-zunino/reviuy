@@ -5,7 +5,7 @@ import type { RealEstateReadRepository } from '@/modules/real-estates/domain';
 describe('createGetAllRealEstateReviewsQuery', () => {
   it('delegates to repository', async () => {
     const expected = { reviews: [], total: 0 };
-    const input = { realEstateId: 're-123', limit: 10 };
+    const input = { id: 're-123', limit: 10 };
 
     const repository: RealEstateReadRepository = {
       getAllReviews: vi.fn().mockResolvedValue(expected),

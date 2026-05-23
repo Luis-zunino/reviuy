@@ -22,7 +22,9 @@ describe('useGetReviewsNearby', () => {
     const mockData = { reviews: [{ id: 'review-1', title: 'Nearby place' }], total: 1 };
     (useQuery as any).mockReturnValue({ data: mockData, isLoading: false, error: null });
 
-    const { result } = renderHook(() => useGetReviewsNearby({ lat: -34.61, lon: -58.38, radiusDeg: 0.05, limit: 20 }));
+    const { result } = renderHook(() =>
+      useGetReviewsNearby({ lat: -34.61, lon: -58.38, radiusDeg: 0.05, limit: 20 })
+    );
 
     expect(useQuery).toHaveBeenCalledWith(
       expect.objectContaining({

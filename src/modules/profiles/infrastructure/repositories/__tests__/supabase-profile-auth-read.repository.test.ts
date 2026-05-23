@@ -21,7 +21,10 @@ describe('SupabaseProfileAuthReadRepository', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockGetUser.mockResolvedValue({ data: { user: { id: 'user-1' } }, error: null });
-    mockGetSession.mockResolvedValue({ data: { session: { user: { id: 'user-1' }, expires_at: 123456 } }, error: null });
+    mockGetSession.mockResolvedValue({
+      data: { session: { user: { id: 'user-1' }, expires_at: 123456 } },
+      error: null,
+    });
   });
 
   describe('verifyAuthentication', () => {

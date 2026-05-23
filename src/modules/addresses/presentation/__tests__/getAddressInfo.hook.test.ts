@@ -26,7 +26,7 @@ describe('useGetAddressInfo', () => {
       expect.objectContaining({
         queryKey: [REVIEW_KEYS.getAddressInfo, 'R123'],
         enabled: true,
-      }),
+      })
     );
     expect(result.current.data).toEqual([]);
   });

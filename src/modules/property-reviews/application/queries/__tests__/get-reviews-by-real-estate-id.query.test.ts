@@ -21,7 +21,9 @@ describe('createGetReviewsByRealEstateIdQuery', () => {
       hasUserReportedReview: vi.fn(),
     };
 
-    const handler = createGetReviewsByRealEstateIdQuery({ propertyReviewReadRepository: repository });
+    const handler = createGetReviewsByRealEstateIdQuery({
+      propertyReviewReadRepository: repository,
+    });
 
     await expect(handler(input)).resolves.toEqual(expected);
     expect(repository.getByRealEstateId).toHaveBeenCalledWith(input);
@@ -44,7 +46,9 @@ describe('createGetReviewsByRealEstateIdQuery', () => {
       hasUserReportedReview: vi.fn(),
     };
 
-    const handler = createGetReviewsByRealEstateIdQuery({ propertyReviewReadRepository: repository });
+    const handler = createGetReviewsByRealEstateIdQuery({
+      propertyReviewReadRepository: repository,
+    });
 
     await expect(handler(input)).resolves.toEqual([]);
   });

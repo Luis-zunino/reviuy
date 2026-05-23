@@ -162,6 +162,6 @@ describe('handleSupabaseError', () => {
 
     expect(result.code).toBe('DATABASE_ERROR');
     expect(result.statusCode).toBe(500);
-    expect(result.message).toBe('unknown database error');
+    expect(result.message).toBe('some postgrest error');
   });
 });

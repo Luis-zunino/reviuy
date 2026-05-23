@@ -28,9 +28,7 @@ describe('useUpdateRealEstateReviewHook', () => {
     expect(useAuthMutation).toHaveBeenCalledWith(
       expect.objectContaining({
         authErrorMessage: 'Debes iniciar sesión para actualizar una reseña de una inmobiliaria',
-        invalidateQueryKeys: expect.arrayContaining([
-          [expect.any(String)],
-        ]),
+        invalidateQueryKeys: expect.arrayContaining([[expect.any(String)]]),
       })
     );
   });
@@ -45,7 +43,7 @@ describe('useUpdateRealEstateReviewHook', () => {
   it('debe llamar a updateRealEstateReviewAction al mutar', async () => {
     const { result } = renderHook(() => useUpdateRealEstateReviewHook());
 
-    const input = { id: 'review-123', title: 'Updated', rating: 5 };
+    const input = { id: 'review-123', title: 'Updated', description: 'Updated description', rating: 5 };
     await result.current.mutateAsync(input);
 
     const { id, ...data } = input;

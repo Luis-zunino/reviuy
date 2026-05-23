@@ -31,7 +31,11 @@ describe('useGetAllRealEstateReviews', () => {
 
     expect(useQuery).toHaveBeenCalledWith(
       expect.objectContaining({
-        queryKey: [REAL_ESTATE_REVIEWS.getAllRealEstateReviews, '550e8400-e29b-41d4-a716-446655440000', 10],
+        queryKey: [
+          REAL_ESTATE_REVIEWS.getAllRealEstateReviews,
+          '550e8400-e29b-41d4-a716-446655440000',
+          10,
+        ],
         enabled: true,
       })
     );
@@ -42,9 +46,7 @@ describe('useGetAllRealEstateReviews', () => {
 
     renderHook(() => useGetAllRealEstateReviews({ id: 'invalid-id' }));
 
-    expect(useQuery).toHaveBeenCalledWith(
-      expect.objectContaining({ enabled: false })
-    );
+    expect(useQuery).toHaveBeenCalledWith(expect.objectContaining({ enabled: false }));
   });
 
   it('debe retornar los datos de la query', () => {

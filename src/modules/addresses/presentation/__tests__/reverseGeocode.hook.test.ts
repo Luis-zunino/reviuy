@@ -26,7 +26,7 @@ describe('useReverseGeocode', () => {
       expect.objectContaining({
         queryKey: [REVIEW_KEYS.reverseGeocode, -34.9011, -56.1645],
         enabled: true,
-      }),
+      })
     );
     expect(result.current.data).toBeNull();
   });

@@ -49,9 +49,7 @@ describe('useToggleFavorite', () => {
       wrapper: createWrapper(),
     });
 
-    expect(mockUseAuthMutation).toHaveBeenCalledWith(
-      expect.objectContaining({ mutationFn }),
-    );
+    expect(mockUseAuthMutation).toHaveBeenCalledWith(expect.objectContaining({ mutationFn }));
   });
 
   it('invalidates queries on successful toggle', () => {

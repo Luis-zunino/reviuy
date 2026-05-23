@@ -17,7 +17,7 @@ vi.mock('bad-words', () => ({
   },
 }));
 
-import { TextValidator, textValidator, validateText, cleanText } from '../textValidation.util';
+import { textValidator, validateText, cleanText } from '../textValidation.util';
 
 describe('TextValidator', () => {
   beforeEach(() => {

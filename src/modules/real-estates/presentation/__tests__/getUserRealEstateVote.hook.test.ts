@@ -46,9 +46,7 @@ describe('useGetUserRealEstateVote', () => {
 
     renderHook(() => useGetUserRealEstateVote({ realEstateId: '' }));
 
-    expect(useQuery).toHaveBeenCalledWith(
-      expect.objectContaining({ enabled: false })
-    );
+    expect(useQuery).toHaveBeenCalledWith(expect.objectContaining({ enabled: false }));
   });
 
   it('debe retornar el voto del usuario cuando existe', () => {

@@ -1,6 +1,10 @@
 import { describe, expect, expectTypeOf, it, vi } from 'vitest';
 import { createGetAddressInfoQuery } from '../get-address-info.query';
-import type { AddressReadRepository, GetAddressInfoInput, GetAddressInfoOutput } from '../../../domain';
+import type {
+  AddressReadRepository,
+  GetAddressInfoInput,
+  GetAddressInfoOutput,
+} from '../../../domain';
 import type { QueryHandler } from '@/shared/kernel/contracts/query.contract';
 import { OsmType } from '@/enums/osmType.enum';
 

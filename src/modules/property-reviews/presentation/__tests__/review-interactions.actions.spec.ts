@@ -23,10 +23,7 @@ vi.mock('next/cache', () => ({
 }));
 
 import { createServerActionDeps } from '@/shared/auth/create-server-action-deps.util';
-import {
-  voteReviewAction,
-  toggleFavoriteReviewAction,
-} from '../review-interactions.actions';
+import { voteReviewAction, toggleFavoriteReviewAction } from '../review-interactions.actions';
 import { VoteType } from '@/types/vote-type';
 
 const mockDeps = (overrides = {}) => ({
@@ -77,11 +74,15 @@ describe('voteReviewAction', () => {
   it('throws UNAUTHORIZED when no user', async () => {
     (createServerActionDeps as unknown as ReturnType<typeof vi.fn>).mockResolvedValue(
       mockDeps({
-        supabase: { auth: { getUser: vi.fn().mockResolvedValue({ data: { user: null }, error: null }) } },
+        supabase: {
+          auth: { getUser: vi.fn().mockResolvedValue({ data: { user: null }, error: null }) },
+        },
       })
     );
 
-    await expect(voteReviewAction('review-1', VoteType.LIKE)).rejects.toThrow('Debés iniciar sesión.');
+    await expect(voteReviewAction('review-1', VoteType.LIKE)).rejects.toThrow(
+      'Debés iniciar sesión.'
+    );
     expect(mockVoteUseCase).not.toHaveBeenCalled();
   });
 
@@ -112,7 +113,9 @@ describe('toggleFavoriteReviewAction', () => {
   it('throws UNAUTHORIZED when no user', async () => {
     (createServerActionDeps as unknown as ReturnType<typeof vi.fn>).mockResolvedValue(
       mockDeps({
-        supabase: { auth: { getUser: vi.fn().mockResolvedValue({ data: { user: null }, error: null }) } },
+        supabase: {
+          auth: { getUser: vi.fn().mockResolvedValue({ data: { user: null }, error: null }) },
+        },
       })
     );
 

@@ -19,11 +19,7 @@ vi.mock('../../infrastructure', () => ({
 }));
 
 import { createServerActionDeps } from '@/shared/auth/create-server-action-deps.util';
-import {
-  createReviewAction,
-  updateReviewAction,
-  deleteReviewAction,
-} from '../review.actions';
+import { createReviewAction, updateReviewAction, deleteReviewAction } from '../review.actions';
 
 const mockDeps = (overrides = {}) => ({
   supabase: {
@@ -46,7 +42,9 @@ describe('createReviewAction', () => {
     const useCase = vi.fn().mockResolvedValue({ id: 'review-1' });
     mockCreateUseCase.mockReturnValue(useCase);
 
-    const input = { data: { title: 'Great place to stay', description: 'Loved the experience here', rating: 5 } };
+    const input = {
+      data: { title: 'Great place to stay', description: 'Loved the experience here', rating: 5 },
+    };
     const result = await createReviewAction(input as any);
 
     expect(result).toEqual({ id: 'review-1' });
@@ -56,7 +54,9 @@ describe('createReviewAction', () => {
   it('throws UNAUTHORIZED when no user', async () => {
     (createServerActionDeps as unknown as ReturnType<typeof vi.fn>).mockResolvedValue(
       mockDeps({
-        supabase: { auth: { getUser: vi.fn().mockResolvedValue({ data: { user: null }, error: null }) } },
+        supabase: {
+          auth: { getUser: vi.fn().mockResolvedValue({ data: { user: null }, error: null }) },
+        },
       })
     );
 
@@ -68,7 +68,11 @@ describe('createReviewAction', () => {
     const useCase = vi.fn().mockRejectedValue(new Error('Use case failed'));
     mockCreateUseCase.mockReturnValue(useCase);
 
-    await expect(createReviewAction({ data: { title: 'Great place', description: 'Loved it here! Very nice.', rating: 5 } } as any)).rejects.toThrow('Use case failed');
+    await expect(
+      createReviewAction({
+        data: { title: 'Great place', description: 'Loved it here! Very nice.', rating: 5 },
+      } as any)
+    ).rejects.toThrow('Use case failed');
   });
 });
 
@@ -91,7 +95,9 @@ describe('updateReviewAction', () => {
   it('throws UNAUTHORIZED when no user', async () => {
     (createServerActionDeps as unknown as ReturnType<typeof vi.fn>).mockResolvedValue(
       mockDeps({
-        supabase: { auth: { getUser: vi.fn().mockResolvedValue({ data: { user: null }, error: null }) } },
+        supabase: {
+          auth: { getUser: vi.fn().mockResolvedValue({ data: { user: null }, error: null }) },
+        },
       })
     );
 
@@ -126,7 +132,9 @@ describe('deleteReviewAction', () => {
   it('throws UNAUTHORIZED when no user', async () => {
     (createServerActionDeps as unknown as ReturnType<typeof vi.fn>).mockResolvedValue(
       mockDeps({
-        supabase: { auth: { getUser: vi.fn().mockResolvedValue({ data: { user: null }, error: null }) } },
+        supabase: {
+          auth: { getUser: vi.fn().mockResolvedValue({ data: { user: null }, error: null }) },
+        },
       })
     );
 

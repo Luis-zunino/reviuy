@@ -40,18 +40,14 @@ describe('useSearchRealEstates', () => {
 
     renderHook(() => useSearchRealEstates({ query: 'ab' }));
 
-    expect(useQuery).toHaveBeenCalledWith(
-      expect.objectContaining({ enabled: false })
-    );
+    expect(useQuery).toHaveBeenCalledWith(expect.objectContaining({ enabled: false }));
   });
 
   it('debe retornar los resultados de búsqueda', () => {
     const mockResults = [{ id: '1', name: 'Result 1' }];
     vi.mocked(useQuery).mockReturnValue({ data: mockResults, isLoading: false } as any);
 
-    const { result } = renderHook(() =>
-      useSearchRealEstates({ query: 'example', limit: 10 })
-    );
+    const { result } = renderHook(() => useSearchRealEstates({ query: 'example', limit: 10 }));
 
     expect(result.current.data).toEqual(mockResults);
   });
