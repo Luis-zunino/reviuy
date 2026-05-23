@@ -43,7 +43,12 @@ describe('useUpdateRealEstateReviewHook', () => {
   it('debe llamar a updateRealEstateReviewAction al mutar', async () => {
     const { result } = renderHook(() => useUpdateRealEstateReviewHook());
 
-    const input = { id: 'review-123', title: 'Updated', description: 'Updated description', rating: 5 };
+    const input = {
+      id: 'review-123',
+      title: 'Updated',
+      description: 'Updated description',
+      rating: 5,
+    };
     await result.current.mutateAsync(input);
 
     const { id, ...data } = input;
