@@ -4,7 +4,6 @@ import {
   DeleteRealEstateReviewButton,
   PageWithSidebar,
   RealEstateReviewVoteButtons,
-  ReportRealEstateReviewButton,
 } from '@/components/common';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -12,6 +11,8 @@ import { Save } from 'lucide-react';
 import { RealEstateReviewFormContent } from './components/RealEstateReviewFormContent';
 import type { RealEstateReviewFormProps } from './types';
 import { Form } from '@/components/ui/form';
+import { ReportDialog } from '@/components/common/ReportDialog';
+import { useReportRealEstateReviewButton } from './hooks';
 
 export const RealEstateReviewForm = (props: RealEstateReviewFormProps) => {
   const {
@@ -26,6 +27,7 @@ export const RealEstateReviewForm = (props: RealEstateReviewFormProps) => {
     review,
     refetchRealEstateReview,
   } = props;
+  const hookResponse = useReportRealEstateReviewButton({ review });
 
   if (isLoading) {
     return (
@@ -69,8 +71,14 @@ export const RealEstateReviewForm = (props: RealEstateReviewFormProps) => {
                   refetchRealEstateReview={refetchRealEstateReview}
                 />
               ) : null}
-              {review && isReadOnly ? (
-                <ReportRealEstateReviewButton review={review} showText />
+              {isReadOnly ? (
+                <ReportDialog
+                  hookResponse={hookResponse}
+                  title="Reportar reseña"
+                  dialogDescription="Si consideras que esta reseña viola nuestras políticas, por favor selecciona el motivo y proporciona detalles adicionales."
+                  textareaPlaceholder="Proporciona más detalles sobre por qué estás reportando esta reseña..."
+                  showText
+                />
               ) : null}
               {review ? <DeleteRealEstateReviewButton review={review} showText /> : null}
               {isReadOnly ? null : (

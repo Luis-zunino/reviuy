@@ -1,6 +1,6 @@
 'use client';
 
-import { Flag, AlertTriangle } from 'lucide-react';
+import { AlertTriangle, Flag } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -13,53 +13,78 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { useReportReviewButton } from './hooks';
-import { ReportReviewButtonProps } from './types';
 
-export const ReportReviewButton = ({ review, showText = false }: ReportReviewButtonProps) => {
+interface ReportReason {
+  value: string;
+  label: string;
+}
+
+export interface ReportDialogProps {
+  showText?: boolean;
+  hookResponse: {
+    isOpen: boolean;
+    onOpenChange: (open: boolean) => void;
+    onSubmit: (e: React.FormEvent) => void;
+    selectedReason: string;
+    onReasonChange: (value: string) => void;
+    description: string;
+    onDescriptionChange: (value: string) => void;
+    onCancel: () => void;
+    isPending: boolean;
+    reportReasons: ReportReason[];
+    showReportedButton?: boolean;
+    hasReported?: boolean;
+  };
+  title: string;
+  dialogDescription: string;
+  textareaPlaceholder: string;
+}
+
+export const ReportDialog = ({
+  title,
+  dialogDescription,
+  textareaPlaceholder,
+  showText,
+  hookResponse,
+}: ReportDialogProps) => {
   const {
     isOpen,
-    setIsOpen,
-    handleSubmit,
+    onOpenChange,
+    onSubmit,
     selectedReason,
-    setSelectedReason,
+    onReasonChange,
     description,
-    setDescription,
-    handleCancel,
+    onDescriptionChange,
+    onCancel,
     isPending,
-    showReportedButton,
-    hasReported,
     reportReasons,
-  } = useReportReviewButton({
-    review,
-  });
+    hasReported,
+    showReportedButton = true,
+  } = hookResponse;
+
+  const trigger = showReportedButton ? (
+    <Button variant="report" size="sm" disabled={hasReported} icon={Flag}>
+      {showText && <span className="hidden sm:inline">Reportar</span>}
+    </Button>
+  ) : null;
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      {showReportedButton ? (
-        <DialogTrigger asChild>
-          <Button variant="report" size="sm" disabled={hasReported} icon={Flag}>
-            {showText && <span className="hidden sm:inline">Reportar</span>}
-          </Button>
-        </DialogTrigger>
-      ) : null}
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+      {trigger ? <DialogTrigger asChild>{trigger}</DialogTrigger> : null}
 
       <DialogContent>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <AlertTriangle className="size-5 text-red-500" />
-            Reportar Reseña
+            {title}
           </DialogTitle>
-          <DialogDescription>
-            Si consideras que esta reseña viola nuestras políticas, por favor selecciona el motivo y
-            proporciona detalles adicionales.
-          </DialogDescription>
+          <DialogDescription>{dialogDescription}</DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={onSubmit} className="space-y-4">
           <div className="space-y-3">
             <Label htmlFor="reason">Motivo del reporte *</Label>
-            <RadioGroup value={selectedReason} onValueChange={setSelectedReason} required>
+            <RadioGroup value={selectedReason} onValueChange={onReasonChange} required>
               {reportReasons.map((reason) => (
                 <div key={reason.value} className="flex items-center gap-x-2">
                   <RadioGroupItem value={reason.value} id={reason.value} />
@@ -72,12 +97,12 @@ export const ReportReviewButton = ({ review, showText = false }: ReportReviewBut
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">Descripción adicional (opcional)</Label>
+            <Label htmlFor="description">Descripci&oacute;n adicional (opcional)</Label>
             <Textarea
               id="description"
-              placeholder="Proporciona más detalles sobre por qué estás reportando esta reseña..."
+              placeholder={textareaPlaceholder}
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              onChange={(e) => onDescriptionChange(e.target.value)}
               rows={3}
               maxLength={500}
             />
@@ -85,7 +110,7 @@ export const ReportReviewButton = ({ review, showText = false }: ReportReviewBut
           </div>
 
           <div className="flex justify-end gap-2 pt-4">
-            <Button type="button" variant="outline" onClick={handleCancel} disabled={isPending}>
+            <Button type="button" variant="outline" onClick={onCancel} disabled={isPending}>
               Cancelar
             </Button>
             <Button

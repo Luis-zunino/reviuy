@@ -1,14 +1,14 @@
 import {
   FavoriteRealEstateButton,
   RealEstateVoteButtons,
-  ReportRealEstateButton,
   StarRatingDisplay,
 } from '@/components/common';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import type { ViewRealEstateDetailsHeaderProps } from './types';
 import { NotebookPen } from 'lucide-react';
-import { useViewRealEstateDetailsHeader } from './hooks';
+import { useReportRealEstateButton, useViewRealEstateDetailsHeader } from './hooks';
+import { ReportDialog } from '@/components/common/ReportDialog';
 
 export const ViewRealEstateDetailsHeader = (props: ViewRealEstateDetailsHeaderProps) => {
   const { averageRating, amountReviews } = props;
@@ -23,6 +23,7 @@ export const ViewRealEstateDetailsHeader = (props: ViewRealEstateDetailsHeaderPr
     isLoadingVote,
     handleOnCreateReview,
   } = useViewRealEstateDetailsHeader();
+  const hookResponse = useReportRealEstateButton({ realEstate: realEstate ?? undefined });
 
   return (
     <div className="grid grid-cols-1 gap-6">
@@ -44,7 +45,16 @@ export const ViewRealEstateDetailsHeader = (props: ViewRealEstateDetailsHeaderPr
             <div className="content-center flex flex-col">
               <div className="mt-4 grid grid-cols-1 gap-2">
                 <FavoriteRealEstateButton realEstateId={realEstateId} showText />
-                {realEstate ? <ReportRealEstateButton realEstate={realEstate} showText /> : null}
+                {realEstate ? (
+                  <ReportDialog
+                    title="Reportar Inmobiliaria"
+                    dialogDescription="Si consideras que esta inmobiliaria viola nuestras políticas, por favor selecciona el motivo y proporciona detalles adicionales."
+                    textareaPlaceholder="Proporciona más detalles sobre por qué estás reportando esta inmobiliaria..."
+                    showText
+                    hookResponse={hookResponse}
+                  />
+                ) : null}
+
                 {hasRealEstateReview ? null : (
                   <Button
                     onClick={handleOnCreateReview}

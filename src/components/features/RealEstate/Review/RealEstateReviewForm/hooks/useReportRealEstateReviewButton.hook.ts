@@ -1,32 +1,23 @@
 import {
-  useHasUserReportedRealEstate,
-  useReportRealEstate,
+  useHasUserReportedRealEstateReview,
+  useReportRealEstateReview,
 } from '@/modules/real-estates/presentation';
-import { useSendReportRealEstateMessage } from '@/modules/moderation/presentation';
+import { useSendReportRealEstateReviewMessage } from '@/modules/moderation/presentation';
 import React, { useState } from 'react';
 import { validateText } from '@/utils/textValidation.util';
 import { toast } from 'sonner';
-import type { UseReportRealEstateButtonProps } from './types';
+import type { UseReportRealEstateReviewButtonProps } from './types';
+import { reportReviewReasons } from '@/constants/report-review-reasons.constant';
 
-export const useReportRealEstateButton = (props: UseReportRealEstateButtonProps) => {
-  const { realEstate } = props;
+export const useReportRealEstateReviewButton = (props: UseReportRealEstateReviewButtonProps) => {
+  const { review } = props;
   const [isOpen, setIsOpen] = useState(false);
   const [selectedReason, setSelectedReason] = useState('');
   const [description, setDescription] = useState('');
 
-  const { mutateAsync, isPending } = useReportRealEstate();
-  const { mutateAsync: sendMessage } = useSendReportRealEstateMessage();
-  const { data: hasReported } = useHasUserReportedRealEstate(realEstate.id ?? undefined);
-
-  const reportReasons = [
-    { value: 'fraud', label: 'Posible fraude o estafa' },
-    { value: 'fake', label: 'Inmobiliaria falsa o inexistente' },
-    { value: 'inappropriate', label: 'Comportamiento inapropiado' },
-    { value: 'spam', label: 'Spam o contenido promocional' },
-    { value: 'illegal', label: 'Actividad ilegal' },
-    { value: 'poor_service', label: 'Mala praxis profesional' },
-    { value: 'other', label: 'Otro motivo' },
-  ];
+  const { mutateAsync, isPending } = useReportRealEstateReview();
+  const { mutateAsync: sendMessage } = useSendReportRealEstateReviewMessage();
+  const { data: hasReported } = useHasUserReportedRealEstateReview(review?.id ?? '');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,24 +34,25 @@ export const useReportRealEstateButton = (props: UseReportRealEstateButtonProps)
       }
     }
 
+    if (!review?.id) return;
     await mutateAsync(
       {
-        real_estate_id: realEstate.id ?? '',
+        review_id: review.id,
         reason: selectedReason,
-        description: description.trim() || undefined,
+        description: description.trim(),
       },
       {
         onSuccess: async ({ success, message, error }) => {
           if (success) {
             toast.success(message || 'Reporte enviado');
-            setIsOpen(false);
-            setSelectedReason('');
-            setDescription('');
             await sendMessage({
               reason: selectedReason,
               message: description,
-              realEstateName: realEstate.name ?? '',
+              realEstateReviewUuid: review.id ?? '',
             });
+            setIsOpen(false);
+            setSelectedReason('');
+            setDescription('');
           } else {
             toast.error(error || 'Error al enviar el reporte');
           }
@@ -77,15 +69,16 @@ export const useReportRealEstateButton = (props: UseReportRealEstateButtonProps)
 
   return {
     isOpen,
-    setIsOpen,
-    handleSubmit,
+    onOpenChange: setIsOpen,
+    onSubmit: handleSubmit,
     selectedReason,
-    setSelectedReason,
+    onReasonChange: setSelectedReason,
     description,
-    setDescription,
-    handleCancel,
+    onDescriptionChange: setDescription,
+    onCancel: handleCancel,
     isPending,
+    showReportedButton: !review?.is_mine,
     hasReported,
-    reportReasons,
+    reportReasons: reportReviewReasons,
   };
 };
