@@ -1,23 +1,18 @@
-import {
-  useHasUserReportedRealEstateReview,
-  useReportRealEstateReview,
-} from '@/modules/real-estates/presentation';
-import { useSendReportRealEstateReviewMessage } from '@/modules/moderation/presentation';
+import { useHasUserReportedReview, useReportReview } from '@/modules/property-reviews/presentation';
 import React, { useState } from 'react';
 import { validateText } from '@/utils/textValidation.util';
 import { toast } from 'sonner';
-import type { UseReportRealEstateReviewButtonProps } from './types';
+import type { UseReportReviewButtonProps } from './types';
 import { reportReviewReasons } from '@/constants/report-review-reasons.constant';
 
-export const useReportRealEstateReviewButton = (props: UseReportRealEstateReviewButtonProps) => {
+export const useReportReviewButton = (props: UseReportReviewButtonProps) => {
   const { review } = props;
   const [isOpen, setIsOpen] = useState(false);
   const [selectedReason, setSelectedReason] = useState('');
   const [description, setDescription] = useState('');
 
-  const { mutateAsync, isPending } = useReportRealEstateReview();
-  const { mutateAsync: sendMessage } = useSendReportRealEstateReviewMessage();
-  const { data: hasReported } = useHasUserReportedRealEstateReview(review?.id ?? '');
+  const { mutateAsync, isPending } = useReportReview();
+  const { data: hasReported } = useHasUserReportedReview(review.id ?? '');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,28 +29,22 @@ export const useReportRealEstateReviewButton = (props: UseReportRealEstateReview
       }
     }
 
-    if (!review?.id) return;
     await mutateAsync(
       {
-        review_id: review.id,
+        review_id: review.id ?? '',
         reason: selectedReason,
-        description: description.trim(),
+        description: description.trim() || undefined,
       },
       {
-        onSuccess: async ({ success, message, error }) => {
+        onSuccess: ({ message, success, error }) => {
           if (success) {
             toast.success(message || 'Reporte enviado');
-            await sendMessage({
-              reason: selectedReason,
-              message: description,
-              realEstateReviewUuid: review.id ?? '',
-            });
-            setIsOpen(false);
-            setSelectedReason('');
-            setDescription('');
           } else {
             toast.error(error || 'Error al enviar el reporte');
           }
+          setIsOpen(false);
+          setSelectedReason('');
+          setDescription('');
         },
       }
     );
@@ -69,13 +58,13 @@ export const useReportRealEstateReviewButton = (props: UseReportRealEstateReview
 
   return {
     isOpen,
-    setIsOpen,
-    handleSubmit,
+    onOpenChange: setIsOpen,
+    onSubmit: handleSubmit,
     selectedReason,
-    setSelectedReason,
+    onReasonChange: setSelectedReason,
     description,
-    setDescription,
-    handleCancel,
+    onDescriptionChange: setDescription,
+    onCancel: handleCancel,
     isPending,
     showReportedButton: !review?.is_mine,
     hasReported,

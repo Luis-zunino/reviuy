@@ -1,7 +1,6 @@
 'use client';
 
-import type { ReactNode } from 'react';
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle, Flag } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -21,91 +20,109 @@ interface ReportReason {
 }
 
 export interface ReportDialogProps {
-  isOpen: boolean;
-  onOpenChange: (open: boolean) => void;
-  trigger?: ReactNode;
-  onSubmit: (e: React.FormEvent) => void;
-  selectedReason: string;
-  onReasonChange: (value: string) => void;
-  description: string;
-  onDescriptionChange: (value: string) => void;
-  onCancel: () => void;
-  isPending: boolean;
-  reportReasons: ReportReason[];
+  showText?: boolean;
+  hookResponse: {
+    isOpen: boolean;
+    onOpenChange: (open: boolean) => void;
+    onSubmit: (e: React.FormEvent) => void;
+    selectedReason: string;
+    onReasonChange: (value: string) => void;
+    description: string;
+    onDescriptionChange: (value: string) => void;
+    onCancel: () => void;
+    isPending: boolean;
+    reportReasons: ReportReason[];
+    showReportedButton?: boolean;
+    hasReported?: boolean;
+  };
   title: string;
   dialogDescription: string;
   textareaPlaceholder: string;
 }
 
 export const ReportDialog = ({
-  isOpen,
-  onOpenChange,
-  trigger,
-  onSubmit,
-  selectedReason,
-  onReasonChange,
-  description,
-  onDescriptionChange,
-  onCancel,
-  isPending,
-  reportReasons,
   title,
   dialogDescription,
   textareaPlaceholder,
-}: ReportDialogProps) => (
-  <Dialog open={isOpen} onOpenChange={onOpenChange}>
-    {trigger ? <DialogTrigger asChild>{trigger}</DialogTrigger> : null}
+  showText,
+  hookResponse,
+}: ReportDialogProps) => {
+  const {
+    isOpen,
+    onOpenChange,
+    onSubmit,
+    selectedReason,
+    onReasonChange,
+    description,
+    onDescriptionChange,
+    onCancel,
+    isPending,
+    reportReasons,
+    hasReported,
+    showReportedButton = true,
+  } = hookResponse;
 
-    <DialogContent>
-      <DialogHeader>
-        <DialogTitle className="flex items-center gap-2">
-          <AlertTriangle className="size-5 text-red-500" />
-          {title}
-        </DialogTitle>
-        <DialogDescription>{dialogDescription}</DialogDescription>
-      </DialogHeader>
+  const trigger = showReportedButton ? (
+    <Button variant="report" size="sm" disabled={hasReported} icon={Flag}>
+      {showText && <span className="hidden sm:inline">Reportar</span>}
+    </Button>
+  ) : null;
 
-      <form onSubmit={onSubmit} className="space-y-4">
-        <div className="space-y-3">
-          <Label htmlFor="reason">Motivo del reporte *</Label>
-          <RadioGroup value={selectedReason} onValueChange={onReasonChange} required>
-            {reportReasons.map((reason) => (
-              <div key={reason.value} className="flex items-center gap-x-2">
-                <RadioGroupItem value={reason.value} id={reason.value} />
-                <Label htmlFor={reason.value} className="text-sm font-normal cursor-pointer">
-                  {reason.label}
-                </Label>
-              </div>
-            ))}
-          </RadioGroup>
-        </div>
+  return (
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+      {trigger ? <DialogTrigger asChild>{trigger}</DialogTrigger> : null}
 
-        <div className="space-y-2">
-          <Label htmlFor="description">Descripci&oacute;n adicional (opcional)</Label>
-          <Textarea
-            id="description"
-            placeholder={textareaPlaceholder}
-            value={description}
-            onChange={(e) => onDescriptionChange(e.target.value)}
-            rows={3}
-            maxLength={500}
-          />
-          <p className="text-xs text-gray-500">{description.length}/500 caracteres</p>
-        </div>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <AlertTriangle className="size-5 text-red-500" />
+            {title}
+          </DialogTitle>
+          <DialogDescription>{dialogDescription}</DialogDescription>
+        </DialogHeader>
 
-        <div className="flex justify-end gap-2 pt-4">
-          <Button type="button" variant="outline" onClick={onCancel} disabled={isPending}>
-            Cancelar
-          </Button>
-          <Button
-            type="submit"
-            disabled={!selectedReason || isPending}
-            className="bg-red-600 hover:bg-red-700"
-          >
-            {isPending ? 'Enviando...' : 'Enviar Reporte'}
-          </Button>
-        </div>
-      </form>
-    </DialogContent>
-  </Dialog>
-);
+        <form onSubmit={onSubmit} className="space-y-4">
+          <div className="space-y-3">
+            <Label htmlFor="reason">Motivo del reporte *</Label>
+            <RadioGroup value={selectedReason} onValueChange={onReasonChange} required>
+              {reportReasons.map((reason) => (
+                <div key={reason.value} className="flex items-center gap-x-2">
+                  <RadioGroupItem value={reason.value} id={reason.value} />
+                  <Label htmlFor={reason.value} className="text-sm font-normal cursor-pointer">
+                    {reason.label}
+                  </Label>
+                </div>
+              ))}
+            </RadioGroup>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="description">Descripci&oacute;n adicional (opcional)</Label>
+            <Textarea
+              id="description"
+              placeholder={textareaPlaceholder}
+              value={description}
+              onChange={(e) => onDescriptionChange(e.target.value)}
+              rows={3}
+              maxLength={500}
+            />
+            <p className="text-xs text-gray-500">{description.length}/500 caracteres</p>
+          </div>
+
+          <div className="flex justify-end gap-2 pt-4">
+            <Button type="button" variant="outline" onClick={onCancel} disabled={isPending}>
+              Cancelar
+            </Button>
+            <Button
+              type="submit"
+              disabled={!selectedReason || isPending}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              {isPending ? 'Enviando...' : 'Enviar Reporte'}
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+};

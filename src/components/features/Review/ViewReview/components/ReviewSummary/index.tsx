@@ -4,7 +4,6 @@ import { SquareArrowRight } from 'lucide-react';
 import {
   DeleteReviewButton,
   EditReviewButton,
-  ReportReviewButton,
   FavoriteReviewButton,
   ReviewLikesButtons,
   StarRatingDisplay,
@@ -19,10 +18,12 @@ import { translateComfort } from '@/utils/translateComfort.util';
 import { translateHumidity } from '@/utils/translateHumidity.util';
 import { translatePropertyType } from '@/utils/translatePropertyType.util';
 import { translateRoomType } from '@/utils/translateRoomType.util';
+import { useReportReviewButton } from './hooks';
+import { ReportDialog } from '@/components/common/ReportDialog';
 
 export const ReviewSummary = ({ review }: ReviewSummaryProps) => {
   const recommended = (review.rating ?? 0) >= 3.5;
-
+  const hookResponse = useReportReviewButton({ review });
   return (
     <div className="space-y-6">
       <div className="flex w-full flex-wrap md:flex-nowrap items-center justify-between gap-4 align-middle">
@@ -31,7 +32,12 @@ export const ReviewSummary = ({ review }: ReviewSummaryProps) => {
         </div>
         <FavoriteReviewButton reviewId={review.id ?? ''} showText />
         <EditReviewButton review={review} showText />
-        <ReportReviewButton review={review} showText />
+        <ReportDialog
+          hookResponse={hookResponse}
+          title="Reportar Reseña"
+          dialogDescription="Si consideras que esta reseña viola nuestras políticas, por favor selecciona el motivo y proporciona detalles adicionales."
+          textareaPlaceholder="Proporciona más detalles sobre por qué estás reportando esta reseña..."
+        />
         <DeleteReviewButton review={review} showText />
       </div>
 
