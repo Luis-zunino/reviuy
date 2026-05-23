@@ -163,7 +163,7 @@ export function handleSupabaseError(error: PostgrestError): AppError {
 
   // PostgREST errors (PGRSTxxx)
   if (error.code?.startsWith('PGRST')) {
-    const statusCode = parseInt(error.code.replace('PGRST', ''), 10);
+    const statusCode = Number.parseInt(error.code.replace('PGRST', ''), 10);
     if (statusCode === 301) {
       return new AppError(
         ErrorCodes.UNAUTHORIZED,

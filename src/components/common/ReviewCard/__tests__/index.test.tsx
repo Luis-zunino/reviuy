@@ -1,6 +1,5 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import type { ReviewWithVotes } from '@/modules/property-reviews';
 
 vi.mock('@/components/common', () => ({
   StarRatingDisplay: ({ rating }: { rating: number }) => (
@@ -25,7 +24,22 @@ const mockReview = {
   zone_rating: 4,
   address_text: 'Av. 18 de Julio 1234',
   created_at: '2024-01-15',
-} as ReviewWithVotes;
+  address_osm_id: null,
+  apartment_number: null,
+  dislikes: null,
+  humidity: null,
+  latitude: null,
+  likes: null,
+  longitude: null,
+  property_type: null,
+  real_estate_experience: null,
+  real_estate_id: null,
+  summer_comfort: null,
+  total_votes: null,
+  updated_at: null,
+  winter_comfort: null,
+  is_mine: null,
+};
 
 describe('ReviewCard', () => {
   it('renders review title and description', async () => {
