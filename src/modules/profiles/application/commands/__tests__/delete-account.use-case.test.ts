@@ -61,4 +61,19 @@ describe('createDeleteAccountUseCase', () => {
       lastSignInAt,
     });
   });
+
+  it('rejects when lastSignInAt is null', async () => {
+    const profileCommandRepository: ProfileCommandRepository = {
+      deleteAccount: vi.fn(),
+    };
+    const useCase = createDeleteAccountUseCase({
+      getCurrentUserId: vi.fn().mockResolvedValue('user-1'),
+      rateLimit: vi.fn().mockResolvedValue(undefined),
+      profileCommandRepository,
+    });
+    await expect(useCase({ lastSignInAt: null })).rejects.toMatchObject({
+      code: 'UNAUTHORIZED',
+    });
+    expect(profileCommandRepository.deleteAccount).not.toHaveBeenCalled();
+  });
 });

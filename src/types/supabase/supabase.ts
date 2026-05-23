@@ -1,6 +1,11 @@
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
 export type Database = {
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: '14.1';
+  };
   graphql_public: {
     Tables: {
       [_ in never]: never;
@@ -246,6 +251,7 @@ export type Database = {
           real_estate_review_id: string;
           updated_at: string;
           user_id: string;
+          user_id_snapshot: string;
           vote_type: string;
         };
         Insert: {
@@ -254,6 +260,7 @@ export type Database = {
           real_estate_review_id: string;
           updated_at?: string;
           user_id: string;
+          user_id_snapshot: string;
           vote_type: string;
         };
         Update: {
@@ -262,6 +269,7 @@ export type Database = {
           real_estate_review_id?: string;
           updated_at?: string;
           user_id?: string;
+          user_id_snapshot?: string;
           vote_type?: string;
         };
         Relationships: [
@@ -312,7 +320,7 @@ export type Database = {
           real_estate_id: string;
           title: string;
           updated_at: string;
-          user_id: string | null;
+          user_id: string;
         };
         Insert: {
           created_at?: string;
@@ -323,7 +331,7 @@ export type Database = {
           real_estate_id: string;
           title: string;
           updated_at?: string;
-          user_id?: string | null;
+          user_id: string;
         };
         Update: {
           created_at?: string;
@@ -334,7 +342,7 @@ export type Database = {
           real_estate_id?: string;
           title?: string;
           updated_at?: string;
-          user_id?: string | null;
+          user_id?: string;
         };
         Relationships: [
           {
@@ -467,7 +475,7 @@ export type Database = {
           id: string;
           new_data: Json | null;
           old_data: Json | null;
-          review_id: string | null;
+          review_id: string;
         };
         Insert: {
           change_type: string;
@@ -476,7 +484,7 @@ export type Database = {
           id?: string;
           new_data?: Json | null;
           old_data?: Json | null;
-          review_id?: string | null;
+          review_id: string;
         };
         Update: {
           change_type?: string;
@@ -485,7 +493,7 @@ export type Database = {
           id?: string;
           new_data?: Json | null;
           old_data?: Json | null;
-          review_id?: string | null;
+          review_id?: string;
         };
         Relationships: [
           {
@@ -532,7 +540,7 @@ export type Database = {
           deletion_reason: string | null;
           id: string;
           review_created_at: string | null;
-          review_id: string | null;
+          review_id: string;
           review_rating: number | null;
           review_title: string | null;
         };
@@ -542,7 +550,7 @@ export type Database = {
           deletion_reason?: string | null;
           id?: string;
           review_created_at?: string | null;
-          review_id?: string | null;
+          review_id: string;
           review_rating?: number | null;
           review_title?: string | null;
         };
@@ -552,7 +560,7 @@ export type Database = {
           deletion_reason?: string | null;
           id?: string;
           review_created_at?: string | null;
-          review_id?: string | null;
+          review_id?: string;
           review_rating?: number | null;
           review_title?: string | null;
         };
@@ -925,7 +933,7 @@ export type Database = {
           summer_comfort: string | null;
           title: string;
           updated_at: string;
-          user_id: string | null;
+          user_id: string;
           winter_comfort: string | null;
           zone_rating: number | null;
         };
@@ -947,7 +955,7 @@ export type Database = {
           summer_comfort?: string | null;
           title: string;
           updated_at?: string;
-          user_id?: string | null;
+          user_id: string;
           winter_comfort?: string | null;
           zone_rating?: number | null;
         };
@@ -969,7 +977,7 @@ export type Database = {
           summer_comfort?: string | null;
           title?: string;
           updated_at?: string;
-          user_id?: string | null;
+          user_id?: string;
           winter_comfort?: string | null;
           zone_rating?: number | null;
         };
@@ -1480,6 +1488,7 @@ export type Database = {
       };
     };
     Functions: {
+      check_migration_status_simple: { Args: never; Returns: undefined };
       check_rate_limit: {
         Args: {
           p_endpoint: string;
@@ -1495,6 +1504,7 @@ export type Database = {
         Returns: string;
       };
       cleanup_old_security_logs: { Args: never; Returns: undefined };
+      cleanup_rate_limits: { Args: never; Returns: undefined };
       create_real_estate: {
         Args: { p_description?: string; p_name: string };
         Returns: Json;
@@ -1814,15 +1824,17 @@ export type Database = {
         };
         Returns: undefined;
       };
-      moderate_reports: {
-        Args: {
-          p_moderation_note?: string;
-          p_report_id: string;
-          p_status: string;
-          p_target_type: string;
-        };
-        Returns: Json;
-      };
+      moderate_reports:
+        | {
+            Args: {
+              p_moderation_note?: string;
+              p_report_id: string;
+              p_status: string;
+              p_target_type: string;
+            };
+            Returns: Json;
+          }
+        | { Args: { report_id: string }; Returns: undefined };
       refresh_all_vote_stats: { Args: never; Returns: undefined };
       report_real_estate: {
         Args: {
@@ -1886,6 +1898,11 @@ export type Database = {
       [_ in never]: never;
     };
     CompositeTypes: {
+      action_result: {
+        success: boolean | null;
+        message: string | null;
+        error: string | null;
+      };
       create_real_estate_result: {
         success: boolean | null;
         message: string | null;
@@ -1901,6 +1918,12 @@ export type Database = {
         review_id: string | null;
         message: string | null;
         error: string | null;
+      };
+      detect_suspicious_activity_result: {
+        user_id: string | null;
+        total_requests: number | null;
+        blocked_requests: number | null;
+        suspicious_score: number | null;
       };
       get_review_delete_info_result: {
         id: string | null;
@@ -1932,6 +1955,34 @@ export type Database = {
         success: boolean | null;
         message: string | null;
         report_id: string | null;
+      };
+      result_error: {
+        success: boolean | null;
+        error: string | null;
+      };
+      result_report: {
+        success: boolean | null;
+        message: string | null;
+        report_id: string | null;
+      };
+      result_success: {
+        success: boolean | null;
+        message: string | null;
+      };
+      result_success_id: {
+        success: boolean | null;
+        message: string | null;
+        id: string | null;
+      };
+      result_toggle: {
+        success: boolean | null;
+        message: string | null;
+        is_favorite: boolean | null;
+      };
+      result_vote: {
+        success: boolean | null;
+        message: string | null;
+        action: string | null;
       };
       review_delete_info: {
         id: string | null;

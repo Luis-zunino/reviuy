@@ -5,6 +5,9 @@ import type { ReactNode } from 'react';
 
 const mockVerifyAuthentication = vi.fn();
 
+let capturedOnSuccess: ((data: any, vars: any, context: any) => void) | null = null;
+let capturedOnError: ((error: Error, vars: any, context: any, info: any) => void) | null = null;
+
 const mockUseMutation = vi.hoisted(() => vi.fn());
 
 vi.mock('@tanstack/react-query', async () => {
@@ -16,40 +19,58 @@ vi.mock('@/modules/profiles/presentation', () => ({
   useVerifyAuthentication: mockVerifyAuthentication,
 }));
 
-function createWrapper() {
-  const queryClient = new QueryClient({
-    defaultOptions: { queries: { retry: false } },
-  });
+vi.mock('sonner', () => ({
+  toast: { error: vi.fn() },
+}));
+
+function createWrapper(queryClient?: QueryClient) {
+  const qc = queryClient ?? new QueryClient({ defaultOptions: { queries: { retry: false } } });
   const Wrapper = ({ children }: { children: ReactNode }) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    <QueryClientProvider client={qc}>{children}</QueryClientProvider>
   );
   Wrapper.displayName = 'Wrapper';
   return Wrapper;
 }
 
+function captureCallbacks() {
+  mockUseMutation.mockImplementation(({ mutationFn, onSuccess, onError, ...rest }: any) => {
+    capturedOnSuccess = onSuccess ?? null;
+    capturedOnError = onError ?? null;
+    return {
+      mutate: async (vars: any) => {
+        try {
+          const result = await mutationFn(vars);
+          onSuccess?.(result, vars, undefined);
+          return result;
+        } catch (e) {
+          onError?.(e, vars, undefined, undefined);
+          throw e;
+        }
+      },
+      mutateAsync: async (vars: any) => {
+        try {
+          const result = await mutationFn(vars);
+          onSuccess?.(result, vars, undefined);
+          return result;
+        } catch (e) {
+          onError?.(e, vars, undefined, undefined);
+          throw e;
+        }
+      },
+      data: null,
+      error: null,
+      isPending: false,
+    };
+  });
+}
+
 describe('useAuthMutation', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    capturedOnSuccess = null;
+    capturedOnError = null;
     mockVerifyAuthentication.mockReturnValue({ data: { userId: 'user-1' }, error: null });
-    mockUseMutation.mockImplementation(({ mutationFn, ...rest }: any) => {
-      const mockMutate = async (vars: any) => {
-        try {
-          const result = await mutationFn(vars);
-          rest?.onSuccess?.(result, vars, undefined);
-          return result;
-        } catch (e) {
-          rest?.onError?.(e, vars, undefined, undefined);
-          throw e;
-        }
-      };
-      return {
-        mutate: mockMutate,
-        mutateAsync: mockMutate,
-        data: null,
-        error: null,
-        isPending: false,
-      };
-    });
+    captureCallbacks();
   });
 
   it('throws auth error when user is not authenticated', async () => {
@@ -110,5 +131,95 @@ describe('useAuthMutation', () => {
     );
 
     await expect(result.current.mutateAsync('test')).rejects.toThrow('original error');
+  });
+
+  it('shows toast with errorToastMessage as function', async () => {
+    const mutationFn = vi.fn().mockRejectedValue(new Error('db error'));
+
+    const { useAuthMutation } = await import('../useAuthMutation.hook');
+
+    const { result } = renderHook(
+      () =>
+        useAuthMutation({
+          mutationFn,
+          errorToastMessage: (e: Error) => `Mapped: ${e.message}`,
+        }),
+      { wrapper: createWrapper() }
+    );
+
+    await expect(result.current.mutateAsync('test')).rejects.toThrow('db error');
+  });
+
+  it('shows toast with errorToastMessage as string', async () => {
+    const mutationFn = vi.fn().mockRejectedValue(new Error('db error'));
+
+    const { useAuthMutation } = await import('../useAuthMutation.hook');
+
+    const { result } = renderHook(
+      () =>
+        useAuthMutation({
+          mutationFn,
+          errorToastMessage: 'Custom string message',
+        }),
+      { wrapper: createWrapper() }
+    );
+
+    await expect(result.current.mutateAsync('test')).rejects.toThrow('db error');
+  });
+
+  it('falls back to UNKNOWN_ERROR when error has no message', async () => {
+    const mutationFn = vi.fn().mockRejectedValue(new Error());
+
+    const { useAuthMutation } = await import('../useAuthMutation.hook');
+
+    const { result } = renderHook(
+      () =>
+        useAuthMutation({
+          mutationFn,
+        }),
+      { wrapper: createWrapper() }
+    );
+
+    await expect(result.current.mutateAsync('test')).rejects.toThrow('');
+  });
+
+  it('suppresses toast for NEXT_REDIRECT errors', async () => {
+    const mutationFn = vi.fn().mockRejectedValue(new Error('NEXT_REDIRECT'));
+
+    const { useAuthMutation } = await import('../useAuthMutation.hook');
+
+    const { result } = renderHook(
+      () =>
+        useAuthMutation({
+          mutationFn,
+          errorToastMessage: 'Should not appear',
+        }),
+      { wrapper: createWrapper() }
+    );
+
+    await expect(result.current.mutateAsync('test')).rejects.toThrow('NEXT_REDIRECT');
+  });
+
+  it('invalidates queries on success when invalidateQueryKeys is set', async () => {
+    const mutationFn = vi.fn().mockResolvedValue('ok');
+    const invalidateQueryKeys = [['reviews'], ['favorites']];
+    const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
+
+    const { useAuthMutation } = await import('../useAuthMutation.hook');
+
+    renderHook(
+      () =>
+        useAuthMutation({
+          mutationFn,
+          invalidateQueryKeys,
+        }),
+      { wrapper: createWrapper(queryClient) }
+    );
+
+    capturedOnSuccess!('ok', {}, undefined);
+
+    expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['reviews'] });
+    expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['favorites'] });
   });
 });

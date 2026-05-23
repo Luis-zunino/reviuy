@@ -1,6 +1,11 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, expectTypeOf, it, vi } from 'vitest';
 import { createGetAddressInfoQuery } from '../get-address-info.query';
-import type { AddressReadRepository, GetAddressInfoOutput } from '../../../domain';
+import type {
+  AddressReadRepository,
+  GetAddressInfoInput,
+  GetAddressInfoOutput,
+} from '../../../domain';
+import type { QueryHandler } from '@/shared/kernel/contracts/query.contract';
 import { OsmType } from '@/enums/osmType.enum';
 
 describe('createGetAddressInfoQuery', () => {
@@ -42,9 +47,36 @@ describe('createGetAddressInfoQuery', () => {
     };
 
     const handler = createGetAddressInfoQuery({ repository });
-    const input = { osmId: '123' };
+    const input: GetAddressInfoInput = { osmId: '123' };
 
     await expect(handler(input)).resolves.toEqual(expected);
     expect(repository.getAddressInfo).toHaveBeenCalledWith(input);
+  });
+
+  it('rejects when repository throws', async () => {
+    const error = new Error('Repository failed');
+    const repository: AddressReadRepository = {
+      getAddressInfo: vi.fn().mockRejectedValue(error),
+      searchByName: vi.fn(),
+      reverseGeocode: vi.fn(),
+    };
+
+    const handler = createGetAddressInfoQuery({ repository });
+    const input: GetAddressInfoInput = { osmId: '123' };
+
+    await expect(handler(input)).rejects.toThrow(error);
+    expect(repository.getAddressInfo).toHaveBeenCalledWith(input);
+  });
+
+  it('returns the correct handler type signature', () => {
+    const repository: AddressReadRepository = {
+      getAddressInfo: vi.fn(),
+      searchByName: vi.fn(),
+      reverseGeocode: vi.fn(),
+    };
+
+    const handler = createGetAddressInfoQuery({ repository });
+
+    expectTypeOf(handler).toEqualTypeOf<QueryHandler<GetAddressInfoInput, GetAddressInfoOutput>>();
   });
 });

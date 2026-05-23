@@ -2,7 +2,7 @@ BEGIN;
 
 CREATE EXTENSION IF NOT EXISTS pgtap;
 
-SELECT plan(29);
+SELECT plan(53);
 
 -- 1) RLS habilitado en tablas criticas
 SELECT ok((SELECT relrowsecurity FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace WHERE n.nspname = 'public' AND c.relname = 'reviews'), 'RLS habilitado en public.reviews');
@@ -80,23 +80,23 @@ SELECT ok(
   'review_audit y review_deletions no usan ON DELETE CASCADE'
 );
 
--- 5) Revokes de anon sobre tablas de votos
+-- 5) Grants de anon sobre tablas de votos (SELECT mantenido, protegido por RLS + funciones SECURITY INVOKER)
 SELECT is(
   has_table_privilege('anon', 'public.review_votes', 'SELECT'),
-  false,
-  'anon NO tiene SELECT sobre public.review_votes'
+  true,
+  'anon tiene SELECT sobre public.review_votes (protegido por RLS + solo accesible vía funciones SECURITY INVOKER)'
 );
 
 SELECT is(
   has_table_privilege('anon', 'public.real_estate_votes', 'SELECT'),
-  false,
-  'anon NO tiene SELECT sobre public.real_estate_votes'
+  true,
+  'anon tiene SELECT sobre public.real_estate_votes (protegido por RLS + solo accesible vía funciones SECURITY INVOKER)'
 );
 
 SELECT is(
   has_table_privilege('anon', 'public.real_estate_review_votes', 'SELECT'),
-  false,
-  'anon NO tiene SELECT sobre public.real_estate_review_votes'
+  true,
+  'anon tiene SELECT sobre public.real_estate_review_votes (protegido por RLS + solo accesible vía funciones SECURITY INVOKER)'
 );
 
 -- 6) Índices únicos parciales críticos
@@ -135,10 +135,10 @@ SELECT ok(
     WHERE n.nspname = 'public'
       AND c.relname = 'reviews_public'
       AND c.relkind = 'v'
-      AND c.reloptions::text ILIKE '%security_invoker=off%'
-      AND c.reloptions::text ILIKE '%security_barrier=true%'
-  ),
-  'reviews_public tiene security_invoker=off y security_barrier=true'
+  AND c.reloptions::text ILIKE '%security_invoker=false%'
+  AND c.reloptions::text ILIKE '%security_barrier=true%'
+),
+  'reviews_public tiene security_invoker=false y security_barrier=true'
 );
 
 SELECT ok(
@@ -149,10 +149,10 @@ SELECT ok(
     WHERE n.nspname = 'public'
       AND c.relname = 'reviews_with_votes_public'
       AND c.relkind = 'v'
-      AND c.reloptions::text ILIKE '%security_invoker=off%'
-      AND c.reloptions::text ILIKE '%security_barrier=true%'
-  ),
-  'reviews_with_votes_public tiene security_invoker=off y security_barrier=true'
+  AND c.reloptions::text ILIKE '%security_invoker=false%'
+  AND c.reloptions::text ILIKE '%security_barrier=true%'
+),
+  'reviews_with_votes_public tiene security_invoker=false y security_barrier=true'
 );
 
 SELECT ok(
@@ -161,12 +161,40 @@ SELECT ok(
     FROM pg_class c
     JOIN pg_namespace n ON n.oid = c.relnamespace
     WHERE n.nspname = 'public'
-      AND c.relname = 'real_estates_with_votes_public'
+      AND c.relname = 'real_estate_reviews_public'
       AND c.relkind = 'v'
-      AND c.reloptions::text ILIKE '%security_invoker=off%'
-      AND c.reloptions::text ILIKE '%security_barrier=true%'
-  ),
-  'real_estates_with_votes_public tiene security_invoker=off y security_barrier=true'
+  AND c.reloptions::text ILIKE '%security_invoker=false%'
+  AND c.reloptions::text ILIKE '%security_barrier=true%'
+),
+  'real_estate_reviews_public tiene security_invoker=false y security_barrier=true'
+);
+
+SELECT ok(
+  EXISTS (
+    SELECT 1
+    FROM pg_class c
+    JOIN pg_namespace n ON n.oid = c.relnamespace
+    WHERE n.nspname = 'public'
+      AND c.relname = 'real_estate_reviews_with_votes_public'
+      AND c.relkind = 'v'
+  AND c.reloptions::text ILIKE '%security_invoker=false%'
+  AND c.reloptions::text ILIKE '%security_barrier=true%'
+),
+  'real_estate_reviews_with_votes_public tiene security_invoker=false y security_barrier=true'
+);
+
+SELECT ok(
+  EXISTS (
+    SELECT 1
+    FROM pg_class c
+    JOIN pg_namespace n ON n.oid = c.relnamespace
+    WHERE n.nspname = 'public'
+      AND c.relname = 'real_estates_public'
+      AND c.relkind = 'v'
+  AND c.reloptions::text ILIKE '%security_invoker=false%'
+  AND c.reloptions::text ILIKE '%security_barrier=true%'
+),
+  'real_estates_public tiene security_invoker=false y security_barrier=true'
 );
 
 -- 8) Funciones internas sensibles sin EXECUTE para roles cliente
@@ -178,8 +206,8 @@ SELECT is(
 
 SELECT is(
   has_function_privilege('authenticated', 'public.log_security_event(text, text, text, jsonb)', 'EXECUTE'),
-  false,
-  'authenticated NO tiene EXECUTE sobre log_security_event'
+  true,
+  'authenticated tiene EXECUTE sobre log_security_event (necesario para funciones SECURITY INVOKER que la llaman internamente)'
 );
 
 SELECT is(
@@ -372,6 +400,8 @@ SELECT ok(
 );
 
 -- 14) Grants por rol: funciones internas nuevas no ejecutables por roles cliente
+--     Excepciones intencionales: log_security_event y check_rate_limit son
+--     llamadas internamente por funciones SECURITY INVOKER y heredan permisos.
 SELECT ok(
   NOT EXISTS (
     SELECT 1
@@ -379,12 +409,117 @@ SELECT ok(
     JOIN pg_namespace n ON n.oid = p.pronamespace
     WHERE n.nspname = 'public'
       AND p.proname ~ '^(refresh_|cleanup_|log_security_|check_rate_limit|moderate_|sync_)'
+      AND p.proname NOT IN ('log_security_event', 'check_rate_limit')
       AND (
         has_function_privilege('anon', p.oid, 'EXECUTE')
         OR has_function_privilege('authenticated', p.oid, 'EXECUTE')
       )
   ),
-  'Funciones internas (refresh/cleanup/log_security/check_rate_limit/moderate/sync) no tienen EXECUTE en anon/authenticated'
+  'Funciones internas (refresh/cleanup/log_security/check_rate_limit/moderate/sync) no tienen EXECUTE en anon/authenticated (excepto log_security_event y check_rate_limit que son llamadas por SECURITY INVOKER)'
+);
+
+-- 15) review_images: RLS habilitado + policies + grants (migración 010)
+SELECT is(
+  (SELECT relrowsecurity FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace WHERE n.nspname = 'public' AND c.relname = 'review_images'),
+  true,
+  'RLS habilitado en public.review_images'
+);
+
+SELECT ok(
+  EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='review_images' AND policyname='review_images_select_public'),
+  'review_images_select_public existe'
+);
+
+SELECT ok(
+  EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='review_images' AND policyname='review_images_insert_own'),
+  'review_images_insert_own existe'
+);
+
+SELECT ok(
+  EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='review_images' AND policyname='review_images_delete_own'),
+  'review_images_delete_own existe'
+);
+
+SELECT is(has_table_privilege('anon', 'public.review_images', 'SELECT'), true, 'anon tiene SELECT en review_images');
+SELECT is(has_table_privilege('authenticated', 'public.review_images', 'SELECT'), true, 'authenticated tiene SELECT en review_images');
+SELECT is(has_table_privilege('authenticated', 'public.review_images', 'INSERT'), true, 'authenticated tiene INSERT en review_images');
+SELECT is(has_table_privilege('authenticated', 'public.review_images', 'DELETE'), true, 'authenticated tiene DELETE en review_images');
+
+-- check_review_active y check_review_owner: revocadas de anon/auth (solo uso interno via RLS)
+SELECT is(has_function_privilege('anon', 'public.check_review_active(uuid)', 'EXECUTE'), false, 'anon NO tiene EXECUTE sobre check_review_active');
+SELECT is(has_function_privilege('authenticated', 'public.check_review_active(uuid)', 'EXECUTE'), false, 'authenticated NO tiene EXECUTE sobre check_review_active');
+SELECT is(has_function_privilege('anon', 'public.check_review_owner(uuid)', 'EXECUTE'), false, 'anon NO tiene EXECUTE sobre check_review_owner');
+SELECT is(has_function_privilege('authenticated', 'public.check_review_owner(uuid)', 'EXECUTE'), false, 'authenticated NO tiene EXECUTE sobre check_review_owner');
+
+-- 16) Triggers: todos existen y están habilitados
+SELECT ok(
+  NOT EXISTS (
+    SELECT 1 FROM (
+      VALUES
+        ('update_reviews_updated_at', 'reviews'),
+        ('update_real_estates_updated_at', 'real_estates'),
+        ('update_review_rooms_updated_at', 'review_rooms'),
+        ('update_real_estate_counters_trigger', 'reviews'),
+        ('review_changes_audit', 'reviews'),
+        ('review_deletion_audit', 'reviews'),
+        ('update_real_estate_reviews_updated_at', 'real_estate_reviews'),
+        ('update_real_estate_rating_trigger', 'real_estate_reviews'),
+        ('update_real_estate_reports_updated_at', 'real_estate_reports'),
+        ('update_real_estate_votes_updated_at', 'real_estate_votes'),
+        ('update_review_reports_updated_at', 'review_reports'),
+        ('update_real_estate_review_reports_updated_at', 'real_estate_review_reports'),
+        ('cleanup_rate_limits_trigger', 'rate_limits')
+    ) AS expected(tgname, tbl)
+    WHERE NOT EXISTS (
+      SELECT 1 FROM information_schema.triggers
+      WHERE trigger_name = expected.tgname
+        AND event_object_table = expected.tbl
+        AND action_timing IS NOT NULL
+    )
+  ),
+  'Todos los triggers (13) existen y están habilitados'
+);
+
+-- 17) Policies de review_rooms (dependen de reviews_public)
+SELECT ok(
+  EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='review_rooms' AND policyname='review_rooms_select_public'),
+  'review_rooms_select_public existe'
+);
+
+SELECT ok(
+  EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='review_rooms' AND policyname='review_rooms_manage_own'),
+  'review_rooms_manage_own existe'
+);
+
+-- 18) Policy de review_audit (depende de reviews_public)
+SELECT ok(
+  EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='review_audit' AND policyname='review_audit_select_own'),
+  'review_audit_select_own existe'
+);
+
+-- 19) Funciones service_role-only: moderate_reports y detect_suspicious_activity
+SELECT is(has_function_privilege('anon', 'public.moderate_reports(uuid,text,text,text)', 'EXECUTE'), false, 'anon NO tiene EXECUTE sobre moderate_reports');
+SELECT is(has_function_privilege('authenticated', 'public.moderate_reports(uuid,text,text,text)', 'EXECUTE'), false, 'authenticated NO tiene EXECUTE sobre moderate_reports');
+
+SELECT is(has_function_privilege('anon', 'public.detect_suspicious_activity(uuid)', 'EXECUTE'), false, 'anon NO tiene EXECUTE sobre detect_suspicious_activity');
+SELECT is(has_function_privilege('authenticated', 'public.detect_suspicious_activity(uuid)', 'EXECUTE'), false, 'authenticated NO tiene EXECUTE sobre detect_suspicious_activity');
+
+-- 20) FKs de tablas de votos: deben tener ON DELETE CASCADE
+SELECT ok(
+  NOT EXISTS (
+    SELECT 1
+    FROM pg_constraint c
+    JOIN pg_class t ON t.oid = c.conrelid
+    JOIN pg_namespace n ON n.oid = t.relnamespace
+    WHERE n.nspname = 'public'
+      AND t.relname IN ('review_votes', 'real_estate_votes', 'real_estate_review_votes')
+      AND c.contype = 'f'
+      AND c.confdeltype <> 'c'
+      AND c.confrelid IN (
+        SELECT oid FROM pg_class WHERE relname IN ('reviews', 'real_estates', 'real_estate_reviews')
+      )
+  ),
+  'Todas las FKs de tablas de votos (review_votes, real_estate_votes, real_estate_review_votes) usan ON DELETE CASCADE'
 );
 
 SELECT * FROM finish();
