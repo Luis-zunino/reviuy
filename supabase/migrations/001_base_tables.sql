@@ -2,7 +2,7 @@
 -- Tablas principales y estructura base
 -- =============================================================================
 -- Se crea esta extensión para manejar cadenas de texto case-insensitive
-create extension IF not exists citext;
+create extension if not exists citext;
 
 -- Tabla de inmobiliarias
 create table if not exists public.real_estates (
@@ -175,7 +175,7 @@ create table if not exists public.real_estate_reviews (
   -- Timestamps
   created_at TIMESTAMPTZ not null default now(),
   updated_at TIMESTAMPTZ not null default now() check (updated_at >= created_at),
-  deleted_at TIMESTAMPTZ -- Índice condicional para soft delete (ver migración 054)
+  deleted_at TIMESTAMPTZ -- Índice condicional para soft delete (ver migración 008)
 );
 
 -- TABLA: Votos para reseñas de inmobiliarias
@@ -553,7 +553,6 @@ COMMENT on column public.review_favorites.created_at is 'Fecha de creación del 
 -- VISTAS MATERIALIZADAS PARA CONTADORES DINÁMICOS
 -- =============================================================================
 -- Vista materializada para cachear contadores de votos de real_estates
--- Eliminar vista si existe para recrearla limpiamente
 drop materialized view if exists public.real_estate_vote_stats cascade;
 
 create materialized view public.real_estate_vote_stats as
@@ -587,7 +586,7 @@ group by
   re.id;
 
 -- Índice único en la vista materializada (necesario antes del REFRESH CONCURRENTLY)
-create unique index idx_real_estate_vote_stats_real_estate_id on public.real_estate_vote_stats (real_estate_id);
+create unique index if not exists idx_real_estate_vote_stats_real_estate_id on public.real_estate_vote_stats (real_estate_id);
 
 -- Vista para facilitar consultas de real_estates con contadores
 create or replace view public.real_estates_with_votes
@@ -616,7 +615,6 @@ refresh materialized view public.real_estate_vote_stats;
 -- VISTAS MATERIALIZADAS PARA CONTADORES DINÁMICOS DE REVIEWS
 -- =============================================================================
 -- Vista materializada para cachear contadores de votos de reviews
--- Eliminar vista si existe para recrearla limpiamente
 drop materialized view if exists public.review_vote_stats cascade;
 
 create materialized view public.review_vote_stats as
@@ -650,7 +648,7 @@ group by
   r.id;
 
 -- Índice único en la vista materializada (necesario antes del REFRESH CONCURRENTLY)
-create unique index idx_review_vote_stats_review_id on public.review_vote_stats (review_id);
+create unique index if not exists idx_review_vote_stats_review_id on public.review_vote_stats (review_id);
 
 -- Vista para facilitar consultas de reviews con contadores
 create or replace view public.reviews_with_votes
@@ -679,7 +677,6 @@ refresh materialized view public.review_vote_stats;
 -- VISTAS MATERIALIZADAS PARA CONTADORES DINÁMICOS DE REAL ESTATE REVIEWS
 -- =============================================================================
 -- Vista materializada para cachear contadores de votos de real_estate_reviews
--- Eliminar vista si existe para recrearla limpiamente
 drop materialized view if exists public.real_estate_review_vote_stats cascade;
 
 create materialized view public.real_estate_review_vote_stats as
@@ -713,12 +710,9 @@ group by
   rer.id;
 
 -- Índice único en la vista materializada (necesario antes del REFRESH CONCURRENTLY)
-create unique index idx_real_estate_review_vote_stats_review_id on public.real_estate_review_vote_stats (real_estate_review_id);
+create unique index if not exists idx_real_estate_review_vote_stats_review_id on public.real_estate_review_vote_stats (real_estate_review_id);
 
-drop view if exists public.real_estate_reviews_with_votes;
-
--- Vista para facilitar consultas de real_estate_reviews con contadores
-create view public.real_estate_reviews_with_votes
+create or replace view public.real_estate_reviews_with_votes
 with
   (security_invoker = on) as
 select
@@ -739,3 +733,27 @@ comment on view public.real_estate_reviews_with_votes is 'Vista que combina real
 
 -- Refrescar la vista materializada por primera vez
 refresh materialized view public.real_estate_review_vote_stats;
+
+-- =============================================================================
+-- VISTA DE MONITOREO PARA RATE LIMITING
+-- =============================================================================
+create or replace view public.rate_limit_stats
+with
+  (security_invoker = on) as
+select
+    endpoint,
+    count(distinct user_id) as unique_users,
+    sum(request_count) as total_requests,
+    avg(request_count) as avg_requests_per_window,
+    max(request_count) as max_requests_per_window,
+    max(window_start) as last_request_time
+from
+    public.rate_limits
+where
+    window_start > now() - interval '1 hour'
+group by
+    endpoint
+order by
+    total_requests desc;
+
+comment on view public.rate_limit_stats is 'Vista de monitoreo de rate limiting: muestra métricas agregadas por endpoint en la última hora.';
