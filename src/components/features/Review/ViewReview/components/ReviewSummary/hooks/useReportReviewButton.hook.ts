@@ -1,4 +1,5 @@
 import { useHasUserReportedReview, useReportReview } from '@/modules/property-reviews/presentation';
+import { useSendReportReviewMessage } from '@/modules/moderation/presentation';
 import React, { useState } from 'react';
 import { validateText } from '@/utils/textValidation.util';
 import { toast } from 'sonner';
@@ -12,6 +13,7 @@ export const useReportReviewButton = (props: UseReportReviewButtonProps) => {
   const [description, setDescription] = useState('');
 
   const { mutateAsync, isPending } = useReportReview();
+  const { mutateAsync: sendMessage } = useSendReportReviewMessage();
   const { data: hasReported } = useHasUserReportedReview(review.id ?? '');
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -36,15 +38,20 @@ export const useReportReviewButton = (props: UseReportReviewButtonProps) => {
         description: description.trim() || undefined,
       },
       {
-        onSuccess: ({ message, success, error }) => {
+        onSuccess: async ({ success, message, error }) => {
           if (success) {
             toast.success(message || 'Reporte enviado');
+            setIsOpen(false);
+            setSelectedReason('');
+            setDescription('');
+            await sendMessage({
+              reviewUuid: review.id ?? '',
+              reason: selectedReason,
+              message: description,
+            });
           } else {
             toast.error(error || 'Error al enviar el reporte');
           }
-          setIsOpen(false);
-          setSelectedReason('');
-          setDescription('');
         },
       }
     );

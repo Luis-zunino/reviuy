@@ -33,7 +33,9 @@ create index if not exists idx_review_images_path
 -- =============================================================================
 create or replace function public.check_review_active (p_review_id uuid)
 returns boolean language sql security definer
-set search_path = public as $$
+set search_path = public, pg_temp
+set row_security = on
+as $$
   select exists (
     select 1 from public.reviews
     where id = p_review_id and deleted_at is null
@@ -42,7 +44,9 @@ $$;
 
 create or replace function public.check_review_owner (p_review_id uuid)
 returns boolean language sql security definer
-set search_path = public as $$
+set search_path = public, pg_temp
+set row_security = on
+as $$
   select exists (
     select 1 from public.reviews
     where id = p_review_id and user_id = auth.uid()

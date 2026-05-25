@@ -88,8 +88,12 @@ describe('SupabasePropertyReviewCommandRepository', () => {
     };
 
     it('creates a review without rooms successfully', async () => {
-      // Sequence: check_rate_limit → true, INSERT review → null, SELECT reviews_public → publicReview, SELECT review_rooms → []
-      mockBuilder = createMockBuilder(true, null, publicReview, []);
+      // Sequence: RPC create_review → {success:true, review_id}, SELECT reviews_public → publicReview, SELECT review_rooms → []
+      mockBuilder = createMockBuilder(
+        { success: true, review_id: 'new-review-1', message: 'Reseña creada exitosamente' },
+        publicReview,
+        []
+      );
       mockSupabase.from.mockReturnValue(mockBuilder);
       mockSupabase.rpc.mockReturnValue(mockBuilder);
 
@@ -104,8 +108,12 @@ describe('SupabasePropertyReviewCommandRepository', () => {
       const roomsData = [
         { id: 'rm1', review_id: 'new-review-1', room_type: 'bedroom', area_m2: 20 },
       ];
-      // Sequence: rate_limit → true, INSERT review → null, INSERT rooms → null, SELECT reviews_public → publicReview, SELECT review_rooms → roomsData
-      mockBuilder = createMockBuilder(true, null, null, publicReview, roomsData);
+      // Sequence: RPC create_review, SELECT reviews_public → publicReview, SELECT review_rooms → roomsData
+      mockBuilder = createMockBuilder(
+        { success: true, review_id: 'new-review-1', message: 'Reseña creada exitosamente' },
+        publicReview,
+        roomsData
+      );
       mockSupabase.from.mockReturnValue(mockBuilder);
       mockSupabase.rpc.mockReturnValue(mockBuilder);
 
@@ -124,73 +132,49 @@ describe('SupabasePropertyReviewCommandRepository', () => {
       await expect(repository.create(validInput)).rejects.toThrow();
     });
 
-    it('throws RATE_LIMIT when rate limited', async () => {
-      mockBuilder = createMockBuilder(false);
+    it('throws VALIDATION_ERROR when RPC rejects (rate limit / duplicate)', async () => {
+      mockBuilder = createMockBuilder({
+        success: false,
+        error: 'Demasiadas reseñas. Intenta más tarde.',
+      });
       mockSupabase.rpc.mockReturnValue(mockBuilder);
 
-      await expect(repository.create(validInput)).rejects.toThrow('Demasiadas reseñas');
+      await expect(repository.create(validInput)).rejects.toThrow(
+        'Demasiadas reseñas. Intenta más tarde.'
+      );
     });
 
-    it('throws on insert error', async () => {
-      const errorBuilder = createMockBuilder(true);
+    it('throws on RPC error', async () => {
+      const errorBuilder = createMockBuilder(null);
       const origThen = errorBuilder.then;
       let callCount = 0;
       errorBuilder.then = (onfulfilled: any) => {
         callCount++;
-        // Call 1: rate limit → true, Call 2: INSERT review → error
-        if (callCount === 2) {
-          return Promise.resolve({ data: null, error: { message: 'Insert failed' } }).then(
+        // Call 1: RPC create_review → error
+        if (callCount === 1) {
+          return Promise.resolve({ data: null, error: { message: 'RPC failed', code: 'PGRST116' } }).then(
             onfulfilled
           );
         }
         return origThen.call(errorBuilder, onfulfilled);
       };
-      mockSupabase.from.mockReturnValue(errorBuilder);
       mockSupabase.rpc.mockReturnValue(errorBuilder);
 
       await expect(repository.create(validInput)).rejects.toThrow();
     });
 
-    it('rolls back review when rooms insert fails', async () => {
-      const errorBuilder = createMockBuilder(true);
-      const origThen = errorBuilder.then;
-      let callCount = 0;
-      errorBuilder.then = (onfulfilled: any) => {
-        callCount++;
-        // Call 1: rate limit → true, Call 2: INSERT review → ok, Call 3: INSERT rooms → error
-        if (callCount === 2) {
-          return Promise.resolve({ data: null, error: null }).then(onfulfilled);
-        }
-        if (callCount === 3) {
-          return Promise.resolve({ data: null, error: { message: 'Rooms insert failed' } }).then(
-            onfulfilled
-          );
-        }
-        return origThen.call(errorBuilder, onfulfilled);
-      };
-      mockSupabase.from.mockReturnValue(errorBuilder);
-      mockSupabase.rpc.mockReturnValue(errorBuilder);
-
-      await expect(
-        repository.create({ ...validInput, review_rooms: [{ room_type: 'bedroom', area_m2: 20 }] })
-      ).rejects.toThrow();
-    });
-
     it('returns fallback data when public view fetch fails', async () => {
-      const errorBuilder = createMockBuilder(true);
+      const errorBuilder = createMockBuilder({ success: true, review_id: 'new-review-1' });
       const origThen = errorBuilder.then;
       let callCount = 0;
       errorBuilder.then = (onfulfilled: any) => {
         callCount++;
-        // Call 1: rate limit → true, Call 2: INSERT review → ok
-        // Call 3: SELECT reviews_public → error, Call 4: SELECT review_rooms → []
+        // Call 1: RPC create_review → success
+        // Call 2: SELECT reviews_public → error, Call 3: SELECT review_rooms → []
         if (callCount === 2) {
-          return Promise.resolve({ data: null, error: null }).then(onfulfilled);
-        }
-        if (callCount === 3) {
           return Promise.resolve({ data: null, error: { message: 'Not found' } }).then(onfulfilled);
         }
-        if (callCount === 4) {
+        if (callCount === 3) {
           return Promise.resolve({ data: [], error: null }).then(onfulfilled);
         }
         return origThen.call(errorBuilder, onfulfilled);

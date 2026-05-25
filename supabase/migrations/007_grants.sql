@@ -34,7 +34,7 @@ grant execute on function public.create_real_estate(text, text) to authenticated
 grant execute on function public.vote_real_estate(uuid, text) to authenticated;
 grant execute on function public.report_real_estate(uuid, text, text) to authenticated;
 grant execute on function public.has_user_reported_real_estate(uuid) to authenticated;
-grant execute on function public.has_user_reported_real_estate_review(uuid) to authenticated;
+grant execute on function public.get_review_detail(uuid) to authenticated, anon;
 
 -- =============================================================================
 -- SECCIÓN 2: GRANTS PARA FUNCIONES DE CONTADORES DE VOTOS (SECURITY DEFINER)
@@ -58,7 +58,9 @@ grant select on public.real_estate_review_vote_stats to authenticated, anon;
 --            anidadas heredan permisos del invocador).
 -- =============================================================================
 revoke execute on function public.check_rate_limit(text, integer, integer) from public, anon;
+grant execute on function public.check_rate_limit(text, integer, integer) to authenticated;
 revoke execute on function public.log_security_event(text, text, text, jsonb) from public, anon;
+grant execute on function public.log_security_event(text, text, text, jsonb) to authenticated;
 
 -- Funciones admin (solo service_role)
 revoke execute on function public.moderate_reports(uuid, text, text, text) from public, anon, authenticated;
@@ -128,12 +130,34 @@ revoke select on public.real_estate_reviews_with_votes from authenticated, anon;
 -- revocar SELECT de authenticated y anon como defensa en profundidad.
 
 -- =============================================================================
--- SECCIÓN 11: REVOKE SELECT EN VISTA DE MONITOREO
+-- SECCIÓN 11: GRANTS SELECT EXPLÍCITOS PARA TABLAS CON RLS
+--            Necesarios cuando Supabase no aplica el grant automático
+--            (ej. bases creadas desde migraciones puras).
+--            RLS filtra por auth.uid() — cada usuario ve solo sus datos.
+-- =============================================================================
+grant select on public.review_votes to authenticated;
+grant select on public.review_reports to authenticated;
+grant select on public.review_favorites to authenticated;
+grant select on public.real_estate_votes to authenticated;
+grant select on public.real_estate_review_votes to authenticated;
+grant select on public.real_estate_review_reports to authenticated;
+grant select on public.real_estate_reports to authenticated;
+grant select on public.real_estate_favorites to authenticated;
+grant select on public.rate_limits to authenticated;
+grant select on public.review_rooms to anon, authenticated;
+grant insert, delete on public.review_rooms to authenticated;
+
+-- NOTA: Sección 12 eliminada por seguridad (Zero-Trust).
+-- Todos los writes ahora son vía funciones SECURITY DEFINER
+-- que corren como postgres y no necesitan DML grants directos.
+
+-- =============================================================================
+-- SECCIÓN 13: REVOKE SELECT EN VISTA DE MONITOREO
 -- =============================================================================
 revoke select on public.rate_limit_stats from anon, authenticated;
 
 -- =============================================================================
--- SECCIÓN 12: HARDENING PARA anon
+-- SECCIÓN 14: HARDENING PARA anon
 --            anon nunca debe mutar tablas directamente. Las operaciones de
 --            escritura deben pasar por funciones/capas de negocio.
 -- =============================================================================

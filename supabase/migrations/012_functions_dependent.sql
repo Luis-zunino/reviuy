@@ -12,7 +12,8 @@
 -- =============================================================================
 
 create or replace function public.get_reviews_by_current_user () returns setof reviews_with_votes_public language plpgsql security invoker
-set search_path = public as $$
+set search_path = public, pg_temp
+as $$
 begin
   return query select * from reviews_with_votes_public
     where is_mine order by created_at desc
@@ -23,7 +24,8 @@ $$;
 comment on function public.get_reviews_by_current_user is 'Obtiene todas las reviews del usuario autenticado';
 
 create or replace function public.get_favorite_reviews_by_current_user () returns setof reviews_with_votes_public language plpgsql security invoker
-set search_path = public as $$
+set search_path = public, pg_temp
+as $$
 begin
   return query select rwv_p.* from review_favorites rf
     join reviews_with_votes_public rwv_p on rwv_p.id = rf.review_id
@@ -39,7 +41,8 @@ comment on function public.get_favorite_reviews_by_current_user is 'Obtiene las 
 -- =============================================================================
 
 create or replace function public.get_real_estate_review_by_user (p_real_estate_id uuid) returns setof public.real_estate_reviews_with_votes_public language plpgsql security invoker
-set search_path = public as $$
+set search_path = public, pg_temp
+as $$
 begin
   return query select * from public.real_estate_reviews_with_votes_public
     where is_mine and real_estate_id = p_real_estate_id limit 1;

@@ -22,8 +22,8 @@ create or replace function log_security_event (
   p_error_message text default null,
   p_metadata jsonb default null
 ) RETURNS VOID LANGUAGE plpgsql SECURITY INVOKER
-set
-  search_path = public as $function$ BEGIN INSERT INTO
+set search_path = public, pg_temp
+as $function$ BEGIN INSERT INTO
     public.security_logs (
         user_id,
         ip_address,
@@ -72,9 +72,10 @@ create or replace function check_rate_limit (
   p_endpoint text,
   p_max_requests integer default 10,
   p_window_minutes integer default 1
-) RETURNS boolean LANGUAGE plpgsql SECURITY INVOKER
-set
-  search_path = public as $function$ DECLARE v_user_id UUID;
+) RETURNS boolean LANGUAGE plpgsql SECURITY DEFINER
+set search_path = public, pg_temp
+set row_security = on
+as $function$ DECLARE v_user_id UUID;
 
 
 v_window_from TIMESTAMPTZ;
@@ -194,9 +195,10 @@ create or replace function public.create_review (
   p_real_estate_experience text default null,
   p_apartment_number text default null,
   p_review_rooms jsonb default null
-) RETURNS public.create_review_result LANGUAGE plpgsql SECURITY INVOKER
-set
-  search_path = public as $function$ DECLARE v_review_id UUID;
+) RETURNS public.create_review_result LANGUAGE plpgsql SECURITY DEFINER
+set search_path = public, pg_temp
+set row_security = on
+as $function$ DECLARE v_review_id UUID;
 
 
 v_user_id UUID;
@@ -508,8 +510,9 @@ $function$;
 -- Función para eliminar una reseña de forma segura
 -- SECURITY DEFINER porque UPDATE en PostgreSQL requiere SELECT (revocado en 007).
 create or replace function delete_review_safe (review_id_param uuid) RETURNS boolean LANGUAGE plpgsql SECURITY DEFINER
-set
-  search_path = public as $function$ DECLARE v_is_mine boolean;
+set search_path = public, pg_temp
+set row_security = on
+as $function$ DECLARE v_is_mine boolean;
 
 
 current_user_id UUID;
@@ -554,7 +557,7 @@ UPDATE
 SET
     deleted_at = NOW()
 WHERE
-    id = review_id_param AND created_by = current_user_id;
+    id = review_id_param AND user_id = current_user_id;
 
 -- Registrar la eliminación en auditoría manualmente
 -- (el trigger BEFORE DELETE ya no se dispara con soft delete)
@@ -594,8 +597,8 @@ $function$;
 
 -- Función para obtener estadísticas antes de eliminar
 create or replace function public.get_review_delete_info (review_id_param uuid) RETURNS public.get_review_delete_info_result LANGUAGE plpgsql SECURITY INVOKER
-set
-  search_path = public as $function$ DECLARE result public.get_review_delete_info_result;
+set search_path = public, pg_temp
+as $function$ DECLARE result public.get_review_delete_info_result;
 
 BEGIN
 SELECT
@@ -652,8 +655,8 @@ create or replace function public.update_review(
 ) RETURNS json
 LANGUAGE plpgsql
 SECURITY DEFINER
-set
-  search_path = public
+set search_path = public, pg_temp
+set row_security = on
 AS $function$
 DECLARE
   v_user_id UUID;
@@ -727,7 +730,7 @@ BEGIN
     real_estate_experience = COALESCE(p_real_estate_experience, real_estate_experience),
     apartment_number = COALESCE(p_apartment_number, apartment_number),
     updated_at = now()
-  WHERE id = p_review_id AND created_by = v_user_id;
+  WHERE id = p_review_id AND user_id = v_user_id;
 
   RETURN json_build_object('success', true, 'message', 'Reseña actualizada exitosamente');
 
@@ -736,7 +739,8 @@ BEGIN
   -- ===========================================================================
 EXCEPTION
   WHEN OTHERS THEN
-    RETURN json_build_object('success', false, 'error', SQLERRM, 'sqlstate', SQLSTATE);
+    PERFORM log_security_event('update_review', 'error', SQLERRM);
+    RETURN json_build_object('success', false, 'error', 'Error interno del servidor');
 END;
 $function$;
 
@@ -745,9 +749,10 @@ $function$;
 -- =============================================================================
 
 -- Función para votar reviews (con toggle)
-create or replace function vote_review (p_review_id uuid, p_vote_type text) RETURNS json LANGUAGE plpgsql SECURITY INVOKER
-set
-  search_path = public as $$
+create or replace function vote_review (p_review_id uuid, p_vote_type text) RETURNS json LANGUAGE plpgsql SECURITY DEFINER
+set search_path = public, pg_temp
+set row_security = on
+as $$
 DECLARE
     v_user_id uuid;
     v_existing_vote text;
@@ -828,9 +833,10 @@ create or replace function report_review (
   p_review_id UUID,
   p_reason TEXT,
   p_description TEXT default null
-) RETURNS JSON LANGUAGE plpgsql SECURITY INVOKER
-set
-  search_path = public as $$ DECLARE v_user_id UUID;
+) RETURNS JSON LANGUAGE plpgsql SECURITY DEFINER
+set search_path = public, pg_temp
+set row_security = on
+as $$ DECLARE v_user_id UUID;
 
 v_report_id UUID;
 
@@ -925,8 +931,8 @@ $$;
 
 -- Función para verificar si usuario ya reportóuna review 
 create or replace function has_user_reported_review (p_review_id UUID) RETURNS BOOLEAN LANGUAGE plpgsql SECURITY INVOKER
-set
-  search_path = public as $$ DECLARE v_user_id UUID;
+set search_path = public, pg_temp
+as $$ DECLARE v_user_id UUID;
 
 BEGIN
     v_user_id := auth.uid ();
@@ -959,9 +965,10 @@ create or replace function create_real_estate_review (
   p_title TEXT,
   p_description TEXT,
   p_rating INTEGER
-) RETURNS JSON LANGUAGE plpgsql SECURITY INVOKER
-set
-  search_path = public as $$ DECLARE v_review_id UUID;
+) RETURNS JSON LANGUAGE plpgsql SECURITY DEFINER
+set search_path = public, pg_temp
+set row_security = on
+as $$ DECLARE v_review_id UUID;
 
         v_user_id UUID;
 
@@ -1034,7 +1041,8 @@ RETURN json_build_object('success', TRUE, 'review_id', v_review_id, 'message', '
 
 EXCEPTION
     WHEN OTHERS THEN
-        RETURN json_build_object('success', FALSE, 'error', SQLERRM, 'sqlstate', SQLSTATE);
+        PERFORM log_security_event('create_real_estate_review', 'error', SQLERRM);
+        RETURN json_build_object('success', FALSE, 'error', 'Error interno del servidor');
 
 END;
 $$;
@@ -1051,7 +1059,8 @@ create or replace function public.update_real_estate_review(
 ) RETURNS json
 LANGUAGE plpgsql
 SECURITY DEFINER
-set search_path = public
+set search_path = public, pg_temp
+set row_security = on
 AS $$
 DECLARE
   v_user_id UUID;
@@ -1087,11 +1096,12 @@ BEGIN
     description = COALESCE(p_description, description),
     rating = COALESCE(p_rating, rating),
     updated_at = now()
-  WHERE id = p_review_id AND created_by = v_user_id;
+  WHERE id = p_review_id AND user_id = v_user_id;
   RETURN json_build_object('success', true, 'message', 'Reseña actualizada exitosamente');
 EXCEPTION
   WHEN OTHERS THEN
-    RETURN json_build_object('success', false, 'error', SQLERRM, 'sqlstate', SQLSTATE);
+    PERFORM log_security_event('update_real_estate_review', 'error', SQLERRM);
+    RETURN json_build_object('success', false, 'error', 'Error interno del servidor');
 END;
 $$;
 
@@ -1103,7 +1113,8 @@ create or replace function public.delete_real_estate_review_safe(p_review_id UUI
 RETURNS json
 LANGUAGE plpgsql
 SECURITY DEFINER
-set search_path = public
+set search_path = public, pg_temp
+set row_security = on
 AS $$
 DECLARE
   v_user_id UUID;
@@ -1123,18 +1134,20 @@ BEGIN
     RETURN json_build_object('success', false, 'error', 'No tienes permisos para eliminar esta reseña');
   END IF;
   UPDATE public.real_estate_reviews SET deleted_at = now()
-  WHERE id = p_review_id AND created_by = v_user_id;
+  WHERE id = p_review_id AND user_id = v_user_id;
   RETURN json_build_object('success', true, 'message', 'Reseña eliminada exitosamente');
 EXCEPTION
   WHEN OTHERS THEN
-    RETURN json_build_object('success', false, 'error', SQLERRM, 'sqlstate', SQLSTATE);
+    PERFORM log_security_event('delete_real_estate_review_safe', 'error', SQLERRM);
+    RETURN json_build_object('success', false, 'error', 'Error interno del servidor');
 END;
 $$;
 
 -- Función para votar reseñas de inmobiliarias
-create or replace function vote_real_estate_review (p_real_estate_review_id uuid, p_vote_type text) RETURNS json LANGUAGE plpgsql SECURITY INVOKER
-set
-  search_path = public as $$
+create or replace function vote_real_estate_review (p_real_estate_review_id uuid, p_vote_type text) RETURNS json LANGUAGE plpgsql SECURITY DEFINER
+set search_path = public, pg_temp
+set row_security = on
+as $$
 DECLARE
     v_user_id uuid;
     v_existing_vote text;
@@ -1185,9 +1198,10 @@ create or replace function report_real_estate_review (
   p_real_estate_review_id uuid,
   p_reason text,
   p_description text default null
-) RETURNS json LANGUAGE plpgsql SECURITY INVOKER
-set
-  search_path = public as $$
+) RETURNS json LANGUAGE plpgsql SECURITY DEFINER
+set search_path = public, pg_temp
+set row_security = on
+as $$
 DECLARE
     v_user_id uuid;
     v_report_id uuid;
@@ -1250,8 +1264,8 @@ $$;
 -- FUNCIÓN PARA VERIFICAR SI USUARIO YA REPORTÓUNA RESEÑA DE INMOBILIARIA 
 -- =============================================================================
 create or replace function public.has_user_reported_real_estate_review (p_review_id UUID) RETURNS BOOLEAN LANGUAGE plpgsql SECURITY INVOKER
-set
-  search_path = public as $$ DECLARE v_user_id UUID;
+set search_path = public, pg_temp
+as $$ DECLARE v_user_id UUID;
 
 BEGIN
     v_user_id := auth.uid ();
@@ -1279,9 +1293,10 @@ $$;
 -- =============================================================================
 
 -- Función para crear inmobiliaria 
-create or replace function create_real_estate (p_name text, p_description text default null) RETURNS json LANGUAGE plpgsql SECURITY INVOKER
-set
-  search_path = public as $function$ DECLARE v_user_id uuid;
+create or replace function create_real_estate (p_name text, p_description text default null) RETURNS json LANGUAGE plpgsql SECURITY DEFINER
+set search_path = public, pg_temp
+set row_security = on
+as $function$ DECLARE v_user_id uuid;
 
 v_real_estate_id uuid;
 
@@ -1341,13 +1356,13 @@ WHEN unique_violation THEN RETURN json_build_object(
     'Ya existe una inmobiliaria con ese nombre'
 );
 
-WHEN OTHERS THEN RETURN json_build_object(
+WHEN OTHERS THEN
+    PERFORM log_security_event('create_real_estate', 'error', SQLERRM);
+    RETURN json_build_object(
     'success',
     FALSE,
     'error',
-    SQLERRM,
-    'sqlstate',
-    SQLSTATE
+    'Error interno del servidor'
 );
 
 END;
@@ -1359,9 +1374,10 @@ $function$;
 -- =============================================================================
 
 -- Función para votar inmobiliarias (simplificada - contadores se calculan con SELECT)
-create or replace function vote_real_estate (p_real_estate_id uuid, p_vote_type text) RETURNS json LANGUAGE plpgsql SECURITY INVOKER
-set
-  search_path = public as $$ DECLARE v_user_id uuid;
+create or replace function vote_real_estate (p_real_estate_id uuid, p_vote_type text) RETURNS json LANGUAGE plpgsql SECURITY DEFINER
+set search_path = public, pg_temp
+set row_security = on
+as $$ DECLARE v_user_id uuid;
 
 v_existing_vote text;
 
@@ -1481,9 +1497,10 @@ create or replace function report_real_estate (
   p_real_estate_id UUID,
   p_reason TEXT,
   p_description TEXT default null
-) RETURNS JSON LANGUAGE plpgsql SECURITY INVOKER
-set
-  search_path = public as $$ DECLARE v_user_id UUID;
+) RETURNS JSON LANGUAGE plpgsql SECURITY DEFINER
+set search_path = public, pg_temp
+set row_security = on
+as $$ DECLARE v_user_id UUID;
 
 BEGIN v_user_id := auth.uid ();
 
@@ -1587,8 +1604,8 @@ $$;
 
 -- Función para verificar si usuario ya reportó una inmobiliaria
 create or replace function has_user_reported_real_estate (p_real_estate_id uuid) RETURNS boolean LANGUAGE plpgsql SECURITY INVOKER
-set
-  search_path = public as $$ DECLARE v_user_id uuid;
+set search_path = public, pg_temp
+as $$ DECLARE v_user_id uuid;
 
 BEGIN v_user_id := auth.uid ();
 
@@ -1614,9 +1631,10 @@ $$;
 -- FAVORITOS DE INMOBILIARIAS
 -- =============================================================================
 
-create or replace function toggle_favorite_real_estate (p_real_estate_id uuid) RETURNS public.toggle_favorite_result LANGUAGE plpgsql SECURITY INVOKER
-set
-  search_path = public as $$ DECLARE v_user_id uuid;
+create or replace function toggle_favorite_real_estate (p_real_estate_id uuid) RETURNS public.toggle_favorite_result LANGUAGE plpgsql SECURITY DEFINER
+set search_path = public, pg_temp
+set row_security = on
+as $$ DECLARE v_user_id uuid;
 
 result public.toggle_favorite_result;
 
@@ -1675,8 +1693,8 @@ $$;
 -- FUNCIÓN PARA VERIFICAR SI UNA INMOBILIARIA ES FAVORITA
 -- =============================================================================
 create or replace function is_real_estate_favorite (p_real_estate_id uuid) RETURNS boolean LANGUAGE plpgsql SECURITY INVOKER
-set
-  search_path = public as $$ DECLARE v_user_id uuid;
+set search_path = public, pg_temp
+as $$ DECLARE v_user_id uuid;
 
 BEGIN v_user_id := auth.uid ();
 
@@ -1704,7 +1722,8 @@ $$;
 
 -- Función para saber el voto del usuario sobre una real estate
 create or replace function public.get_user_real_estate_vote (p_real_estate_id uuid) returns text language sql stable security invoker
-set search_path = public as $$
+set search_path = public, pg_temp
+as $$
   select vote_type
   from public.real_estate_votes
   where real_estate_id = p_real_estate_id
@@ -1714,7 +1733,8 @@ $$;
 
 -- Función para saber el voto del usuario sobre una review
 create or replace function public.get_user_review_vote (p_review_id uuid) returns text language sql stable security invoker
-set search_path = public as $$
+set search_path = public, pg_temp
+as $$
 select vote_type from public.review_votes
   where review_id = p_review_id and user_id = auth.uid()
   limit 1;
@@ -1722,7 +1742,8 @@ $$;
 
 -- Función para saber el voto del usuario sobre una review (from 017)
 create or replace function public.get_user_vote_on_review (p_review_id uuid) returns text language sql stable security invoker
-set search_path = public as $$
+set search_path = public, pg_temp
+as $$
   select vote_type from public.review_votes
     where review_id = p_review_id and user_id = auth.uid()
     limit 1;
@@ -1730,7 +1751,8 @@ $$;
 
 -- Función para saber el voto del usuario sobre una reseña de inmobiliaria (from 017)
 create or replace function public.get_user_vote_on_real_estate_review (p_real_estate_review_id uuid) returns text language sql stable security invoker
-set search_path = public as $$
+set search_path = public, pg_temp
+as $$
   select vote_type from public.real_estate_review_votes
     where real_estate_review_id = p_real_estate_review_id and user_id = auth.uid()
     limit 1;
@@ -1742,7 +1764,8 @@ comment on function public.get_user_vote_on_real_estate_review is 'Obtiene el vo
 -- FUNCIÓN PARA SABER SI EL USUARIO TIENE UNA REVIEW SEGUN LA ADDRESS
 -- =============================================================================
 create or replace function public.check_user_review_for_address (p_osm_id text) returns uuid language plpgsql stable security invoker
-set search_path = public as $$
+set search_path = public, pg_temp
+as $$
 declare
   v_id uuid;
 begin
@@ -1757,9 +1780,10 @@ $$;
 -- =============================================================================
 
 -- Función para agregar / quitar favorito de reseña (toggle)
-create or replace function toggle_favorite_review (p_review_id uuid) RETURNS json LANGUAGE plpgsql SECURITY INVOKER
-set
-  search_path = public as $$ DECLARE v_user_id uuid;
+create or replace function toggle_favorite_review (p_review_id uuid) RETURNS json LANGUAGE plpgsql SECURITY DEFINER
+set search_path = public, pg_temp
+set row_security = on
+as $$ DECLARE v_user_id uuid;
 
 v_favorite_exists boolean;
 
@@ -1834,8 +1858,8 @@ $$;
 
 -- Función para verificar si una reseña es favorita
 create or replace function is_review_favorite (p_review_id uuid) RETURNS boolean LANGUAGE plpgsql SECURITY INVOKER
-set
-  search_path = public as $$ DECLARE v_user_id uuid;
+set search_path = public, pg_temp
+as $$ DECLARE v_user_id uuid;
 
 BEGIN v_user_id := auth.uid ();
 
@@ -1856,3 +1880,46 @@ RETURN EXISTS (
 END;
 
 $$;
+
+-- =============================================================================
+-- get_review_detail: Review completa con habitaciones e inmobiliaria
+-- SECURITY DEFINER para evitar grants SELECT en tablas auxiliares.
+-- Devuelve el review embebido con rooms y real_estate en un solo JSON,
+-- manteniendo la misma forma que el embedding de PostgREST.
+-- =============================================================================
+create or replace function public.get_review_detail(p_review_id uuid)
+returns json
+language plpgsql
+security definer
+set search_path = public, pg_temp
+set row_security = on
+as $$
+declare
+  v_result json;
+begin
+  select jsonb_set(
+    to_jsonb(r.*),
+    '{review_rooms}',
+    coalesce(
+      (select jsonb_agg(to_jsonb(rm.*) order by rm.created_at)
+       from public.review_rooms rm
+       where rm.review_id = p_review_id),
+      '[]'::jsonb
+    )
+  ) || jsonb_build_object(
+    'real_estates',
+    (select to_jsonb(re.*) from public.real_estates_public re where re.id = r.real_estate_id)
+  ) into v_result
+  from public.reviews_with_votes_public r
+  where r.id = p_review_id;
+
+  if v_result is null then
+    return json_build_object('error', 'Reseña no encontrada');
+  end if;
+
+  return v_result;
+end;
+$$;
+
+comment on function public.get_review_detail is
+  'Retorna review completa con habitaciones e inmobiliaria en un solo JSON. SECURITY DEFINER para evitar grants directos.';

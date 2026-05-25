@@ -20,7 +20,8 @@ create or replace function public.log_security_event (
   p_error_message text default null,
   p_metadata jsonb default null
 ) RETURNS VOID LANGUAGE plpgsql SECURITY INVOKER
-set search_path = public as $function$ BEGIN
+set search_path = public, pg_temp
+as $function$ BEGIN
   INSERT INTO public.security_logs (
     user_id, ip_address, user_agent, endpoint,
     action, status, error_message, metadata, created_at
@@ -66,7 +67,9 @@ comment on index idx_security_logs_suspicious_activity is
 --        la rama UPDATE usaba auth.uid() (quien EJECUTÓ la acción).
 -- Ahora: ambas ramas usan auth.uid() para consistencia en auditoría.
 create or replace function public.log_review_changes () RETURNS TRIGGER LANGUAGE plpgsql SECURITY DEFINER
-set search_path = public as $function$ BEGIN
+set search_path = public, pg_temp
+set row_security = on
+as $function$ BEGIN
   IF (TG_OP = 'UPDATE' AND OLD IS DISTINCT FROM NEW) THEN
     INSERT INTO public.review_audit (
       review_id, old_data, new_data, changed_by, change_type

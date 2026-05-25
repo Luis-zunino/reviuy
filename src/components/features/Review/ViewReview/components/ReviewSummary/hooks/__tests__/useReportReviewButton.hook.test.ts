@@ -2,14 +2,19 @@ import { renderHook, act } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useReportReviewButton } from '../useReportReviewButton.hook';
 
-const { mockMutateAsync, mockValidateText } = vi.hoisted(() => ({
+const { mockMutateAsync, mockSendMessage, mockValidateText } = vi.hoisted(() => ({
   mockMutateAsync: vi.fn(),
+  mockSendMessage: vi.fn(),
   mockValidateText: vi.fn(),
 }));
 
 vi.mock('@/modules/property-reviews/presentation', () => ({
   useReportReview: vi.fn(() => ({ mutateAsync: mockMutateAsync, isPending: false })),
   useHasUserReportedReview: vi.fn(() => ({ data: false })),
+}));
+
+vi.mock('@/modules/moderation/presentation', () => ({
+  useSendReportReviewMessage: vi.fn(() => ({ mutateAsync: mockSendMessage })),
 }));
 
 vi.mock('@/utils/textValidation.util', () => ({

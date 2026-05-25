@@ -18,7 +18,9 @@
 
 create or replace function public.check_review_active (p_review_id uuid)
 returns boolean language sql security definer
-set search_path = public as $$
+set search_path = public, pg_temp
+set row_security = on
+as $$
   select exists (
     select 1 from public.reviews
     where id = p_review_id and deleted_at is null
@@ -27,7 +29,9 @@ $$;
 
 create or replace function public.check_review_owner (p_review_id uuid)
 returns boolean language sql security definer
-set search_path = public as $$
+set search_path = public, pg_temp
+set row_security = on
+as $$
   select exists (
     select 1 from public.reviews
     where id = p_review_id and user_id = auth.uid() and deleted_at is null
@@ -44,8 +48,9 @@ revoke execute on function public.check_review_owner (uuid) from public, anon, a
 -- Diseñada para ejecutarse vía pg_cron o edge function.
 -- =============================================================================
 create or replace function public.cleanup_old_security_logs () returns void language plpgsql security definer
-set
-  search_path = public as $function$ begin -- Retención de 90 días, borrado en lotes para evitar locks largos
+set search_path = public, pg_temp
+set row_security = on
+as $function$ begin -- Retención de 90 días, borrado en lotes para evitar locks largos
 delete from
     public.security_logs
 where
@@ -71,7 +76,7 @@ comment on function public.cleanup_old_security_logs is 'Limpia security_logs co
 -- =============================================================================
 
 -- Nueva estrategia: Cleanup probabilístico (1% de chance por insert)
-create or replace function cleanup_rate_limits_on_insert () RETURNS TRIGGER set search_path = public as $function$ BEGIN
+create or replace function cleanup_rate_limits_on_insert () RETURNS TRIGGER set search_path = public, pg_temp as $function$ BEGIN
 -- Solo limpiar el 1% de las veces (reduce overhead)
 IF random() < 0.01 THEN -- DELETE con LIMIT para evitar locks largos
 DELETE FROM
@@ -97,7 +102,7 @@ END;
 $function$ LANGUAGE plpgsql;
 
 -- Función para actualizar timestamp de updated_at
-create or replace function update_updated_at_column () RETURNS TRIGGER set search_path = public as $function$ BEGIN IF NEW IS DISTINCT FROM OLD THEN
+create or replace function update_updated_at_column () RETURNS TRIGGER set search_path = public, pg_temp as $function$ BEGIN IF NEW IS DISTINCT FROM OLD THEN
     NEW.updated_at = now();
 
 END IF;
@@ -111,7 +116,10 @@ $function$ LANGUAGE plpgsql;
 -- Función para actualizar contadores de inmobiliarias
 -- NOTA: review_count y rating se gestionan exclusivamente por update_real_estate_rating_from_reviews
 -- (trigger en real_estate_reviews). Esta función solo actualiza updated_at cuando cambia real_estate_id.
-create or replace function update_real_estate_counters () RETURNS TRIGGER SECURITY DEFINER set search_path = public as $function$ BEGIN IF (TG_OP = 'INSERT') THEN IF NEW.real_estate_id IS NOT NULL THEN
+create or replace function update_real_estate_counters () RETURNS TRIGGER SECURITY DEFINER
+set search_path = public, pg_temp
+set row_security = on
+as $function$ BEGIN IF (TG_OP = 'INSERT') THEN IF NEW.real_estate_id IS NOT NULL THEN
 UPDATE
     public.real_estates
 SET
@@ -163,7 +171,10 @@ END;
 $function$ LANGUAGE plpgsql;
 
 -- Función para actualizar rating de inmobiliaria basado en sus reseñas
-create or replace function update_real_estate_rating_from_reviews () RETURNS TRIGGER SECURITY DEFINER set search_path = public as $$
+create or replace function update_real_estate_rating_from_reviews () RETURNS TRIGGER SECURITY DEFINER
+set search_path = public, pg_temp
+set row_security = on
+as $$
 BEGIN
     IF (TG_OP = 'INSERT' OR TG_OP = 'UPDATE' OR TG_OP = 'DELETE') THEN
         UPDATE
@@ -203,8 +214,9 @@ $$ LANGUAGE plpgsql;
 -- Función para auditoría completa de cambios en reviews
 -- Con manejo de excepciones para no bloquear operaciones principales
 create or replace function log_review_changes () RETURNS TRIGGER SECURITY DEFINER
-set
-  search_path = public as $function$ BEGIN IF (
+set search_path = public, pg_temp
+set row_security = on
+as $function$ BEGIN IF (
                 TG_OP = 'UPDATE'
             AND OLD IS DISTINCT FROM
                 NEW
@@ -264,8 +276,9 @@ $function$ LANGUAGE plpgsql;
 -- Función para registrar eliminaciones de reviews
 -- Con manejo de excepciones para no bloquear la eliminación de reviews
 create or replace function log_review_deletion () RETURNS TRIGGER LANGUAGE plpgsql SECURITY DEFINER
-set
-  search_path = public as $function$ BEGIN BEGIN INSERT INTO
+set search_path = public, pg_temp
+set row_security = on
+as $function$ BEGIN BEGIN INSERT INTO
     public.review_deletions (
         review_id,
         deleted_by,
@@ -306,8 +319,9 @@ create or replace function moderate_reports (
   p_status text,
   p_moderation_note text default null
 ) RETURNS json LANGUAGE plpgsql SECURITY DEFINER
-set
-  search_path = public as $$
+set search_path = public, pg_temp
+set row_security = on
+as $$
 DECLARE
   v_updated boolean;
 BEGIN
@@ -369,8 +383,9 @@ create or replace function detect_suspicious_activity (p_user_id UUID default nu
   blocked_requests INTEGER,
   suspicious_score INTEGER
 ) LANGUAGE plpgsql SECURITY DEFINER
-set
-  search_path = public as $$ BEGIN IF auth.jwt() ->> 'role' != 'service_role' THEN RAISE EXCEPTION 'Access denied';
+set search_path = public, pg_temp
+set row_security = on
+as $$ BEGIN IF auth.jwt() ->> 'role' != 'service_role' THEN RAISE EXCEPTION 'Access denied';
 
 END IF;
 
@@ -428,8 +443,9 @@ $$;
 -- ⚠️ ADVERTENCIA (F016): Esta función es SECURITY DEFINER con grant a anon + authenticated.
 -- Función para obtener contadores de likes/dislikes en tiempo real
 create or replace function public.get_real_estate_vote_counts (p_real_estate_id uuid) returns table (likes_count bigint, dislikes_count bigint) language plpgsql stable security definer
-set
-  search_path = public as $$ begin return query
+set search_path = public, pg_temp
+set row_security = on
+as $$ begin return query
 select
     coalesce(
         sum(
@@ -466,8 +482,9 @@ $$;
 -- ⚠️ ADVERTENCIA (F016): Esta función es SECURITY DEFINER con grant a anon + authenticated.
 -- Función para obtener contadores de likes/dislikes de reviews en tiempo real
 create or replace function public.get_review_vote_counts (p_review_id uuid) returns table (likes_count bigint, dislikes_count bigint) language plpgsql stable security definer
-set
-  search_path = public as $$ begin return query
+set search_path = public, pg_temp
+set row_security = on
+as $$ begin return query
 select
     coalesce(
         sum(
@@ -504,8 +521,9 @@ $$;
 -- ⚠️ ADVERTENCIA (F016): Esta función es SECURITY DEFINER con grant a anon + authenticated.
 -- Función para obtener contadores de votos de real_estate_reviews en tiempo real
 create or replace function public.get_real_estate_review_vote_counts (p_real_estate_review_id uuid) returns table (likes_count bigint, dislikes_count bigint) language plpgsql stable security definer
-set
-  search_path = public as $$ begin return query
+set search_path = public, pg_temp
+set row_security = on
+as $$ begin return query
 select
     coalesce(
         sum(
@@ -542,8 +560,9 @@ $$;
 
 -- NOTA: Solo se usa vía pg_cron o refresh_all_vote_stats(). No hay triggers que la llamen (ver migración 011).
 create or replace function public.refresh_real_estate_vote_stats () returns trigger language plpgsql security definer
-set
-  search_path = public as $$ begin refresh materialized view concurrently public.real_estate_vote_stats;
+set search_path = public, pg_temp
+set row_security = on
+as $$ begin refresh materialized view concurrently public.real_estate_vote_stats;
 
 return null;
 
@@ -553,8 +572,9 @@ $$;
 
 -- NOTA: Solo se usa vía pg_cron o refresh_all_vote_stats(). No hay triggers que la llamen (ver migración 011).
 create or replace function public.refresh_review_vote_stats () returns trigger language plpgsql security definer
-set
-  search_path = public as $$ begin refresh materialized view concurrently public.review_vote_stats;
+set search_path = public, pg_temp
+set row_security = on
+as $$ begin refresh materialized view concurrently public.review_vote_stats;
 
 return null;
 
@@ -564,8 +584,9 @@ $$;
 
 -- NOTA: Solo se usa vía pg_cron o refresh_all_vote_stats(). No hay triggers que la llamen (ver migración 011).
 create or replace function public.refresh_real_estate_review_vote_stats () returns trigger language plpgsql security definer
-set
-  search_path = public as $$ begin refresh materialized view concurrently public.real_estate_review_vote_stats;
+set search_path = public, pg_temp
+set row_security = on
+as $$ begin refresh materialized view concurrently public.real_estate_review_vote_stats;
 
 return null;
 
@@ -577,8 +598,9 @@ $$;
 -- FUNCIÓN PARA REFRESH DE TODAS LAS MVs DE VOTOS
 -- =============================================================================
 create or replace function public.refresh_all_vote_stats () returns void language plpgsql security definer
-set
-  search_path = public as $$ begin refresh materialized view concurrently public.review_vote_stats;
+set search_path = public, pg_temp
+set row_security = on
+as $$ begin refresh materialized view concurrently public.review_vote_stats;
 
 refresh materialized view concurrently public.real_estate_vote_stats;
 

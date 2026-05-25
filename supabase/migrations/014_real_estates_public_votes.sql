@@ -30,7 +30,14 @@ select
   coalesce((re.created_by = auth.uid ()), false) as is_mine
 from
   public.real_estates re
-  left join public.real_estate_vote_stats stats on re.id = stats.real_estate_id
+  left join lateral (
+    select
+      count(*) filter (where vote_type = 'like') as likes,
+      count(*) filter (where vote_type = 'dislike') as dislikes,
+      count(*) as total_votes
+    from public.real_estate_votes rev
+    where rev.real_estate_id = re.id
+  ) stats on true
 where
   re.deleted_at is null;
 
@@ -48,7 +55,8 @@ create or replace function public.get_real_estates_paginated (
   p_limit int default 50,
   p_offset int default 0
 ) returns setof public.real_estates_public language sql stable security invoker
-set search_path = public as $$
+set search_path = public, pg_temp
+as $$
   select * from public.real_estates_public
   order by created_at desc
   limit least(p_limit, 100)
