@@ -1656,6 +1656,7 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      get_review_detail: { Args: { p_review_id: string }; Returns: Json };
       get_review_vote_counts: {
         Args: { p_review_id: string };
         Returns: {

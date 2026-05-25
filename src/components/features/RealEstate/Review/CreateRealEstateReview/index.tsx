@@ -18,7 +18,7 @@ export const CreateRealEstateReview = () => {
       title={`Escribir reseña para ${realEstate?.name}`}
       subtitle="Comparte tu experiencia con esta inmobiliaria"
       isLoading={isLoading}
-      error={!realEstate}
+      error={!realEstate && !isLoading}
     />
   );
 };

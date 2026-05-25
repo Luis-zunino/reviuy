@@ -1,4 +1,3 @@
-import { randomUUID } from 'node:crypto';
 import { createError, handleSupabaseError } from '@/lib/errors';
 import type { createSupabaseServerClient } from '@/lib/supabase/server';
 import type {
@@ -67,58 +66,35 @@ export class SupabasePropertyReviewCommandRepository implements PropertyReviewCo
       throw createError('UNAUTHORIZED');
     }
 
-    const { data: rateLimitAllowed } = await this.supabase.rpc('check_rate_limit', {
-      p_endpoint: 'create_review',
-      p_max_requests: 5,
-      p_window_minutes: 10,
+    const { data: rpcResult, error: rpcError } = await this.supabase.rpc('create_review', {
+      p_title: reviewData.title,
+      p_description: reviewData.description,
+      p_rating: reviewData.rating,
+      p_address_text: reviewData.address_text,
+      p_address_osm_id: reviewData.address_osm_id,
+      p_latitude: reviewData.latitude,
+      p_longitude: reviewData.longitude,
+      p_real_estate_id: reviewData.real_estate_id ?? null,
+      p_property_type: reviewData.property_type ?? null,
+      p_zone_rating: reviewData.zone_rating ?? null,
+      p_winter_comfort: reviewData.winter_comfort ?? null,
+      p_summer_comfort: reviewData.summer_comfort ?? null,
+      p_humidity: reviewData.humidity ?? null,
+      p_real_estate_experience: reviewData.real_estate_experience ?? null,
+      p_apartment_number: reviewData.apartment_number ?? null,
+      p_review_rooms:
+        review_rooms && review_rooms.length > 0 ? JSON.parse(JSON.stringify(review_rooms)) : null,
     });
 
-    if (rateLimitAllowed === false) {
-      throw createError('RATE_LIMIT', 'Demasiadas reseñas. Intenta más tarde.');
+    if (rpcError) {
+      throw handleSupabaseError(rpcError);
     }
 
-    // Generar UUID client-side para no necesitar RETURNING
-    const reviewId = randomUUID();
-
-    const { error: insertError } = await this.supabase.from('reviews').insert({
-      id: reviewId,
-      user_id: user.id,
-      title: reviewData.title,
-      description: reviewData.description,
-      rating: reviewData.rating,
-      address_text: reviewData.address_text,
-      address_osm_id: reviewData.address_osm_id,
-      latitude: reviewData.latitude,
-      longitude: reviewData.longitude,
-      real_estate_id: reviewData.real_estate_id ?? null,
-      property_type: reviewData.property_type ?? null,
-      zone_rating: reviewData.zone_rating ?? null,
-      winter_comfort: reviewData.winter_comfort ?? null,
-      summer_comfort: reviewData.summer_comfort ?? null,
-      humidity: reviewData.humidity ?? null,
-      real_estate_experience: reviewData.real_estate_experience ?? null,
-      apartment_number: reviewData.apartment_number ?? null,
-    });
-
-    if (insertError) {
-      throw handleSupabaseError(insertError);
+    if (!rpcResult.success) {
+      throw createError('VALIDATION_ERROR', rpcResult.error ?? rpcResult.message);
     }
 
-    if (review_rooms && review_rooms.length > 0) {
-      const { error: roomsError } = await this.supabase.from('review_rooms').insert(
-        review_rooms.map((room) => ({
-          review_id: reviewId,
-          room_type: room.room_type,
-          area_m2: room.area_m2,
-        }))
-      );
-
-      if (roomsError) {
-        // Rollback vía RPC (SECURITY DEFINER, maneja ownership y SELECT revocado)
-        await this.supabase.rpc('delete_review_safe', { review_id_param: reviewId });
-        throw handleSupabaseError(roomsError);
-      }
-    }
+    const reviewId = rpcResult.review_id;
 
     // Leer datos creados desde la vista pública
     const { data: insertedReview, error: fetchReviewError } = await this.supabase
@@ -130,7 +106,6 @@ export class SupabasePropertyReviewCommandRepository implements PropertyReviewCo
     const insertedRooms = await fetchReviewRooms(this.supabase, reviewId);
 
     if (fetchReviewError) {
-      // La review se creó pero no se pudo leer → devolver con datos mínimos
       return {
         success: true,
         message:
@@ -152,10 +127,10 @@ export class SupabasePropertyReviewCommandRepository implements PropertyReviewCo
           winter_comfort: reviewData.winter_comfort ?? null,
           summer_comfort: reviewData.summer_comfort ?? null,
           humidity: reviewData.humidity ?? null,
+          real_estate_experience: reviewData.real_estate_experience ?? null,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
           apartment_number: reviewData.apartment_number ?? null,
-          real_estate_experience: reviewData.real_estate_experience ?? null,
           review_rooms: insertedRooms,
         },
       };

@@ -226,7 +226,8 @@ select
 -- Obtener el voto del usuario actual en una review
 -- =============================================================================
 create or replace function public.get_user_vote_on_review (p_review_id uuid) returns text language sql stable security invoker
-set search_path = public as $$
+set search_path = public, pg_temp
+as $$
   select vote_type from public.review_votes
     where review_id = p_review_id and user_id = auth.uid()
     limit 1;
@@ -241,7 +242,8 @@ grant execute on function public.get_user_vote_on_review (uuid) to authenticated
 -- Obtener el voto del usuario actual en una reseña de inmobiliaria
 -- =============================================================================
 create or replace function public.get_user_vote_on_real_estate_review (p_real_estate_review_id uuid) returns text language sql stable security invoker
-set search_path = public as $$
+set search_path = public, pg_temp
+as $$
   select vote_type from public.real_estate_review_votes
     where real_estate_review_id = p_real_estate_review_id and user_id = auth.uid()
     limit 1;
@@ -260,7 +262,8 @@ create or replace function public.get_reviews_paginated (
   p_limit int default 50,
   p_offset int default 0
 ) returns setof public.reviews_public language sql stable security invoker
-set search_path = public as $$
+set search_path = public, pg_temp
+as $$
   select * from public.reviews_public
   order by created_at desc
   limit least(p_limit, 100)
@@ -274,7 +277,8 @@ create or replace function public.get_reviews_with_votes_paginated (
   p_limit int default 50,
   p_offset int default 0
 ) returns setof public.reviews_with_votes_public language sql stable security invoker
-set search_path = public as $$
+set search_path = public, pg_temp
+as $$
   select * from public.reviews_with_votes_public
   order by created_at desc
   limit least(p_limit, 100)
@@ -288,7 +292,8 @@ create or replace function public.get_real_estates_paginated (
   p_limit int default 50,
   p_offset int default 0
 ) returns setof public.real_estates_public language sql stable security invoker
-set search_path = public as $$
+set search_path = public, pg_temp
+as $$
   select * from public.real_estates_public
   order by created_at desc
   limit least(p_limit, 100)
@@ -303,7 +308,8 @@ create or replace function public.get_real_estate_reviews_paginated (
   p_limit int default 50,
   p_offset int default 0
 ) returns setof public.real_estate_reviews_with_votes_public language sql stable security invoker
-set search_path = public as $$
+set search_path = public, pg_temp
+as $$
   select * from public.real_estate_reviews_with_votes_public
   where real_estate_id = p_real_estate_id
   order by created_at desc

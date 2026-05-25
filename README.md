@@ -120,7 +120,7 @@ Estado actual resumido:
 
 La capa legacy src/services fue retirada por completo. Los imports ahora apuntan directo a modulos, shared o constants segun corresponda.
 
-Ver detalle en [src/modules/README.md](src/modules/README.md) y [docs/architecture/MIGRATION_PLAN_TOWARD_TARGET_ARCHITECTURE.md](docs/architecture/MIGRATION_PLAN_TOWARD_TARGET_ARCHITECTURE.md).
+Ver detalle en [src/modules/README.md](src/modules/README.md) y [docs/architecture.md](docs/architecture.md).
 
 ## Documentacion
 
@@ -129,7 +129,7 @@ Ver detalle en [src/modules/README.md](src/modules/README.md) y [docs/architectu
 - Variables de entorno: [.env.example](.env.example)
 - Seguridad: [security.readme.md](security.readme.md)
 - Rate limiting: [docs/security/RATE_LIMITING_IMPLEMENTATION.md](docs/security/RATE_LIMITING_IMPLEMENTATION.md)
-- Mejoras de arquitectura: [docs/architecture/ARCHITECTURE_IMPROVEMENTS.md](docs/architecture/ARCHITECTURE_IMPROVEMENTS.md)
+- Arquitectura: [docs/architecture.md](docs/architecture.md)
 - Estado de modulos: [src/modules/README.md](src/modules/README.md)
 - Despliegue por entorno: [docs/operations/DEPLOYMENT.md](docs/operations/DEPLOYMENT.md)
 - Branching y releases: [docs/process/BRANCHING_AND_RELEASES.md](docs/process/BRANCHING_AND_RELEASES.md)
