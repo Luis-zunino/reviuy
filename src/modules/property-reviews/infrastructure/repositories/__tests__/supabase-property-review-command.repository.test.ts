@@ -152,9 +152,10 @@ describe('SupabasePropertyReviewCommandRepository', () => {
         callCount++;
         // Call 1: RPC create_review → error
         if (callCount === 1) {
-          return Promise.resolve({ data: null, error: { message: 'RPC failed', code: 'PGRST116' } }).then(
-            onfulfilled
-          );
+          return Promise.resolve({
+            data: null,
+            error: { message: 'RPC failed', code: 'PGRST116' },
+          }).then(onfulfilled);
         }
         return origThen.call(errorBuilder, onfulfilled);
       };
