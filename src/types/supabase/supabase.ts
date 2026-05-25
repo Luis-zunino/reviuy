@@ -6,31 +6,6 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: '14.1';
   };
-  graphql_public: {
-    Tables: {
-      [_ in never]: never;
-    };
-    Views: {
-      [_ in never]: never;
-    };
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json;
-          operationName?: string;
-          query?: string;
-          variables?: Json;
-        };
-        Returns: Json;
-      };
-    };
-    Enums: {
-      [_ in never]: never;
-    };
-    CompositeTypes: {
-      [_ in never]: never;
-    };
-  };
   public: {
     Tables: {
       rate_limits: {
@@ -1545,6 +1520,10 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      delete_real_estate_review_safe: {
+        Args: { p_review_id: string };
+        Returns: Json;
+      };
       delete_review_safe: {
         Args: { review_id_param: string };
         Returns: boolean;
@@ -1867,15 +1846,31 @@ export type Database = {
         };
       };
       toggle_favorite_review: { Args: { p_review_id: string }; Returns: Json };
+      update_real_estate_review: {
+        Args: {
+          p_description?: string;
+          p_rating?: number;
+          p_review_id: string;
+          p_title?: string;
+        };
+        Returns: Json;
+      };
       update_review: {
         Args: {
-          p_description: string;
+          p_address_osm_id?: string;
+          p_address_text?: string;
+          p_apartment_number?: string;
+          p_description?: string;
           p_humidity?: string;
+          p_latitude?: number;
+          p_longitude?: number;
           p_property_type?: string;
-          p_rating: number;
+          p_rating?: number;
+          p_real_estate_experience?: string;
+          p_real_estate_id?: string;
           p_review_id: string;
           p_summer_comfort?: string;
-          p_title: string;
+          p_title?: string;
           p_winter_comfort?: string;
           p_zone_rating?: number;
         };
@@ -2147,9 +2142,6 @@ export type CompositeTypes<
     : never;
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {},
   },

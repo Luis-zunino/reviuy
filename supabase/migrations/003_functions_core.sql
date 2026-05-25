@@ -1,13 +1,15 @@
 -- =============================================================================
--- MIGRACIÓN 003: FUNCIONES CORE (SECURITY INVOKER)
+-- MIGRACIÓN 003: FUNCIONES CORE
 -- =============================================================================
--- Este archivo agrupa TODAS las funciones SECURITY INVOKER del sistema.
+-- Este archivo agrupa las funciones RPC del sistema.
 --  
--- SECURITY INVOKER significa que la función se ejecuta con permisos del 
--- usuario que la llama, respetando RLS y grants. Es el estándar del proyecto.
+-- SECURITY INVOKER es el estándar del proyecto. Sin embargo, las funciones que
+-- hacen UPDATE o DELETE en tablas raw (reviews, real_estates, real_estate_reviews)
+-- son SECURITY DEFINER porque PostgreSQL requiere SELECT para esas operaciones,
+-- y SELECT fue revocado de authenticated en migración 007.
 --  
--- Las funciones leen de las vistas _public (migración 009) porque SELECT
--- está revocado en tablas raw (migración 007).
+-- Las funciones leen de las vistas _public (migración 009) para verificar
+-- ownership, y ejecutan UPDATE/DELETE solo después de validar is_mine.
 -- =============================================================================
 
 -- =============================================================================
@@ -504,7 +506,8 @@ END;
 $function$;
 
 -- Función para eliminar una reseña de forma segura
-create or replace function delete_review_safe (review_id_param uuid) RETURNS boolean LANGUAGE plpgsql SECURITY INVOKER
+-- SECURITY DEFINER porque UPDATE en PostgreSQL requiere SELECT (revocado en 007).
+create or replace function delete_review_safe (review_id_param uuid) RETURNS boolean LANGUAGE plpgsql SECURITY DEFINER
 set
   search_path = public as $function$ DECLARE v_is_mine boolean;
 
@@ -551,7 +554,7 @@ UPDATE
 SET
     deleted_at = NOW()
 WHERE
-    id = review_id_param;
+    id = review_id_param AND created_by = current_user_id;
 
 -- Registrar la eliminación en auditoría manualmente
 -- (el trigger BEFORE DELETE ya no se dispara con soft delete)
@@ -620,137 +623,121 @@ END;
 
 $function$;
 
--- Función para actualizar una reseña 
-create or replace function public.update_review (
+-- =============================================================================
+-- update_review: función RPC para actualizar reseñas
+-- SECURITY DEFINER → corre como postgres, necesario porque UPDATE en PostgreSQL
+-- requiere SELECT (revocado de authenticated en 007_grants.sql).
+-- La seguridad está en la verificación explícita de ownership vía is_mine.
+-- Se llama via supabase.rpc() → bypasea RETURNING * de PostgREST
+-- Todos los parámetros tienen default null; el UPDATE usa COALESCE para
+-- actualización parcial (solo cambia lo que se pasa explícitamente).
+-- =============================================================================
+create or replace function public.update_review(
   p_review_id UUID,
-  p_title TEXT,
-  p_description TEXT,
-  p_rating INTEGER,
+  p_title TEXT default null,
+  p_description TEXT default null,
+  p_rating INTEGER default null,
   p_property_type TEXT default null,
+  p_address_text TEXT default null,
+  p_address_osm_id TEXT default null,
+  p_latitude NUMERIC default null,
+  p_longitude NUMERIC default null,
   p_zone_rating INTEGER default null,
   p_winter_comfort TEXT default null,
   p_summer_comfort TEXT default null,
-  p_humidity TEXT default null
-) RETURNS json LANGUAGE plpgsql SECURITY INVOKER
+  p_humidity TEXT default null,
+  p_real_estate_id UUID default null,
+  p_real_estate_experience TEXT default null,
+  p_apartment_number TEXT default null
+) RETURNS json
+LANGUAGE plpgsql
+SECURITY DEFINER
 set
-  search_path = public as $function$ DECLARE v_user_id UUID;
+  search_path = public
+AS $function$
+DECLARE
+  v_user_id UUID;
+  v_is_mine boolean;
+BEGIN
+  -- ===========================================================================
+  -- 1. Autenticación
+  -- ===========================================================================
+  v_user_id := auth.uid();
+  IF v_user_id IS NULL THEN
+    RETURN json_build_object('success', false, 'error', 'Usuario no autenticado');
+  END IF;
 
+  -- ===========================================================================
+  -- 2. Rate limiting: máx 10 actualizaciones por hora
+  -- ===========================================================================
+  IF NOT check_rate_limit('update_review', 10, 60) THEN
+    RETURN json_build_object(
+      'success', false,
+      'error', 'Límite de actualizaciones alcanzado. Intenta nuevamente en una hora.'
+    );
+  END IF;
 
-v_is_mine boolean;
+  -- ===========================================================================
+  -- 3. Verificar existencia y ownership
+  -- ===========================================================================
+  SELECT is_mine INTO v_is_mine
+  FROM public.reviews_public
+  WHERE id = p_review_id;
 
-BEGIN -- Usuario autenticado
-v_user_id := auth.uid();
+  IF NOT FOUND THEN
+    RETURN json_build_object('success', false, 'error', 'La reseña no existe');
+  END IF;
 
-IF v_user_id IS NULL THEN RETURN json_build_object(
-    'success',
-    false,
-    'error',
-    'Usuario no autenticado'
-);
+  IF NOT v_is_mine THEN
+    RETURN json_build_object('success', false, 'error', 'No tienes permisos para editar esta reseña');
+  END IF;
 
-END IF;
+  -- ===========================================================================
+  -- 4. Validación de campos (solo si fueron provistos)
+  -- ===========================================================================
+  IF p_title IS NOT NULL AND char_length(trim(p_title)) = 0 THEN
+    RETURN json_build_object('success', false, 'error', 'El título no puede estar vacío');
+  END IF;
 
--- Rate limiting: máx 10 actualizaciones por hora
--- Motivo: check_rate_limit recibe minutos; 60 = 1 hora real.
-IF NOT check_rate_limit('update_review', 10, 60) THEN RETURN json_build_object(
-    'success',
-    false,
-    'error',
-    'Límite de actualizaciones alcanzado. Intenta nuevamente en una hora.'
-);
+  IF p_description IS NOT NULL AND char_length(trim(p_description)) = 0 THEN
+    RETURN json_build_object('success', false, 'error', 'La descripción no puede estar vacía');
+  END IF;
 
-END IF;
+  IF p_rating IS NOT NULL AND (p_rating < 1 OR p_rating > 5) THEN
+    RETURN json_build_object('success', false, 'error', 'La calificación debe estar entre 1 y 5');
+  END IF;
 
--- Verificar existencia y ownership
-SELECT
-    is_mine INTO v_is_mine
-FROM
-    public.reviews_public
-WHERE
-    id = p_review_id;
-
-IF NOT FOUND THEN RETURN json_build_object(
-    'success',
-    false,
-    'error',
-    'La reseña no existe'
-);
-
-END IF;
-
-IF NOT v_is_mine THEN RETURN json_build_object(
-    'success',
-    false,
-    'error',
-    'No tienes permisos para editar esta reseña'
-);
-
-END IF;
-
-IF p_title IS NULL
-OR char_length(trim(p_title)) = 0 THEN RETURN json_build_object(
-    'success',
-    false,
-    'error',
-    'El título no puede estar vacío'
-);
-
-END IF;
-
-IF p_description IS NULL
-OR char_length(trim(p_description)) = 0 THEN RETURN json_build_object(
-    'success',
-    false,
-    'error',
-    'La descripción no puede estar vacía'
-);
-
-END IF;
-
-IF p_rating IS NULL
-OR p_rating < 1
-OR p_rating > 5 THEN RETURN json_build_object(
-    'success',
-    false,
-    'error',
-    'La calificación debe estar entre 1 y 5'
-);
-
-END IF;
-
--- Actualización
-UPDATE
-    public.reviews
-SET
-    title = p_title,
-    description = p_description,
-    rating = p_rating,
+  -- ===========================================================================
+  -- 5. Actualización (COALESCE mantiene valores existentes si el parámetro es NULL)
+  -- ===========================================================================
+  UPDATE public.reviews SET
+    title = COALESCE(p_title, title),
+    description = COALESCE(p_description, description),
+    rating = COALESCE(p_rating, rating),
     property_type = COALESCE(p_property_type, property_type),
+    address_text = COALESCE(p_address_text, address_text),
+    address_osm_id = COALESCE(p_address_osm_id, address_osm_id),
+    latitude = COALESCE(p_latitude, latitude),
+    longitude = COALESCE(p_longitude, longitude),
     zone_rating = COALESCE(p_zone_rating, zone_rating),
     winter_comfort = COALESCE(p_winter_comfort, winter_comfort),
     summer_comfort = COALESCE(p_summer_comfort, summer_comfort),
     humidity = COALESCE(p_humidity, humidity),
+    real_estate_id = COALESCE(p_real_estate_id, real_estate_id),
+    real_estate_experience = COALESCE(p_real_estate_experience, real_estate_experience),
+    apartment_number = COALESCE(p_apartment_number, apartment_number),
     updated_at = now()
-WHERE
-    id = p_review_id;
+  WHERE id = p_review_id AND created_by = v_user_id;
 
-RETURN json_build_object(
-    'success',
-    true,
-    'message',
-    'Reseña actualizada exitosamente'
-);
+  RETURN json_build_object('success', true, 'message', 'Reseña actualizada exitosamente');
 
+  -- ===========================================================================
+  -- 6. Manejo de errores inesperados
+  -- ===========================================================================
 EXCEPTION
-WHEN OTHERS THEN RETURN json_build_object(
-    'success',
-    false,
-    'error',
-    'Error interno del servidor'
-);
-
+  WHEN OTHERS THEN
+    RETURN json_build_object('success', false, 'error', SQLERRM, 'sqlstate', SQLSTATE);
 END;
-
 $function$;
 
 -- =============================================================================
@@ -1047,10 +1034,101 @@ RETURN json_build_object('success', TRUE, 'review_id', v_review_id, 'message', '
 
 EXCEPTION
     WHEN OTHERS THEN
-        RETURN json_build_object('success', FALSE, 'error', 'Error interno del servidor');
+        RETURN json_build_object('success', FALSE, 'error', SQLERRM, 'sqlstate', SQLSTATE);
 
 END;
+$$;
 
+-- =============================================================================
+-- update_real_estate_review: actualizar reseña de inmobiliaria
+-- SECURITY DEFINER porque UPDATE en PostgreSQL requiere SELECT (revocado en 007)
+-- =============================================================================
+create or replace function public.update_real_estate_review(
+  p_review_id UUID,
+  p_title TEXT default null,
+  p_description TEXT default null,
+  p_rating INTEGER default null
+) RETURNS json
+LANGUAGE plpgsql
+SECURITY DEFINER
+set search_path = public
+AS $$
+DECLARE
+  v_user_id UUID;
+  v_is_mine boolean;
+BEGIN
+  v_user_id := auth.uid();
+  IF v_user_id IS NULL THEN
+    RETURN json_build_object('success', false, 'error', 'Usuario no autenticado');
+  END IF;
+  IF NOT check_rate_limit('update_real_estate_review', 10, 60) THEN
+    RETURN json_build_object('success', false, 'error', 'Límite de actualizaciones alcanzado');
+  END IF;
+  SELECT is_mine INTO v_is_mine
+  FROM public.real_estate_reviews_public
+  WHERE id = p_review_id;
+  IF NOT FOUND THEN
+    RETURN json_build_object('success', false, 'error', 'La reseña no existe');
+  END IF;
+  IF NOT v_is_mine THEN
+    RETURN json_build_object('success', false, 'error', 'No tienes permisos para editar esta reseña');
+  END IF;
+  IF p_title IS NOT NULL AND char_length(trim(p_title)) = 0 THEN
+    RETURN json_build_object('success', false, 'error', 'El título no puede estar vacío');
+  END IF;
+  IF p_description IS NOT NULL AND char_length(trim(p_description)) = 0 THEN
+    RETURN json_build_object('success', false, 'error', 'La descripción no puede estar vacía');
+  END IF;
+  IF p_rating IS NOT NULL AND (p_rating < 1 OR p_rating > 5) THEN
+    RETURN json_build_object('success', false, 'error', 'La calificación debe estar entre 1 y 5');
+  END IF;
+  UPDATE public.real_estate_reviews SET
+    title = COALESCE(p_title, title),
+    description = COALESCE(p_description, description),
+    rating = COALESCE(p_rating, rating),
+    updated_at = now()
+  WHERE id = p_review_id AND created_by = v_user_id;
+  RETURN json_build_object('success', true, 'message', 'Reseña actualizada exitosamente');
+EXCEPTION
+  WHEN OTHERS THEN
+    RETURN json_build_object('success', false, 'error', SQLERRM, 'sqlstate', SQLSTATE);
+END;
+$$;
+
+-- =============================================================================
+-- delete_real_estate_review_safe: soft delete de reseña de inmobiliaria
+-- SECURITY DEFINER porque DELETE en PostgreSQL requiere SELECT (revocado en 007)
+-- =============================================================================
+create or replace function public.delete_real_estate_review_safe(p_review_id UUID)
+RETURNS json
+LANGUAGE plpgsql
+SECURITY DEFINER
+set search_path = public
+AS $$
+DECLARE
+  v_user_id UUID;
+  v_is_mine boolean;
+BEGIN
+  v_user_id := auth.uid();
+  IF v_user_id IS NULL THEN
+    RETURN json_build_object('success', false, 'error', 'Usuario no autenticado');
+  END IF;
+  SELECT is_mine INTO v_is_mine
+  FROM public.real_estate_reviews_public
+  WHERE id = p_review_id;
+  IF NOT FOUND THEN
+    RETURN json_build_object('success', false, 'error', 'La reseña no existe');
+  END IF;
+  IF NOT v_is_mine THEN
+    RETURN json_build_object('success', false, 'error', 'No tienes permisos para eliminar esta reseña');
+  END IF;
+  UPDATE public.real_estate_reviews SET deleted_at = now()
+  WHERE id = p_review_id AND created_by = v_user_id;
+  RETURN json_build_object('success', true, 'message', 'Reseña eliminada exitosamente');
+EXCEPTION
+  WHEN OTHERS THEN
+    RETURN json_build_object('success', false, 'error', SQLERRM, 'sqlstate', SQLSTATE);
+END;
 $$;
 
 -- Función para votar reseñas de inmobiliarias
@@ -1207,7 +1285,7 @@ set
 
 v_real_estate_id uuid;
 
-BEGIN -- Obtener el ID del usuario autenticado
+BEGIN
 v_user_id := auth.uid ();
 
 IF v_user_id IS NULL THEN RETURN json_build_object(
@@ -1267,7 +1345,9 @@ WHEN OTHERS THEN RETURN json_build_object(
     'success',
     FALSE,
     'error',
-    'Error interno del servidor'
+    SQLERRM,
+    'sqlstate',
+    SQLSTATE
 );
 
 END;

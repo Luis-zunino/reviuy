@@ -55,15 +55,40 @@ describe('SupabaseRealEstateCommandRepository', () => {
   });
 
   describe('create', () => {
-    it('creates a real estate successfully', async () => {
-      const created = { id: 're-1', name: 'Edificio Test', created_by: 'user-1' };
-      mockBuilder = createMockBuilder(created);
-      mockSupabase.from.mockReturnValue(mockBuilder);
+    it('creates a real estate successfully via RPC', async () => {
+      const rpcResult = {
+        success: true,
+        id: 're-1',
+        message: 'Inmobiliaria creada exitosamente',
+      };
+      const publicEstate = {
+        id: 're-1',
+        name: 'Edificio Test',
+        description: null,
+        review_count: 0,
+        rating: 0,
+        created_at: '2024-01-01T00:00:00Z',
+        updated_at: '2024-01-01T00:00:00Z',
+        is_mine: true,
+      };
+
+      const rpcBuilder = createMockBuilder(rpcResult);
+      mockSupabase.rpc.mockReturnValue(rpcBuilder);
+
+      const publicBuilder = createMockBuilder(publicEstate);
+      mockSupabase.from.mockReturnValue(publicBuilder);
 
       const result = await repository.create({ real_estate_name: 'Edificio Test' });
 
-      expect(result).toEqual(created);
-      expect(mockSupabase.from).toHaveBeenCalledWith('real_estates');
+      expect(result).toMatchObject({
+        id: 're-1',
+        name: 'Edificio Test',
+        created_by: 'user-1',
+      });
+      expect(mockSupabase.rpc).toHaveBeenCalledWith('create_real_estate', {
+        p_name: 'Edificio Test',
+      });
+      expect(mockSupabase.from).toHaveBeenCalledWith('real_estates_public');
     });
 
     it('throws UNAUTHORIZED when no user', async () => {
@@ -74,11 +99,11 @@ describe('SupabaseRealEstateCommandRepository', () => {
       );
     });
 
-    it('throws on insert error', async () => {
+    it('throws on RPC error', async () => {
       const errorBuilder = createMockBuilder(null);
       errorBuilder.then = (onfulfilled: any) =>
-        Promise.resolve({ data: null, error: { message: 'Insert failed' } }).then(onfulfilled);
-      mockSupabase.from.mockReturnValue(errorBuilder);
+        Promise.resolve({ data: null, error: { message: 'RPC error' } }).then(onfulfilled);
+      mockSupabase.rpc.mockReturnValue(errorBuilder);
 
       await expect(repository.create({ real_estate_name: 'Test' })).rejects.toThrow();
     });
@@ -167,9 +192,17 @@ describe('SupabaseRealEstateCommandRepository', () => {
       updated_at: '2024-01-01',
     };
 
-    it('creates a review successfully', async () => {
-      mockBuilder = createMockBuilder(createdReview);
-      mockSupabase.from.mockReturnValue(mockBuilder);
+    it('creates a review successfully via RPC', async () => {
+      const rpcResult = {
+        success: true,
+        review_id: 'rev-1',
+        message: 'Reseña de inmobiliaria creada exitosamente',
+      };
+      const rpcBuilder = createMockBuilder(rpcResult);
+      mockSupabase.rpc.mockReturnValue(rpcBuilder);
+
+      const publicBuilder = createMockBuilder(createdReview);
+      mockSupabase.from.mockReturnValue(publicBuilder);
 
       const result = await repository.createReview({
         ...reviewInput,
@@ -178,10 +211,44 @@ describe('SupabaseRealEstateCommandRepository', () => {
 
       expect(result.success).toBe(true);
       expect(result.data?.id).toBe('rev-1');
+      expect(mockSupabase.rpc).toHaveBeenCalledWith('create_real_estate_review', {
+        p_real_estate_id: 're-1',
+        p_title: 'Great building',
+        p_description: 'Loved it',
+        p_rating: 5,
+      });
+      expect(mockSupabase.from).toHaveBeenCalledWith('real_estate_reviews_public');
     });
 
-    it('returns UNAUTHORIZED when no user', async () => {
-      mockSupabase.auth.getUser.mockResolvedValue({ data: { user: null }, error: null });
+    it('returns fallback data when public view fetch fails', async () => {
+      const rpcResult = {
+        success: true,
+        review_id: 'rev-1',
+        message: 'Reseña de inmobiliaria creada exitosamente',
+      };
+      const rpcBuilder = createMockBuilder(rpcResult);
+      mockSupabase.rpc.mockReturnValue(rpcBuilder);
+
+      // La vista pública falla → debe devolver fallback con datos del input
+      const errorBuilder = createMockBuilder(null);
+      errorBuilder.then = (onfulfilled: any) =>
+        Promise.resolve({ data: null, error: { message: 'Not found' } }).then(onfulfilled);
+      mockSupabase.from.mockReturnValue(errorBuilder);
+
+      const result = await repository.createReview({
+        ...reviewInput,
+        real_estate_id: 're-1',
+      });
+
+      expect(result.success).toBe(true);
+      expect(result.data?.id).toBe('rev-1');
+      expect(result.data?.title).toBe('Great building');
+    });
+
+    it('returns error when RPC returns success: false (e.g. unauthenticated)', async () => {
+      const rpcResult = { success: false, error: 'Usuario no autenticado' };
+      const rpcBuilder = createMockBuilder(rpcResult);
+      mockSupabase.rpc.mockReturnValue(rpcBuilder);
 
       const result = await repository.createReview({
         ...reviewInput,
@@ -189,14 +256,14 @@ describe('SupabaseRealEstateCommandRepository', () => {
       });
 
       expect(result.success).toBe(false);
-      expect(result.error).toBe('UNAUTHORIZED');
+      expect(result.error).toBe('Usuario no autenticado');
     });
 
-    it('throws on insert error', async () => {
+    it('throws on RPC error', async () => {
       const errorBuilder = createMockBuilder(null);
       errorBuilder.then = (onfulfilled: any) =>
-        Promise.resolve({ data: null, error: { message: 'Insert failed' } }).then(onfulfilled);
-      mockSupabase.from.mockReturnValue(errorBuilder);
+        Promise.resolve({ data: null, error: { message: 'RPC error' } }).then(onfulfilled);
+      mockSupabase.rpc.mockReturnValue(errorBuilder);
 
       await expect(
         repository.createReview({
@@ -210,6 +277,7 @@ describe('SupabaseRealEstateCommandRepository', () => {
   describe('updateReview', () => {
     const updatedReview = {
       id: 'rev-1',
+      real_estate_id: 're-1',
       title: 'Updated title',
       description: 'Better now',
       rating: 4,
@@ -218,6 +286,14 @@ describe('SupabaseRealEstateCommandRepository', () => {
     };
 
     it('updates a review successfully', async () => {
+      // RPC (SECURITY DEFINER) → success
+      const rpcBuilder = createMockBuilder({
+        success: true,
+        message: 'Reseña actualizada exitosamente',
+      });
+      mockSupabase.rpc.mockReturnValue(rpcBuilder);
+
+      // SELECT desde real_estate_reviews_public → datos actualizados
       mockBuilder = createMockBuilder(updatedReview);
       mockSupabase.from.mockReturnValue(mockBuilder);
 
@@ -230,6 +306,13 @@ describe('SupabaseRealEstateCommandRepository', () => {
 
       expect(result.success).toBe(true);
       expect(result.data?.title).toBe('Updated title');
+      expect(mockSupabase.rpc).toHaveBeenCalledWith('update_real_estate_review', {
+        p_review_id: 'rev-1',
+        p_title: 'Updated title',
+        p_description: 'Better now',
+        p_rating: 4,
+      });
+      expect(mockSupabase.from).toHaveBeenLastCalledWith('real_estate_reviews_public');
     });
 
     it('returns UNAUTHORIZED when no user', async () => {
@@ -244,15 +327,15 @@ describe('SupabaseRealEstateCommandRepository', () => {
       expect(result.error).toBe('UNAUTHORIZED');
     });
 
-    it('throws on update error', async () => {
+    it('throws on RPC error', async () => {
       const errorBuilder = createMockBuilder(null);
       errorBuilder.then = (onfulfilled: any) =>
         Promise.resolve({ data: null, error: { message: 'Update failed' } }).then(onfulfilled);
-      mockSupabase.from.mockReturnValue(errorBuilder);
+      mockSupabase.rpc.mockReturnValue(errorBuilder);
 
       await expect(
         repository.updateReview({
-          reviewId: 'rev-1',
+          reviewId: 'review-1',
           title: 'Updated',
         })
       ).rejects.toThrow();
@@ -260,15 +343,16 @@ describe('SupabaseRealEstateCommandRepository', () => {
   });
 
   describe('deleteReview', () => {
-    const existingReview = { id: 'rev-1', user_id: 'user-1', title: 'Test review' };
-
     it('deletes a review successfully', async () => {
-      mockBuilder = createMockBuilder(existingReview, null);
+      const publicReview = { id: 'rev-1', title: 'Test review', is_mine: true };
+      // Primero real_estate_reviews_public → dueño, luego delete → null
+      mockBuilder = createMockBuilder(publicReview, null);
       mockSupabase.from.mockReturnValue(mockBuilder);
 
       const result = await repository.deleteReview({ reviewId: 'rev-1' });
 
       expect(result.success).toBe(true);
+      expect(mockSupabase.from).toHaveBeenNthCalledWith(1, 'real_estate_reviews_public');
     });
 
     it('returns UNAUTHORIZED when no user', async () => {
@@ -300,7 +384,7 @@ describe('SupabaseRealEstateCommandRepository', () => {
     });
 
     it('returns FORBIDDEN when user does not own review', async () => {
-      const otherReview = { id: 'rev-2', user_id: 'other-user', title: 'Test' };
+      const otherReview = { id: 'rev-2', is_mine: false };
       mockBuilder = createMockBuilder(otherReview);
       mockSupabase.from.mockReturnValue(mockBuilder);
 
@@ -311,19 +395,14 @@ describe('SupabaseRealEstateCommandRepository', () => {
     });
 
     it('throws on delete error', async () => {
-      const errorBuilder = createMockBuilder(existingReview);
-      const origThen = errorBuilder.then;
-      let callCount = 0;
-      errorBuilder.then = (onfulfilled: any) => {
-        callCount++;
-        if (callCount === 2) {
-          return Promise.resolve({ data: null, error: { message: 'Delete failed' } }).then(
-            onfulfilled
-          );
-        }
-        return origThen.call(errorBuilder, onfulfilled);
-      };
-      mockSupabase.from.mockReturnValue(errorBuilder);
+      const publicReview = { id: 'rev-1', title: 'Test review', is_mine: true };
+      const ownershipBuilder = createMockBuilder(publicReview);
+      mockSupabase.from.mockReturnValue(ownershipBuilder);
+
+      const errorBuilder = createMockBuilder(null);
+      errorBuilder.then = (onfulfilled: any) =>
+        Promise.resolve({ data: null, error: { message: 'Delete failed' } }).then(onfulfilled);
+      mockSupabase.rpc.mockReturnValue(errorBuilder);
 
       await expect(repository.deleteReview({ reviewId: 'rev-1' })).rejects.toThrow();
     });

@@ -182,5 +182,9 @@ export function handleSupabaseError(error: PostgrestError): AppError {
   }
 
   // Error genérico de base de datos
-  return new AppError(ErrorCodes.DATABASE_ERROR, 'Error inesperado en la base de datos.', 500);
+  return new AppError(
+    ErrorCodes.DATABASE_ERROR,
+    `Error inesperado en la base de datos. (code: ${error.code}, message: ${error.message})`,
+    500
+  );
 }

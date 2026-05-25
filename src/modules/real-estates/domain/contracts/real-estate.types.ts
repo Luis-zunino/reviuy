@@ -73,7 +73,7 @@ export interface UpdateRealEstateReviewOutput {
   success: boolean;
   message: string;
   error?: string;
-  data?: RealEstateReview;
+  data?: RealEstateReviewSummary;
 }
 
 export interface DeleteRealEstateReviewInput {

@@ -67,11 +67,29 @@ describe('SupabasePropertyReviewCommandRepository', () => {
       longitude: -58.4,
     };
 
-    const insertedBase = { id: 'new-review-1', ...validInput };
+    const publicReview = {
+      id: 'new-review-1',
+      title: 'Great place',
+      description: 'Loved it',
+      rating: 5,
+      property_type: null,
+      address_text: 'Calle Falsa 123',
+      address_osm_id: 'N456',
+      latitude: -34.6,
+      longitude: -58.4,
+      zone_rating: null,
+      winter_comfort: null,
+      summer_comfort: null,
+      humidity: null,
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z',
+      apartment_number: null,
+      real_estate_experience: null,
+    };
 
     it('creates a review without rooms successfully', async () => {
-      const completeReview = { ...insertedBase, review_rooms: [] };
-      mockBuilder = createMockBuilder(true, insertedBase, completeReview);
+      // Sequence: check_rate_limit → true, INSERT review → null, SELECT reviews_public → publicReview, SELECT review_rooms → []
+      mockBuilder = createMockBuilder(true, null, publicReview, []);
       mockSupabase.from.mockReturnValue(mockBuilder);
       mockSupabase.rpc.mockReturnValue(mockBuilder);
 
@@ -83,11 +101,11 @@ describe('SupabasePropertyReviewCommandRepository', () => {
     });
 
     it('creates a review with rooms successfully', async () => {
-      const completeReview = {
-        ...insertedBase,
-        review_rooms: [{ id: 'rm1', room_type: 'bedroom', area_m2: 20 }],
-      };
-      mockBuilder = createMockBuilder(true, insertedBase, null, completeReview);
+      const roomsData = [
+        { id: 'rm1', review_id: 'new-review-1', room_type: 'bedroom', area_m2: 20 },
+      ];
+      // Sequence: rate_limit → true, INSERT review → null, INSERT rooms → null, SELECT reviews_public → publicReview, SELECT review_rooms → roomsData
+      mockBuilder = createMockBuilder(true, null, null, publicReview, roomsData);
       mockSupabase.from.mockReturnValue(mockBuilder);
       mockSupabase.rpc.mockReturnValue(mockBuilder);
 
@@ -119,6 +137,7 @@ describe('SupabasePropertyReviewCommandRepository', () => {
       let callCount = 0;
       errorBuilder.then = (onfulfilled: any) => {
         callCount++;
+        // Call 1: rate limit → true, Call 2: INSERT review → error
         if (callCount === 2) {
           return Promise.resolve({ data: null, error: { message: 'Insert failed' } }).then(
             onfulfilled
@@ -138,7 +157,11 @@ describe('SupabasePropertyReviewCommandRepository', () => {
       let callCount = 0;
       errorBuilder.then = (onfulfilled: any) => {
         callCount++;
+        // Call 1: rate limit → true, Call 2: INSERT review → ok, Call 3: INSERT rooms → error
         if (callCount === 2) {
+          return Promise.resolve({ data: null, error: null }).then(onfulfilled);
+        }
+        if (callCount === 3) {
           return Promise.resolve({ data: null, error: { message: 'Rooms insert failed' } }).then(
             onfulfilled
           );
@@ -153,37 +176,68 @@ describe('SupabasePropertyReviewCommandRepository', () => {
       ).rejects.toThrow();
     });
 
-    it('throws on final review fetch error', async () => {
+    it('returns fallback data when public view fetch fails', async () => {
       const errorBuilder = createMockBuilder(true);
       const origThen = errorBuilder.then;
       let callCount = 0;
       errorBuilder.then = (onfulfilled: any) => {
         callCount++;
+        // Call 1: rate limit → true, Call 2: INSERT review → ok
+        // Call 3: SELECT reviews_public → error, Call 4: SELECT review_rooms → []
         if (callCount === 2) {
           return Promise.resolve({ data: null, error: null }).then(onfulfilled);
         }
         if (callCount === 3) {
-          return Promise.resolve({ data: null, error: { message: 'Fetch failed' } }).then(
-            onfulfilled
-          );
+          return Promise.resolve({ data: null, error: { message: 'Not found' } }).then(onfulfilled);
+        }
+        if (callCount === 4) {
+          return Promise.resolve({ data: [], error: null }).then(onfulfilled);
         }
         return origThen.call(errorBuilder, onfulfilled);
       };
       mockSupabase.from.mockReturnValue(errorBuilder);
       mockSupabase.rpc.mockReturnValue(errorBuilder);
 
-      await expect(repository.create(validInput)).rejects.toThrow();
+      const result = await repository.create(validInput);
+
+      expect(result.success).toBe(true);
+      expect(result.data?.id).toBeDefined();
+      expect(result.data?.review_rooms).toEqual([]);
     });
   });
 
   describe('update', () => {
-    const existingReview = { id: 'review-1', user_id: 'user-1' };
     const updateData = { title: 'Updated title' };
+    const publicReview = {
+      id: 'review-1',
+      title: 'Updated title',
+      description: 'Loved it',
+      rating: 5,
+      property_type: null,
+      address_text: 'Calle Falsa 123',
+      address_osm_id: 'N456',
+      latitude: -34.6,
+      longitude: -58.4,
+      zone_rating: null,
+      winter_comfort: null,
+      summer_comfort: null,
+      humidity: null,
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z',
+      apartment_number: null,
+      real_estate_experience: null,
+    };
 
     it('updates a review successfully', async () => {
-      const completeReview = { id: 'review-1', title: 'Updated title', review_rooms: [] };
-      mockBuilder = createMockBuilder(existingReview, null, completeReview);
+      // Sequence: reviews_public(ownership) → {is_mine:true}, RPC → {success:true}, reviews_public(select) → publicReview, review_rooms → []
+      mockBuilder = createMockBuilder(
+        { id: 'review-1', is_mine: true },
+        { success: true },
+        publicReview,
+        []
+      );
       mockSupabase.from.mockReturnValue(mockBuilder);
+      mockSupabase.rpc.mockReturnValue(mockBuilder);
 
       const result = await repository.update({ reviewId: 'review-1', ...updateData });
 
@@ -204,8 +258,7 @@ describe('SupabasePropertyReviewCommandRepository', () => {
     });
 
     it('returns FORBIDDEN when user does not own review', async () => {
-      const otherUserReview = { id: 'review-2', user_id: 'other-user' };
-      mockBuilder = createMockBuilder(otherUserReview);
+      mockBuilder = createMockBuilder({ id: 'review-2', is_mine: false });
       mockSupabase.from.mockReturnValue(mockBuilder);
 
       const result = await repository.update({ reviewId: 'review-2', ...updateData });
@@ -215,13 +268,18 @@ describe('SupabasePropertyReviewCommandRepository', () => {
     });
 
     it('updates rooms when provided', async () => {
-      const completeReview = {
-        id: 'review-1',
-        title: 'Updated',
-        review_rooms: [{ id: 'rm1', room_type: 'kitchen', area_m2: 15 }],
-      };
-      mockBuilder = createMockBuilder(existingReview, null, completeReview);
+      const roomsData = [{ id: 'rm1', review_id: 'review-1', room_type: 'kitchen', area_m2: 15 }];
+      // Sequence: ownership, RPC, delete rooms, insert rooms, reviews_public SELECT, review_rooms SELECT
+      mockBuilder = createMockBuilder(
+        { id: 'review-1', is_mine: true },
+        { success: true },
+        null,
+        null,
+        publicReview,
+        roomsData
+      );
       mockSupabase.from.mockReturnValue(mockBuilder);
+      mockSupabase.rpc.mockReturnValue(mockBuilder);
 
       const result = await repository.update({
         reviewId: 'review-1',
@@ -233,34 +291,37 @@ describe('SupabasePropertyReviewCommandRepository', () => {
     });
 
     it('throws on update error', async () => {
-      const errorBuilder = createMockBuilder(existingReview);
+      const errorBuilder = createMockBuilder({ id: 'review-1', is_mine: true });
       const origThen = errorBuilder.then;
       let callCount = 0;
       errorBuilder.then = (onfulfilled: any) => {
         callCount++;
         if (callCount === 2) {
-          return Promise.resolve({ data: null, error: { message: 'Update failed' } }).then(
-            onfulfilled
-          );
+          return Promise.resolve({
+            data: { success: false, error: 'Update failed' },
+            error: null,
+          }).then(onfulfilled);
         }
         return origThen.call(errorBuilder, onfulfilled);
       };
       mockSupabase.from.mockReturnValue(errorBuilder);
+      mockSupabase.rpc.mockReturnValue(errorBuilder);
 
       await expect(repository.update({ reviewId: 'review-1', ...updateData })).rejects.toThrow();
     });
 
     it('throws on rooms insert error during update', async () => {
-      const errorBuilder = createMockBuilder(existingReview);
+      const errorBuilder = createMockBuilder({ id: 'review-1', is_mine: true });
       const origThen = errorBuilder.then;
       let callCount = 0;
       errorBuilder.then = (onfulfilled: any) => {
         callCount++;
+        // Call 1: ownership, Call 2: RPC success, Call 3: delete rooms ok, Call 4: insert rooms error
         if (callCount === 2) {
-          return Promise.resolve({ data: null, error: null }).then(onfulfilled);
+          return Promise.resolve({ data: { success: true }, error: null }).then(onfulfilled);
         }
         if (callCount === 3) {
-          return origThen.call(errorBuilder, onfulfilled);
+          return Promise.resolve({ data: null, error: null }).then(onfulfilled);
         }
         if (callCount === 4) {
           return Promise.resolve({ data: null, error: { message: 'Rooms insert failed' } }).then(
@@ -270,6 +331,7 @@ describe('SupabasePropertyReviewCommandRepository', () => {
         return origThen.call(errorBuilder, onfulfilled);
       };
       mockSupabase.from.mockReturnValue(errorBuilder);
+      mockSupabase.rpc.mockReturnValue(errorBuilder);
 
       await expect(
         repository.update({
@@ -280,33 +342,39 @@ describe('SupabasePropertyReviewCommandRepository', () => {
       ).rejects.toThrow();
     });
 
-    it('throws on final review fetch error after update', async () => {
-      const errorBuilder = createMockBuilder(existingReview);
+    it('returns partial data on final review fetch error after update', async () => {
+      // Sequence: ownership {is_mine:true}, RPC {success:true}, reviews_public SELECT → error, review_rooms → []
+      const errorBuilder = createMockBuilder({ id: 'review-1', is_mine: true });
       const origThen = errorBuilder.then;
       let callCount = 0;
       errorBuilder.then = (onfulfilled: any) => {
         callCount++;
         if (callCount === 2) {
-          return Promise.resolve({ data: null, error: null }).then(onfulfilled);
+          return Promise.resolve({ data: { success: true }, error: null }).then(onfulfilled);
         }
         if (callCount === 3) {
           return Promise.resolve({ data: null, error: { message: 'Fetch review failed' } }).then(
             onfulfilled
           );
         }
+        if (callCount === 4) {
+          return Promise.resolve({ data: [], error: null }).then(onfulfilled);
+        }
         return origThen.call(errorBuilder, onfulfilled);
       };
       mockSupabase.from.mockReturnValue(errorBuilder);
+      mockSupabase.rpc.mockReturnValue(errorBuilder);
 
-      await expect(repository.update({ reviewId: 'review-1', ...updateData })).rejects.toThrow();
+      const result = await repository.update({ reviewId: 'review-1', ...updateData });
+      expect(result.success).toBe(true);
+      expect(result.message).toContain('actualizada');
     });
   });
 
   describe('delete', () => {
-    const existingReview = { id: 'review-1', user_id: 'user-1', title: 'Test' };
-
     it('deletes a review successfully', async () => {
-      mockBuilder = createMockBuilder(existingReview, null);
+      // Sequence: reviews_public(ownership) → {is_mine:true}, DELETE → null
+      mockBuilder = createMockBuilder({ id: 'review-1', is_mine: true }, null);
       mockSupabase.from.mockReturnValue(mockBuilder);
 
       const result = await repository.delete({ reviewId: 'review-1' });
@@ -335,8 +403,7 @@ describe('SupabasePropertyReviewCommandRepository', () => {
     });
 
     it('returns FORBIDDEN when user does not own review', async () => {
-      const otherReview = { id: 'review-2', user_id: 'other-user', title: 'Test' };
-      mockBuilder = createMockBuilder(otherReview);
+      mockBuilder = createMockBuilder({ id: 'review-2', is_mine: false });
       mockSupabase.from.mockReturnValue(mockBuilder);
 
       const result = await repository.delete({ reviewId: 'review-2' });
@@ -346,19 +413,13 @@ describe('SupabasePropertyReviewCommandRepository', () => {
     });
 
     it('throws on delete error', async () => {
-      const errorBuilder = createMockBuilder(existingReview);
-      const origThen = errorBuilder.then;
-      let callCount = 0;
-      errorBuilder.then = (onfulfilled: any) => {
-        callCount++;
-        if (callCount === 2) {
-          return Promise.resolve({ data: null, error: { message: 'Delete failed' } }).then(
-            onfulfilled
-          );
-        }
-        return origThen.call(errorBuilder, onfulfilled);
-      };
-      mockSupabase.from.mockReturnValue(errorBuilder);
+      const ownershipBuilder = createMockBuilder({ id: 'review-1', is_mine: true });
+      mockSupabase.from.mockReturnValue(ownershipBuilder);
+
+      const errorBuilder = createMockBuilder(null);
+      errorBuilder.then = (onfulfilled: any) =>
+        Promise.resolve({ data: null, error: { message: 'Delete failed' } }).then(onfulfilled);
+      mockSupabase.rpc.mockReturnValue(errorBuilder);
 
       await expect(repository.delete({ reviewId: 'review-1' })).rejects.toThrow();
     });

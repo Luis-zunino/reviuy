@@ -28,7 +28,7 @@ describe('useCreateRealEstateHook', () => {
     expect(useAuthMutation).toHaveBeenCalledWith(
       expect.objectContaining({
         mutationKey: ['create-real-estate'],
-        authErrorMessage: 'Debes iniciar sesión para crear una inmobiliaria',
+        authErrorMessage: 'Debés iniciar sesión para crear una inmobiliaria',
       })
     );
   });

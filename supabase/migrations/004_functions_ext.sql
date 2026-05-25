@@ -111,7 +111,7 @@ $function$ LANGUAGE plpgsql;
 -- Función para actualizar contadores de inmobiliarias
 -- NOTA: review_count y rating se gestionan exclusivamente por update_real_estate_rating_from_reviews
 -- (trigger en real_estate_reviews). Esta función solo actualiza updated_at cuando cambia real_estate_id.
-create or replace function update_real_estate_counters () RETURNS TRIGGER set search_path = public as $function$ BEGIN IF (TG_OP = 'INSERT') THEN IF NEW.real_estate_id IS NOT NULL THEN
+create or replace function update_real_estate_counters () RETURNS TRIGGER SECURITY DEFINER set search_path = public as $function$ BEGIN IF (TG_OP = 'INSERT') THEN IF NEW.real_estate_id IS NOT NULL THEN
 UPDATE
     public.real_estates
 SET
@@ -163,7 +163,7 @@ END;
 $function$ LANGUAGE plpgsql;
 
 -- Función para actualizar rating de inmobiliaria basado en sus reseñas
-create or replace function update_real_estate_rating_from_reviews () RETURNS TRIGGER set search_path = public as $$
+create or replace function update_real_estate_rating_from_reviews () RETURNS TRIGGER SECURITY DEFINER set search_path = public as $$
 BEGIN
     IF (TG_OP = 'INSERT' OR TG_OP = 'UPDATE' OR TG_OP = 'DELETE') THEN
         UPDATE

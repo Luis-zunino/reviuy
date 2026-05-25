@@ -23,13 +23,17 @@ export class SupabaseReviewImageRepository implements ReviewImageRepository {
   async upload(input: UploadReviewImageInput): Promise<UploadReviewImageResult> {
     // Verificar que la reseña existe y pertenece al usuario actual
     const { data: review, error: reviewError } = await this.supabase
-      .from('reviews')
-      .select('id, user_id')
+      .from('reviews_public')
+      .select('id, is_mine')
       .eq('id', input.reviewId)
       .single();
 
     if (reviewError || !review) {
       throw createError('NOT_FOUND', 'Reseña no encontrada.');
+    }
+
+    if (!review.is_mine) {
+      throw createError('FORBIDDEN', 'No tenés permiso para subir imágenes a esta reseña.');
     }
 
     // Verificar límite de imágenes
