@@ -1,1 +1,0 @@
-export { TipsSidebar } from './TipsSidebar';
