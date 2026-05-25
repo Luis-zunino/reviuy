@@ -88,7 +88,7 @@ describe('SupabaseReviewImageRepository', () => {
         order: 0,
       });
       mockSupabase.from
-        .mockReturnValueOnce(createMockBuilder({ id: 'review-1', user_id: 'user-1' }))
+        .mockReturnValueOnce(createMockBuilder({ id: 'review-1', is_mine: true }))
         .mockReturnValueOnce(countBuilder)
         .mockReturnValueOnce(insertBuilder);
 
@@ -110,7 +110,7 @@ describe('SupabaseReviewImageRepository', () => {
       countBuilder.then = (onfulfilled: any) => Promise.resolve(countResolve).then(onfulfilled);
 
       mockSupabase.from
-        .mockReturnValueOnce(createMockBuilder({ id: 'review-1', user_id: 'user-1' }))
+        .mockReturnValueOnce(createMockBuilder({ id: 'review-1', is_mine: true }))
         .mockReturnValueOnce(countBuilder);
 
       await expect(repository.upload(validInput)).rejects.toThrow('límite máximo es 5');
@@ -122,7 +122,7 @@ describe('SupabaseReviewImageRepository', () => {
         Promise.resolve({ data: null, error: { message: 'Count error' } }).then(onfulfilled);
 
       mockSupabase.from
-        .mockReturnValueOnce(createMockBuilder({ id: 'review-1', user_id: 'user-1' }))
+        .mockReturnValueOnce(createMockBuilder({ id: 'review-1', is_mine: true }))
         .mockReturnValueOnce(countErrorBuilder);
 
       await expect(repository.upload(validInput)).rejects.toThrow('Error al verificar el límite');
@@ -138,7 +138,7 @@ describe('SupabaseReviewImageRepository', () => {
         Promise.resolve({ data: null, error: { message: 'Insert failed' } }).then(onfulfilled);
 
       mockSupabase.from
-        .mockReturnValueOnce(createMockBuilder({ id: 'review-1', user_id: 'user-1' }))
+        .mockReturnValueOnce(createMockBuilder({ id: 'review-1', is_mine: true }))
         .mockReturnValueOnce(countBuilder)
         .mockReturnValueOnce(failedInsertBuilder);
 
@@ -158,7 +158,7 @@ describe('SupabaseReviewImageRepository', () => {
         order: 0,
       });
       mockSupabase.from
-        .mockReturnValueOnce(createMockBuilder({ id: 'review-1', user_id: 'user-1' }))
+        .mockReturnValueOnce(createMockBuilder({ id: 'review-1', is_mine: true }))
         .mockReturnValueOnce(countBuilder)
         .mockReturnValueOnce(insertBuilder);
 
@@ -180,7 +180,7 @@ describe('SupabaseReviewImageRepository', () => {
         order: 0,
       });
       mockSupabase.from
-        .mockReturnValueOnce(createMockBuilder({ id: 'review-1', user_id: 'user-1' }))
+        .mockReturnValueOnce(createMockBuilder({ id: 'review-1', is_mine: true }))
         .mockReturnValueOnce(countBuilder)
         .mockReturnValueOnce(insertBuilder);
 

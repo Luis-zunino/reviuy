@@ -22,12 +22,14 @@ grant execute on function public.create_review(text, text, integer, text, text, 
 grant execute on function public.delete_review_safe(uuid) to authenticated;
 grant execute on function public.vote_review(uuid, text) to authenticated;
 grant execute on function public.get_review_delete_info(uuid) to authenticated;
-grant execute on function public.update_review(uuid, text, text, integer, text, integer, text, text, text) to authenticated;
+grant execute on function public.update_review(uuid, text, text, integer, text, text, text, numeric, numeric, integer, text, text, text, uuid, text, text) to authenticated;
 grant execute on function public.report_review(uuid, text, text) to authenticated;
 grant execute on function public.has_user_reported_review(uuid) to authenticated;
 grant execute on function public.create_real_estate_review(uuid, text, text, integer) to authenticated;
 grant execute on function public.vote_real_estate_review(uuid, text) to authenticated;
 grant execute on function public.report_real_estate_review(uuid, text, text) to authenticated;
+grant execute on function public.update_real_estate_review(uuid, text, text, integer) to authenticated;
+grant execute on function public.delete_real_estate_review_safe(uuid) to authenticated;
 grant execute on function public.create_real_estate(text, text) to authenticated;
 grant execute on function public.vote_real_estate(uuid, text) to authenticated;
 grant execute on function public.report_real_estate(uuid, text, text) to authenticated;

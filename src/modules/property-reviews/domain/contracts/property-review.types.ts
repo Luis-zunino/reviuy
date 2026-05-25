@@ -67,10 +67,15 @@ export interface UpdatePropertyReviewInput {
   description?: string;
   rating?: number;
   property_type?: string | null;
+  address_text?: string;
+  address_osm_id?: string;
+  latitude?: number;
+  longitude?: number;
   zone_rating?: number | null;
   winter_comfort?: string;
   summer_comfort?: string;
   humidity?: string;
+  real_estate_id?: string | null;
   real_estate_experience?: string | null;
   apartment_number?: string | null;
   review_rooms?: PropertyReviewRoomDraft[];

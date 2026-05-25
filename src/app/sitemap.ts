@@ -119,25 +119,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     const supabase = getSupabaseClient();
 
-    // Fetch real estates (only non-deleted ones)
+    // Fetch real estates (vista _public ya filtra soft-deletes)
     const { data: realEstates } = await supabase
-      .from('real_estates')
+      .from('real_estates_public')
       .select('id, updated_at')
-      .is('deleted_at', null)
       .order('updated_at', { ascending: false });
 
-    // Fetch reviews (only non-deleted ones)
+    // Fetch reviews (vista _public ya filtra soft-deletes)
     const { data: reviews } = await supabase
-      .from('reviews')
+      .from('reviews_public')
       .select('id, updated_at, address_osm_id')
-      .is('deleted_at', null)
       .order('updated_at', { ascending: false });
 
     // Generate URLs for real estates
     const realEstatePages: MetadataRoute.Sitemap =
       realEstates?.map((estate) => ({
         url: `${baseUrl}/real-estate/${estate.id}`,
-        lastModified: new Date(estate.updated_at),
+        lastModified: new Date(estate.updated_at ?? now),
         changeFrequency: 'weekly' as const,
         priority: 0.8,
       })) || [];
@@ -146,7 +144,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const reviewPages: MetadataRoute.Sitemap =
       reviews?.map((review) => ({
         url: `${baseUrl}/review/${review.id}/details`,
-        lastModified: new Date(review.updated_at),
+        lastModified: new Date(review.updated_at ?? now),
         changeFrequency: 'weekly' as const,
         priority: 0.7,
       })) || [];
@@ -157,7 +155,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     for (const review of reviews ?? []) {
       if (!review.address_osm_id) continue;
 
-      const currentDate = new Date(review.updated_at);
+      const currentDate = new Date(review.updated_at ?? now);
       const previousDate = addressLatestUpdate.get(review.address_osm_id);
 
       if (!previousDate || currentDate > previousDate) {
