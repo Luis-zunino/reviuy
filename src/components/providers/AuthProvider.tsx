@@ -133,8 +133,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         Sentry.setUser({
           id: supabaseSession.user.id,
           email: supabaseSession.user.email ?? undefined,
-          username:
-            supabaseSession.user.user_metadata?.full_name ?? undefined,
+          username: supabaseSession.user.user_metadata?.full_name ?? undefined,
         });
       } else {
         Sentry.setUser(null);
