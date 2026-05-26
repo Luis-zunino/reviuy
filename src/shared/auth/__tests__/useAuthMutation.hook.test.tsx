@@ -6,7 +6,7 @@ import type { ReactNode } from 'react';
 const mockVerifyAuthentication = vi.fn();
 
 let capturedOnSuccess: ((data: any, vars: any, context: any) => void) | null = null;
-let capturedOnError: ((error: Error, vars: any, context: any, info: any) => void) | null = null;
+
 
 const mockUseMutation = vi.hoisted(() => vi.fn());
 
@@ -33,9 +33,8 @@ function createWrapper(queryClient?: QueryClient) {
 }
 
 function captureCallbacks() {
-  mockUseMutation.mockImplementation(({ mutationFn, onSuccess, onError, ...rest }: any) => {
+  mockUseMutation.mockImplementation(({ mutationFn, onSuccess }: any) => {
     capturedOnSuccess = onSuccess ?? null;
-    capturedOnError = onError ?? null;
     return {
       mutate: async (vars: any) => {
         try {
@@ -43,7 +42,6 @@ function captureCallbacks() {
           onSuccess?.(result, vars, undefined);
           return result;
         } catch (e) {
-          onError?.(e, vars, undefined, undefined);
           throw e;
         }
       },
@@ -53,7 +51,6 @@ function captureCallbacks() {
           onSuccess?.(result, vars, undefined);
           return result;
         } catch (e) {
-          onError?.(e, vars, undefined, undefined);
           throw e;
         }
       },
@@ -68,7 +65,6 @@ describe('useAuthMutation', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     capturedOnSuccess = null;
-    capturedOnError = null;
     mockVerifyAuthentication.mockReturnValue({ data: { userId: 'user-1' }, error: null });
     captureCallbacks();
   });

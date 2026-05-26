@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import { TabsContent } from '@/components/ui/tabs';
 import { TabDetailsSkeleton } from '../../../TabDetailsSkeleton';
 import { Card, CardContent } from '@/components/ui/card';
@@ -15,9 +15,9 @@ export interface RealEstateUserExperienceTabContentProps {
   isLoadingReviews: boolean;
 }
 function DateDisplay({ date }: { date: string | null | undefined }) {
-  const [formatted, setFormatted] = useState('');
-  useEffect(() => {
-    if (date) setFormatted(new Date(date).toLocaleDateString());
+  const formatted = useMemo(() => {
+    if (!date) return '';
+    return new Date(date).toLocaleDateString();
   }, [date]);
   return <>{formatted}</>;
 }

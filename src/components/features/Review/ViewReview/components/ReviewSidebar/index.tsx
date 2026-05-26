@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import { LazyMapComponent, StarRatingDisplay } from '@/components/common';
 import { MapPinned, Calendar, Home, DoorClosed } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -10,18 +10,13 @@ import { translatePropertyType } from '@/utils/translatePropertyType.util';
 
 export const ReviewSidebar = ({ review }: ReviewSidebarProps) => {
   const addressText = review?.address_text;
-  const [formattedDate, setFormattedDate] = useState('');
-
-  useEffect(() => {
-    if (review?.created_at) {
-      setFormattedDate(
-        new Date(review.created_at).toLocaleDateString('es-ES', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-        })
-      );
-    }
+  const formattedDate = useMemo(() => {
+    if (!review?.created_at) return '';
+    return new Date(review?.created_at).toLocaleDateString('es-ES', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
   }, [review?.created_at]);
 
   return (

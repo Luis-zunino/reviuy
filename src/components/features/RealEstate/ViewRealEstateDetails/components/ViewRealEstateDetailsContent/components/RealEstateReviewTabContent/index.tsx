@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import { StarRatingDisplay } from '@/components/common';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -14,10 +14,10 @@ export interface RealEstateReviewTabContentProps {
   realEstateId: string;
 }
 
-function DateDisplay({ date }: { date: string | null | undefined }) {
-  const [formatted, setFormatted] = useState('');
-  useEffect(() => {
-    if (date) setFormatted(new Date(date).toLocaleDateString());
+function DateDisplay({ date }: Readonly<{ date?: string | null }>) {
+  const formatted = useMemo(() => {
+    if (!date) return '';
+    return new Date(date).toLocaleDateString();
   }, [date]);
   return <>{formatted}</>;
 }

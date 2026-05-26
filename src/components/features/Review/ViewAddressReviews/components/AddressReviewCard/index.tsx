@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import { FeedBackBadge } from '@/components/common';
 import { Button } from '@/components/ui/button';
 import { ReviewCardProps } from '../../types';
@@ -9,12 +9,9 @@ export const AddressReviewCard = ({ review }: ReviewCardProps) => {
   const addressText = review.address_text || 'Dirección no disponible';
   const cityText = addressText.includes(',') ? addressText.split(',').slice(-1)[0].trim() : '';
   const isRecommended = review.rating >= 3;
-  const [formattedDate, setFormattedDate] = useState('');
-
-  useEffect(() => {
-    if (review.created_at) {
-      setFormattedDate(new Date(review.created_at).toLocaleDateString('es-ES'));
-    }
+  const formattedDate = useMemo(() => {
+    if (!review.created_at) return '';
+    return new Date(review.created_at).toLocaleDateString('es-ES');
   }, [review.created_at]);
 
   return (
