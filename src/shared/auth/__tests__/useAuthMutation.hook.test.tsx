@@ -7,7 +7,6 @@ const mockVerifyAuthentication = vi.fn();
 
 let capturedOnSuccess: ((data: any, vars: any, context: any) => void) | null = null;
 
-
 const mockUseMutation = vi.hoisted(() => vi.fn());
 
 vi.mock('@tanstack/react-query', async () => {
