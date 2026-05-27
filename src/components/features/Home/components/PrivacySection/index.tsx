@@ -1,6 +1,6 @@
 'use client';
 
-import { LazyMotion, m, domAnimation } from 'framer-motion';
+import { LazyMotion, m, domAnimation, Variants } from 'framer-motion';
 import { Shield, Lock, Eye, Database, CheckCircle2 } from 'lucide-react';
 import { manrope, playfair } from '@/constants/fonts.constant';
 import { cn } from '@/lib/utils/cn';
@@ -36,7 +36,7 @@ const containerVariants = {
   },
 };
 
-const itemVariants = {
+const itemVariants: Variants = {
   hidden: { opacity: 0, x: -20 },
   visible: {
     opacity: 1,
