@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import * as Sentry from '@sentry/nextjs';
 import { supabaseClient } from '@/lib/supabase/client';
 import type { AuthProviderProps, TermsAcceptancePayload } from './types';
 import { useRouter } from 'next/navigation';
@@ -112,13 +113,37 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     if (error) {
       throw error;
     }
+    Sentry.setUser(null);
     push(PagesUrls.HOME);
   }, [push]);
 
   useEffect(() => {
+    const setSentryFromAppSession = (appSession: AppSession | null) => {
+      if (appSession?.userId) {
+        Sentry.setUser({ id: appSession.userId });
+      } else {
+        Sentry.setUser(null);
+      }
+    };
+
+    const setSentryFromSupabaseSession = (
+      supabaseSession: import('@supabase/supabase-js').Session | null
+    ) => {
+      if (supabaseSession?.user) {
+        Sentry.setUser({
+          id: supabaseSession.user.id,
+          email: supabaseSession.user.email ?? undefined,
+          username: supabaseSession.user.user_metadata?.full_name ?? undefined,
+        });
+      } else {
+        Sentry.setUser(null);
+      }
+    };
+
     const getInitialSession = async () => {
       const { session } = await getSession();
 
+      setSentryFromAppSession(session);
       setSession(session);
       setLoading(false);
     };
@@ -127,9 +152,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     const {
       data: { subscription },
-    } = supabaseClient.auth.onAuthStateChange(async (event, session) => {
-      const sessionResult = sessionMapped(session);
+    } = supabaseClient.auth.onAuthStateChange(async (event, supabaseSession) => {
+      const sessionResult = sessionMapped(supabaseSession);
 
+      setSentryFromSupabaseSession(supabaseSession);
       setSession(sessionResult);
       setLoading(false);
     });

@@ -19,13 +19,17 @@ const matchesRoute = (pathname: string, patterns: RegExp[]) => {
 };
 
 const buildCsp = () => {
+  const isDev = process.env.NODE_ENV === 'development';
+
+  const localSupabase = isDev ? 'http://127.0.0.1:54321' : '';
+
   return `
     default-src 'self';
     script-src 'self' 'unsafe-inline' https://apis.google.com https://va.vercel-scripts.com;
     style-src 'self' 'unsafe-inline';
     img-src 'self' data: blob: https://placehold.co https://firebasestorage.googleapis.com https://lh3.googleusercontent.com https://*.tile.openstreetmap.org;
     font-src 'self' data:;
-    connect-src 'self' http://127.0.0.1:54321 https://*.supabase.co https://firebasestorage.googleapis.com https://vitals.vercel-insights.com https://nominatim.openstreetmap.org;
+    connect-src 'self' ${localSupabase} https://*.supabase.co https://firebasestorage.googleapis.com https://vitals.vercel-insights.com https://nominatim.openstreetmap.org;
     object-src 'none';
     base-uri 'self';
     frame-ancestors 'none';

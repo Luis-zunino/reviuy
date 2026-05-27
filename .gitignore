@@ -58,3 +58,5 @@ next-env.d.ts
 .codegraph
 .cursor
 .atl
+# Sentry Config File
+.env.sentry-build-plugin
