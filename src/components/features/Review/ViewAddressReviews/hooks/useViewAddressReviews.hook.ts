@@ -17,7 +17,6 @@ export const useViewAddressReviews = () => {
   } = useGetAddressInfo({ osmId });
   const {
     data: reviews,
-    isLoading: isLoadingReviews,
     error: reviewsError,
     isError: isErrorReviews,
   } = useGetReviewsByAddress({ osmId });
@@ -30,7 +29,9 @@ export const useViewAddressReviews = () => {
     toast.error(reviewsError.message);
   }
 
-  const isLoading = isLoadingAddress || isLoadingReviews;
+  // Page-level loading only depends on address data.
+  // Reviews load independently — the component already handles empty/null reviews.
+  const isLoading = isLoadingAddress;
 
   const handleCreateReview = () => {
     if (!isAuthenticated) {
