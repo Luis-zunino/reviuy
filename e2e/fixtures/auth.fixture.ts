@@ -17,11 +17,11 @@ import { injectAuthCookies } from '../helpers/auth.helper';
  *   });
  */
 export const test = base.extend<{ authPage: import('@playwright/test').Page }>({
-  authPage: async ({ browser }, use) => {
+  authPage: async ({ browser }, release) => {
     const context = await browser.newContext();
     await injectAuthCookies(context);
     const page = await context.newPage();
-    await use(page);
+    await release(page);
     await context.close();
   },
 });

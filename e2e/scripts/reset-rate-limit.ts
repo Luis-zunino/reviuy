@@ -17,7 +17,7 @@ async function main() {
   console.log('Test user ID:', user.id);
 
   // Try direct delete via REST API (service_role bypasses RLS)
-  const { data, error } = await admin
+  const { error } = await admin
     .from('rate_limits')
     .delete()
     .eq('user_id', user.id)

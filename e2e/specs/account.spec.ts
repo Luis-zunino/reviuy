@@ -31,7 +31,7 @@ test.describe('Account — sesión y perfil', () => {
     await expect(authPage.getByText('¿Estás absolutamente seguro?')).not.toBeVisible();
   });
 
-  test('cierra sesión desde el menú de navegación', async ({ page, authPage }) => {
+  test('cierra sesión desde el menú de navegación', async ({ authPage }) => {
     // Usamos authPage autenticado para no invalidar el storageState compartido
     await authPage.goto('/profile');
     await expect(authPage.getByRole('heading', { name: 'Perfil' })).toBeVisible();

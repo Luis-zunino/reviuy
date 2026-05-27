@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import type { Database } from '@/types/supabase/supabase';
 import { E2E_TEST_EMAIL, E2E_TEST_PASSWORD } from './auth.helper';
 
 function getSupabaseUrl(): string {
@@ -13,11 +14,11 @@ function getAnonKey(): string {
   return key;
 }
 
-let client: ReturnType<typeof createClient> | null = null;
+let client: ReturnType<typeof createClient<Database>> | null = null;
 
 async function ensureClient() {
   if (client) return client;
-  client = createClient(getSupabaseUrl(), getAnonKey());
+  client = createClient<Database>(getSupabaseUrl(), getAnonKey());
 
   const { error } = await client.auth.signInWithPassword({
     email: E2E_TEST_EMAIL,

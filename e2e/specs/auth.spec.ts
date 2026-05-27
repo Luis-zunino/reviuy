@@ -20,11 +20,7 @@ test.describe('Auth — rutas protegidas redirigen', () => {
 
   for (const route of PROTECTED_ROUTES) {
     test(`"${route}" redirige a /login sin autenticación`, async ({ page }) => {
-      const response = await page.goto(route);
-      const redirected =
-        response?.status() === 307 ||
-        response?.status() === 200 ||
-        response?.status() === 302;
+      await page.goto(route);
 
       await page.waitForURL(/\/login/);
       expect(page.url()).toContain('/login');
