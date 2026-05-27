@@ -38,7 +38,13 @@ export class NominatimAddressReadRepository implements AddressReadRepository {
 
   async getAddressInfo({ osmId }: GetAddressInfoInput): Promise<GetAddressInfoOutput> {
     const response = await fetch(
-      `${NOMINATIM_URL}/lookup?osm_ids=${osmId}&format=json&extratags=1`
+      `${NOMINATIM_URL}/lookup?osm_ids=${osmId}&format=json&extratags=1`,
+      {
+        headers: {
+          'User-Agent': 'ReviUy/1.0',
+        },
+        signal: AbortSignal.timeout(5000),
+      }
     );
 
     if (!response.ok) {

@@ -187,7 +187,10 @@ describe('NominatimAddressReadRepository', () => {
       await repository.getAddressInfo({ osmId: 'R456' });
 
       expect(fetchSpy).toHaveBeenCalledWith(
-        `${NOMINATIM_URL}/lookup?osm_ids=R456&format=json&extratags=1`
+        `${NOMINATIM_URL}/lookup?osm_ids=R456&format=json&extratags=1`,
+        expect.objectContaining({
+          headers: { 'User-Agent': 'ReviUy/1.0' },
+        })
       );
     });
   });
