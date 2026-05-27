@@ -7,13 +7,13 @@ import { AddressReviewCard } from './components/AddressReviewCard';
 import { Button } from '@/components/ui/button';
 
 export const ViewAddressReviews = () => {
-  const { data, reviews, isLoading, isError, handleCreateReview, averageRating } =
+  const { data, reviews, isLoading, isAddressError, handleCreateReview, averageRating } =
     useViewAddressReviews();
   const address = data?.address;
   return (
     <PageWithSidebar
       isLoading={isLoading}
-      isError={isError || !data}
+      isError={isAddressError || !data}
       title="Reseñas de la dirección"
       description="Lee las reseñas de otros usuarios sobre esta dirección o comparte tu experiencia"
     >

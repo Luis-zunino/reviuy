@@ -61,6 +61,8 @@ export const useViewAddressReviews = () => {
     reviews,
     isLoading,
     isError: isError || isErrorReviews,
+    /** Address-specific error — use for page-level error state */
+    isAddressError: isError,
     handleCreateReview,
     averageRating,
   };
