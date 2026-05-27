@@ -6,10 +6,14 @@ test.describe('Address — página de detalle por dirección', () => {
     await page.goto('/address/R2929054');
 
     // Debe mostrar el título de la página (dentro de PageWithSidebar)
-    await expect(page.getByRole('heading', { name: 'Reseñas de la dirección' })).toBeVisible({ timeout: 15000 });
+    await expect(page.getByRole('heading', { name: 'Reseñas de la dirección' })).toBeVisible({
+      timeout: 15000,
+    });
 
     // Debe mostrar el nombre de la dirección (Montevideo)
-    await expect(page.getByText(/Montevideo/i)).toBeVisible({ timeout: 15000 });
+    await expect(page.getByRole('heading', { name: /Montevideo/i })).toBeVisible({
+      timeout: 15000,
+    });
 
     // Debe mostrar el mapa
     await expect(page.locator('.leaflet-container').first()).toBeVisible({ timeout: 10000 });
@@ -22,7 +26,9 @@ test.describe('Address — página de detalle por dirección', () => {
     await authPage.goto('/address/R2929054');
 
     // Esperar que cargue la dirección
-    await expect(authPage.getByText(/Montevideo/i)).toBeVisible({ timeout: 15000 });
+    await expect(authPage.getByRole('heading', { name: /Montevideo/i })).toBeVisible({
+      timeout: 15000,
+    });
 
     // Debe mostrar el mensaje de estado vacío
     await expect(authPage.getByText('Aún no hay reseñas para esta dirección')).toBeVisible();

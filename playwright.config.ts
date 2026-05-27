@@ -6,10 +6,7 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 1,
   workers: 1,
-  reporter: [
-    ['html', { outputFolder: 'playwright-report' }],
-    ['list'],
-  ],
+  reporter: [['html', { outputFolder: 'playwright-report' }], ['list']],
 
   globalSetup: './e2e/global-setup.ts',
 
@@ -27,7 +24,7 @@ export default defineConfig({
   ],
 
   webServer: {
-    command: 'pnpm start',
+    command: 'pnpm next start',
     // Prod build necesario: ejecutar `pnpm build` antes del primer test run
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
