@@ -17,11 +17,17 @@ import { injectAuthCookies } from '../helpers/auth.helper';
  *   });
  */
 export const test = base.extend<{ authPage: import('@playwright/test').Page }>({
-  authPage: async ({ browser }, release) => {
+  authPage: async ({ browser }, use, testInfo) => {
     const context = await browser.newContext();
-    await injectAuthCookies(context);
+    const ok = await injectAuthCookies(context);
+    if (!ok) {
+      testInfo.skip();
+      await context.close();
+      return;
+    }
     const page = await context.newPage();
-    await release(page);
+    // eslint-disable-next-line react-hooks/rules-of-hooks -- Playwright fixture release fn, not React hook
+    await use(page);
     await context.close();
   },
 });

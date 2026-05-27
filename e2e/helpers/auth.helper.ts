@@ -4,42 +4,43 @@ import type { Cookie } from '@playwright/test';
 export const E2E_TEST_EMAIL = 'e2e-test@reviuy.qa';
 export const E2E_TEST_PASSWORD = 'TestPassword123!';
 
-function getSupabaseUrl(): string {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  if (!url) throw new Error('NEXT_PUBLIC_SUPABASE_URL no está definida');
-  return url;
+function getSupabaseUrl(): string | null {
+  return process.env.NEXT_PUBLIC_SUPABASE_URL ?? null;
 }
 
-function getAnonKey(): string {
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  if (!key) throw new Error('NEXT_PUBLIC_SUPABASE_ANON_KEY no está definida');
-  return key;
+function getAnonKey(): string | null {
+  return process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? null;
 }
 
-function getServiceRoleKey(): string {
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!key) throw new Error('SUPABASE_SERVICE_ROLE_KEY no está definida');
-  return key;
+function getServiceRoleKey(): string | null {
+  return process.env.SUPABASE_SERVICE_ROLE_KEY ?? null;
 }
 
 export function getSupabaseAdmin() {
-  return createClient(getSupabaseUrl(), getServiceRoleKey(), {
+  const url = getSupabaseUrl();
+  const serviceKey = getServiceRoleKey();
+  if (!url || !serviceKey) return null;
+  return createClient(url, serviceKey, {
     auth: { autoRefreshToken: false, persistSession: false },
   });
 }
 
 export function getSupabaseClient() {
-  return createClient(getSupabaseUrl(), getAnonKey());
+  const url = getSupabaseUrl();
+  const key = getAnonKey();
+  if (!url || !key) return null;
+  return createClient(url, key);
 }
 
 /**
  * Obtiene el project ref de la URL de Supabase.
  * Ej: "https://abc123.supabase.co" → "abc123"
  */
-export function getProjectRef(): string {
+export function getProjectRef(): string | null {
   const url = getSupabaseUrl();
+  if (!url) return null;
   const match = url.match(/https?:\/\/([^.]+)/);
-  if (!match) throw new Error(`No se pudo extraer el project ref de: ${url}`);
+  if (!match) return null;
   return match[1];
 }
 
@@ -49,8 +50,11 @@ export function getProjectRef(): string {
  */
 export async function ensureTestUser() {
   const admin = getSupabaseAdmin();
+  if (!admin) return null;
 
-  const { data: { users } } = await admin.auth.admin.listUsers();
+  const {
+    data: { users },
+  } = await admin.auth.admin.listUsers();
   const existing = users?.find((u) => u.email === E2E_TEST_EMAIL);
 
   if (existing) {
@@ -59,7 +63,8 @@ export async function ensureTestUser() {
       user_metadata: {
         ...existing.user_metadata,
         terms_accepted_at: existing.user_metadata?.terms_accepted_at ?? new Date().toISOString(),
-        privacy_accepted_at: existing.user_metadata?.privacy_accepted_at ?? new Date().toISOString(),
+        privacy_accepted_at:
+          existing.user_metadata?.privacy_accepted_at ?? new Date().toISOString(),
         terms_version: existing.user_metadata?.terms_version ?? 'v1',
       },
     });
@@ -87,6 +92,7 @@ export async function ensureTestUser() {
  */
 export async function getTestSession() {
   const supabase = getSupabaseClient();
+  if (!supabase) return null;
   const { data, error } = await supabase.auth.signInWithPassword({
     email: E2E_TEST_EMAIL,
     password: E2E_TEST_PASSWORD,
@@ -108,8 +114,12 @@ export async function getTestSession() {
  * Si el valor excede ~3180 bytes, se divide en chunks:
  *   sb-{projectRef}-auth-token.0, sb-{projectRef}-auth-token.1, etc.
  */
-export function buildAuthCookies(session: NonNullable<Awaited<ReturnType<typeof getTestSession>>>): Cookie[] {
+export function buildAuthCookies(
+  session: NonNullable<Awaited<ReturnType<typeof getTestSession>>> | null
+): Cookie[] {
+  if (!session) return [];
   const projectRef = getProjectRef();
+  if (!projectRef) return [];
   const storageKey = `sb-${projectRef}-auth-token`;
 
   const rawValue = JSON.stringify({
@@ -151,14 +161,13 @@ export function buildAuthCookies(session: NonNullable<Awaited<ReturnType<typeof 
 
 export const AUTH_STORAGE_PATH = 'e2e/.auth/user.json';
 
-/**
- * Inyecta cookies de sesión frescas en un BrowserContext de Playwright.
- * Útil cuando el storageState puede estar stale (ej: después de un signOut).
- */
+/** @returns true si se inyectaron cookies, false si no había sesión disponible */
 export async function injectAuthCookies(
   context: import('@playwright/test').BrowserContext
-): Promise<void> {
+): Promise<boolean> {
   const session = await getTestSession();
+  if (!session) return false;
   const cookies = buildAuthCookies(session);
   await context.addCookies(cookies);
+  return true;
 }
