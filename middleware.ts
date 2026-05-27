@@ -46,46 +46,53 @@ const withSecurityHeaders = (response: NextResponse) => {
 
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next();
+  const pathname = request.nextUrl.pathname;
+  const isProtected = matchesRoute(pathname, PROTECTED_ROUTE_PATTERNS);
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll();
-        },
-        setAll(cookiesToSet) {
-          // 1. Para la petición entrante pasamos solo propiedades válidas de RequestCookie
-          cookiesToSet.forEach(({ name, value }) => {
-            request.cookies.set({ name, value });
-          });
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-          supabaseResponse = NextResponse.next();
-
-          // 2. Para la respuesta saliente sí aplicamos las políticas SameSite exigidas por Semgrep
-          cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, {
-              ...options,
-              sameSite: 'lax',
-              secure: process.env.NODE_ENV === 'production',
-            })
-          );
-        },
-      },
+  if (!supabaseUrl || !supabaseKey) {
+    if (isProtected) {
+      const redirectUrl = new URL(PagesUrls.LOGIN, request.url);
+      redirectUrl.searchParams.set('redirectTo', pathname);
+      return withSecurityHeaders(NextResponse.redirect(redirectUrl));
     }
-  );
+    return withSecurityHeaders(supabaseResponse);
+  }
+
+  const supabase = createServerClient(supabaseUrl, supabaseKey, {
+    cookies: {
+      getAll() {
+        return request.cookies.getAll();
+      },
+      setAll(cookiesToSet) {
+        // 1. Para la petición entrante pasamos solo propiedades válidas de RequestCookie
+        cookiesToSet.forEach(({ name, value }) => {
+          request.cookies.set({ name, value });
+        });
+
+        supabaseResponse = NextResponse.next();
+
+        // 2. Para la respuesta saliente sí aplicamos las políticas SameSite exigidas por Semgrep
+        cookiesToSet.forEach(({ name, value, options }) =>
+          supabaseResponse.cookies.set(name, value, {
+            ...options,
+            sameSite: 'lax',
+            secure: process.env.NODE_ENV === 'production',
+          })
+        );
+      },
+    },
+  });
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  const pathname = request.nextUrl.pathname;
-
-  const isProtected = matchesRoute(pathname, PROTECTED_ROUTE_PATTERNS);
 
   if (isProtected && !user) {
     const redirectUrl = new URL(PagesUrls.LOGIN, request.url);
-    redirectUrl.searchParams.set('redirectTo', request.nextUrl.pathname);
+    redirectUrl.searchParams.set('redirectTo', pathname);
     return withSecurityHeaders(NextResponse.redirect(redirectUrl));
   }
 
