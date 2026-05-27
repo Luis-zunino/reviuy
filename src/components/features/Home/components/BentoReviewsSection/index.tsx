@@ -1,6 +1,6 @@
 'use client';
 
-import { LazyMotion, m, domAnimation } from 'framer-motion';
+import { LazyMotion, m, domAnimation, Variants } from 'framer-motion';
 import { Star, MapPin, ThumbsUp, Quote } from 'lucide-react';
 import { manrope, playfair } from '@/constants/fonts.constant';
 import { cn } from '@/lib/utils/cn';
@@ -67,7 +67,7 @@ const containerVariants = {
   },
 };
 
-const cardVariants = {
+const cardVariants: Variants = {
   hidden: { opacity: 0, y: 20 },
   visible: {
     opacity: 1,
