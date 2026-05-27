@@ -26,12 +26,14 @@ describe('Supabase client', () => {
     expect(client).toBeDefined();
   });
 
-  it('creates singleton supabaseClient', async () => {
+  it('creates singleton supabaseClient lazily', async () => {
     process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
 
     const { supabaseClient, createClient } = await import('../client');
 
+    // Proxy is lazy — createClient() triggers singleton creation
+    createClient();
     expect(mockCreateBrowserClient).toHaveBeenCalled();
     expect(supabaseClient).toBeDefined();
     expect(createClient).toBeDefined();
