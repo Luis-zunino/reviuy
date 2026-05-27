@@ -4,16 +4,22 @@ import type { Cookie } from '@playwright/test';
 export const E2E_TEST_EMAIL = 'e2e-test@reviuy.qa';
 export const E2E_TEST_PASSWORD = 'TestPassword123!';
 
+/** Rechaza valores placeholder usados como fallback en CI */
+function isValidValue(val: string | undefined): string | null {
+  if (!val || val.includes('placeholder')) return null;
+  return val;
+}
+
 function getSupabaseUrl(): string | null {
-  return process.env.NEXT_PUBLIC_SUPABASE_URL ?? null;
+  return isValidValue(process.env.NEXT_PUBLIC_SUPABASE_URL);
 }
 
 function getAnonKey(): string | null {
-  return process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? null;
+  return isValidValue(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
 }
 
 function getServiceRoleKey(): string | null {
-  return process.env.SUPABASE_SERVICE_ROLE_KEY ?? null;
+  return isValidValue(process.env.SUPABASE_SERVICE_ROLE_KEY);
 }
 
 export function getSupabaseAdmin() {
