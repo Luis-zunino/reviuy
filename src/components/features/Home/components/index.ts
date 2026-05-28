@@ -4,5 +4,5 @@ export { HeroSection } from './HeroSection';
 export { SocialProofSection } from './SocialProofSection';
 export { BentoReviewsSection } from './BentoReviewsSection';
 export { PrivacySection } from './PrivacySection';
-export { FeaturedProjectsCarousel } from './FeaturedProjectsCarousel';
+export { ReviewedZones } from './ReviewedZones';
 export { WhySection } from './WhySection';
