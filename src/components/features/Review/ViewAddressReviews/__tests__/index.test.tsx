@@ -13,7 +13,18 @@ vi.mock('../hooks', () => ({
 }));
 
 vi.mock('@/components/common', () => ({
-  PageWithSidebar: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  PageWithSidebar: ({
+    children,
+    sidebar,
+  }: {
+    children: React.ReactNode;
+    sidebar?: React.ReactNode;
+  }) => (
+    <div>
+      {sidebar}
+      {children}
+    </div>
+  ),
   StarRatingDisplay: ({ rating }: { rating: number }) => <div>StarRating-{rating}</div>,
   LazyMapComponent: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }));
@@ -48,21 +59,25 @@ describe('ViewAddressReviews', () => {
     });
   });
 
-  it('renderiza direccion, rating y lista de reseñas', () => {
+  it('renderiza dirección con editorial header, rating y cards de reseñas', () => {
     render(<ViewAddressReviews />);
 
+    // Header editorial con Playfair (contiene la calle y número)
     expect(screen.getByRole('heading', { name: /Avenida Italia/i })).toBeInTheDocument();
+    // Star rating
     expect(screen.getByText('StarRating-4.5')).toBeInTheDocument();
+    // Cards de reseñas
     expect(screen.getByText('AddressReviewCard-a')).toBeInTheDocument();
     expect(screen.getByText('AddressReviewCard-b')).toBeInTheDocument();
+    // Título de sección
     expect(screen.getByText('Últimas opiniones')).toBeInTheDocument();
   });
 
-  it('ejecuta handleCreateReview al hacer click en Crear reseña', async () => {
+  it('ejecuta handleCreateReview al hacer clic en Compartí tu experiencia', async () => {
     const user = userEvent.setup();
     render(<ViewAddressReviews />);
 
-    await user.click(screen.getByRole('button', { name: /crear reseña/i }));
+    await user.click(screen.getByRole('button', { name: /compartí/i }));
 
     expect(handleCreateReviewMock).toHaveBeenCalledTimes(1);
   });
