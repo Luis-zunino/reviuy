@@ -1,0 +1,107 @@
+[
+  {
+    "query": "test address",
+    "response": {
+      "place_id": 1000001,
+      "licence": "Data © OpenStreetMap contributors, ODbL 1.0. https://osm.org/copyright",
+      "osm_type": "way",
+      "osm_id": 123456,
+      "lat": "-34.9011",
+      "lon": "-56.1645",
+      "category": "highway",
+      "type": "residential",
+      "place_rank": 26,
+      "importance": 0.1,
+      "addresstype": "road",
+      "name": "Test Street",
+      "display_name": "Test Street, Montevideo, Montevideo Department, Uruguay",
+      "address": {
+        "road": "Test Street",
+        "city": "Montevideo",
+        "state": "Montevideo Department",
+        "country": "Uruguay",
+        "country_code": "uy"
+      },
+      "boundingbox": ["-34.9020", "-34.9000", "-56.1655", "-56.1635"]
+    }
+  },
+  {
+    "query": "calle",
+    "response": {
+      "place_id": 1000002,
+      "licence": "Data © OpenStreetMap contributors, ODbL 1.0. https://osm.org/copyright",
+      "osm_type": "way",
+      "osm_id": 234567,
+      "lat": "-34.9050",
+      "lon": "-56.1700",
+      "category": "highway",
+      "type": "residential",
+      "place_rank": 26,
+      "importance": 0.1,
+      "addresstype": "road",
+      "name": "Calle Test",
+      "display_name": "Calle Test, Pocitos, Montevideo, Montevideo Department, Uruguay",
+      "address": {
+        "road": "Calle Test",
+        "neighbourhood": "Pocitos",
+        "city": "Montevideo",
+        "state": "Montevideo Department",
+        "country": "Uruguay",
+        "country_code": "uy"
+      },
+      "boundingbox": ["-34.9060", "-34.9040", "-56.1710", "-56.1690"]
+    }
+  },
+  {
+    "query": "av",
+    "response": {
+      "place_id": 1000003,
+      "licence": "Data © OpenStreetMap contributors, ODbL 1.0. https://osm.org/copyright",
+      "osm_type": "way",
+      "osm_id": 345678,
+      "lat": "-34.9080",
+      "lon": "-56.1750",
+      "category": "highway",
+      "type": "primary",
+      "place_rank": 26,
+      "importance": 0.15,
+      "addresstype": "road",
+      "name": "Avenida Test",
+      "display_name": "Avenida Test, Cordón, Montevideo, Montevideo Department, Uruguay",
+      "address": {
+        "road": "Avenida Test",
+        "neighbourhood": "Cordón",
+        "city": "Montevideo",
+        "state": "Montevideo Department",
+        "country": "Uruguay",
+        "country_code": "uy"
+      },
+      "boundingbox": ["-34.9090", "-34.9070", "-56.1760", "-56.1740"]
+    }
+  },
+  {
+    "query": "default",
+    "response": {
+      "place_id": 1000999,
+      "licence": "Data © OpenStreetMap contributors, ODbL 1.0. https://osm.org/copyright",
+      "osm_type": "way",
+      "osm_id": 999999,
+      "lat": "-34.9100",
+      "lon": "-56.1800",
+      "category": "place",
+      "type": "city",
+      "place_rank": 16,
+      "importance": 0.1,
+      "addresstype": "city",
+      "name": "Montevideo",
+      "display_name": "Montevideo, Montevideo Department, Uruguay",
+      "address": {
+        "city": "Montevideo",
+        "state": "Montevideo Department",
+        "country": "Uruguay",
+        "country_code": "uy"
+      },
+      "boundingbox": ["-34.9500", "-34.7500", "-56.2500", "-56.0500"]
+    }
+  }
+]
