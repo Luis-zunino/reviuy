@@ -15,24 +15,24 @@ const socialLinks = [
  */
 export const Footer = () => {
   return (
-    <footer className="relative mt-16 w-full overflow-hidden border-t border-reviuy-gray-800 bg-reviuy-gray-950 text-reviuy-gray-100">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(37,99,235,0.28),transparent_42%),radial-gradient(circle_at_85%_80%,rgba(249,115,22,0.22),transparent_38%)]" />
+    <footer className="relative mt-16 w-full overflow-hidden border-t border-white/10 bg-black text-white/80">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(255,255,255,0.04),transparent_42%),radial-gradient(circle_at_85%_80%,rgba(255,255,255,0.03),transparent_38%)]" />
 
       <div className="relative mx-auto max-w-6xl px-6 py-14 lg:px-8 lg:py-18">
         <div className="grid grid-cols-1 gap-10 md:grid-cols-3 md:gap-8">
           <div className="space-y-4 md:col-span-1">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-reviuy-primary-300">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/40">
               ReviUy
             </p>
             <p className="text-2xl font-extrabold leading-tight text-white lg:text-3xl">
               Encontrá tu lugar ideal con reseñas reales
             </p>
-            <p className="max-w-sm text-sm leading-relaxed text-reviuy-gray-300">
+            <p className="max-w-sm text-sm leading-relaxed text-white/50">
               Información útil para alquilar con más criterio, más tranquilidad y menos sorpresas.
             </p>
 
             <div className="pt-2">
-              <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-reviuy-secondary-300">
+              <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-white/40">
                 Redes
               </p>
               <div className="flex items-center gap-2">
@@ -44,7 +44,7 @@ export const Footer = () => {
                     rel="noreferrer"
                     aria-label={name}
                     title={name}
-                    className="inline-flex size-9 items-center justify-center rounded-full border border-reviuy-gray-700 bg-reviuy-gray-900/70 text-reviuy-gray-200 transition-colors hover:border-reviuy-primary-500 hover:text-white"
+                    className="inline-flex size-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/70 transition-colors hover:border-white/40 hover:text-white"
                   >
                     <Icon className="size-4" />
                   </a>
@@ -53,16 +53,16 @@ export const Footer = () => {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-reviuy-gray-800/90 bg-reviuy-gray-900/60 p-5 backdrop-blur-xs">
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
             <ul className="flex flex-col gap-3 text-sm">
-              <li className="mb-1 text-xs font-semibold uppercase tracking-[0.14em] text-reviuy-secondary-300">
+              <li className="mb-1 text-xs font-semibold uppercase tracking-[0.14em] text-white/40">
                 Empresa
               </li>
               <li>
                 <Link
                   href={PagesUrls.ABOUT}
                   title="Información sobre ReviUy"
-                  className="text-reviuy-gray-200 transition-colors hover:text-white"
+                  className="text-white/70 transition-colors hover:text-white"
                 >
                   Sobre nosotros
                 </Link>
@@ -71,7 +71,7 @@ export const Footer = () => {
                 <Link
                   href={PagesUrls.CONTACT}
                   title="Contáctanos"
-                  className="text-reviuy-gray-200 transition-colors hover:text-white"
+                  className="text-white/70 transition-colors hover:text-white"
                 >
                   Contáctanos
                 </Link>
@@ -79,16 +79,16 @@ export const Footer = () => {
             </ul>
           </div>
 
-          <div className="rounded-2xl border border-reviuy-gray-800/90 bg-reviuy-gray-900/60 p-5 backdrop-blur-xs">
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
             <ul className="flex flex-col gap-3 text-sm">
-              <li className="mb-1 text-xs font-semibold uppercase tracking-[0.14em] text-reviuy-secondary-300">
+              <li className="mb-1 text-xs font-semibold uppercase tracking-[0.14em] text-white/40">
                 Legal
               </li>
               <li>
                 <Link
                   href={PagesUrls.PRIVACY_POLICY}
                   title="Política de privacidad"
-                  className="text-reviuy-gray-200 transition-colors hover:text-white"
+                  className="text-white/70 transition-colors hover:text-white"
                 >
                   Política de privacidad
                 </Link>
@@ -97,7 +97,7 @@ export const Footer = () => {
                 <Link
                   href={PagesUrls.TERMS_AND_CONDITIONS}
                   title="Términos y condiciones de uso"
-                  className="text-reviuy-gray-200 transition-colors hover:text-white"
+                  className="text-white/70 transition-colors hover:text-white"
                 >
                   Términos y condiciones
                 </Link>
@@ -106,7 +106,7 @@ export const Footer = () => {
                 <Link
                   href={PagesUrls.GOOD_PRACTICES}
                   title="Buenas prácticas"
-                  className="text-reviuy-gray-200 transition-colors hover:text-white"
+                  className="text-white/70 transition-colors hover:text-white"
                 >
                   Buenas prácticas
                 </Link>
@@ -115,7 +115,7 @@ export const Footer = () => {
           </div>
         </div>
 
-        <div className="mt-10 flex flex-col items-center justify-between gap-3 border-t border-reviuy-gray-800 pt-6 text-xs text-reviuy-gray-400 md:flex-row">
+        <div className="mt-10 flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-6 text-xs text-white/40 md:flex-row">
           <p>ReviUy</p>
           <p>Comunidad de inquilinos de Uruguay</p>
         </div>

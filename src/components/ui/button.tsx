@@ -24,17 +24,17 @@ const buttonVariants = cva(
           'bg-reviuy-warning-500 text-reviuy-gray-900 hover:bg-reviuy-warning-600 dark:bg-reviuy-warning-600 dark:hover:bg-reviuy-warning-700 shadow-sm hover:shadow-md transform hover:-translate-y-0.5',
         ghost:
           'bg-transparent text-foreground/80 hover:bg-accent hover:text-accent-foreground hover:cursor-pointer',
-        link: 'text-primary underline-offset-4 hover:underline hover:text-primary/90 dark:text-reviuy-primary-400 dark:hover:text-reviuy-primary-300 hover:cursor-pointer',
-        // Variantes específicas de la plataforma
-        like: 'text-blue-700 hover:text-blue-600 dark:text-blue-300 shadow-sm hover:shadow-md transform hover:-translate-y-0.5  data-[active=true]:text-blue-600 dark:data-[active=true]:text-blue-200 data-[active=true]:[&_svg]:fill-current hover:cursor-pointer',
+        link: 'text-primary underline-offset-4 hover:underline hover:text-primary/80 hover:cursor-pointer',
+        // Variantes específicas de la plataforma — monocromo, guiado por icono
+        like: 'text-reviuy-gray-400 hover:text-reviuy-gray-700 dark:text-reviuy-gray-500 dark:hover:text-reviuy-gray-200 data-[active=true]:text-reviuy-gray-700 dark:data-[active=true]:text-reviuy-gray-200 data-[active=true]:[&_svg]:fill-current shadow-sm hover:shadow-md transform hover:-translate-y-0.5 hover:cursor-pointer',
         favorite:
-          'text-red-700 hover:text-red-600 dark:text-red-300 shadow-sm hover:shadow-md transform hover:-translate-y-0.5  data-[active=true]:text-red-600 dark:data-[active=true]:text-red-200 data-[active=true]:[&_svg]:fill-current hover:cursor-pointer',
+          'text-reviuy-gray-400 hover:text-reviuy-gray-700 dark:text-reviuy-gray-500 dark:hover:text-reviuy-gray-200 data-[active=true]:text-reviuy-gray-700 dark:data-[active=true]:text-reviuy-gray-200 data-[active=true]:[&_svg]:fill-current shadow-sm hover:shadow-md transform hover:-translate-y-0.5 hover:cursor-pointer',
         share:
-          'bg-violet-50 text-violet-700 border border-violet-200 hover:border-violet-400 hover:bg-violet-100 hover:text-violet-600 dark:bg-violet-500/10 dark:text-violet-300 dark:border-violet-500/30 dark:hover:bg-violet-500/20 dark:hover:border-violet-400 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 hover:cursor-pointer',
+          'border border-reviuy-gray-200 text-reviuy-gray-500 hover:bg-reviuy-gray-50 hover:text-reviuy-gray-700 dark:border-reviuy-gray-600 dark:text-reviuy-gray-400 dark:hover:bg-reviuy-gray-800 dark:hover:text-reviuy-gray-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 hover:cursor-pointer',
         report:
-          'text-yellow-700 hover:text-yellow-600 dark:text-yellow-300 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 hover:cursor-pointer',
+          'text-reviuy-gray-400 hover:text-reviuy-gray-600 dark:text-reviuy-gray-500 dark:hover:text-reviuy-gray-300 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 hover:cursor-pointer',
         seeMore:
-          'text-green-700 dark:text-green-300 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 hover:cursor-pointer',
+          'text-reviuy-gray-500 hover:text-reviuy-gray-700 dark:text-reviuy-gray-400 dark:hover:text-reviuy-gray-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 hover:cursor-pointer',
       },
       size: {
         xs: 'h-8 px-3 py-1.5 text-xs rounded-lg gap-1.5',

@@ -30,7 +30,7 @@ export const ViewAddressReviews = () => {
       {/* Resumen de dirección */}
       <div className="rounded-xl border border-zinc-200/50 dark:border-zinc-700/50 bg-reviuy-gray-50/50 p-4 dark:bg-reviuy-gray-800/30">
         <div className="flex items-start gap-3">
-          <MapPin className="mt-0.5 size-4 shrink-0 text-reviuy-primary-500" />
+          <MapPin className="mt-0.5 size-4 shrink-0 text-reviuy-gray-500" />
           <div>
             <p
               className={cn(
@@ -57,7 +57,7 @@ export const ViewAddressReviews = () => {
         {reviews && reviews.length > 0 && (
           <div className="mt-4 flex items-center gap-4 border-t border-zinc-200/30 pt-4 dark:border-zinc-700/30">
             <div className="flex items-center gap-1.5">
-              <Star className="size-4 fill-reviuy-secondary-400 text-reviuy-secondary-400" />
+              <Star className="size-4 fill-reviuy-gray-500 text-reviuy-gray-500" />
               <span
                 className={cn(
                   manrope.className,
