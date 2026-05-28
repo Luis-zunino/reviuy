@@ -25,19 +25,19 @@ export const PrivacySection = () => {
           >
             <div className="flex flex-col items-center gap-6 text-center md:flex-row md:text-left">
               {/* Icon */}
-              <div className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-reviuy-primary-50 dark:bg-reviuy-primary-500/10">
-                <Shield className="size-7 text-reviuy-primary-600 dark:text-reviuy-primary-400" />
+              <div className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-reviuy-gray-50 dark:bg-reviuy-gray-800/50">
+                <Shield className="size-7 text-foreground" />
               </div>
 
               {/* Content */}
               <div className="flex-1">
                 <h2
-                  className={`${playfair.className} text-xl font-bold text-reviuy-gray-900 dark:text-white md:text-2xl`}
+                  className={`${playfair.className} text-xl font-bold text-foreground md:text-2xl`}
                 >
                   Tus datos protegidos
                 </h2>
                 <p
-                  className={`${manrope.className} mt-1 max-w-2xl text-sm leading-relaxed text-reviuy-gray-600 dark:text-reviuy-gray-400`}
+                  className={`${manrope.className} mt-1 max-w-2xl text-sm leading-relaxed text-muted-foreground`}
                 >
                   Cumplimos con la Ley N° 18.331 de Protección de Datos Personales de Uruguay. Tu
                   identidad nunca se revela sin tu consentimiento.
@@ -49,7 +49,7 @@ export const PrivacySection = () => {
                 href={PagesUrls.PRIVACY_POLICY}
                 className={cn(
                   manrope.className,
-                  'group inline-flex shrink-0 items-center gap-2 rounded-xl border border-reviuy-primary-200 dark:border-reviuy-primary-500/30  dark:bg-reviuy-gray-800 px-5 py-2.5 text-sm font-semibold text-reviuy-primary-700 dark:text-reviuy-primary-400 shadow-sm transition-all hover:border-reviuy-primary-300 dark:hover:border-reviuy-primary-500/50 hover:shadow-md'
+                  'group inline-flex shrink-0 items-center gap-2 rounded-xl border border-reviuy-gray-300 dark:border-reviuy-gray-600 dark:bg-reviuy-gray-800 px-5 py-2.5 text-sm font-semibold text-foreground shadow-sm transition-all hover:border-reviuy-gray-400 dark:hover:border-reviuy-gray-500 hover:shadow-md'
                 )}
               >
                 Política de privacidad

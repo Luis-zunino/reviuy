@@ -20,8 +20,8 @@ const zones = [
     tenantCount: 890,
     topComment: 'Uno de los barrios con mejor iluminación y más servicios',
     color:
-      'from-reviuy-primary-50 to-reviuy-secondary-50/30 dark:from-reviuy-primary-950/30 dark:to-reviuy-secondary-950/20',
-    borderColor: 'border-reviuy-primary-100/50 dark:border-reviuy-primary-800/30',
+      'from-reviuy-gray-100/50 to-reviuy-gray-50/30 dark:from-reviuy-gray-700/30 dark:to-reviuy-gray-800/20',
+    borderColor: 'border-reviuy-gray-300/50 dark:border-reviuy-gray-600/30',
   },
   {
     name: 'Cordón',
@@ -31,7 +31,7 @@ const zones = [
     tenantCount: 567,
     topComment: 'Buena conexión de transporte, edificios con historia',
     color:
-      'from-reviuy-primary-50/50 to-reviuy-gray-100/30 dark:from-reviuy-primary-950/20 dark:to-reviuy-gray-800/30',
+      'from-reviuy-gray-50/50 to-reviuy-gray-100/30 dark:from-reviuy-gray-800/20 dark:to-reviuy-gray-900/30',
     borderColor: 'border-reviuy-gray-200/50 dark:border-reviuy-gray-700/30',
   },
   {
@@ -42,8 +42,8 @@ const zones = [
     tenantCount: 423,
     topComment: 'Zona residencial tranquila, ideal para familias',
     color:
-      'from-reviuy-success-50/40 to-reviuy-primary-50/30 dark:from-reviuy-success-950/20 dark:to-reviuy-primary-950/20',
-    borderColor: 'border-reviuy-success-100/40 dark:border-reviuy-success-900/30',
+      'from-reviuy-gray-50/40 to-reviuy-gray-100/30 dark:from-reviuy-gray-800/20 dark:to-reviuy-gray-900/20',
+    borderColor: 'border-reviuy-gray-200/40 dark:border-reviuy-gray-700/30',
   },
   {
     name: 'Centro',
@@ -53,8 +53,8 @@ const zones = [
     tenantCount: 712,
     topComment: 'Todo cerca, pero puede ser ruidoso según la cuadra',
     color:
-      'from-reviuy-secondary-50/30 to-reviuy-primary-50/20 dark:from-reviuy-secondary-950/20 dark:to-reviuy-primary-950/20',
-    borderColor: 'border-reviuy-secondary-100/40 dark:border-reviuy-secondary-900/30',
+      'from-reviuy-gray-50/30 to-reviuy-gray-100/20 dark:from-reviuy-gray-800/20 dark:to-reviuy-gray-900/20',
+    borderColor: 'border-reviuy-gray-200/40 dark:border-reviuy-gray-700/30',
   },
   {
     name: 'Malvín',
@@ -64,8 +64,8 @@ const zones = [
     tenantCount: 398,
     topComment: 'Playa cerca, barrio tranquilo y buena comunidad',
     color:
-      'from-reviuy-primary-50/40 to-reviuy-success-50/20 dark:from-reviuy-primary-950/20 dark:to-reviuy-success-950/20',
-    borderColor: 'border-reviuy-primary-100/40 dark:border-reviuy-primary-800/30',
+      'from-reviuy-gray-100/40 to-reviuy-gray-50/20 dark:from-reviuy-gray-700/20 dark:to-reviuy-gray-800/20',
+    borderColor: 'border-reviuy-gray-300/40 dark:border-reviuy-gray-600/30',
   },
   {
     name: 'Carrasco',
@@ -75,7 +75,7 @@ const zones = [
     tenantCount: 312,
     topComment: 'Barrio premium, edificios cuidados y buena seguridad',
     color:
-      'from-reviuy-primary-50/30 to-reviuy-gray-100/30 dark:from-reviuy-primary-950/20 dark:to-reviuy-gray-800/30',
+      'from-reviuy-gray-50/30 to-reviuy-gray-100/30 dark:from-reviuy-gray-800/20 dark:to-reviuy-gray-900/30',
     borderColor: 'border-reviuy-gray-200/40 dark:border-reviuy-gray-700/30',
   },
 ];
@@ -116,12 +116,12 @@ export const ReviewedZones = () => {
           >
             <div>
               <h2
-                className={`${playfair.className} text-3xl font-bold text-reviuy-gray-900 dark:text-white md:text-4xl`}
+                className={`${playfair.className} text-3xl font-bold text-foreground md:text-4xl`}
               >
                 Barrios más comentados
               </h2>
               <p
-                className={`${manrope.className} mt-3 max-w-xl text-base leading-relaxed text-reviuy-gray-600 dark:text-reviuy-gray-400`}
+                className={`${manrope.className} mt-3 max-w-xl text-base leading-relaxed text-muted-foreground`}
               >
                 Descubrí lo que dicen los inquilinos sobre cada zona antes de decidir
               </p>
@@ -130,7 +130,7 @@ export const ReviewedZones = () => {
               href="/explorar"
               className={cn(
                 manrope.className,
-                'group hidden items-center gap-2 text-sm font-semibold text-reviuy-primary-600 dark:text-reviuy-primary-400 transition-colors hover:text-reviuy-primary-700 dark:hover:text-reviuy-primary-300 md:inline-flex'
+                'group hidden items-center gap-2 text-sm font-semibold text-foreground transition-colors hover:text-foreground/70 md:inline-flex'
               )}
             >
               Explorar todas las zonas
@@ -158,9 +158,7 @@ export const ReviewedZones = () => {
             >
               {/* Rating grande */}
               <div className="mb-4 flex items-center gap-2">
-                <span
-                  className={`${playfair.className} text-5xl font-bold text-reviuy-primary-700 dark:text-reviuy-primary-300`}
-                >
+                <span className={`${playfair.className} text-5xl font-bold text-foreground`}>
                   {zones[0].avgRating}
                 </span>
                 <div className="flex flex-col">
@@ -171,27 +169,23 @@ export const ReviewedZones = () => {
                         className={cn(
                           'size-3.5',
                           i < Math.round(zones[0].avgRating)
-                            ? 'fill-reviuy-secondary-400 text-reviuy-secondary-400'
-                            : 'fill-reviuy-gray-200 dark:fill-reviuy-gray-700 text-reviuy-gray-200 dark:text-reviuy-gray-600'
+                            ? 'fill-reviuy-gray-500 text-reviuy-gray-500'
+                            : 'fill-reviuy-gray-200 dark:fill-reviuy-gray-600 text-reviuy-gray-200 dark:text-reviuy-gray-600'
                         )}
                       />
                     ))}
                   </div>
-                  <span
-                    className={`${manrope.className} text-xs text-reviuy-gray-500 dark:text-reviuy-gray-400`}
-                  >
+                  <span className={`${manrope.className} text-xs text-muted-foreground`}>
                     calificación general
                   </span>
                 </div>
               </div>
 
-              <h3
-                className={`${manrope.className} mb-1 text-xl font-bold text-reviuy-gray-900 dark:text-white`}
-              >
+              <h3 className={`${manrope.className} mb-1 text-xl font-bold text-foreground`}>
                 {zones[0].name}
               </h3>
               <p
-                className={`${manrope.className} mb-4 flex items-center gap-1 text-sm text-reviuy-gray-500 dark:text-reviuy-gray-400`}
+                className={`${manrope.className} mb-4 flex items-center gap-1 text-sm text-muted-foreground`}
               >
                 <MapPin className="size-3.5" />
                 {zones[0].region}
@@ -200,23 +194,23 @@ export const ReviewedZones = () => {
               {/* Stats */}
               <div className="mb-4 flex items-center gap-4">
                 <span
-                  className={`${manrope.className} flex items-center gap-1.5 text-sm font-medium text-reviuy-gray-700 dark:text-reviuy-gray-300`}
+                  className={`${manrope.className} flex items-center gap-1.5 text-sm font-medium text-foreground`}
                 >
-                  <MessageSquareText className="size-4 text-reviuy-primary-500" />
+                  <MessageSquareText className="size-4 text-reviuy-gray-500" />
                   {zones[0].reviewCount} reseñas
                 </span>
                 <span
-                  className={`${manrope.className} flex items-center gap-1.5 text-sm font-medium text-reviuy-gray-700 dark:text-reviuy-gray-300`}
+                  className={`${manrope.className} flex items-center gap-1.5 text-sm font-medium text-foreground`}
                 >
-                  <Users className="size-4 text-reviuy-secondary-500" />
+                  <Users className="size-4 text-reviuy-gray-500" />
                   {zones[0].tenantCount} inquilinos
                 </span>
               </div>
 
               {/* Quote */}
-              <div className="mt-auto rounded-xl border border-reviuy-primary-100/40 dark:border-reviuy-primary-800/30 bg-white/40 dark:bg-reviuy-gray-800/40 px-4 py-3 backdrop-blur-sm">
+              <div className="mt-auto rounded-xl border border-reviuy-gray-200/40 dark:border-reviuy-gray-700/30 bg-white/40 dark:bg-reviuy-gray-800/40 px-4 py-3 backdrop-blur-sm">
                 <p
-                  className={`${manrope.className} text-sm italic leading-relaxed text-reviuy-gray-600 dark:text-reviuy-gray-400`}
+                  className={`${manrope.className} text-sm italic leading-relaxed text-muted-foreground`}
                 >
                   &ldquo;{zones[0].topComment}&rdquo;
                 </p>
@@ -237,13 +231,11 @@ export const ReviewedZones = () => {
               >
                 <div className="mb-3 flex items-center justify-between">
                   <div>
-                    <h3
-                      className={`${manrope.className} text-base font-bold text-reviuy-gray-900 dark:text-white`}
-                    >
+                    <h3 className={`${manrope.className} text-base font-bold text-foreground`}>
                       {zone.name}
                     </h3>
                     <p
-                      className={`${manrope.className} flex items-center gap-1 text-xs text-reviuy-gray-500 dark:text-reviuy-gray-400`}
+                      className={`${manrope.className} flex items-center gap-1 text-xs text-muted-foreground`}
                     >
                       <MapPin className="size-3" />
                       {zone.region}
@@ -251,17 +243,15 @@ export const ReviewedZones = () => {
                   </div>
                   {/* Rating badge */}
                   <div className="flex items-center gap-1 rounded-full bg-white/60 dark:bg-reviuy-gray-800/60 px-2.5 py-1 shadow-xs backdrop-blur-sm">
-                    <Star className="size-3 fill-reviuy-secondary-400 text-reviuy-secondary-400" />
-                    <span
-                      className={`${manrope.className} text-sm font-bold text-reviuy-gray-800 dark:text-reviuy-gray-200`}
-                    >
+                    <Star className="size-3 fill-reviuy-gray-500 text-reviuy-gray-500" />
+                    <span className={`${manrope.className} text-sm font-bold text-foreground`}>
                       {zone.avgRating}
                     </span>
                   </div>
                 </div>
 
                 {/* Stats row */}
-                <div className="mb-3 flex items-center gap-3 text-xs text-reviuy-gray-500 dark:text-reviuy-gray-400">
+                <div className="mb-3 flex items-center gap-3 text-xs text-muted-foreground">
                   <span className="flex items-center gap-1">
                     <MessageSquareText className="size-3.5" />
                     {zone.reviewCount} reseñas
@@ -274,7 +264,7 @@ export const ReviewedZones = () => {
 
                 {/* Top comment */}
                 <p
-                  className={`${manrope.className} text-sm italic leading-relaxed text-reviuy-gray-600 dark:text-reviuy-gray-400 line-clamp-2`}
+                  className={`${manrope.className} text-sm italic leading-relaxed text-muted-foreground line-clamp-2`}
                 >
                   &ldquo;{zone.topComment}&rdquo;
                 </p>
@@ -294,7 +284,7 @@ export const ReviewedZones = () => {
               href="/explorar"
               className={cn(
                 manrope.className,
-                'group inline-flex items-center gap-2 rounded-xl border border-reviuy-primary-200 dark:border-reviuy-primary-500/30 bg-white dark:bg-reviuy-gray-800 px-5 py-2.5 text-sm font-semibold text-reviuy-primary-700 dark:text-reviuy-primary-400 shadow-sm transition-all hover:shadow-md'
+                'group inline-flex items-center gap-2 rounded-xl border border-reviuy-gray-300 dark:border-reviuy-gray-600 bg-white dark:bg-reviuy-gray-800 px-5 py-2.5 text-sm font-semibold text-foreground shadow-sm transition-all hover:shadow-md'
               )}
             >
               Explorar todas las zonas

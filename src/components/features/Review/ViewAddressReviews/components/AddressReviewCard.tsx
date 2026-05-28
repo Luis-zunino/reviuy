@@ -36,13 +36,13 @@ export const AddressReviewCard = ({ review }: AddressReviewCardProps) => {
     >
       {/* Not-recommended indicator sutil */}
       {!recommended && (
-        <div className="absolute right-3 top-3 z-10 rounded-full bg-reviuy-error-500/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-reviuy-error-600 dark:bg-reviuy-error-500/20 dark:text-reviuy-error-400">
+        <div className="absolute right-3 top-3 z-10 rounded-full bg-reviuy-gray-100 dark:bg-reviuy-gray-800 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-reviuy-gray-500 dark:text-reviuy-gray-400">
           No recomiendo
         </div>
       )}
 
       {/* Quote icon decorativo */}
-      <Quote className="absolute bottom-4 right-4 size-8 text-reviuy-gray-100 dark:text-reviuy-gray-700 transition-colors duration-300 group-hover:text-reviuy-primary-100 dark:group-hover:text-reviuy-primary-800" />
+      <Quote className="absolute bottom-4 right-4 size-8 text-reviuy-gray-200 dark:text-reviuy-gray-600 transition-colors duration-300 group-hover:text-reviuy-gray-400 dark:group-hover:text-reviuy-gray-400" />
 
       {/* Rating estrellas */}
       <div className="mb-3">
