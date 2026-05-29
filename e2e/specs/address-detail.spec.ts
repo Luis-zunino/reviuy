@@ -15,7 +15,7 @@ test.describe('Address — página de detalle por dirección', () => {
       timeout: 15000,
     });
 
-    // Debe mostrar el mapa
+    // Debe mostrar el mapa en la sidebar
     await expect(page.locator('.leaflet-container').first()).toBeVisible({ timeout: 10000 });
 
     // Debe mostrar el botón "Compartí tu experiencia"
