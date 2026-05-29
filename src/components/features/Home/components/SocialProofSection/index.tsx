@@ -10,28 +10,24 @@ const stats = [
     value: '2,500+',
     label: 'Reseñas verificadas',
     color: 'text-reviuy-gray-500',
-    bgColor: 'bg-reviuy-gray-50',
   },
   {
     icon: Building2,
     value: '850+',
     label: 'Edificios registrados',
     color: 'text-reviuy-gray-600',
-    bgColor: 'bg-reviuy-gray-100',
   },
   {
     icon: Users,
     value: '5,000+',
     label: 'Inquilinos activos',
     color: 'text-reviuy-gray-500',
-    bgColor: 'bg-reviuy-gray-50',
   },
   {
     icon: Shield,
     value: '100%',
     label: 'Datos protegidos',
     color: 'text-reviuy-gray-700',
-    bgColor: 'bg-reviuy-gray-100',
   },
 ];
 
@@ -97,7 +93,7 @@ export const SocialProofSection = () => {
                 className="group flex flex-col items-center rounded-2xl border border-reviuy-gray-200/60 dark:bg-reviuy-gray-800/50 p-6 shadow-sm transition-all duration-300 hover:border-reviuy-gray-300 hover:shadow-lg md:p-8"
               >
                 <div
-                  className={`mb-4 rounded-xl ${stat.bgColor} p-3 transition-transform duration-300 group-hover:scale-110`}
+                  className={`mb-4 rounded-xl p-3 transition-transform duration-300 group-hover:scale-110`}
                 >
                   <stat.icon className={`size-6 ${stat.color}`} />
                 </div>
