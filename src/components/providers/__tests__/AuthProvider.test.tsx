@@ -29,10 +29,6 @@ vi.mock('next/navigation', () => ({
   useRouter: () => ({ push: pushMock }),
 }));
 
-vi.mock('@/lib/site-url', () => ({
-  buildSiteUrl: () => 'https://reviuy.vercel.app/auth/callback',
-}));
-
 vi.mock('@/utils/sessionMapped.util', () => ({
   sessionMapped: sessionMappedMock,
 }));
@@ -63,28 +59,10 @@ const AuthConsumer = () => {
     <div>
       <span>loading:{String(loading)}</span>
       <span>auth:{String(isAuthenticated)}</span>
-      <button
-        type="button"
-        onClick={() =>
-          signInWithGoogle({
-            acceptedTerms: true,
-            termsAcceptedAt: '2026-04-11T12:00:00.000Z',
-            termsVersion: 'v2',
-          })
-        }
-      >
+      <button type="button" onClick={() => signInWithGoogle()}>
         GoogleSignIn
       </button>
-      <button
-        type="button"
-        onClick={() =>
-          signInWithEmail('test@reviuy.com', {
-            acceptedTerms: true,
-            termsAcceptedAt: '2026-04-11T13:00:00.000Z',
-            termsVersion: 'v3',
-          })
-        }
-      >
+      <button type="button" onClick={() => signInWithEmail('test@reviuy.com')}>
         EmailSignIn
       </button>
       <button type="button" onClick={() => signOut()}>
@@ -140,7 +118,7 @@ describe('AuthProvider', () => {
     expect(screen.getByText('auth:true')).toBeInTheDocument();
   });
 
-  it('signInWithGoogle usa redirectTo con términos aceptados', async () => {
+  it('signInWithGoogle llama a signInWithOAuth sin payload de términos', async () => {
     const user = userEvent.setup();
     renderProvider();
 
@@ -149,13 +127,12 @@ describe('AuthProvider', () => {
     expect(signInWithOAuthMock).toHaveBeenCalledWith({
       provider: 'google',
       options: {
-        redirectTo:
-          'https://reviuy.vercel.app/auth/callback?terms_accepted=1&terms_accepted_at=2026-04-11T12%3A00%3A00.000Z&terms_version=v2',
+        redirectTo: '/auth/callback',
       },
     });
   });
 
-  it('signInWithEmail usa emailRedirectTo con términos aceptados', async () => {
+  it('signInWithEmail llama a signInWithOtp sin payload de términos', async () => {
     const user = userEvent.setup();
     renderProvider();
 
@@ -164,8 +141,7 @@ describe('AuthProvider', () => {
     expect(signInWithOtpMock).toHaveBeenCalledWith({
       email: 'test@reviuy.com',
       options: {
-        emailRedirectTo:
-          'https://reviuy.vercel.app/auth/callback?terms_accepted=1&terms_accepted_at=2026-04-11T13%3A00%3A00.000Z&terms_version=v3',
+        emailRedirectTo: '/auth/callback',
       },
     });
   });
