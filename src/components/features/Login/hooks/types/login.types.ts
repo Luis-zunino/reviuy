@@ -5,7 +5,6 @@ export const formLoginSchema = z.object({
     .string({ message: 'Por favor ingresa tu email.' })
     .min(1, { message: 'El campo es obligatorio.' })
     .email({ message: 'Ingresa un email válido.' }),
-  acceptedTerms: z.boolean(),
 });
 
 export type FormLoginSchema = z.infer<typeof formLoginSchema>;
