@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import { createGetSessionQuery } from '@/modules/profiles/application';
 import { SupabaseProfileAuthReadRepository } from '@/modules/profiles/infrastructure';
 import { supabaseClient } from '@/lib/supabase/client';
+import { CURRENT_TERMS_VERSION } from '@/constants/legal-terms.constant';
 
 const profileAuthReadRepository = new SupabaseProfileAuthReadRepository();
 const getSession = createGetSessionQuery({
@@ -35,45 +36,19 @@ export default function AuthCallback() {
             throw userError;
           }
 
-          const searchParams = new URLSearchParams(globalThis.location.search);
-          const termsAcceptedFromRedirect = searchParams.get('terms_accepted') === '1';
-          const termsAcceptedAtFromRedirect = searchParams.get('terms_accepted_at');
-          const termsVersionFromRedirect = searchParams.get('terms_version');
           const user = userData.user;
-          const hasTermsAcceptedInMetadata = Boolean(user?.user_metadata?.terms_accepted_at);
+          const userVersion = user?.user_metadata?.terms_version;
+          const hasAcceptedLatest = userVersion === CURRENT_TERMS_VERSION;
 
-          // Si el usuario ya aceptó términos previamente, permitir entrada sin validación adicional
-          if (!hasTermsAcceptedInMetadata) {
-            // Solo exigir aceptación si es la primera vez
-            if (!termsAcceptedFromRedirect) {
-              await supabaseClient.auth.signOut();
-              toast.error('Debes aceptar términos y privacidad para continuar.');
-              globalThis.location.assign(PagesUrls.LOGIN);
-              return;
-            }
-
-            const acceptedAt = termsAcceptedAtFromRedirect ?? new Date().toISOString();
-            const termsVersion = termsVersionFromRedirect ?? 'v1';
-
-            const { error: updateUserError } = await supabaseClient.auth.updateUser({
-              data: {
-                ...user?.user_metadata,
-                terms_accepted_at: acceptedAt,
-                privacy_accepted_at: acceptedAt,
-                terms_version: termsVersion,
-              },
+          if (hasAcceptedLatest) {
+            toast.success('¡Bienvenido!', {
+              description: 'Has iniciado sesión correctamente.',
             });
-
-            if (updateUserError) {
-              throw updateUserError;
-            }
+            globalThis.location.assign(PagesUrls.HOME);
+          } else {
+            // First-time login — redirect to accept terms
+            globalThis.location.assign(PagesUrls.ACCEPT_TERMS);
           }
-          // Si ya tiene terms_accepted_at, la validación se salta automáticamente y continúa
-
-          toast.success('¡Bienvenido!', {
-            description: 'Has iniciado sesión correctamente.',
-          });
-          globalThis.location.assign(PagesUrls.HOME);
         } else {
           globalThis.location.assign(PagesUrls.LOGIN);
         }
@@ -92,10 +67,12 @@ export default function AuthCallback() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-blue-50">
+      <div className="min-h-screen flex items-center justify-center bg-fog dark:bg-reviuy-gray-800">
         <div className="text-center">
           <Loader />
-          <p className="mt-4 text-gray-600">Procesando tu autenticación…</p>
+          <p className="mt-4 text-muted-gray dark:text-reviuy-gray-400">
+            Procesando tu autenticación…
+          </p>
         </div>
       </div>
     );
