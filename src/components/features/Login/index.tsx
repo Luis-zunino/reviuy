@@ -2,20 +2,22 @@
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Mail } from 'lucide-react';
 import { useLogin } from './hooks';
-import Link from 'next/link';
 import { GoogleIcon } from '../../common/GoogleIcon';
-import { PagesUrls } from '@/enums';
 
 export const Login = () => {
-  const { register, handleSubmit, onSubmit, errors, loading, onGoogleSignIn } = useLogin();
+  const { register, handleSubmit, onSubmit, errors, loading, cooldownRemaining, onGoogleSignIn } =
+    useLogin();
+
+  const isDisabled = loading || cooldownRemaining > 0;
 
   return (
     <div className="space-y-6 mx-auto">
       <div className="text-center space-y-2">
-        <h1 className="text-2xl font-semibold text-gray-900">Iniciar Sesión</h1>
+        <h1 className="text-2xl font-semibold text-ink dark:text-reviuy-gray-100">
+          Iniciar Sesión
+        </h1>
       </div>
 
       <Button
@@ -33,15 +35,12 @@ export const Login = () => {
           <span className="w-full border-t" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="px-2 text-gray-500">O continúa con</span>
+          <span className="px-2 text-muted-gray dark:text-reviuy-gray-400">O continúa con</span>
         </div>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="email" className="text-gray-600 mb-6 font-weight-200">
-            Te enviaremos un enlace mágico al correo que ingreses para acceder a la plataforma{' '}
-          </Label>
           <div className="relative">
             <Mail className="absolute left-3 top-3 size-4 text-gray-400" />
             <Input
@@ -53,54 +52,27 @@ export const Login = () => {
             />
           </div>
           {errors.email && <div className="text-red-500 text-sm">{errors.email.message}</div>}
+          <label
+            htmlFor="email"
+            className="text-sm text-muted-gray dark:text-reviuy-gray-400 block"
+          >
+            Te enviaremos un enlace mágico al correo que ingreses para acceder a la plataforma
+          </label>
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="acceptedTerms" className="text-sm text-gray-600 flex items-start gap-2">
-            <Input
-              id="acceptedTerms"
-              type="checkbox"
-              className="mt-0.5 size-4"
-              {...register('acceptedTerms')}
-            />
-            <span>
-              Acepto los
-              <Link
-                href={PagesUrls.TERMS_AND_CONDITIONS}
-                className="text-blue-600 hover:bg-transparent underline px-1"
-              >
-                terminos y condiciones
-              </Link>
-              y la{' '}
-              <Link
-                href={PagesUrls.PRIVACY_POLICY}
-                className="text-blue-600 hover:bg-transparent underline pl-1 pr-0"
-              >
-                politica de privacidad
-              </Link>
-              .
-            </span>
-          </Label>
-          {errors.acceptedTerms && (
-            <div className="text-red-500 text-sm">{errors.acceptedTerms.message}</div>
-          )}
-        </div>
-
-        <Button variant="default" type="submit" disabled={loading} className="w-full">
+        <Button variant="default" type="submit" disabled={isDisabled} className="w-full">
           {loading ? (
             <>
               <div className="animate-spin rounded-full size-4 border-b-2 border-white mr-2"></div>
               Enviando enlace…
             </>
+          ) : cooldownRemaining > 0 ? (
+            `Esperá ${cooldownRemaining}s para reenviar`
           ) : (
             'Enviar enlace mágico'
           )}
         </Button>
       </form>
-
-      <div className="text-center text-xs text-gray-500 space-y-1">
-        Si ya aceptaste anteriormente, no necesitas volver a marcarlo.
-      </div>
     </div>
   );
 };
