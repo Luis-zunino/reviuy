@@ -1,7 +1,7 @@
 import { Loader } from '@/components/common/Loaders';
 
-const Loading = () => {
+const RootLoading = () => {
   return <Loader variant="overlay" message="Cargando..." />;
 };
 
-export default Loading;
+export default RootLoading;
