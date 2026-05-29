@@ -3,15 +3,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import AuthCallback from '../page';
 import { PagesUrls } from '@/enums';
 
-const { locationAssignMock, getSessionMock, getUserMock, updateUserMock, signOutMock } = vi.hoisted(
-  () => ({
-    locationAssignMock: vi.fn(),
-    getSessionMock: vi.fn(),
-    getUserMock: vi.fn(),
-    updateUserMock: vi.fn(),
-    signOutMock: vi.fn(),
-  })
-);
+const { locationAssignMock, getSessionMock, getUserMock, updateUserMock } = vi.hoisted(() => ({
+  locationAssignMock: vi.fn(),
+  getSessionMock: vi.fn(),
+  getUserMock: vi.fn(),
+  updateUserMock: vi.fn(),
+}));
 
 vi.stubGlobal('location', { assign: locationAssignMock, search: '' });
 
@@ -28,7 +25,6 @@ vi.mock('@/lib/supabase/client', () => ({
     auth: {
       getUser: getUserMock,
       updateUser: updateUserMock,
-      signOut: signOutMock,
     },
   },
 }));
@@ -40,7 +36,7 @@ vi.mock('sonner', () => ({
   },
 }));
 
-describe('AuthCallback terms persistence', () => {
+describe('AuthCallback terms check', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.stubGlobal('location', {
@@ -66,15 +62,14 @@ describe('AuthCallback terms persistence', () => {
     });
 
     updateUserMock.mockResolvedValue({ error: null });
-    signOutMock.mockResolvedValue({ error: null });
   });
 
-  it('redirects home without updating metadata when user already accepted terms', async () => {
+  it('redirects home when user already accepted latest terms version', async () => {
     getUserMock.mockResolvedValue({
       data: {
         user: {
           id: 'user-1',
-          user_metadata: { terms_accepted_at: '2026-01-01T00:00:00.000Z' },
+          user_metadata: { terms_accepted_at: '2026-01-01T00:00:00.000Z', terms_version: 'v2' },
         },
       },
       error: null,
@@ -85,42 +80,32 @@ describe('AuthCallback terms persistence', () => {
     await waitFor(() => {
       expect(locationAssignMock).toHaveBeenCalledWith(PagesUrls.HOME);
     });
-
-    expect(updateUserMock).not.toHaveBeenCalled();
-    expect(signOutMock).not.toHaveBeenCalled();
   });
 
-  it('updates metadata from redirect params and redirects home for first acceptance', async () => {
-    (globalThis.location as unknown as Record<string, unknown>).search =
-      '?terms_accepted=1&terms_accepted_at=2026-04-11T10:00:00.000Z&terms_version=v1';
-
+  it('redirects to accept-terms when user has not accepted terms', async () => {
     render(<AuthCallback />);
 
     await waitFor(() => {
-      expect(updateUserMock).toHaveBeenCalledTimes(1);
+      expect(locationAssignMock).toHaveBeenCalledWith(PagesUrls.ACCEPT_TERMS);
     });
+  });
 
-    expect(updateUserMock).toHaveBeenCalledWith({
+  it('redirects to accept-terms when user has old terms_version', async () => {
+    getUserMock.mockResolvedValue({
       data: {
-        terms_accepted_at: '2026-04-11T10:00:00.000Z',
-        privacy_accepted_at: '2026-04-11T10:00:00.000Z',
-        terms_version: 'v1',
+        user: {
+          id: 'user-1',
+          user_metadata: { terms_accepted_at: '2026-01-01T00:00:00.000Z', terms_version: 'v1' },
+        },
       },
+      error: null,
     });
 
-    expect(locationAssignMock).toHaveBeenCalledWith(PagesUrls.HOME);
-    expect(signOutMock).not.toHaveBeenCalled();
-  });
-
-  it('signs out and redirects to login when first login has no acceptance params', async () => {
     render(<AuthCallback />);
 
     await waitFor(() => {
-      expect(signOutMock).toHaveBeenCalledTimes(1);
+      expect(locationAssignMock).toHaveBeenCalledWith(PagesUrls.ACCEPT_TERMS);
     });
-
-    expect(locationAssignMock).toHaveBeenCalledWith(PagesUrls.LOGIN);
-    expect(updateUserMock).not.toHaveBeenCalled();
   });
 
   it('redirects to login when session query fails', async () => {
