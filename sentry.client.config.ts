@@ -3,12 +3,20 @@ import * as Sentry from '@sentry/nextjs';
 Sentry.init({
   dsn: process.env.SENTRY_DSN || process.env.NEXT_PUBLIC_SENTRY_DSN,
 
-  // En desarrollo capturamos todo, en produccion sampleamos
+  integrations: [
+    // Captura console.warn/error como breadcrumbs dentro de los errores
+    // (gratuito — no consume quota extra de Logs que es pago)
+    Sentry.consoleIntegration({ levels: ['warn', 'error'] }),
+    // Session Replay solo cuando hay error (protege los 1GB/mes del free tier)
+    Sentry.replayIntegration(),
+  ],
+
+  // En desarrollo sampleamos todo, en producción reducimos para no quemar las 1000 transacciones/mes del free tier
   tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
 
   // Session Replay solo cuando hay error (protege quota)
   replaysOnErrorSampleRate: 1.0,
   replaysSessionSampleRate: 0,
 
-  integrations: [Sentry.replayIntegration()],
+  // NO habilitar enableLogs — Sentry Logs es un producto pago
 });
