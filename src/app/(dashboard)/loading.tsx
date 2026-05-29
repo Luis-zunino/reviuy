@@ -1,9 +1,7 @@
-export const Loading = () => {
-  return (
-    <div className="flex items-center justify-center h-screen">
-      <div className="animate-spin rounded-full size-32 border-b-2 border-gray-900"></div>
-    </div>
-  );
+import { Loader } from '@/components/common/Loaders';
+
+const Loading = () => {
+  return <Loader variant="overlay" message="Cargando..." />;
 };
 
 export default Loading;

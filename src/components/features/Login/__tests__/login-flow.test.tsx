@@ -9,8 +9,7 @@ const { signInWithGoogleMock, signInWithEmailMock } = vi.hoisted(() => ({
 }));
 
 vi.mock('next/font/google', () => ({
-  Manrope: () => ({ className: 'manrope' }),
-  Playfair_Display: () => ({ className: 'playfair' }),
+  Inter: () => ({ className: 'mock-inter-class' }),
 }));
 
 vi.mock('@/components/providers/AuthProvider', () => ({
@@ -27,46 +26,23 @@ vi.mock('sonner', () => ({
   },
 }));
 
-describe('Login terms acceptance flow', () => {
+describe('Login flow', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    localStorage.clear();
   });
 
-  it('sends acceptedTerms=false when user signs in with Google without checking terms', async () => {
+  it('calls signInWithGoogle without payload when Google button is clicked', async () => {
     const user = userEvent.setup();
     render(<Login />);
 
     await user.click(screen.getByRole('button', { name: /continuar con google/i }));
 
     expect(signInWithGoogleMock).toHaveBeenCalledTimes(1);
-    expect(signInWithGoogleMock).toHaveBeenCalledWith(
-      expect.objectContaining({
-        acceptedTerms: false,
-        termsVersion: 'v1',
-        termsAcceptedAt: expect.any(String),
-      })
-    );
+    expect(signInWithGoogleMock).toHaveBeenCalledWith();
   });
 
-  it('sends acceptedTerms=true when user checks terms and signs in with Google', async () => {
-    const user = userEvent.setup();
-    render(<Login />);
-
-    const checkbox = screen.getByRole('checkbox');
-    await user.click(checkbox);
-    await user.click(screen.getByRole('button', { name: /continuar con google/i }));
-
-    expect(signInWithGoogleMock).toHaveBeenCalledTimes(1);
-    expect(signInWithGoogleMock).toHaveBeenCalledWith(
-      expect.objectContaining({
-        acceptedTerms: true,
-        termsVersion: 'v1',
-        termsAcceptedAt: expect.any(String),
-      })
-    );
-  });
-
-  it('sends payload to email sign in with form values', async () => {
+  it('sends email to signInWithEmail and shows success toast', async () => {
     const user = userEvent.setup();
     render(<Login />);
 
@@ -77,13 +53,21 @@ describe('Login terms acceptance flow', () => {
       expect(signInWithEmailMock).toHaveBeenCalledTimes(1);
     });
 
-    expect(signInWithEmailMock).toHaveBeenCalledWith(
-      'test@example.com',
-      expect.objectContaining({
-        acceptedTerms: false,
-        termsVersion: 'v1',
-        termsAcceptedAt: expect.any(String),
-      })
-    );
+    expect(signInWithEmailMock).toHaveBeenCalledWith('test@example.com');
+  });
+
+  it('shows error toast when email sign-in fails', async () => {
+    const toastError = vi.mocked((await import('sonner')).toast.error);
+    signInWithEmailMock.mockRejectedValueOnce(new Error('Network error'));
+
+    const user = userEvent.setup();
+    render(<Login />);
+
+    await user.type(screen.getByPlaceholderText('tu@email.com'), 'test@example.com');
+    await user.click(screen.getByRole('button', { name: /enviar enlace mágico/i }));
+
+    await waitFor(() => {
+      expect(toastError).toHaveBeenCalledWith('Error al enviar el enlace', expect.any(Object));
+    });
   });
 });

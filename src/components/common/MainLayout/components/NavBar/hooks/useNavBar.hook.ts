@@ -5,7 +5,8 @@ export const useNavBar = () => {
   const { isAuthenticated, signOut } = useAuthContext();
   const [isOpen, setIsOpen] = useState(false);
   const [opacity, setOpacity] = useState(0);
-  const sharedStyles = 'flex items-center gap-2 transition-colors';
+  const sharedStyles =
+    'flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors';
 
   useEffect(() => {
     const handleScroll = () => {

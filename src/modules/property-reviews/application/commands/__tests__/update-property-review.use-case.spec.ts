@@ -5,16 +5,10 @@ vi.mock('server-only', () => ({}));
 
 // Mock next/font/google as it's not meant to run in a test environment
 vi.mock('next/font/google', () => ({
-  Manrope: () => ({
-    className: 'mock-manrope-class',
+  Inter: () => ({
+    className: 'mock-inter-class',
     style: {
-      fontFamily: 'mock-manrope',
-    },
-  }),
-  Playfair_Display: () => ({
-    className: 'mock-playfair-class',
-    style: {
-      fontFamily: 'mock-playfair',
+      fontFamily: 'mock-inter',
     },
   }),
 }));

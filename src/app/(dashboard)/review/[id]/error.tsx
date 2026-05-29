@@ -13,8 +13,8 @@ export default function ReviewError({
     <ErrorPage
       error={error}
       reset={reset}
-      title="Error al cargar la resena"
-      description="No pudimos obtener la informacion de esta resena. Es posible que no exista o que hayas perdido la conexion."
+      title="Error al cargar la reseña"
+      description="No pudimos obtener la informacion de esta reseña. Es posible que no exista o que hayas perdido la conexion."
     />
   );
 }
