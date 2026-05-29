@@ -9,8 +9,7 @@ const { signInWithGoogleMock, signInWithEmailMock } = vi.hoisted(() => ({
 }));
 
 vi.mock('next/font/google', () => ({
-  Manrope: () => ({ className: 'manrope' }),
-  Playfair_Display: () => ({ className: 'playfair' }),
+  Inter: () => ({ className: 'mock-inter-class' }),
 }));
 
 vi.mock('@/components/providers/AuthProvider', () => ({
