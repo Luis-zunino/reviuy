@@ -10,7 +10,9 @@ export default defineConfig({
   },
   test: {
     globals: true,
-    environment: 'jsdom',
+    // jsdom NO está como environment global — es extremadamente lento para 156 tests
+    // de lógica pura (utils, schemas, repos, queries) que no necesitan DOM.
+    // Solo los 116 archivos que usan @testing-library/react o jsx tienen anotación @vitest-environment jsdom explícita.
     env: {
       NEXT_PUBLIC_SUPABASE_URL: 'https://test-project.supabase.co',
       NEXT_PUBLIC_SUPABASE_ANON_KEY: 'test-anon-key',
