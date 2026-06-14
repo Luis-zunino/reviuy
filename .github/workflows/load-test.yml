@@ -250,9 +250,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Log threshold breach
+        env:
+          GH_SERVER_URL: ${{ github.server_url }}
+          GH_REPOSITORY: ${{ github.repository }}
+          GH_RUN_ID: ${{ github.run_id }}
         run: |
           echo "::warning::⚠️ Load test threshold breach detected — $(date)"
-          echo "Check artifacts at: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          echo "Check artifacts at: $GH_SERVER_URL/$GH_REPOSITORY/actions/runs/$GH_RUN_ID"
 
       # Add Slack/email notification here when integration is configured.
       # - uses: slackapi/slack-github-action@...
