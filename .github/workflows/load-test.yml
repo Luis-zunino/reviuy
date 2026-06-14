@@ -61,14 +61,15 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - name: Apply migrations (includes cleanup RPC)
-        run: pnpm exec supabase db push --db-url "${{ secrets.STAGING_SUPABASE_DB_URL }}"
+        run: pnpm exec supabase db push --db-url "$DB_URL"
+        env:
+          DB_URL: ${{ secrets.STAGING_SUPABASE_DB_URL }}
         # Only applies the cleanup_test_data() function — seed data is separate
 
       - name: Apply seed data (test users, properties, reviews)
         run: |
           # supabase db query uses extended query protocol (no multi-statement).
           # Run each SQL statement separately via temp files.
-          DB_URL="${{ secrets.STAGING_SUPABASE_DB_URL }}"
 
           # 1. pgcrypto extension
           pnpm exec supabase db query --db-url "$DB_URL" \
@@ -99,6 +100,7 @@ jobs:
           })();
           '
         env:
+          DB_URL: ${{ secrets.STAGING_SUPABASE_DB_URL }}
           SUPABASE_URL: ${{ secrets.STAGING_SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.STAGING_SUPABASE_SERVICE_KEY }}
           TEST_PASSWORD: ${{ secrets.STAGING_TEST_PASSWORD }}
@@ -118,8 +120,10 @@ jobs:
           );
           SQLEOF
           pnpm exec supabase db query \
-            --db-url "${{ secrets.STAGING_SUPABASE_DB_URL }}" \
+            --db-url "$DB_URL" \
             --file /tmp/seed_real_estates.sql
+        env:
+          DB_URL: ${{ secrets.STAGING_SUPABASE_DB_URL }}
 
       - name: Seed reviews (200)
         run: |
@@ -150,8 +154,10 @@ jobs:
           on conflict (id) do nothing;
           SQLEOF
           pnpm exec supabase db query \
-            --db-url "${{ secrets.STAGING_SUPABASE_DB_URL }}" \
+            --db-url "$DB_URL" \
             --file /tmp/seed_reviews.sql
+        env:
+          DB_URL: ${{ secrets.STAGING_SUPABASE_DB_URL }}
 
       - name: Seed review rooms (50)
         run: |
@@ -171,8 +177,10 @@ jobs:
           on conflict (id) do nothing;
           SQLEOF
           pnpm exec supabase db query \
-            --db-url "${{ secrets.STAGING_SUPABASE_DB_URL }}" \
+            --db-url "$DB_URL" \
             --file /tmp/seed_rooms.sql
+        env:
+          DB_URL: ${{ secrets.STAGING_SUPABASE_DB_URL }}
         # Idempotent — safe to re-run. Uses ON CONFLICT DO NOTHING.
 
   # ---------------------------------------------------------------------------
@@ -208,17 +216,21 @@ jobs:
 
           k6 run \
             --compatibility-mode=extended \
-            -e BASE_URL="${{ inputs.base_url || vars.STAGING_BASE_URL || secrets.STAGING_BASE_URL }}" \
-            -e SUPABASE_URL="${{ secrets.STAGING_SUPABASE_URL }}" \
-            -e SUPABASE_SERVICE_KEY="${{ secrets.STAGING_SUPABASE_SERVICE_KEY }}" \
-            -e TEST_PASSWORD="${{ secrets.STAGING_TEST_PASSWORD }}" \
-            -e REVIEW_ACTION_HASH="${{ inputs.review_action_hash || secrets.STAGING_REVIEW_ACTION_HASH || '' }}" \
+            -e BASE_URL="$BASE_URL" \
+            -e SUPABASE_URL="$SUPABASE_URL" \
+            -e SUPABASE_SERVICE_KEY="$SUPABASE_SERVICE_KEY" \
+            -e TEST_PASSWORD="$TEST_PASSWORD" \
+            -e REVIEW_ACTION_HASH="$REVIEW_ACTION_HASH" \
             --out json=k6/reports/${{ matrix.journey }}/metrics.json \
             --summary-export=k6/reports/${{ matrix.journey }}/summary.json \
             k6/journeys/${{ matrix.journey }}.js
         env:
-          # k6 browser needs to know it's in headless mode (CI)
           K6_BROWSER_HEADLESS: true
+          BASE_URL: ${{ inputs.base_url || vars.STAGING_BASE_URL || secrets.STAGING_BASE_URL }}
+          SUPABASE_URL: ${{ secrets.STAGING_SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.STAGING_SUPABASE_SERVICE_KEY }}
+          TEST_PASSWORD: ${{ secrets.STAGING_TEST_PASSWORD }}
+          REVIEW_ACTION_HASH: ${{ inputs.review_action_hash || secrets.STAGING_REVIEW_ACTION_HASH || '' }}
 
       - name: Upload report artifact
         if: always() # Upload even on failure for debugging
