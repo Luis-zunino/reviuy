@@ -5,6 +5,7 @@ import { getSiteOrigin } from '@/lib/site-url';
 
 // Cache por 24 horas
 export const revalidate = 86400;
+export const runtime = 'nodejs';
 const baseUrl = getSiteOrigin();
 
 /** Timeout para queries de Supabase durante el build. */
