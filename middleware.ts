@@ -1,5 +1,4 @@
 import { PagesUrls } from '@/enums/pagesUrls.enum';
-import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
 const PROTECTED_ROUTE_PATTERNS = [
@@ -44,6 +43,113 @@ const withSecurityHeaders = (response: NextResponse) => {
   return response;
 };
 
+const base64urlDecode = (str: string): string => {
+  const base64 = str.replace(/-/g, '+').replace(/_/g, '/');
+  const padded = base64.padEnd(base64.length + ((4 - (base64.length % 4)) % 4), '=');
+  return atob(padded);
+};
+
+type SupabaseSession = {
+  access_token: string;
+  token_type: string;
+  expires_in: number;
+  expires_at?: number;
+  refresh_token: string;
+  user?: Record<string, unknown> | null;
+};
+
+type RefreshResponse = {
+  access_token: string;
+  token_type: string;
+  expires_in: number;
+  expires_at?: number;
+  refresh_token: string;
+  user?: Record<string, unknown> | null;
+};
+
+const getSessionFromCookie = (
+  request: NextRequest
+): { access_token: string; refresh_token?: string } | null => {
+  const authCookie = request.cookies
+    .getAll()
+    .find((c) => c.name.startsWith('sb-') && c.name.endsWith('-auth-token'));
+
+  if (!authCookie?.value) return null;
+
+  try {
+    const decoded = base64urlDecode(authCookie.value);
+    const parsed = JSON.parse(decoded) as SupabaseSession;
+    return { access_token: parsed.access_token, refresh_token: parsed.refresh_token };
+  } catch {
+    return null;
+  }
+};
+
+const setSessionCookie = (response: NextResponse, session: RefreshResponse, cookieName: string) => {
+  const sessionToStore: SupabaseSession = {
+    access_token: session.access_token,
+    token_type: session.token_type,
+    expires_in: session.expires_in,
+    expires_at: session.expires_at,
+    refresh_token: session.refresh_token,
+    user: session.user ?? null,
+  };
+
+  const encoded = btoa(JSON.stringify(sessionToStore));
+  response.cookies.set(cookieName, encoded, {
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production',
+    path: '/',
+    maxAge: 60 * 60 * 24 * 365,
+  });
+};
+
+const fetchUser = async (
+  accessToken: string,
+  supabaseUrl: string,
+  supabaseKey: string
+): Promise<{ id: string } | null> => {
+  try {
+    const res = await fetch(`${supabaseUrl}/auth/v1/user`, {
+      headers: {
+        apikey: supabaseKey,
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (!res.ok) return null;
+
+    const body = await res.json();
+    return body?.id ? { id: body.id } : null;
+  } catch {
+    return null;
+  }
+};
+
+const refreshSession = async (
+  refreshToken: string,
+  supabaseUrl: string,
+  supabaseKey: string
+): Promise<RefreshResponse | null> => {
+  try {
+    const res = await fetch(`${supabaseUrl}/auth/v1/token?grant_type=refresh_token`, {
+      method: 'POST',
+      headers: {
+        apikey: supabaseKey,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ refresh_token: refreshToken }),
+    });
+
+    if (!res.ok) return null;
+
+    return (await res.json()) as RefreshResponse;
+  } catch {
+    return null;
+  }
+};
+
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next();
   const pathname = request.nextUrl.pathname;
@@ -61,34 +167,31 @@ export async function middleware(request: NextRequest) {
     return withSecurityHeaders(supabaseResponse);
   }
 
-  const supabase = createServerClient(supabaseUrl, supabaseKey, {
-    cookies: {
-      getAll() {
-        return request.cookies.getAll();
-      },
-      setAll(cookiesToSet) {
-        // 1. Para la petición entrante pasamos solo propiedades válidas de RequestCookie
-        cookiesToSet.forEach(({ name, value }) => {
-          request.cookies.set({ name, value });
-        });
+  let user: { id: string } | null = null;
+  const session = getSessionFromCookie(request);
 
-        supabaseResponse = NextResponse.next();
+  if (session?.access_token) {
+    user = await fetchUser(session.access_token, supabaseUrl, supabaseKey);
+  }
 
-        // 2. Para la respuesta saliente sí aplicamos las políticas SameSite exigidas por Semgrep
-        cookiesToSet.forEach(({ name, value, options }) =>
-          supabaseResponse.cookies.set(name, value, {
-            ...options,
-            sameSite: 'lax',
-            secure: process.env.NODE_ENV === 'production',
-          })
-        );
-      },
-    },
-  });
+  if (!user && session?.refresh_token) {
+    const refreshed = await refreshSession(session.refresh_token, supabaseUrl, supabaseKey);
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+    if (refreshed) {
+      supabaseResponse = NextResponse.next();
+      user = await fetchUser(refreshed.access_token, supabaseUrl, supabaseKey);
+
+      if (user) {
+        const cookieName = request.cookies
+          .getAll()
+          .find((c) => c.name.startsWith('sb-') && c.name.endsWith('-auth-token'))?.name;
+
+        if (cookieName) {
+          setSessionCookie(supabaseResponse, refreshed, cookieName);
+        }
+      }
+    }
+  }
 
   if (isProtected && !user) {
     const redirectUrl = new URL(PagesUrls.LOGIN, request.url);
