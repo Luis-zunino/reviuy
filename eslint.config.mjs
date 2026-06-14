@@ -82,7 +82,18 @@ const eslintConfig = [
       '.atl/**',
       'docs/**',
       'scripts/**',
+      'playwright-report/**',
+      'test-results/**',
+      'coverage/**',
+      'k6/**',
+      'e2e/**',
     ],
+  },
+  {
+    files: ['**/__tests__/**', '**/*.test.*', '**/*.spec.*'],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+    },
   },
 ];
 
