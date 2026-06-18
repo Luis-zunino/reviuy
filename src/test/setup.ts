@@ -11,14 +11,11 @@ vi.mock('next/cache', () => ({
   revalidateTag: vi.fn(),
 }));
 
-// Mock global de next/font/google para evitar el error "Manrope is not a function"
-// Esto permite que las constantes de fuentes en src/constants/fonts.constant.ts se inicialicen correctamente.
+// Mock global de next/font/google para evitar errores en tests.
+// Las constantes de fuentes (fonts.constant.ts) usan Inter.
 vi.mock('next/font/google', () => ({
-  Manrope: () => ({
-    className: 'mocked-manrope-font',
-  }),
-  Playfair_Display: () => ({
-    className: 'mocked-playfair-font',
+  Inter: () => ({
+    className: 'mocked-inter-font',
   }),
 }));
 
