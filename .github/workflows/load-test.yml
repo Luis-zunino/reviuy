@@ -61,27 +61,28 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - uses: supabase/setup-cli@v1
-        with:
-          version: latest
+      - name: Install PostgreSQL client
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq postgresql-client
 
-      - name: Apply migrations (includes cleanup RPC)
-        run: supabase db push --db-url "$DB_URL"
+      - name: Apply cleanup RPC function
+        run: psql -h "$PGHOST" -U "$PGUSER" -d "$PGDATABASE" -f supabase/migrations/016_load_test_seed.sql
         env:
-          DB_URL: ${{ secrets.STAGING_SUPABASE_DB_URL }}
-        # Only applies the cleanup_test_data() function — seed data is separate
+          PGHOST: aws-1-us-east-1.pooler.supabase.com
+          PGUSER: postgres.nanksrdsnybkkrmfrnjp
+          PGPORT: "5432"
+          PGDATABASE: postgres
+          PGPASSWORD: ${{ secrets.STAGING_SUPABASE_DB_PASSWORD }}
+        # Idempotent: create or replace function cleanup_test_data()
 
       - name: Apply seed data (test users, properties, reviews)
         run: |
-          # supabase db query uses extended query protocol (no multi-statement).
-          # Run each SQL statement separately via temp files.
-
           # 1. pgcrypto extension
-          supabase db query --db-url "$DB_URL" \
-            "create extension if not exists pgcrypto with schema extensions;"
+          psql -h "$PGHOST" -U "$PGUSER" -d "$PGDATABASE" \
+            -c "create extension if not exists pgcrypto with schema extensions;"
 
-          # 2. Load test users (20) — via Auth Admin API (PL/pgSQL DO blocks
-          #    fail with extended query protocol, so use Node.js)
+          # 2. Load test users (20) — via Auth Admin API
           node -e '
           const { createClient } = require("@supabase/supabase-js");
           const sb = createClient(
@@ -105,7 +106,6 @@ jobs:
           })();
           '
         env:
-          DB_URL: ${{ secrets.STAGING_SUPABASE_DB_URL }}
           SUPABASE_URL: ${{ secrets.STAGING_SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.STAGING_SUPABASE_SERVICE_KEY }}
           TEST_PASSWORD: ${{ secrets.STAGING_TEST_PASSWORD }}
@@ -124,11 +124,13 @@ jobs:
             select 1 from public.real_estates where name = 'Test Property ' || n
           );
           SQLEOF
-          pnpm exec supabase db query \
-            --db-url "$DB_URL" \
-            --file /tmp/seed_real_estates.sql
+          psql -h "$PGHOST" -U "$PGUSER" -d "$PGDATABASE" --file /tmp/seed_real_estates.sql
         env:
-          DB_URL: ${{ secrets.STAGING_SUPABASE_DB_URL }}
+          PGUSER: postgres.nanksrdsnybkkrmfrnjp
+          PGHOST: aws-1-us-east-1.pooler.supabase.com
+          PGPORT: "5432"
+          PGDATABASE: postgres
+          PGPASSWORD: ${{ secrets.STAGING_SUPABASE_DB_PASSWORD }}
 
       - name: Seed reviews (200)
         run: |
@@ -158,11 +160,13 @@ jobs:
           join public.real_estates re on re.name = 'Test Property ' || (1 + ((n - 1) % 50))
           on conflict (id) do nothing;
           SQLEOF
-          pnpm exec supabase db query \
-            --db-url "$DB_URL" \
-            --file /tmp/seed_reviews.sql
+          psql -h "$PGHOST" -U "$PGUSER" -d "$PGDATABASE" --file /tmp/seed_reviews.sql
         env:
-          DB_URL: ${{ secrets.STAGING_SUPABASE_DB_URL }}
+          PGUSER: postgres.nanksrdsnybkkrmfrnjp
+          PGHOST: aws-1-us-east-1.pooler.supabase.com
+          PGPORT: "5432"
+          PGDATABASE: postgres
+          PGPASSWORD: ${{ secrets.STAGING_SUPABASE_DB_PASSWORD }}
 
       - name: Seed review rooms (50)
         run: |
@@ -181,11 +185,13 @@ jobs:
           where r.rn = n and n % 4 = 0
           on conflict (id) do nothing;
           SQLEOF
-          pnpm exec supabase db query \
-            --db-url "$DB_URL" \
-            --file /tmp/seed_rooms.sql
+          psql -h "$PGHOST" -U "$PGUSER" -d "$PGDATABASE" --file /tmp/seed_rooms.sql
         env:
-          DB_URL: ${{ secrets.STAGING_SUPABASE_DB_URL }}
+          PGUSER: postgres.nanksrdsnybkkrmfrnjp
+          PGHOST: aws-1-us-east-1.pooler.supabase.com
+          PGPORT: "5432"
+          PGDATABASE: postgres
+          PGPASSWORD: ${{ secrets.STAGING_SUPABASE_DB_PASSWORD }}
         # Idempotent — safe to re-run. Uses ON CONFLICT DO NOTHING.
 
   # ---------------------------------------------------------------------------
