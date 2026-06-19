@@ -78,11 +78,15 @@ jobs:
 
       - name: Apply seed data (test users, properties, reviews)
         run: |
-          # 1. pgcrypto extension
+          # 1. Clean up any leftover data from previous runs
+          psql -h "$PGHOST" -U "$PGUSER" -d "$PGDATABASE" \
+            -c "select public.cleanup_test_data();"
+
+          # 2. pgcrypto extension
           psql -h "$PGHOST" -U "$PGUSER" -d "$PGDATABASE" \
             -c "create extension if not exists pgcrypto with schema extensions;"
 
-          # 2. Load test users (20) — via Auth Admin API
+          # 3. Load test users (20) — via Auth Admin API
           node -e '
           const { createClient } = require("@supabase/supabase-js");
           const sb = createClient(
@@ -97,7 +101,7 @@ jobs:
                 email_confirm: true,
                 user_metadata: { is_load_test_user: true }
               });
-              if (error && !error.message.includes("already exists")) {
+              if (error && !error.message.includes("already been registered")) {
                 console.error("Failed:", "loadtest-" + i + "@reviuy.qa", error.message);
                 process.exit(1);
               }
