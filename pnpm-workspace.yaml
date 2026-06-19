@@ -1,6 +1,6 @@
 pnpm:
   minimumReleaseAgeExclude:
-    - "shadcn"
+    - 'shadcn'
 
 allowBuilds:
   '@sentry/cli': true
@@ -11,21 +11,21 @@ allowBuilds:
 
 overrides:
   diff: 8.0.3
-  "@isaacs/brace-expansion": 5.0.1
-  "@modelcontextprotocol/sdk": 1.26.0
+  '@isaacs/brace-expansion': 5.0.1
+  '@modelcontextprotocol/sdk': 1.26.0
   sirv: 3.0.2
   qs: 6.15.2
-  minimatch: ">=3.1.4"
-  hono: ">=4.12.18"
-  "@hono/node-server": ">=1.19.13"
-  express-rate-limit: ">=8.5.1"
+  minimatch: '>=3.1.4'
+  hono: '>=4.12.18'
+  '@hono/node-server': '>=1.19.13'
+  express-rate-limit: '>=8.5.1'
   flatted: 3.4.2
-  picomatch: ">=2.3.2"
+  picomatch: '>=2.3.2'
   axios: 1.16.1
-  postcss: ">=8.5.10"
+  postcss: '>=8.5.10'
   esbuild: 0.28.1
-  form-data: ">=4.0.6"
-  undici: ">=7.28.0"
+  form-data: '>=4.0.6'
+  undici: '>=7.28.0'
 
 minimumReleaseAgeExclude:
   - shadcn@4.8.2
