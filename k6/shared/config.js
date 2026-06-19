@@ -56,8 +56,9 @@ export const THRESHOLDS = {
   },
 
   // ---- Auth (login journey) ----
+  // p(95)<3000: Supabase free tier is slow (~2s p95). If you upgrade, tighten to <1000.
   httpAuth: {
-    'http_req_duration{type:auth}': ['p(95)<1000'],
+    'http_req_duration{type:auth}': ['p(95)<3000'],
     http_req_failed: ['rate<0.01'],
   },
 
