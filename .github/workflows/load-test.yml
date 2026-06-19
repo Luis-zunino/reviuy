@@ -231,6 +231,26 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Preflight — DNS check for BASE_URL
+        shell: bash
+        run: |
+          url="$BASE_URL"
+          hostname="$(echo "$url" | sed -E 's|https?://([^:/]+).*|\1|')"
+          echo "Checking DNS for: $hostname (from BASE_URL=$url)"
+          if command -v nslookup &>/dev/null; then
+            if nslookup "$hostname" 2>&1 | grep -qi "can't find\|not found\|NXDOMAIN\|no answer\|server failed"; then
+              echo "::error::DNS lookup FAILED for $hostname — the domain does not resolve."
+              echo "::error::BASE_URL=$url cannot be reached. Verify DNS or update the URL."
+              echo "::error::If this is a Vercel deployment, use the *.vercel.app URL instead."
+              exit 1
+            fi
+            echo "DNS OK — $hostname resolves"
+          else
+            echo "nslookup not available, skipping DNS check"
+          fi
+        env:
+          BASE_URL: ${{ github.event.inputs.base_url || vars.STAGING_BASE_URL || secrets.STAGING_BASE_URL }}
+
       - name: Run k6 load test (${{ matrix.journey }})
         run: |
           mkdir -p k6/reports/${{ matrix.journey }}

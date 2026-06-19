@@ -12,7 +12,7 @@
 // Materialized view refresh: each vote triggers review_vote_stats refresh
 
 import http from 'k6/http';
-import { check } from 'k6';
+import { check, sleep } from 'k6';
 import {
   validateEnv,
   SUPABASE_URL,
@@ -115,6 +115,9 @@ export default function (data) {
     const body = JSON.parse(rpcRes.body);
     console.log(`[vote-review] Voted ${voteType} on review ${reviewId}: ${body.action}`);
   }
+
+  // Throttle to stay under the 20 votes/60min per-user rate limit enforced by check_rate_limit RPC.
+  sleep(3);
 }
 
 export function teardown() {

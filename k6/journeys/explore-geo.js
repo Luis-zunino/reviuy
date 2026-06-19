@@ -65,12 +65,11 @@ export default async function (data) {
     });
 
     // Look for the "Detect my location" button or geolocation trigger
-    // The explore page has a geolocation button — try multiple selectors
+    // Try the most likely selector first, then fall back
     const geoButtonSelectors = [
+      '[data-testid="detect-location"]',
       'button:has-text("Detectar")',
       'button:has-text("ubicación")',
-      'button:has-text("location")',
-      '[data-testid="detect-location"]',
       'button:has-text("Cerca de mí")',
     ];
 
@@ -88,18 +87,18 @@ export default async function (data) {
     if (geoButton) {
       await geoButton.click();
 
-      // Wait for results to load (getReviewsNearby RPC + map render)
-      await page.waitForTimeout(5000);
+      // Wait for getReviewsNearby RPC + map to render
+      // Leaflet map container is the most reliable indicator results are ready
+      const mapContainer = page.locator('.leaflet-container');
+      await mapContainer.waitFor({ state: 'visible', timeout: 8000 });
+      await page.waitForTimeout(1000);
     } else {
-      // If no geolocation button found, the page may auto-detect on load
-      // or the user needs to type in the search box first
+      // If no geolocation button found, wait for whatever results exist
       console.warn('[explore-geo] No geolocation button found, waiting for auto-detect');
-      await page.waitForTimeout(5000);
+      await page.waitForTimeout(2000);
     }
 
     // Verify property cards or results appear
-    // The explore page shows property cards with data-testid="property-card"
-    // or search results with data-testid="search-result"
     const propertyCards = page.locator('[data-testid="property-card"]');
     const searchResults = page.locator('[data-testid="search-result"]');
 
@@ -113,9 +112,8 @@ export default async function (data) {
     console.log(`[explore-geo] Found ${cardCount} property cards, ${resultCount} search results`);
 
     // Check that the Leaflet map is rendered
-    // Leaflet renders a div with class "leaflet-container"
-    const mapContainer = page.locator('.leaflet-container');
-    const mapVisible = await mapContainer.count();
+    const mapContainer2 = page.locator('.leaflet-container');
+    const mapVisible = await mapContainer2.count();
 
     check(null, {
       'map is rendered': () => mapVisible > 0,

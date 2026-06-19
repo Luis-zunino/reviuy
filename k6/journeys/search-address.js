@@ -46,7 +46,7 @@ export default async function (data) {
   try {
     // Navigate to home (which redirects to /home)
     const res = await page.goto(data.baseUrl, { waitUntil: 'load' });
-    await page.waitForSelector('body', { timeout: 10000 });
+    await page.waitForSelector('body', { timeout: 8000 });
 
     check(res, {
       'home page loads': (r) => r.status === 200,
@@ -55,7 +55,7 @@ export default async function (data) {
     // Find the address search input by its placeholder text
     // The AsyncSearchSelect uses "Escribe ciudad (ej: Mon...)" as placeholder
     const searchInput = page.locator('input[placeholder="Escribe ciudad (ej: Mon...)"]');
-    await searchInput.waitFor({ state: 'visible', timeout: 5000 });
+    await searchInput.waitFor({ state: 'visible', timeout: 3000 });
 
     // Type a city name to trigger Nominatim autocomplete
     // The component requires 3+ characters before it opens the popover
@@ -64,7 +64,7 @@ export default async function (data) {
     // Wait for the popover results to appear (Nominatim has debounce + network latency)
     // The popover contains CommandItem elements with role="option"
     const resultItem = page.locator('[role="option"]');
-    await resultItem.first().waitFor({ state: 'visible', timeout: 15000 });
+    await resultItem.first().waitFor({ state: 'visible', timeout: 12000 });
 
     // Verify we have results
     const resultCount = await resultItem.count();
@@ -78,7 +78,7 @@ export default async function (data) {
 
       // Wait for navigation to the address page
       // After selecting, the app navigates to /address/[osmId]
-      await page.waitForTimeout(2000);
+      await page.waitForTimeout(1000);
 
       const currentUrl = page.url();
       const navigatedToAddress = currentUrl.includes('/address/');
