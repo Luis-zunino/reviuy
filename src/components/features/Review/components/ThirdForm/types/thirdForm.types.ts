@@ -4,7 +4,7 @@ import { Dispatch, SetStateAction } from 'react';
 import { type RealEstateWithVotesPublic } from '@/modules/real-estates';
 
 export interface ThirdFormProps {
-  form: UseFormReturn<FormReviewSchema, any, FormReviewSchema>;
+  form: UseFormReturn<FormReviewSchema>;
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
   handleClear: () => void;

@@ -36,22 +36,14 @@ function captureCallbacks() {
     capturedOnSuccess = onSuccess ?? null;
     return {
       mutate: async (vars: any) => {
-        try {
-          const result = await mutationFn(vars);
-          onSuccess?.(result, vars, undefined);
-          return result;
-        } catch (e) {
-          throw e;
-        }
+        const result = await mutationFn(vars);
+        onSuccess?.(result, vars, undefined);
+        return result;
       },
       mutateAsync: async (vars: any) => {
-        try {
-          const result = await mutationFn(vars);
-          onSuccess?.(result, vars, undefined);
-          return result;
-        } catch (e) {
-          throw e;
-        }
+        const result = await mutationFn(vars);
+        onSuccess?.(result, vars, undefined);
+        return result;
       },
       data: null,
       error: null,

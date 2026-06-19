@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { FieldValues, UseFormReturn } from 'react-hook-form';
+import { type FieldValues, type UseFormReturn } from 'react-hook-form';
 import { toast } from 'sonner';
 
 export const useMultiForm = <T extends FieldValues = FieldValues>(props: {
   formsChildren: React.ReactNode[];
-  form: UseFormReturn<T, any, T>;
+  form: UseFormReturn<T>;
 }) => {
   const { formsChildren, form } = props;
   const totalSteps = formsChildren.length;

@@ -76,7 +76,6 @@ export const ReviewCard = ({ review }: ReviewCardProps) => {
               </CardDescription>
             </div>
 
-            {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */}
             <div
               onClick={(e) => e.preventDefault()}
               onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()}

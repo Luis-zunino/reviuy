@@ -70,8 +70,7 @@ export function WebVitals() {
 
         if (ttfb > 800) {
           console.warn('⚠️ TTFB lento:', Math.round(ttfb), 'ms');
-          // eslint-disable-next-line no-console
-          console.log('💡 Considera optimizar el servidor o usar Edge Functions');
+          console.warn('💡 Considera optimizar el servidor o usar Edge Functions');
         }
       }
     }

@@ -3,8 +3,8 @@ import { FieldValues, UseFormReturn } from 'react-hook-form';
 import { AsyncSearchSelectClassNameProps } from '../../AsyncSearchSelect/types';
 import { type NominatimEntity } from '@/modules/addresses';
 
-export interface AddressSearchInputProps<T extends FieldValues> {
-  form: UseFormReturn<T, any, T>;
+export interface AddressSearchInputProps<T extends FieldValues = FieldValues> {
+  form: UseFormReturn<T>;
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
   handleClear: () => void;
