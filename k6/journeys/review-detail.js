@@ -17,7 +17,6 @@ import {
   THRESHOLDS,
   STAGES_DEFAULT,
 } from '../shared/config.js';
-import { cleanup } from '../shared/cleanup.js';
 
 export const options = {
   stages: STAGES_DEFAULT,
@@ -97,5 +96,5 @@ export default function (data) {
 }
 
 export function teardown() {
-  cleanup();
+  // Cleanup handled by workflow-level cleanup job after all journeys complete.
 }

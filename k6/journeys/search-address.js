@@ -17,6 +17,8 @@ import { browser } from 'k6/browser';
 import { check } from 'k6';
 import { validateEnv, BASE_URL, THRESHOLDS, STAGES_LIGHT } from '../shared/config.js';
 
+// No teardown needed — cleanup handled by workflow-level cleanup job.
+
 export const options = {
   scenarios: {
     browser_test: {

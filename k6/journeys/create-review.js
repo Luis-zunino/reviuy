@@ -20,8 +20,6 @@ import {
   STAGES_LIGHT,
 } from '../shared/config.js';
 import { login, getProjectRef, buildAuthCookieValue, buildAuthCookieName } from '../shared/auth.js';
-import { cleanup } from '../shared/cleanup.js';
-
 // Build list of test user emails at init time
 const testUsers = new SharedArray('test-users', function () {
   const users = [];
@@ -189,5 +187,5 @@ export default function (data) {
 }
 
 export function teardown() {
-  cleanup();
+  // Cleanup handled by workflow-level cleanup job after all journeys complete.
 }

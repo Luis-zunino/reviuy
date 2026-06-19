@@ -5,7 +5,6 @@
 import { browser } from 'k6/browser';
 import { check } from 'k6';
 import { validateEnv, BASE_URL, THRESHOLDS, STAGES_DEFAULT } from '../shared/config.js';
-import { cleanup } from '../shared/cleanup.js';
 
 export const options = {
   scenarios: {
@@ -53,5 +52,5 @@ export default async function (data) {
 }
 
 export function teardown() {
-  cleanup();
+  // Cleanup handled by workflow-level cleanup job after all journeys complete.
 }
