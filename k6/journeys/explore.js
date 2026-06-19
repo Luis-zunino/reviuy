@@ -7,8 +7,6 @@ import { check } from 'k6';
 import { validateEnv, BASE_URL, THRESHOLDS, STAGES_DEFAULT } from '../shared/config.js';
 
 // Explore uses browser page thresholds (shared from config)
-import { cleanup } from '../shared/cleanup.js';
-
 // The explore page route — using the actual app route (/explorar)
 const EXPLORE_PATH = '/explorar';
 
@@ -69,5 +67,5 @@ export default async function (data) {
 }
 
 export function teardown() {
-  cleanup();
+  // Cleanup handled by workflow-level cleanup job after all journeys complete.
 }

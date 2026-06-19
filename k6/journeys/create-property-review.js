@@ -23,7 +23,6 @@ import {
   STAGES_LIGHT,
 } from '../shared/config.js';
 import { login } from '../shared/auth.js';
-import { cleanup } from '../shared/cleanup.js';
 
 const testUsers = new SharedArray('test-users', function () {
   const users = [];
@@ -168,6 +167,5 @@ export default function (data) {
 }
 
 export function teardown() {
-  // Run cleanup to remove created reviews
-  cleanup();
+  // Cleanup handled by workflow-level cleanup job after all journeys complete.
 }

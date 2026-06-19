@@ -22,7 +22,6 @@ import {
   THRESHOLDS,
   STAGES_LIGHT,
 } from '../shared/config.js';
-import { cleanup } from '../shared/cleanup.js';
 
 const testUsers = new SharedArray('test-users', function () {
   const users = [];
@@ -136,5 +135,5 @@ export default function (data) {
 }
 
 export function teardown() {
-  cleanup();
+  // Cleanup handled by workflow-level cleanup job after all journeys complete.
 }

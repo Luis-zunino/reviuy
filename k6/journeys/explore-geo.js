@@ -16,6 +16,8 @@ import { browser } from 'k6/browser';
 import { check } from 'k6';
 import { validateEnv, BASE_URL, THRESHOLDS, STAGES_LIGHT } from '../shared/config.js';
 
+// No teardown needed — cleanup handled by workflow-level cleanup job.
+
 // Montevideo coordinates for geolocation mock
 const TEST_LATITUDE = -34.9011;
 const TEST_LONGITUDE = -56.1645;
