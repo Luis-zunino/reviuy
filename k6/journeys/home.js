@@ -8,7 +8,17 @@ import { validateEnv, BASE_URL, THRESHOLDS, STAGES_DEFAULT } from '../shared/con
 import { cleanup } from '../shared/cleanup.js';
 
 export const options = {
-  stages: STAGES_DEFAULT,
+  scenarios: {
+    browser_test: {
+      executor: 'ramping-vus',
+      stages: STAGES_DEFAULT,
+      options: {
+        browser: {
+          type: 'chromium',
+        },
+      },
+    },
+  },
   thresholds: THRESHOLDS.browserPage,
 };
 
@@ -18,27 +28,27 @@ export function setup() {
   return { baseUrl: BASE_URL };
 }
 
-export default function (data) {
-  const page = browser.newPage();
+export default async function (data) {
+  const page = await browser.newPage();
 
   try {
-    const res = page.goto(data.baseUrl, { waitUntil: 'load' });
-    page.waitForSelector('[data-testid="property-card"]', {
+    const res = await page.goto(data.baseUrl, { waitUntil: 'load' });
+    await page.waitForSelector('[data-testid="property-card"]', {
       timeout: 10000,
     });
 
     check(res, {
       'home page status is 200': (r) => r.status === 200,
-      'property cards are visible': () => {
+      'property cards are visible': async () => {
         const cards = page.locator('[data-testid="property-card"]');
-        return cards.count() > 0;
+        return (await cards.count()) > 0;
       },
     });
 
-    // Artificial think时间 to simulate user behavior
-    page.waitForTimeout(1000);
+    // Artificial think time to simulate user behavior
+    await page.waitForTimeout(1000);
   } finally {
-    page.close();
+    await page.close();
   }
 }
 

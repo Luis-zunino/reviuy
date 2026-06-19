@@ -13,7 +13,17 @@ import { cleanup } from '../shared/cleanup.js';
 const EXPLORE_PATH = '/explorar';
 
 export const options = {
-  stages: STAGES_DEFAULT,
+  scenarios: {
+    browser_test: {
+      executor: 'ramping-vus',
+      stages: STAGES_DEFAULT,
+      options: {
+        browser: {
+          type: 'chromium',
+        },
+      },
+    },
+  },
   thresholds: THRESHOLDS.browserPage,
 };
 
@@ -23,12 +33,12 @@ export function setup() {
   return { baseUrl: BASE_URL, exploreUrl: `${BASE_URL}${EXPLORE_PATH}` };
 }
 
-export default function (data) {
-  const page = browser.newPage();
+export default async function (data) {
+  const page = await browser.newPage();
 
   try {
     // Navigate to explore page
-    const res = page.goto(data.exploreUrl, { waitUntil: 'load' });
+    const res = await page.goto(data.exploreUrl, { waitUntil: 'load' });
 
     check(res, {
       'explore page status is 200': (r) => r.status === 200,
@@ -39,22 +49,22 @@ export default function (data) {
       'input[type="text"], input[type="search"], [data-testid="search-input"]'
     );
     if (searchInput) {
-      searchInput.fill('test property');
+      await searchInput.fill('test property');
     }
 
     // Wait for results to appear
-    page.waitForTimeout(2000);
+    await page.waitForTimeout(2000);
 
     // Check that property cards or results are visible
     const results = page.locator('[data-testid="property-card"], [data-testid="search-result"]');
     check(null, {
-      'search results are visible': () => results && results.count() > 0,
+      'search results are visible': async () => results && (await results.count()) > 0,
     });
 
     // Artificial think time
-    page.waitForTimeout(1000);
+    await page.waitForTimeout(1000);
   } finally {
-    page.close();
+    await page.close();
   }
 }
 
