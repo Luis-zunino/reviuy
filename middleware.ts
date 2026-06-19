@@ -46,13 +46,13 @@ const withSecurityHeaders = (response: NextResponse) => {
 const BASE64_PREFIX = 'base64-';
 
 const base64urlDecode = (str: string): string => {
-  const base64 = str.replace(/-/g, '+').replace(/_/g, '/');
+  const base64 = str.replaceAll(/-/g, '+').replaceAll(/_/g, '/');
   const padded = base64.padEnd(base64.length + ((4 - (base64.length % 4)) % 4), '=');
   return atob(padded);
 };
 
 const stringToBase64URL = (str: string): string => {
-  return btoa(str).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  return btoa(str).replace(/[+/=]/g, (ch) => (ch === '+' ? '-' : ch === '/' ? '_' : ''));
 };
 
 type SupabaseSession = {
