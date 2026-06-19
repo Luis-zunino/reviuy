@@ -1,11 +1,12 @@
 // k6/journeys/create-property-review.js
-// HTTP journey: login → POST create_review RPC (property review, NOT real estate review)
+// HTTP journey: POST create_review RPC (property review, NOT real estate review)
 // Thresholds: API < 1s, auth < 1s, error < 1%
 //
 // Flow:
-//   1. Login via Supabase password grant → get session
+//   1. Build review payload
 //   2. POST the create_review RPC with review data
 //   3. Validate response
+// Login is done once in setup() — all VUs reuse the same session.
 //
 // Rate limited: 5 reviews per 10 minutes per user
 // This journey creates REAL data in the database.
@@ -23,14 +24,6 @@ import {
   STAGES_LIGHT,
 } from '../shared/config.js';
 import { login } from '../shared/auth.js';
-
-const testUsers = new SharedArray('test-users', function () {
-  const users = [];
-  for (let i = 0; i < 20; i++) {
-    users.push(`loadtest-${i}@reviuy.qa`);
-  }
-  return users;
-});
 
 const testRealEstates = new SharedArray('test-real-estates', function () {
   return [
@@ -79,25 +72,21 @@ const PROPERTY_TYPES = ['apartment', 'house', 'duplex', 'studio', 'penthouse'];
 
 export function setup() {
   validateEnv();
-  console.log(`[create-property-review] Starting against ${SUPABASE_URL}`);
-  return { supabaseUrl: SUPABASE_URL };
+  // Login once in setup — all VUs reuse the same session.
+  // The auth endpoint is tested separately by login.js.
+  const session = login('loadtest-0@reviuy.qa');
+  if (!session) {
+    throw new Error('[create-property-review] Setup login failed');
+  }
+  console.log(`[create-property-review] Starting against ${SUPABASE_URL}, logged in as loadtest-0`);
+  return { supabaseUrl: SUPABASE_URL, accessToken: session.access_token };
 }
 
 export default function (data) {
-  const { supabaseUrl } = data;
-
-  // ---- Step 1: Login ----
+  const { supabaseUrl, accessToken } = data;
   const vuIndex = __VU - 1;
-  const iterIndex = vuIndex + __ITER * 20;
-  const email = testUsers[iterIndex % testUsers.length];
 
-  const session = login(email);
-  if (!session) {
-    console.error(`[create-property-review] Login failed for ${email}, skipping iteration`);
-    return;
-  }
-
-  // ---- Step 2: Build review payload ----
+  // ---- Step 1: Build review payload ----
   const addrIdx = (vuIndex + __ITER) % ADDRESSES.length;
   const addr = ADDRESSES[addrIdx];
   const propertyType = PROPERTY_TYPES[(vuIndex + __ITER) % PROPERTY_TYPES.length];
@@ -132,7 +121,7 @@ export default function (data) {
     headers: {
       'Content-Type': 'application/json',
       apikey: SUPABASE_SERVICE_KEY,
-      Authorization: `Bearer ${session.access_token}`,
+      Authorization: `Bearer ${accessToken}`,
     },
     tags: { type: 'api' },
   };

@@ -1,7 +1,9 @@
 // k6/journeys/login.js
-// HTTP journey: POST Supabase password grant, measure latency
+// HTTP journey: POST Supabase password grant, measure auth latency
 // Thresholds: p95 auth < 1s, error < 1%
 //
+// This is the ONLY journey that exercises the auth endpoint in every iteration.
+// Other journeys authenticate once in setup() and reuse the session.
 // Uses a pool of 20 test users (loadtest-0 through loadtest-19@reviuy.qa).
 // Each VU cycles through users by index.
 
@@ -14,7 +16,7 @@ import {
   SUPABASE_SERVICE_KEY,
   TEST_PASSWORD,
   THRESHOLDS,
-  STAGES_DEFAULT,
+  STAGES_LIGHT,
 } from '../shared/config.js';
 // Build list of test user emails at init time (shared across VUs)
 const testUsers = new SharedArray('test-users', function () {
@@ -26,7 +28,7 @@ const testUsers = new SharedArray('test-users', function () {
 });
 
 export const options = {
-  stages: STAGES_DEFAULT,
+  stages: STAGES_LIGHT,
   thresholds: THRESHOLDS.httpAuth,
 };
 

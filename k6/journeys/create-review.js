@@ -1,16 +1,15 @@
 // k6/journeys/create-review.js
-// HTTP journey: login → GET property → POST review via Server Action
+// HTTP journey: GET property → POST review via Server Action
 // Thresholds: SA < 1s, e2e < 5s, error < 1%
 //
 // Flow:
-//   1. Login via Supabase password grant → get session
-//   2. GET the create review page → build auth cookie → extract action hash
-//   3. POST the Server Action with review data
-//   4. Validate response
+//   1. GET the create review page → build auth cookie → extract action hash
+//   2. POST the Server Action with review data
+//   3. Validate response
+// Login is done once in setup() — all VUs reuse the same session.
 
 import http from 'k6/http';
 import { check } from 'k6';
-import { SharedArray } from 'k6/data';
 import {
   validateEnv,
   BASE_URL,
@@ -20,15 +19,6 @@ import {
   STAGES_LIGHT,
 } from '../shared/config.js';
 import { login, getProjectRef, buildAuthCookieValue, buildAuthCookieName } from '../shared/auth.js';
-// Build list of test user emails at init time
-const testUsers = new SharedArray('test-users', function () {
-  const users = [];
-  for (let i = 0; i < 20; i++) {
-    users.push(`loadtest-${i}@reviuy.qa`);
-  }
-  return users;
-});
-
 export const options = {
   stages: STAGES_LIGHT,
   thresholds: THRESHOLDS.httpServerAction,
@@ -40,32 +30,30 @@ export function setup() {
   if (!projectRef) {
     throw new Error('Could not determine Supabase project ref from SUPABASE_URL');
   }
-  console.log(`[create-review] Project ref: ${projectRef}`);
+  // Login once in setup — all VUs reuse the same session.
+  // The auth endpoint is tested separately by login.js.
+  const session = login('loadtest-0@reviuy.qa');
+  if (!session) {
+    throw new Error('[create-review] Setup login failed');
+  }
+  const cookieValue = buildAuthCookieValue(session);
+  const cookieName = buildAuthCookieName(projectRef);
+  console.log(`[create-review] Project ref: ${projectRef}, logged in as loadtest-0`);
   return {
     baseUrl: BASE_URL,
     supabaseUrl: SUPABASE_URL,
     projectRef: projectRef,
+    cookieName: cookieName,
+    cookieValue: cookieValue,
   };
 }
 
 export default function (data) {
-  // ---- Step 1: Login ----
-  const vuIndex = __VU - 1;
-  const iterIndex = vuIndex + __ITER * 20;
-  const email = testUsers[iterIndex % testUsers.length];
+  const { baseUrl, supabaseUrl, cookieName, cookieValue } = data;
 
-  const session = login(email);
-  if (!session) {
-    console.error(`[create-review] Login failed for ${email}, skipping iteration`);
-    return;
-  }
-
-  const cookieValue = buildAuthCookieValue(session);
-  const cookieName = buildAuthCookieName(data.projectRef);
-
-  // ---- Step 2: GET a property ID for the review ----
+  // ---- Step 1: GET a property ID for the review ----
   // Fetch properties via Supabase REST API (anonymous query for public data)
-  const propsUrl = `${data.supabaseUrl}/rest/v1/real_estates?select=id,name&limit=1`;
+  const propsUrl = `${supabaseUrl}/rest/v1/real_estates?select=id,name&limit=1`;
   const propsRes = http.get(propsUrl, {
     headers: {
       apikey: SUPABASE_SERVICE_KEY,
@@ -97,9 +85,9 @@ export default function (data) {
   }
 
   const realEstateId = properties[0].id;
-  const createUrl = `${data.baseUrl}/real-estate/${realEstateId}/review/create`;
+  const createUrl = `${baseUrl}/real-estate/${realEstateId}/review/create`;
 
-  // ---- Step 3: Extract Server Action hash from the page ----
+  // ---- Step 2: Extract Server Action hash from the page ----
   console.log(`[create-review] Fetching page: ${createUrl}`);
   const pageRes = http.get(createUrl, {
     headers: {
@@ -141,7 +129,7 @@ export default function (data) {
     );
   }
 
-  // ---- Step 4: POST the Server Action to create a review ----
+  // ---- Step 3: POST the Server Action to create a review ----
   const reviewPayload = JSON.stringify({
     title: 'Load Test Review ' + Date.now(),
     description:
