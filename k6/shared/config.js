@@ -74,6 +74,13 @@ export const THRESHOLDS = {
     'http_req_duration{type:api}': ['p(95)<500'],
     http_req_failed: ['rate<0.01'],
   },
+
+  // ---- Vote (vote-review journey) ----
+  httpVote: {
+    'http_req_duration{type:api}': ['p(95)<1000'],
+    'http_req_duration{type:auth}': ['p(95)<1000'],
+    http_req_failed: ['rate<0.01'],
+  },
 };
 
 // =============================================================================

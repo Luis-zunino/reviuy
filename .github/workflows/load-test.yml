@@ -1,7 +1,7 @@
 # ==============================================================================
 # Load Tests (Staging Only)
 # ==============================================================================
-# Runs 5 critical user journeys as k6 load tests in parallel CI matrix.
+# Runs 10 critical user journeys as k6 load tests in parallel CI matrix.
 # Scheduled: weekly (Mon 06:00 UTC) + manual dispatch via workflow_dispatch.
 #
 # ⚠️  SAFETY: This workflow targets a STAGING environment ONLY.
@@ -10,8 +10,9 @@
 #    - All secrets use STAGING_* prefix to prevent accidental prod access
 #
 # Each journey runs in its own `grafana/k6` container. Browser journeys
-# (home, explore) use k6 browser with embedded Chromium. HTTP journeys
-# (login, create-review, review-detail) use k6 HTTP only.
+# (home, explore, search-address, explore-geo) use k6 browser with embedded
+# Chromium. HTTP journeys (login, create-review, review-detail, vote-review,
+# create-property-review, auth-callback) use k6 HTTP only.
 #
 # Threshold breaches cause non-zero exit → GitHub check fails.
 # Reports are uploaded as artifacts for every run.
@@ -202,6 +203,11 @@ jobs:
           - login
           - create-review
           - review-detail
+          - vote-review
+          - search-address
+          - explore-geo
+          - create-property-review
+          - auth-callback
 
     container:
       image: grafana/k6:latest
