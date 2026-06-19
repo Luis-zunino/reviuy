@@ -246,7 +246,7 @@ jobs:
             -e SUPABASE_SERVICE_KEY="$SUPABASE_SERVICE_KEY" \
             -e TEST_PASSWORD="$TEST_PASSWORD" \
             -e REVIEW_ACTION_HASH="$REVIEW_ACTION_HASH" \
-            grafana/k6:latest \
+            grafana/k6:latest-with-browser \
             run \
               --compatibility-mode=extended \
               -e BASE_URL="$BASE_URL" \
