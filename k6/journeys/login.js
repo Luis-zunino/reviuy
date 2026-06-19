@@ -7,8 +7,9 @@
 // Uses a pool of 20 test users (loadtest-0 through loadtest-19@reviuy.qa).
 // Each VU cycles through users by index.
 //
-// Throttled with sleep(2) and max 5 VUs to stay within Supabase Auth rate limits
-// on the free tier. This is a smoke test for auth, not a stress test.
+// Throttled with sleep(5) and max 2 VUs to stay within Supabase Auth rate limits
+// on the free tier (~30 req/min). 2 VUs × ~12 req/min = ~24 req/min, under the limit.
+// This is a smoke test for auth, not a stress test.
 
 import http from 'k6/http';
 import { check, sleep } from 'k6';
@@ -20,11 +21,12 @@ import {
   TEST_PASSWORD,
   THRESHOLDS,
 } from '../shared/config.js';
-// Custom light stages for auth: slow ramp, max 5 VUs, with think time
+// Custom light stages for auth: slow ramp, max 2 VUs, with extended think time
+// Kept at 2 VUs to stay under Supabase free tier rate limit (~30 req/min).
 const LOGIN_STAGES = [
-  { duration: '30s', target: 2 },
-  { duration: '1m', target: 5 },
-  { duration: '2m', target: 5 },
+  { duration: '30s', target: 1 },
+  { duration: '1m', target: 2 },
+  { duration: '2m', target: 2 },
   { duration: '30s', target: 0 },
 ];
 // Build list of test user emails at init time (shared across VUs)
@@ -84,8 +86,8 @@ export default function (data) {
     console.error(`[login] Failed for ${email}: ${res.status} ${res.body}`);
   }
 
-  // Throttle to avoid hitting Supabase Auth rate limit
-  sleep(2);
+  // Throttle to stay under Supabase Auth rate limit (~30 req/min)
+  sleep(5);
 }
 
 export function teardown() {

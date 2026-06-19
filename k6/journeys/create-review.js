@@ -100,6 +100,12 @@ export default function (data) {
     'create review page loads': (r) => r.status === 200,
   });
 
+  // Guard: skip action hash extraction if the page didn't load
+  if (!pageRes.body) {
+    console.error('[create-review] Empty response body — cannot extract action hash');
+    return;
+  }
+
   // Try to extract the action hash from the page HTML
   // Patterns: data-next-action="<hash>", "next-action":"<hash>", or $ACTION_<hash>
   let actionHash = null;

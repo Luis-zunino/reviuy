@@ -210,7 +210,7 @@ jobs:
     name: Journey — ${{ matrix.journey }}
     needs: [seed-check]
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 15
     environment: staging
 
     strategy:
@@ -238,6 +238,7 @@ jobs:
           docker run --rm \
             --user root \
             --cap-add=SYS_ADMIN \
+            --dns 8.8.8.8 \
             -v ${{ github.workspace }}:/apps \
             -w /apps \
             -e K6_BROWSER_HEADLESS=true \
