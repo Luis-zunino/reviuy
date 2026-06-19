@@ -238,8 +238,8 @@ jobs:
           docker run --rm \
             --user root \
             --cap-add=SYS_ADMIN \
-            -v ${{ github.workspace }}:${{ github.workspace }} \
-            -w ${{ github.workspace }} \
+            -v ${{ github.workspace }}:/apps \
+            -w /apps \
             -e K6_BROWSER_HEADLESS=true \
             -e BASE_URL="$BASE_URL" \
             -e SUPABASE_URL="$SUPABASE_URL" \
@@ -247,7 +247,7 @@ jobs:
             -e TEST_PASSWORD="$TEST_PASSWORD" \
             -e REVIEW_ACTION_HASH="$REVIEW_ACTION_HASH" \
             grafana/k6:latest \
-            k6 run \
+            run \
               --compatibility-mode=extended \
               -e BASE_URL="$BASE_URL" \
               -e SUPABASE_URL="$SUPABASE_URL" \
@@ -259,11 +259,11 @@ jobs:
               k6/journeys/${{ matrix.journey }}.js
         env:
           K6_BROWSER_HEADLESS: true
-          BASE_URL: ${{ inputs.base_url || vars.STAGING_BASE_URL || secrets.STAGING_BASE_URL }}
+          BASE_URL: ${{ github.event.inputs.base_url || vars.STAGING_BASE_URL || secrets.STAGING_BASE_URL }}
           SUPABASE_URL: ${{ secrets.STAGING_SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.STAGING_SUPABASE_SERVICE_KEY }}
           TEST_PASSWORD: ${{ secrets.STAGING_TEST_PASSWORD }}
-          REVIEW_ACTION_HASH: ${{ inputs.review_action_hash || secrets.STAGING_REVIEW_ACTION_HASH || '' }}
+          REVIEW_ACTION_HASH: ${{ github.event.inputs.review_action_hash || secrets.STAGING_REVIEW_ACTION_HASH || '' }}
 
       - name: Upload report artifact
         if: always() # Upload even on failure for debugging
