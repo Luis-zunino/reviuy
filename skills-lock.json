@@ -4,7 +4,8 @@
     "accessibility": {
       "source": "addyosmani/web-quality-skills",
       "sourceType": "github",
-      "computedHash": "494d59fffe67c87b485f4ee2fb1abd73fc9d0d508c4c8bd9c43a9edd3242f730"
+      "skillPath": "skills/accessibility/SKILL.md",
+      "computedHash": "ebfa09617a2ac4fd64afd73267726b787145a8d14294df3f8802b462c91594ab"
     },
     "bash-defensive-patterns": {
       "source": "wshobson/agents",
@@ -14,7 +15,8 @@
     "best-practices": {
       "source": "addyosmani/web-quality-skills",
       "sourceType": "github",
-      "computedHash": "98dafea60ec1a7f5f70f6febcdd4b4fa3fe15723ad9c0b991c0818615bff7ba6"
+      "skillPath": "skills/best-practices/SKILL.md",
+      "computedHash": "f84707a5ba30771f4c3e672846457e4b0ed4dff5fd268bf0fe6cd17583637671"
     },
     "composition-patterns": {
       "source": "vercel-labs/agent-skills",
@@ -24,7 +26,8 @@
     "core-web-vitals": {
       "source": "addyosmani/web-quality-skills",
       "sourceType": "github",
-      "computedHash": "fa437acc2249cea2cb28f190ba7faf8fdfac829d1c1aafa9ce938c6dd9338721"
+      "skillPath": "skills/core-web-vitals/SKILL.md",
+      "computedHash": "4684e264c8e3dd529aefe97c3102814e3b63a9ea21a163d0f835ed506773e3f8"
     },
     "frontend-design": {
       "source": "anthropics/skills",
@@ -65,7 +68,8 @@
     "performance": {
       "source": "addyosmani/web-quality-skills",
       "sourceType": "github",
-      "computedHash": "acbafe2fcbfc3a1a67db47c2f6299d5c0e16f543c4e683e38e74a8ccb54888fb"
+      "skillPath": "skills/performance/SKILL.md",
+      "computedHash": "646931a3af896ae12a3cad3d762668cb6487fe3ab179daf8fdc974fb79acfe49"
     },
     "react-best-practices": {
       "source": "vercel-labs/agent-skills",
@@ -80,7 +84,8 @@
     "seo": {
       "source": "addyosmani/web-quality-skills",
       "sourceType": "github",
-      "computedHash": "680cc12a17e9308b4592a2751db51615c618993f75362cb8e64207f6355a8c63"
+      "skillPath": "skills/seo/SKILL.md",
+      "computedHash": "3d72168e266b759454b3e16028e7306ec716f21de6878cac7e98a0a3834ab5db"
     },
     "shadcn": {
       "source": "shadcn/ui",
@@ -137,7 +142,8 @@
     "web-quality-audit": {
       "source": "addyosmani/web-quality-skills",
       "sourceType": "github",
-      "computedHash": "1168be21aa9fe7bdc6e6e053ca05b6ca5a45675a527c103cdf77bc56ce8159af"
+      "skillPath": "skills/web-quality-audit/SKILL.md",
+      "computedHash": "10db799d6bff4fc98a4067aa04fdee2e9f34eaca1c42fd4207a89aafe644a6f0"
     },
     "zod": {
       "source": "pproenca/dot-skills",

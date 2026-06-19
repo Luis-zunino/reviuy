@@ -67,3 +67,4 @@ e2e/.auth/
 # Playwright test artifacts
 playwright-report/
 test-results/
+openspec

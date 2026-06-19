@@ -3,7 +3,6 @@ import nextCoreWebVitals from 'eslint-config-next/core-web-vitals';
 import nextTypescript from 'eslint-config-next/typescript';
 import { fileURLToPath } from 'node:url';
 import js from '@eslint/js';
-import tseslint from 'typescript-eslint';
 import reactPlugin from 'eslint-plugin-react';
 import reactHooksPlugin from 'eslint-plugin-react-hooks';
 
@@ -14,7 +13,6 @@ const eslintConfig = [
   ...nextCoreWebVitals,
   ...nextTypescript,
   js.configs.recommended,
-  ...tseslint.configs.recommended,
   {
     files: ['**/*.{js,jsx,ts,tsx}'],
     plugins: {
@@ -43,6 +41,7 @@ const eslintConfig = [
       'react/prop-types': 'off', // Usamos TypeScript
 
       // Reglas de TypeScript
+      'no-unused-vars': 'off', // La maneja @typescript-eslint
       '@typescript-eslint/no-unused-vars': [
         'error',
         {
@@ -82,7 +81,18 @@ const eslintConfig = [
       '.atl/**',
       'docs/**',
       'scripts/**',
+      'playwright-report/**',
+      'test-results/**',
+      'coverage/**',
+      'k6/**',
+      'e2e/**',
     ],
+  },
+  {
+    files: ['**/__tests__/**', '**/*.test.*', '**/*.spec.*'],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+    },
   },
 ];
 
