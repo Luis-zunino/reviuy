@@ -233,7 +233,7 @@ jobs:
 
     container:
       image: grafana/k6:latest
-      options: --cap-add=SYS_ADMIN # Required for k6 browser (Chromium sandbox)
+      options: --cap-add=SYS_ADMIN --user root
 
     steps:
       - uses: actions/checkout@v4
