@@ -228,6 +228,9 @@ jobs:
           - create-property-review
           - auth-callback
 
+    env:
+      ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
+
     container:
       image: grafana/k6:latest
       options: --cap-add=SYS_ADMIN # Required for k6 browser (Chromium sandbox)
