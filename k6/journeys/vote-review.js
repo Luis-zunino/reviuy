@@ -1,19 +1,18 @@
 // k6/journeys/vote-review.js
-// HTTP journey: login → fetch review ID → POST vote_review RPC (toggle like/dislike)
+// HTTP journey: fetch review ID → POST vote_review RPC (toggle like/dislike)
 // Thresholds: API < 1s, auth < 1s, error < 1%
 //
 // Flow:
-//   1. Login via Supabase password grant → get session
-//   2. Fetch a review ID from Supabase REST API (cached at setup)
-//   3. POST vote_review RPC (alternates between 'like' and 'dislike' per iteration)
-//   4. Validate response
+//   1. Fetch a review ID from Supabase REST API (cached at setup)
+//   2. POST vote_review RPC (alternates between 'like' and 'dislike' per iteration)
+//   3. Validate response
+// Login is done once in setup() — all VUs reuse the same session.
 //
 // Rate limited: 20 votes per 60 minutes per user (enforced by check_rate_limit RPC)
 // Materialized view refresh: each vote triggers review_vote_stats refresh
 
 import http from 'k6/http';
 import { check } from 'k6';
-import { SharedArray } from 'k6/data';
 import {
   validateEnv,
   SUPABASE_URL,
@@ -22,14 +21,6 @@ import {
   STAGES_LIGHT,
 } from '../shared/config.js';
 import { login } from '../shared/auth.js';
-
-const testUsers = new SharedArray('test-users', function () {
-  const users = [];
-  for (let i = 0; i < 20; i++) {
-    users.push(`loadtest-${i}@reviuy.qa`);
-  }
-  return users;
-});
 
 export const options = {
   stages: STAGES_LIGHT,
@@ -65,27 +56,20 @@ function fetchReviewIds() {
 export function setup() {
   validateEnv();
   const reviewIds = fetchReviewIds();
-  console.log(
-    `[vote-review] Loaded ${reviewIds.length} review IDs, ${testUsers.length} test users`
-  );
-  return { supabaseUrl: SUPABASE_URL, reviewIds };
+  // Login once in setup — all VUs reuse the same session.
+  const session = login('loadtest-0@reviuy.qa');
+  if (!session) {
+    throw new Error('[vote-review] Setup login failed');
+  }
+  console.log(`[vote-review] Loaded ${reviewIds.length} review IDs, logged in as loadtest-0`);
+  return { supabaseUrl: SUPABASE_URL, reviewIds, accessToken: session.access_token };
 }
 
 export default function (data) {
-  const { supabaseUrl, reviewIds } = data;
+  const { supabaseUrl, reviewIds, accessToken } = data;
 
-  // ---- Step 1: Login ----
+  // ---- Step 1: Pick a review ID ----
   const vuIndex = __VU - 1;
-  const iterIndex = vuIndex + __ITER * 20;
-  const email = testUsers[iterIndex % testUsers.length];
-
-  const session = login(email);
-  if (!session) {
-    console.error(`[vote-review] Login failed for ${email}, skipping iteration`);
-    return;
-  }
-
-  // ---- Step 2: Pick a review ID ----
   if (!reviewIds || reviewIds.length === 0) {
     console.warn('[vote-review] No review IDs available, skipping');
     return;
@@ -104,7 +88,7 @@ export default function (data) {
     headers: {
       'Content-Type': 'application/json',
       apikey: SUPABASE_SERVICE_KEY,
-      Authorization: `Bearer ${session.access_token}`,
+      Authorization: `Bearer ${accessToken}`,
     },
     tags: { type: 'api' },
   };
