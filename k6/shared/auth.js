@@ -3,7 +3,7 @@
 
 import http from 'k6/http';
 import { check } from 'k6';
-import { encoding } from 'k6/encoding';
+import { b64encode } from 'k6/encoding';
 import { SUPABASE_URL, SUPABASE_SERVICE_KEY, TEST_PASSWORD } from './config.js';
 
 /**
@@ -83,7 +83,7 @@ export function buildAuthCookieValue(session) {
     user: session.user,
   });
 
-  const encodedValue = `base64-${encoding.b64encode(rawValue, 'rawurl')}`;
+  const encodedValue = `base64-${b64encode(rawValue, 'rawurl')}`;
   return encodedValue;
 }
 
