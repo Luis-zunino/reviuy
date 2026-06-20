@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import * as Sentry from '@sentry/nextjs';
 import { supabaseClient } from '@/lib/supabase/client';
-import type { AuthProviderProps, TermsAcceptancePayload } from './types';
+import type { AuthProviderProps } from './types';
 import { useRouter } from 'next/navigation';
 import { PagesUrls } from '@/enums';
 import type { AppSession } from '@/modules/profiles/domain';
@@ -11,7 +11,6 @@ import { sessionMapped } from '@/utils/sessionMapped.util';
 import { AuthContext } from './constants';
 import { createGetSessionQuery } from '@/modules/profiles/application';
 import { SupabaseProfileAuthReadRepository } from '@/modules/profiles/infrastructure';
-import { buildSiteUrl } from '@/lib/site-url';
 
 const profileAuthReadRepository = new SupabaseProfileAuthReadRepository();
 const getSession = createGetSessionQuery({
@@ -52,61 +51,35 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [session, setSession] = useState<AppSession | null>(null);
   const [loading, setLoading] = useState(true);
   const { push } = useRouter();
-  const authCallbackUrl = buildSiteUrl('/auth/callback');
 
-  const buildAuthCallbackUrl = useCallback(
-    (payload?: TermsAcceptancePayload) => {
-      const url = new URL(authCallbackUrl);
+  const signInWithGoogle = useCallback(async () => {
+    setLoading(true);
+    const { error } = await supabaseClient.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: '/auth/callback',
+      },
+    });
+    setLoading(false);
+    if (error) {
+      throw error;
+    }
+  }, []);
 
-      if (payload?.acceptedTerms) {
-        url.searchParams.set('terms_accepted', '1');
-        url.searchParams.set(
-          'terms_accepted_at',
-          payload.termsAcceptedAt ?? new Date().toISOString()
-        );
-        url.searchParams.set('terms_version', payload.termsVersion ?? 'v1');
-      }
+  const signInWithEmail = useCallback(async (email: string) => {
+    setLoading(true);
+    const { error } = await supabaseClient.auth.signInWithOtp({
+      email,
+      options: {
+        emailRedirectTo: '/auth/callback',
+      },
+    });
+    setLoading(false);
 
-      return url.toString();
-    },
-    [authCallbackUrl]
-  );
-
-  const signInWithGoogle = useCallback(
-    async (payload?: TermsAcceptancePayload) => {
-      setLoading(true);
-      const { error } = await supabaseClient.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: buildAuthCallbackUrl(payload),
-        },
-      });
-      setLoading(false);
-      if (error) {
-        throw error;
-      }
-    },
-    [buildAuthCallbackUrl]
-  );
-
-  const signInWithEmail = useCallback(
-    async (email: string, payload?: TermsAcceptancePayload) => {
-      setLoading(true);
-      const emailRedirectTo = buildAuthCallbackUrl(payload);
-      const { error } = await supabaseClient.auth.signInWithOtp({
-        email,
-        options: {
-          emailRedirectTo,
-        },
-      });
-      setLoading(false);
-
-      if (error) {
-        throw error;
-      }
-    },
-    [buildAuthCallbackUrl]
-  );
+    if (error) {
+      throw error;
+    }
+  }, []);
 
   const signOut = useCallback(async () => {
     const { error } = await supabaseClient.auth.signOut();
