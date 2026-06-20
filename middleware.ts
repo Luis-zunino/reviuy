@@ -43,10 +43,16 @@ const withSecurityHeaders = (response: NextResponse) => {
   return response;
 };
 
+const BASE64_PREFIX = 'base64-';
+
 const base64urlDecode = (str: string): string => {
-  const base64 = str.replace(/-/g, '+').replace(/_/g, '/');
+  const base64 = str.replaceAll(/-/g, '+').replaceAll(/_/g, '/');
   const padded = base64.padEnd(base64.length + ((4 - (base64.length % 4)) % 4), '=');
   return atob(padded);
+};
+
+const stringToBase64URL = (str: string): string => {
+  return btoa(str).replace(/[+/=]/g, (ch) => (ch === '+' ? '-' : ch === '/' ? '_' : ''));
 };
 
 type SupabaseSession = {
@@ -77,7 +83,13 @@ const getSessionFromCookie = (
   if (!authCookie?.value) return null;
 
   try {
-    const decoded = base64urlDecode(authCookie.value);
+    // @supabase/ssr v0.10+ escribe cookies con prefijo base64-
+    // Si no tiene prefijo, es formato legacy (v0.7)
+    const raw = authCookie.value.startsWith(BASE64_PREFIX)
+      ? authCookie.value.slice(BASE64_PREFIX.length)
+      : authCookie.value;
+
+    const decoded = base64urlDecode(raw);
     const parsed = JSON.parse(decoded) as SupabaseSession;
     return { access_token: parsed.access_token, refresh_token: parsed.refresh_token };
   } catch {
@@ -95,7 +107,7 @@ const setSessionCookie = (response: NextResponse, session: RefreshResponse, cook
     user: session.user ?? null,
   };
 
-  const encoded = btoa(JSON.stringify(sessionToStore));
+  const encoded = BASE64_PREFIX + stringToBase64URL(JSON.stringify(sessionToStore));
   response.cookies.set(cookieName, encoded, {
     httpOnly: true,
     sameSite: 'lax',

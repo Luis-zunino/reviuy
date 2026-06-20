@@ -11,6 +11,7 @@ import { getSiteOrigin } from '@/lib/site-url';
 
 const inter = Inter({
   subsets: ['latin'],
+  variable: '--font-inter',
 });
 
 const geistSans = Geist({
@@ -118,7 +119,7 @@ export default async function RootLayout({
         <link rel="dns-prefetch" href="https://tile.openstreetmap.org" />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${inter.className} antialiased bg-background relative overflow-x-hidden`}
+        className={`${inter.variable} ${geistSans.variable} ${geistMono.variable} antialiased bg-background relative overflow-x-hidden`}
       >
         <WebVitals />
         <StructuredData

@@ -99,7 +99,7 @@ const ReviewCard = ({ review, className }: ReviewCardProps) => {
       )}
     >
       {/* Quote icon */}
-      <Quote className="absolute right-4 top-4 size-6 text-reviuy-gray-100 dark:text-reviuy-gray-700 transition-colors duration-300 group-hover:text-reviuy-primary-100 dark:group-hover:text-reviuy-primary-800" />
+      <Quote className="absolute right-4 top-4 size-6 text-reviuy-gray-200 dark:text-reviuy-gray-600 transition-colors duration-300 group-hover:text-reviuy-gray-400 dark:group-hover:text-reviuy-gray-400" />
 
       {/* Rating */}
       <div className="mb-3 flex items-center gap-1">
@@ -109,36 +109,36 @@ const ReviewCard = ({ review, className }: ReviewCardProps) => {
             className={cn(
               'size-4',
               i < review.rating
-                ? 'fill-reviuy-secondary-400 text-reviuy-secondary-400'
-                : 'fill-reviuy-gray-100 dark:fill-reviuy-gray-700 text-reviuy-gray-200 dark:text-reviuy-gray-600'
+                ? 'fill-reviuy-gray-500 text-reviuy-gray-500'
+                : 'fill-reviuy-gray-200 dark:fill-reviuy-gray-600 text-reviuy-gray-200 dark:text-reviuy-gray-600'
             )}
           />
         ))}
       </div>
 
       <h3
-        className={`${manrope.className} mb-2 text-base font-semibold text-reviuy-gray-900 dark:text-white line-clamp-2`}
+        className={`${manrope.className} mb-2 text-base font-semibold text-foreground line-clamp-2`}
       >
         {review.title}
       </h3>
 
       <p
-        className={`${manrope.className} mb-4 flex-1 text-sm leading-relaxed text-reviuy-gray-600 dark:text-reviuy-gray-400 line-clamp-3`}
+        className={`${manrope.className} mb-4 flex-1 text-sm leading-relaxed text-muted-foreground line-clamp-3`}
       >
         {review.excerpt}
       </p>
 
       {/* Footer */}
-      <div className="mt-auto flex items-center justify-between border-t border-reviuy-gray-100 dark:border-reviuy-gray-700 pt-4">
+      <div className="mt-auto flex items-center justify-between border-t border-reviuy-gray-200 dark:border-reviuy-gray-700 pt-4">
         <div className="flex flex-col">
           <span
-            className={`${manrope.className} flex items-center gap-1 text-sm font-medium text-reviuy-gray-800 dark:text-reviuy-gray-200`}
+            className={`${manrope.className} flex items-center gap-1 text-sm font-medium text-foreground`}
           >
             <MapPin className="size-3" />
             {review.location}
           </span>
         </div>
-        <div className="flex items-center gap-1 rounded-full bg-reviuy-gray-50 dark:bg-reviuy-gray-700/50 px-2.5 py-1 text-xs font-medium text-reviuy-gray-600 dark:text-reviuy-gray-300">
+        <div className="flex items-center gap-1 rounded-full bg-reviuy-gray-50 dark:bg-reviuy-gray-700/50 px-2.5 py-1 text-xs font-medium text-muted-foreground">
           <ThumbsUp className="size-3" />
           {review.likes}
         </div>
@@ -167,20 +167,18 @@ export const BentoReviewsSection = () => {
             <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div>
                 <h2
-                  className={`${playfair.className} text-3xl font-bold text-reviuy-gray-900 dark:text-white md:text-4xl`}
+                  className={`${playfair.className} text-3xl font-bold text-foreground md:text-4xl`}
                 >
                   Reseñas destacadas
                 </h2>
-                <p
-                  className={`${manrope.className} mt-3 max-w-xl text-reviuy-gray-600 dark:text-reviuy-gray-400`}
-                >
+                <p className={`${manrope.className} mt-3 max-w-xl text-muted-foreground`}>
                   Experiencias reales de inquilinos que ya encontraron su hogar
                 </p>
               </div>
               <m.a
                 href="/review"
                 whileHover={{ x: 4 }}
-                className={`${manrope.className} group inline-flex items-center gap-2 text-sm font-semibold text-reviuy-primary-600 dark:text-reviuy-primary-400 transition-colors hover:text-reviuy-primary-700 dark:hover:text-reviuy-primary-300`}
+                className={`${manrope.className} group inline-flex items-center gap-2 text-sm font-semibold text-foreground transition-colors hover:text-foreground/70`}
               >
                 Ver todas las reseñas{' '}
                 <span className="transition-transform duration-200 group-hover:translate-x-1">
