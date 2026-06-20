@@ -13,7 +13,9 @@ vi.mock('@/lib/supabase/client', () => ({
   createClient: vi.fn(),
   supabaseClient: {},
 }));
-vi.mock('@tanstack/react-query');
+vi.mock('@tanstack/react-query', () => ({
+  useQueryClient: vi.fn(),
+}));
 vi.mock('@/modules/property-reviews', () => ({
   createCheckUserReviewForAddressQuery: vi.fn(),
   SupabasePropertyReviewReadRepository: vi.fn(),

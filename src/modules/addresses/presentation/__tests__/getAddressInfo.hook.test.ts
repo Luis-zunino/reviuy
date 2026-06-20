@@ -5,7 +5,9 @@ import { useQuery } from '@tanstack/react-query';
 import { useGetAddressInfo } from '../getAddressInfo.hook';
 import { REVIEW_KEYS } from '@/constants/query-keys.constant';
 
-vi.mock('@tanstack/react-query');
+vi.mock('@tanstack/react-query', () => ({
+  useQuery: vi.fn(),
+}));
 vi.mock('@/modules/addresses/application', () => ({
   createGetAddressInfoQuery: vi.fn(() => vi.fn().mockResolvedValue([])),
 }));
