@@ -23,22 +23,34 @@ test.describe.serial('Review — página de detalle', () => {
     await option.click();
 
     // Title
-    await authPage.getByPlaceholder('Ej: Excelente ubicación').fill('Excelente ubicación, departamento luminoso');
+    await authPage
+      .getByPlaceholder('Ej: Excelente ubicación')
+      .fill('Excelente ubicación, departamento luminoso');
 
     // Property type
     await authPage.getByRole('combobox').click();
     await authPage.getByRole('option', { name: 'Apartamento' }).click();
 
     // Rating: 4 estrellas
-    await authPage.locator('[role="radiogroup"]').first()
-      .getByRole('radio', { name: '4 estrellas' }).click();
+    await authPage
+      .locator('[role="radiogroup"]')
+      .first()
+      .getByRole('radio', { name: '4 estrellas' })
+      .click();
 
     // Zone rating: 3 estrellas
-    await authPage.locator('[role="radiogroup"]').nth(1)
-      .getByRole('radio', { name: '3 estrellas' }).click();
+    await authPage
+      .locator('[role="radiogroup"]')
+      .nth(1)
+      .getByRole('radio', { name: '3 estrellas' })
+      .click();
 
     // Description
-    await authPage.getByPlaceholder('Comparte los detalles').fill('Viví aquí por dos años y la experiencia fue increíble. El barrio tiene todos los servicios cerca.');
+    await authPage
+      .getByPlaceholder('Comparte los detalles')
+      .fill(
+        'Viví aquí por dos años y la experiencia fue increíble. El barrio tiene todos los servicios cerca.'
+      );
 
     // Step 1 → Step 2
     await authPage.getByRole('button', { name: 'Ir al siguiente paso' }).click();
@@ -74,7 +86,9 @@ test.describe.serial('Review — página de detalle', () => {
     await expect(authPage.getByText('Valoración')).toBeVisible();
 
     // Tipo de propiedad (en sidebar)
-    await expect(authPage.getByRole('complementary').getByText('Apartamento', { exact: true })).toBeVisible();
+    await expect(
+      authPage.getByRole('complementary').getByText('Apartamento', { exact: true })
+    ).toBeVisible();
 
     // Badge "Recomiendo" (rating 4 >= 3.5)
     await expect(authPage.getByText('Recomiendo')).toBeVisible();
@@ -103,20 +117,38 @@ test.describe.serial('Review — página de detalle', () => {
     // Votar like
     const likeButton = authPage.getByRole('button', { name: 'Marcar como útil' });
     await likeButton.click();
-    await expect(authPage.getByRole('button', { name: 'Ya votaste útil' })).toBeVisible({ timeout: 10000 });
+    await expect(authPage.getByRole('button', { name: 'Ya votaste útil' })).toBeVisible({
+      timeout: 10000,
+    });
+    // Esperar que termine la server action (isPending=false, botón habilita)
+    await expect(authPage.getByRole('button', { name: 'Ya votaste útil' })).toBeEnabled({
+      timeout: 10000,
+    });
 
     // Quitar voto (toggle)
     await authPage.getByRole('button', { name: 'Ya votaste útil' }).click();
-    await expect(authPage.getByRole('button', { name: 'Marcar como útil' })).toBeVisible({ timeout: 10000 });
+    await expect(authPage.getByRole('button', { name: 'Marcar como útil' })).toBeVisible({
+      timeout: 10000,
+    });
+    await expect(authPage.getByRole('button', { name: 'Marcar como útil' })).toBeEnabled({
+      timeout: 10000,
+    });
 
     // Votar dislike
     const dislikeButton = authPage.getByRole('button', { name: 'Marcar como no útil' });
     await dislikeButton.click();
-    await expect(authPage.getByRole('button', { name: 'Ya votaste no útil' })).toBeVisible({ timeout: 10000 });
+    await expect(authPage.getByRole('button', { name: 'Ya votaste no útil' })).toBeVisible({
+      timeout: 10000,
+    });
+    await expect(authPage.getByRole('button', { name: 'Ya votaste no útil' })).toBeEnabled({
+      timeout: 10000,
+    });
 
     // Quitar dislike
     await authPage.getByRole('button', { name: 'Ya votaste no útil' }).click();
-    await expect(authPage.getByRole('button', { name: 'Marcar como no útil' })).toBeVisible({ timeout: 10000 });
+    await expect(authPage.getByRole('button', { name: 'Marcar como no útil' })).toBeVisible({
+      timeout: 10000,
+    });
   });
 
   test('marca y desmarca favorito', async ({ authPage }) => {
@@ -126,12 +158,14 @@ test.describe.serial('Review — página de detalle', () => {
 
     // Marcar favorito — esperar que termine la mutación
     await favButton.click();
+    await expect(favButton).toBeEnabled({ timeout: 10000 });
     await expect(favButton).toHaveAttribute('data-active', 'true', { timeout: 10000 });
     // Verificar que cambió el tooltip
     await expect(favButton).toHaveAttribute('title', 'Quitar de favoritos');
 
     // Desmarcar
     await favButton.click();
+    await expect(favButton).toBeEnabled({ timeout: 10000 });
     await expect(favButton).toHaveAttribute('data-active', 'false', { timeout: 10000 });
     await expect(favButton).toHaveAttribute('title', 'Agregar a favoritos');
   });

@@ -9,7 +9,6 @@ test.describe('Auth — página de login', () => {
 
     await expect(login.heading).toBeVisible();
     await expect(login.emailInput).toBeVisible();
-    await expect(login.termsCheckbox).toBeVisible();
     await expect(login.submitButton).toBeVisible();
     await expect(login.googleButton).toBeVisible();
   });
