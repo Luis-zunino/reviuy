@@ -116,7 +116,7 @@
     "husky": "^9.1.7",
     "jsdom": "^29.1.1",
     "lint-staged": "^17.0.7",
-    "prettier": "^3.8.4",
+    "prettier": "^3.9.4",
     "server-only": "^0.0.1",
     "sonarqube-scanner": "^4.3.6",
     "tailwindcss": "^4.3.1",
