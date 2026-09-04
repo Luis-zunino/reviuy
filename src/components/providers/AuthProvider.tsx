@@ -12,7 +12,7 @@ import { AuthContext } from './constants';
 import { createGetSessionQuery } from '@/modules/profiles/application';
 import { SupabaseProfileAuthReadRepository } from '@/modules/profiles/infrastructure';
 
-const profileAuthReadRepository = new SupabaseProfileAuthReadRepository();
+const profileAuthReadRepository = new SupabaseProfileAuthReadRepository(supabaseClient);
 const getSession = createGetSessionQuery({
   profileAuthReadRepository,
 });
@@ -21,7 +21,7 @@ const getSession = createGetSessionQuery({
  * Proveedor de autenticación para la aplicación.
  *
  * Maneja el estado de autenticación del usuario, sesiones de Supabase,
- * y proporciona funciones de login/logout a través de Context API.
+ * y proporciona funciones de logout a través de Context API.
  *
  * @component
  * @example
@@ -35,7 +35,7 @@ const getSession = createGetSessionQuery({
  * @example
  * ```tsx
  * // Consumir en componentes hijos
- * const { signInWithGoogle, signOut } = useAuthContext();
+ * const { signOut } = useAuthContext();
  * ```
  *
  * @param {AuthProviderProps} props - Propiedades del componente
@@ -43,7 +43,7 @@ const getSession = createGetSessionQuery({
  *
  * @returns {JSX.Element} Proveedor de contexto de autenticación
  *
- * @fires AuthContext - Proporciona loading, isAuthenticated, signOut, signInWithEmail, signInWithGoogle
+ * @fires AuthContext - Proporciona loading, isAuthenticated, signOut
  *
  * @see {@link useAuthContext} Hook para consumir el contexto
  */
@@ -51,35 +51,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [session, setSession] = useState<AppSession | null>(null);
   const [loading, setLoading] = useState(true);
   const { push } = useRouter();
-
-  const signInWithGoogle = useCallback(async () => {
-    setLoading(true);
-    const { error } = await supabaseClient.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: '/auth/callback',
-      },
-    });
-    setLoading(false);
-    if (error) {
-      throw error;
-    }
-  }, []);
-
-  const signInWithEmail = useCallback(async (email: string) => {
-    setLoading(true);
-    const { error } = await supabaseClient.auth.signInWithOtp({
-      email,
-      options: {
-        emailRedirectTo: '/auth/callback',
-      },
-    });
-    setLoading(false);
-
-    if (error) {
-      throw error;
-    }
-  }, []);
 
   const signOut = useCallback(async () => {
     const { error } = await supabaseClient.auth.signOut();
@@ -140,11 +111,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     return {
       loading,
       isAuthenticated: !!session,
-      signInWithEmail,
       signOut,
-      signInWithGoogle,
     };
-  }, [loading, session, signInWithEmail, signOut, signInWithGoogle]);
+  }, [loading, session, signOut]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

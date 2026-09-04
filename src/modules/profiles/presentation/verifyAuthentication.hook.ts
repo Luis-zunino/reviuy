@@ -3,9 +3,10 @@ import { AuthError } from '@supabase/supabase-js';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { createVerifyAuthenticationQuery } from '@/modules/profiles/application';
 import { SupabaseProfileAuthReadRepository } from '@/modules/profiles/infrastructure';
+import { supabaseClient } from '@/lib/supabase/client';
 import type { VerifyAuthenticationOutput } from '@/modules/profiles/domain';
 
-const profileAuthReadRepository = new SupabaseProfileAuthReadRepository();
+const profileAuthReadRepository = new SupabaseProfileAuthReadRepository(supabaseClient);
 const verifyAuthentication = createVerifyAuthenticationQuery({
   profileAuthReadRepository,
 });
