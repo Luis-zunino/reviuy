@@ -7,24 +7,22 @@ import { AuthProvider } from '../AuthProvider';
 import { useAuthContext } from '../hooks';
 
 const {
-  signInWithOAuthMock,
-  signInWithOtpMock,
   signOutMock,
   onAuthStateChangeMock,
   unsubscribeMock,
   pushMock,
   getSessionHandlerMock,
   sessionMappedMock,
-} = vi.hoisted(() => ({
-  signInWithOAuthMock: vi.fn(),
-  signInWithOtpMock: vi.fn(),
-  signOutMock: vi.fn(),
-  onAuthStateChangeMock: vi.fn(),
-  unsubscribeMock: vi.fn(),
-  pushMock: vi.fn(),
-  getSessionHandlerMock: vi.fn(),
-  sessionMappedMock: vi.fn(),
-}));
+} = vi.hoisted(() => {
+  return {
+    signOutMock: vi.fn(),
+    onAuthStateChangeMock: vi.fn(),
+    unsubscribeMock: vi.fn(),
+    pushMock: vi.fn(),
+    getSessionHandlerMock: vi.fn(),
+    sessionMappedMock: vi.fn(),
+  };
+});
 
 vi.mock('next/navigation', () => ({
   useRouter: () => ({ push: pushMock }),
@@ -37,8 +35,6 @@ vi.mock('@/utils/sessionMapped.util', () => ({
 vi.mock('@/lib/supabase/client', () => ({
   supabaseClient: {
     auth: {
-      signInWithOAuth: signInWithOAuthMock,
-      signInWithOtp: signInWithOtpMock,
       signOut: signOutMock,
       onAuthStateChange: onAuthStateChangeMock,
     },
@@ -54,18 +50,12 @@ vi.mock('@/modules/profiles/application', () => ({
 }));
 
 const AuthConsumer = () => {
-  const { loading, isAuthenticated, signInWithGoogle, signInWithEmail, signOut } = useAuthContext();
+  const { loading, isAuthenticated, signOut } = useAuthContext();
 
   return (
     <div>
       <span>loading:{String(loading)}</span>
       <span>auth:{String(isAuthenticated)}</span>
-      <button type="button" onClick={() => signInWithGoogle()}>
-        GoogleSignIn
-      </button>
-      <button type="button" onClick={() => signInWithEmail('test@reviuy.com')}>
-        EmailSignIn
-      </button>
       <button type="button" onClick={() => signOut()}>
         SignOut
       </button>
@@ -88,8 +78,6 @@ describe('AuthProvider', () => {
       },
     });
 
-    signInWithOAuthMock.mockResolvedValue({ error: null });
-    signInWithOtpMock.mockResolvedValue({ error: null });
     signOutMock.mockResolvedValue({ error: null });
     sessionMappedMock.mockImplementation((session) => {
       if (!session) return null;
@@ -117,34 +105,6 @@ describe('AuthProvider', () => {
 
     expect(getSessionHandlerMock).toHaveBeenCalledWith();
     expect(screen.getByText('auth:true')).toBeInTheDocument();
-  });
-
-  it('signInWithGoogle llama a signInWithOAuth sin payload de términos', async () => {
-    const user = userEvent.setup();
-    renderProvider();
-
-    await user.click(screen.getByRole('button', { name: 'GoogleSignIn' }));
-
-    expect(signInWithOAuthMock).toHaveBeenCalledWith({
-      provider: 'google',
-      options: {
-        redirectTo: '/auth/callback',
-      },
-    });
-  });
-
-  it('signInWithEmail llama a signInWithOtp sin payload de términos', async () => {
-    const user = userEvent.setup();
-    renderProvider();
-
-    await user.click(screen.getByRole('button', { name: 'EmailSignIn' }));
-
-    expect(signInWithOtpMock).toHaveBeenCalledWith({
-      email: 'test@reviuy.com',
-      options: {
-        emailRedirectTo: '/auth/callback',
-      },
-    });
   });
 
   it('signOut llama a supabase y redirige a HOME', async () => {

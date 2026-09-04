@@ -8,6 +8,4 @@ export const AuthContext = createContext<AuthContextType>({
   loading: true,
   isAuthenticated: false,
   signOut: () => Promise.resolve(),
-  signInWithEmail: () => Promise.resolve(),
-  signInWithGoogle: () => Promise.resolve(),
 });

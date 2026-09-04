@@ -1,5 +1,4 @@
 import { sessionMapped } from '@/utils/sessionMapped.util';
-import { supabaseClient } from '@/lib/supabase/client';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type {
   ProfileAuthReadRepository,
@@ -8,7 +7,7 @@ import type {
 } from '../../domain';
 
 export class SupabaseProfileAuthReadRepository implements ProfileAuthReadRepository {
-  constructor(private readonly supabase: SupabaseClient = supabaseClient) {}
+  constructor(private readonly supabase: SupabaseClient) {}
 
   async verifyAuthentication(): Promise<VerifyAuthenticationOutput> {
     const { data, error } = await this.supabase.auth.getUser();

@@ -4,20 +4,18 @@ import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Login } from '../index';
 
-const { signInWithGoogleMock, signInWithEmailMock } = vi.hoisted(() => ({
-  signInWithGoogleMock: vi.fn(),
-  signInWithEmailMock: vi.fn(),
+const { signInWithGoogleServerMock, signInWithEmailServerMock } = vi.hoisted(() => ({
+  signInWithGoogleServerMock: vi.fn(),
+  signInWithEmailServerMock: vi.fn(),
 }));
 
 vi.mock('next/font/google', () => ({
   Inter: () => ({ className: 'mock-inter-class' }),
 }));
 
-vi.mock('@/components/providers/AuthProvider', () => ({
-  useAuthContext: () => ({
-    signInWithGoogle: signInWithGoogleMock,
-    signInWithEmail: signInWithEmailMock,
-  }),
+vi.mock('@/shared/auth/auth-server-actions', () => ({
+  signInWithGoogleServer: signInWithGoogleServerMock,
+  signInWithEmailServer: signInWithEmailServerMock,
 }));
 
 vi.mock('sonner', () => ({
@@ -30,20 +28,22 @@ vi.mock('sonner', () => ({
 describe('Login flow', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    localStorage.clear();
   });
 
-  it('calls signInWithGoogle without payload when Google button is clicked', async () => {
+  it('calls signInWithGoogleServer and redirects on Google button click', async () => {
+    signInWithGoogleServerMock.mockResolvedValue({ url: 'https://google.com/auth' });
     const user = userEvent.setup();
     render(<Login />);
 
     await user.click(screen.getByRole('button', { name: /continuar con google/i }));
 
-    expect(signInWithGoogleMock).toHaveBeenCalledTimes(1);
-    expect(signInWithGoogleMock).toHaveBeenCalledWith();
+    await waitFor(() => {
+      expect(signInWithGoogleServerMock).toHaveBeenCalledTimes(1);
+    });
   });
 
-  it('sends email to signInWithEmail and shows success toast', async () => {
+  it('calls signInWithEmailServer and shows success toast', async () => {
+    signInWithEmailServerMock.mockResolvedValue({ success: true });
     const user = userEvent.setup();
     render(<Login />);
 
@@ -51,15 +51,20 @@ describe('Login flow', () => {
     await user.click(screen.getByRole('button', { name: /enviar enlace mágico/i }));
 
     await waitFor(() => {
-      expect(signInWithEmailMock).toHaveBeenCalledTimes(1);
+      expect(signInWithEmailServerMock).toHaveBeenCalledTimes(1);
     });
 
-    expect(signInWithEmailMock).toHaveBeenCalledWith('test@example.com');
+    expect(signInWithEmailServerMock).toHaveBeenCalledWith('test@example.com');
+
+    const toastSuccess = vi.mocked((await import('sonner')).toast.success);
+    await waitFor(() => {
+      expect(toastSuccess).toHaveBeenCalledWith('¡Revisá tu correo!', expect.any(Object));
+    });
   });
 
   it('shows error toast when email sign-in fails', async () => {
     const toastError = vi.mocked((await import('sonner')).toast.error);
-    signInWithEmailMock.mockRejectedValueOnce(new Error('Network error'));
+    signInWithEmailServerMock.mockRejectedValueOnce(new Error('Network error'));
 
     const user = userEvent.setup();
     render(<Login />);

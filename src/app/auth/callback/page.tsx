@@ -9,7 +9,7 @@ import { SupabaseProfileAuthReadRepository } from '@/modules/profiles/infrastruc
 import { supabaseClient } from '@/lib/supabase/client';
 import { CURRENT_TERMS_VERSION } from '@/constants/legal-terms.constant';
 
-const profileAuthReadRepository = new SupabaseProfileAuthReadRepository();
+const profileAuthReadRepository = new SupabaseProfileAuthReadRepository(supabaseClient);
 const getSession = createGetSessionQuery({
   profileAuthReadRepository,
 });
