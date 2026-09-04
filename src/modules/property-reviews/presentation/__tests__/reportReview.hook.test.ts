@@ -1,12 +1,17 @@
 // @vitest-environment jsdom
 import { renderHook } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { useQuery } from '@tanstack/react-query';
 
-vi.mock('@tanstack/react-query');
+const { mockUseQuery } = vi.hoisted(() => ({ mockUseQuery: vi.fn() }));
+
+vi.mock('@tanstack/react-query', () => ({
+  useQuery: mockUseQuery,
+}));
+
 vi.mock('@/lib/supabase/client', () => ({
   supabaseClient: {} as any,
 }));
+
 vi.mock('@/shared/auth/useAuthMutation.hook', () => ({
   useAuthMutation: vi.fn(({ mutationFn }) => ({
     mutate: mutationFn,
@@ -16,9 +21,11 @@ vi.mock('@/shared/auth/useAuthMutation.hook', () => ({
     error: null,
   })),
 }));
+
 vi.mock('@/modules/moderation/presentation', () => ({
   reportReviewAction: vi.fn(),
 }));
+
 vi.mock('@/modules/property-reviews', () => ({
   createHasUserReportedReviewQuery: vi.fn(() => vi.fn()),
   SupabasePropertyReviewReadRepository: vi.fn(),
@@ -60,12 +67,12 @@ describe('useHasUserReportedReview', () => {
   });
 
   it('returns data when useQuery succeeds', async () => {
-    (useQuery as any).mockReturnValue({ data: true, isLoading: false, error: null });
+    mockUseQuery.mockReturnValue({ data: true, isLoading: false, error: null });
     const { useHasUserReportedReview } = await import('../reportReview.hook');
 
     const { result } = renderHook(() => useHasUserReportedReview('review-123'));
 
-    expect(useQuery).toHaveBeenCalledWith(
+    expect(mockUseQuery).toHaveBeenCalledWith(
       expect.objectContaining({
         queryKey: ['has-user-reported-review', 'review-123'],
         enabled: true,
@@ -76,21 +83,23 @@ describe('useHasUserReportedReview', () => {
   });
 
   it('disables query when reviewId is empty', async () => {
-    (useQuery as any).mockReturnValue({ data: null, isLoading: false, error: null });
+    mockUseQuery.mockReturnValue({ data: null, isLoading: false, error: null });
     const { useHasUserReportedReview } = await import('../reportReview.hook');
 
     renderHook(() => useHasUserReportedReview(''));
 
-    expect(useQuery).toHaveBeenCalledWith(expect.objectContaining({ enabled: false }));
+    expect(mockUseQuery).toHaveBeenCalledWith(expect.objectContaining({ enabled: false }));
   });
 
   it('invokes queryFn', async () => {
-    (useQuery as any).mockReturnValue({ data: undefined, isLoading: true, error: null });
+    mockUseQuery.mockReturnValue({ data: undefined, isLoading: true, error: null });
     const { useHasUserReportedReview } = await import('../reportReview.hook');
 
     renderHook(() => useHasUserReportedReview('review-123'));
 
-    const qf = (useQuery as any).mock.calls.at(-1)[0].queryFn;
+    const call = mockUseQuery.mock.calls.at(-1);
+    expect(call).toBeDefined();
+    const qf = call![0].queryFn;
     const result = await qf();
 
     expect(result).toBeUndefined();
