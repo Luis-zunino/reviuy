@@ -2,11 +2,12 @@
 import { renderHook } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useGetUserFavoriteRealEstates } from '../getUserFavoriteRealEstates.hook';
-import { useQuery } from '@tanstack/react-query';
+const { mockUseQuery } = vi.hoisted(() => ({ mockUseQuery: vi.fn() }));
 
 vi.mock('@tanstack/react-query', () => ({
-  useQuery: vi.fn(),
+  useQuery: mockUseQuery,
 }));
+
 vi.mock('@/lib/supabase/client', () => ({
   createClient: vi.fn(),
   supabaseClient: {},
@@ -21,12 +22,12 @@ describe('useGetUserFavoriteRealEstates', () => {
     vi.clearAllMocks();
   });
 
-  it('debe llamar a useQuery con los parámetros correctos', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: null, isLoading: false } as any);
+  it('debe llamar a mockUseQuery con los parámetros correctos', () => {
+    vi.mocked(mockUseQuery).mockReturnValue({ data: null, isLoading: false } as any);
 
     renderHook(() => useGetUserFavoriteRealEstates());
 
-    expect(useQuery).toHaveBeenCalledWith(
+    expect(mockUseQuery).toHaveBeenCalledWith(
       expect.objectContaining({
         queryKey: ['favoriteRealEstates'],
         queryFn: expect.any(Function),
@@ -36,7 +37,7 @@ describe('useGetUserFavoriteRealEstates', () => {
 
   it('debe retornar los datos de la query', () => {
     const mockData = [{ id: '1', name: 'Favorite 1' }];
-    vi.mocked(useQuery).mockReturnValue({ data: mockData, isLoading: false } as any);
+    vi.mocked(mockUseQuery).mockReturnValue({ data: mockData, isLoading: false } as any);
 
     const { result } = renderHook(() => useGetUserFavoriteRealEstates());
 
@@ -44,11 +45,11 @@ describe('useGetUserFavoriteRealEstates', () => {
   });
 
   it('invokes queryFn', async () => {
-    vi.mocked(useQuery).mockReturnValue({ data: undefined, isLoading: true } as any);
+    vi.mocked(mockUseQuery).mockReturnValue({ data: undefined, isLoading: true } as any);
 
     renderHook(() => useGetUserFavoriteRealEstates());
 
-    const qf = (useQuery as any).mock.calls.at(-1)[0].queryFn;
+    const qf = (mockUseQuery as any).mock.calls.at(-1)[0].queryFn;
     const result = await qf();
 
     expect(result).toBeUndefined();

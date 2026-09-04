@@ -1,10 +1,9 @@
 // @vitest-environment jsdom
 import { renderHook } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { useQuery } from '@tanstack/react-query';
+
 import { useVerifyAuthentication } from '../verifyAuthentication.hook';
 
-vi.mock('@tanstack/react-query');
 vi.mock('@/modules/profiles/application', () => ({
   createVerifyAuthenticationQuery: vi.fn(() => vi.fn()),
 }));
@@ -13,17 +12,22 @@ vi.mock('@/modules/profiles/infrastructure', () => ({
 }));
 
 import { USER_KEYS } from '@/constants/query-keys.constant';
+const { mockUseQuery } = vi.hoisted(() => ({ mockUseQuery: vi.fn() }));
+
+vi.mock('@tanstack/react-query', () => ({
+  useQuery: mockUseQuery,
+}));
 
 describe('useVerifyAuthentication', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it('calls useQuery with the correct queryKey', () => {
-    (useQuery as any).mockReturnValue({ data: null, isLoading: false });
+  it('calls mockUseQuery with the correct queryKey', () => {
+    (mockUseQuery as any).mockReturnValue({ data: null, isLoading: false });
     const { result } = renderHook(() => useVerifyAuthentication());
 
-    expect(useQuery).toHaveBeenCalledWith(
+    expect(mockUseQuery).toHaveBeenCalledWith(
       expect.objectContaining({ queryKey: [USER_KEYS.useVerifyAuthentication] })
     );
     expect(result.current.data).toBeNull();
@@ -31,13 +35,13 @@ describe('useVerifyAuthentication', () => {
 
   it('invokes queryFn which delegates to verifyAuthentication', () => {
     const queryFn = vi.fn();
-    (useQuery as any).mockImplementation(({ queryFn: fn }: any) => {
+    (mockUseQuery as any).mockImplementation(({ queryFn: fn }: any) => {
       queryFn.mockImplementation(fn);
       return { data: undefined, isLoading: false };
     });
     renderHook(() => useVerifyAuthentication());
 
-    expect(useQuery).toHaveBeenCalledWith(
+    expect(mockUseQuery).toHaveBeenCalledWith(
       expect.objectContaining({
         queryKey: [USER_KEYS.useVerifyAuthentication],
         queryFn: expect.any(Function),

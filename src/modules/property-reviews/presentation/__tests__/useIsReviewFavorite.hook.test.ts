@@ -1,10 +1,14 @@
 // @vitest-environment jsdom
 import { renderHook } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { useQuery } from '@tanstack/react-query';
-import { useIsReviewFavorite } from '../useIsReviewFavorite.hook';
 
-vi.mock('@tanstack/react-query');
+import { useIsReviewFavorite } from '../useIsReviewFavorite.hook';
+const { mockUseQuery } = vi.hoisted(() => ({ mockUseQuery: vi.fn() }));
+
+vi.mock('@tanstack/react-query', () => ({
+  useQuery: mockUseQuery,
+}));
+
 vi.mock('@/lib/supabase/client', () => ({
   supabaseClient: {} as any,
 }));
@@ -19,11 +23,11 @@ describe('useIsReviewFavorite', () => {
   });
 
   it('returns true when review is a favorite', () => {
-    (useQuery as any).mockReturnValue({ data: true, isLoading: false, error: null });
+    (mockUseQuery as any).mockReturnValue({ data: true, isLoading: false, error: null });
 
     const { result } = renderHook(() => useIsReviewFavorite({ reviewId: 'review-123' }));
 
-    expect(useQuery).toHaveBeenCalledWith(
+    expect(mockUseQuery).toHaveBeenCalledWith(
       expect.objectContaining({
         queryKey: ['isFavoriteReview', 'review-123'],
         enabled: true,
@@ -34,7 +38,7 @@ describe('useIsReviewFavorite', () => {
   });
 
   it('returns false when review is not a favorite', () => {
-    (useQuery as any).mockReturnValue({ data: false, isLoading: false, error: null });
+    (mockUseQuery as any).mockReturnValue({ data: false, isLoading: false, error: null });
 
     const { result } = renderHook(() => useIsReviewFavorite({ reviewId: 'review-456' }));
 
@@ -42,19 +46,19 @@ describe('useIsReviewFavorite', () => {
   });
 
   it('disables query when reviewId is empty', () => {
-    (useQuery as any).mockReturnValue({ data: null, isLoading: false, error: null });
+    (mockUseQuery as any).mockReturnValue({ data: null, isLoading: false, error: null });
 
     renderHook(() => useIsReviewFavorite({ reviewId: '' }));
 
-    expect(useQuery).toHaveBeenCalledWith(expect.objectContaining({ enabled: false }));
+    expect(mockUseQuery).toHaveBeenCalledWith(expect.objectContaining({ enabled: false }));
   });
 
   it('invokes queryFn', async () => {
-    (useQuery as any).mockReturnValue({ data: undefined, isLoading: true, error: null });
+    (mockUseQuery as any).mockReturnValue({ data: undefined, isLoading: true, error: null });
 
     renderHook(() => useIsReviewFavorite({ reviewId: 'review-123' }));
 
-    const qf = (useQuery as any).mock.calls.at(-1)[0].queryFn;
+    const qf = (mockUseQuery as any).mock.calls.at(-1)[0].queryFn;
     const result = await qf();
 
     expect(result).toBeUndefined();

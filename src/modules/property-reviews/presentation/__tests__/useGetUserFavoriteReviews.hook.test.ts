@@ -1,10 +1,14 @@
 // @vitest-environment jsdom
 import { renderHook } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { useQuery } from '@tanstack/react-query';
-import { useGetUserFavoriteReviews } from '../useGetUserFavoriteReviews.hook';
 
-vi.mock('@tanstack/react-query');
+import { useGetUserFavoriteReviews } from '../useGetUserFavoriteReviews.hook';
+const { mockUseQuery } = vi.hoisted(() => ({ mockUseQuery: vi.fn() }));
+
+vi.mock('@tanstack/react-query', () => ({
+  useQuery: mockUseQuery,
+}));
+
 vi.mock('@/lib/supabase/client', () => ({
   supabaseClient: {} as any,
 }));
@@ -18,13 +22,13 @@ describe('useGetUserFavoriteReviews', () => {
     vi.clearAllMocks();
   });
 
-  it('returns data when useQuery succeeds', () => {
+  it('returns data when mockUseQuery succeeds', () => {
     const mockData = [{ id: '1', title: 'Great Place' }];
-    (useQuery as any).mockReturnValue({ data: mockData, isLoading: false, error: null });
+    (mockUseQuery as any).mockReturnValue({ data: mockData, isLoading: false, error: null });
 
     const { result } = renderHook(() => useGetUserFavoriteReviews());
 
-    expect(useQuery).toHaveBeenCalledWith(
+    expect(mockUseQuery).toHaveBeenCalledWith(
       expect.objectContaining({
         queryKey: ['favoriteReviews'],
       })
@@ -33,7 +37,7 @@ describe('useGetUserFavoriteReviews', () => {
   });
 
   it('returns empty array when no favorites', () => {
-    (useQuery as any).mockReturnValue({ data: [], isLoading: false, error: null });
+    (mockUseQuery as any).mockReturnValue({ data: [], isLoading: false, error: null });
 
     const { result } = renderHook(() => useGetUserFavoriteReviews());
 
@@ -41,11 +45,11 @@ describe('useGetUserFavoriteReviews', () => {
   });
 
   it('invokes queryFn', async () => {
-    (useQuery as any).mockReturnValue({ data: undefined, isLoading: true, error: null });
+    (mockUseQuery as any).mockReturnValue({ data: undefined, isLoading: true, error: null });
 
     renderHook(() => useGetUserFavoriteReviews());
 
-    const qf = (useQuery as any).mock.calls.at(-1)[0].queryFn;
+    const qf = (mockUseQuery as any).mock.calls.at(-1)[0].queryFn;
     const result = await qf();
 
     expect(result).toBeUndefined();

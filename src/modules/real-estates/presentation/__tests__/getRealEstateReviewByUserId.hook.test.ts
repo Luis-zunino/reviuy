@@ -2,12 +2,14 @@
 import { renderHook } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useGetRealEstateReviewByUserId } from '../getRealEstateReviewByUserId.hook';
-import { useQuery } from '@tanstack/react-query';
+
 import { REAL_ESTATE_REVIEWS } from '@/constants/query-keys.constant';
+const { mockUseQuery } = vi.hoisted(() => ({ mockUseQuery: vi.fn() }));
 
 vi.mock('@tanstack/react-query', () => ({
-  useQuery: vi.fn(),
+  useQuery: mockUseQuery,
 }));
+
 vi.mock('@/lib/supabase/client', () => ({
   createClient: vi.fn(),
   supabaseClient: {},
@@ -23,12 +25,12 @@ describe('useGetRealEstateReviewByUserId', () => {
     vi.clearAllMocks();
   });
 
-  it('debe llamar a useQuery con los parámetros correctos', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: null, isLoading: false } as any);
+  it('debe llamar a mockUseQuery con los parámetros correctos', () => {
+    vi.mocked(mockUseQuery).mockReturnValue({ data: null, isLoading: false } as any);
 
     renderHook(() => useGetRealEstateReviewByUserId({ realEstateId: 'real-estate-123' }));
 
-    expect(useQuery).toHaveBeenCalledWith(
+    expect(mockUseQuery).toHaveBeenCalledWith(
       expect.objectContaining({
         queryKey: [REAL_ESTATE_REVIEWS.getRealEstateReviewByUserId, 'real-estate-123'],
         enabled: true,
@@ -37,16 +39,16 @@ describe('useGetRealEstateReviewByUserId', () => {
   });
 
   it('debe deshabilitar la query cuando realEstateId está vacío', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: null, isLoading: false } as any);
+    vi.mocked(mockUseQuery).mockReturnValue({ data: null, isLoading: false } as any);
 
     renderHook(() => useGetRealEstateReviewByUserId({ realEstateId: '' }));
 
-    expect(useQuery).toHaveBeenCalledWith(expect.objectContaining({ enabled: false }));
+    expect(mockUseQuery).toHaveBeenCalledWith(expect.objectContaining({ enabled: false }));
   });
 
   it('debe retornar los datos de la query', () => {
     const mockData = { id: '1', title: 'Great review' };
-    vi.mocked(useQuery).mockReturnValue({ data: mockData, isLoading: false } as any);
+    vi.mocked(mockUseQuery).mockReturnValue({ data: mockData, isLoading: false } as any);
 
     const { result } = renderHook(() =>
       useGetRealEstateReviewByUserId({ realEstateId: 'real-estate-123' })
@@ -56,11 +58,11 @@ describe('useGetRealEstateReviewByUserId', () => {
   });
 
   it('invokes queryFn', async () => {
-    vi.mocked(useQuery).mockReturnValue({ data: undefined, isLoading: true } as any);
+    vi.mocked(mockUseQuery).mockReturnValue({ data: undefined, isLoading: true } as any);
 
     renderHook(() => useGetRealEstateReviewByUserId({ realEstateId: 'real-estate-123' }));
 
-    const qf = (useQuery as any).mock.calls.at(-1)[0].queryFn;
+    const qf = (mockUseQuery as any).mock.calls.at(-1)[0].queryFn;
     const result = await qf();
 
     expect(result).toBeUndefined();

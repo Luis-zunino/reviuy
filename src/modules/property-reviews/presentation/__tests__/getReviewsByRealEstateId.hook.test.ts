@@ -1,11 +1,15 @@
 // @vitest-environment jsdom
 import { renderHook } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { useQuery } from '@tanstack/react-query';
+
 import { useGetReviewsByRealEstateId } from '../getReviewsByRealEstateId.hook';
 import { REVIEW_KEYS } from '@/constants/query-keys.constant';
+const { mockUseQuery } = vi.hoisted(() => ({ mockUseQuery: vi.fn() }));
 
-vi.mock('@tanstack/react-query');
+vi.mock('@tanstack/react-query', () => ({
+  useQuery: mockUseQuery,
+}));
+
 vi.mock('@/lib/supabase/client', () => ({
   supabaseClient: {} as any,
 }));
@@ -25,12 +29,12 @@ describe('useGetReviewsByRealEstateId', () => {
 
   it('returns data for a valid UUID', () => {
     const mockData = [{ id: 'review-1', title: 'Great' }];
-    (useQuery as any).mockReturnValue({ data: mockData, isLoading: false, error: null });
+    (mockUseQuery as any).mockReturnValue({ data: mockData, isLoading: false, error: null });
 
     const validUuid = '550e8400-e29b-41d4-a716-446655440000';
     const { result } = renderHook(() => useGetReviewsByRealEstateId(validUuid));
 
-    expect(useQuery).toHaveBeenCalledWith(
+    expect(mockUseQuery).toHaveBeenCalledWith(
       expect.objectContaining({
         queryKey: [REVIEW_KEYS.getReviewsByRealEstateId, validUuid],
         enabled: true,
@@ -40,20 +44,20 @@ describe('useGetReviewsByRealEstateId', () => {
   });
 
   it('disables query when realEstateId is not a valid UUID', () => {
-    (useQuery as any).mockReturnValue({ data: null, isLoading: false, error: null });
+    (mockUseQuery as any).mockReturnValue({ data: null, isLoading: false, error: null });
 
     renderHook(() => useGetReviewsByRealEstateId('invalid-id'));
 
-    expect(useQuery).toHaveBeenCalledWith(expect.objectContaining({ enabled: false }));
+    expect(mockUseQuery).toHaveBeenCalledWith(expect.objectContaining({ enabled: false }));
   });
 
   it('invokes queryFn', async () => {
-    (useQuery as any).mockReturnValue({ data: undefined, isLoading: true, error: null });
+    (mockUseQuery as any).mockReturnValue({ data: undefined, isLoading: true, error: null });
 
     const validUuid = '550e8400-e29b-41d4-a716-446655440000';
     renderHook(() => useGetReviewsByRealEstateId(validUuid));
 
-    const qf = (useQuery as any).mock.calls.at(-1)[0].queryFn;
+    const qf = (mockUseQuery as any).mock.calls.at(-1)[0].queryFn;
     const result = await qf();
 
     expect(result).toBeUndefined();

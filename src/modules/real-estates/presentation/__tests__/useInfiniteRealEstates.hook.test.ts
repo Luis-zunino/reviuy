@@ -2,11 +2,12 @@
 import { renderHook } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useInfiniteRealEstates } from '../useInfiniteRealEstates.hook';
-import { useInfiniteQuery } from '@tanstack/react-query';
+const { mockUseQuery } = vi.hoisted(() => ({ mockUseQuery: vi.fn() }));
 
 vi.mock('@tanstack/react-query', () => ({
-  useInfiniteQuery: vi.fn(),
+  useInfiniteQuery: mockUseQuery,
 }));
+
 vi.mock('@/lib/supabase/client', () => ({
   createClient: vi.fn(),
   supabaseClient: {},
@@ -21,8 +22,8 @@ describe('useInfiniteRealEstates', () => {
     vi.clearAllMocks();
   });
 
-  it('debe llamar a useInfiniteQuery con los parámetros correctos', () => {
-    vi.mocked(useInfiniteQuery).mockReturnValue({
+  it('debe llamar a mockUseQuery con los parámetros correctos', () => {
+    vi.mocked(mockUseQuery).mockReturnValue({
       data: { pages: [], pageParams: [] },
       fetchNextPage: vi.fn(),
       hasNextPage: false,
@@ -31,7 +32,7 @@ describe('useInfiniteRealEstates', () => {
 
     renderHook(() => useInfiniteRealEstates({}));
 
-    expect(useInfiniteQuery).toHaveBeenCalledWith(
+    expect(mockUseQuery).toHaveBeenCalledWith(
       expect.objectContaining({
         queryKey: ['realEstates', 'infinite', {}],
         initialPageParam: 0,
@@ -41,7 +42,7 @@ describe('useInfiniteRealEstates', () => {
   });
 
   it('debe pasar search y rating como props', () => {
-    vi.mocked(useInfiniteQuery).mockReturnValue({
+    vi.mocked(mockUseQuery).mockReturnValue({
       data: { pages: [], pageParams: [] },
       fetchNextPage: vi.fn(),
       hasNextPage: false,
@@ -50,7 +51,7 @@ describe('useInfiniteRealEstates', () => {
 
     renderHook(() => useInfiniteRealEstates({ search: 'test', rating: 4 }));
 
-    expect(useInfiniteQuery).toHaveBeenCalledWith(
+    expect(mockUseQuery).toHaveBeenCalledWith(
       expect.objectContaining({
         queryKey: ['realEstates', 'infinite', { search: 'test', rating: 4 }],
       })
@@ -81,7 +82,7 @@ describe('useInfiniteRealEstates', () => {
 
   it('debe retornar los datos paginados', () => {
     const mockPages = [{ data: [{ id: '1' }], nextOffset: null }];
-    vi.mocked(useInfiniteQuery).mockReturnValue({
+    vi.mocked(mockUseQuery).mockReturnValue({
       data: { pages: mockPages, pageParams: [0] },
       fetchNextPage: vi.fn(),
       hasNextPage: false,
@@ -94,7 +95,7 @@ describe('useInfiniteRealEstates', () => {
   });
 
   it('invokes queryFn', async () => {
-    vi.mocked(useInfiniteQuery).mockReturnValue({
+    vi.mocked(mockUseQuery).mockReturnValue({
       data: { pages: [], pageParams: [] },
       fetchNextPage: vi.fn(),
       hasNextPage: false,
@@ -103,14 +104,14 @@ describe('useInfiniteRealEstates', () => {
 
     renderHook(() => useInfiniteRealEstates({}));
 
-    const qf = (useInfiniteQuery as any).mock.calls.at(-1)[0].queryFn;
+    const qf = (mockUseQuery as any).mock.calls.at(-1)[0].queryFn;
     const result = await qf({ pageParam: 0 });
 
     expect(result).toBeUndefined();
   });
 
   it('getNextPageParam returns nextOffset from last page', () => {
-    vi.mocked(useInfiniteQuery).mockReturnValue({
+    vi.mocked(mockUseQuery).mockReturnValue({
       data: { pages: [], pageParams: [] },
       fetchNextPage: vi.fn(),
       hasNextPage: false,
@@ -119,7 +120,7 @@ describe('useInfiniteRealEstates', () => {
 
     renderHook(() => useInfiniteRealEstates({}));
 
-    const getNextPageParam = (useInfiniteQuery as any).mock.calls.at(-1)[0].getNextPageParam;
+    const getNextPageParam = (mockUseQuery as any).mock.calls.at(-1)[0].getNextPageParam;
 
     expect(getNextPageParam({ data: ['item1'], nextOffset: 5 })).toBe(5);
     expect(getNextPageParam({ data: ['item1'], nextOffset: null })).toBeUndefined();
