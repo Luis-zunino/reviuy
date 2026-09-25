@@ -5,7 +5,7 @@ import type { Database } from '@/types/supabase';
 // Tabla reviews
 export type Review = Database['public']['Tables']['reviews']['Row'];
 export type ReviewRoom = Database['public']['Tables']['review_rooms']['Row'];
-export type ReviewWithVotes = Database['public']['Views']['reviews_with_votes']['Row'];
+export type ReviewWithVotes = Database['public']['Views']['reviews_with_votes_public']['Row'];
 export type ReviewUpdate = Database['public']['Tables']['reviews']['Update'];
 export type ReviewRoomUpdate = Database['public']['Tables']['review_rooms']['Update'];
 export type ReviewWriteResponse = Omit<Review, 'user_id' | 'deleted_at'> & {
