@@ -106,6 +106,7 @@ const createMockReview = (overrides = {}) => ({
   real_estates: { id: 're-1', name: 'Inmobiliaria ABC' },
   likes: 10,
   dislikes: 2,
+  is_mine: false,
   ...overrides,
 });
 
@@ -149,6 +150,12 @@ describe('ReviewSummary', () => {
     expect(screen.getByTestId('edit-review')).toBeInTheDocument();
     expect(screen.getByTestId('delete-review')).toBeInTheDocument();
     expect(screen.getByTestId('review-likes')).toBeInTheDocument();
+  });
+
+  it('no renderiza votos (ReviewLikesButtons) cuando la reseña es propia', () => {
+    render(<ReviewSummary review={createMockReview({ is_mine: true }) as any} />);
+
+    expect(screen.queryByTestId('review-likes')).not.toBeInTheDocument();
   });
 
   it('renderiza información de valoración', () => {

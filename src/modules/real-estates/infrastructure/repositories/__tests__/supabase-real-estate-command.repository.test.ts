@@ -110,7 +110,7 @@ describe('SupabaseRealEstateCommandRepository', () => {
   });
 
   describe('vote', () => {
-    const rpcResult = { likes: 5, dislikes: 1 };
+    const rpcResult = { success: true, likes: 5, dislikes: 1 };
 
     it('calls vote_real_estate RPC', async () => {
       mockBuilder = createMockBuilder(rpcResult);
@@ -409,7 +409,7 @@ describe('SupabaseRealEstateCommandRepository', () => {
   });
 
   describe('voteReview', () => {
-    const rpcResult = { likes: 3, dislikes: 0 };
+    const rpcResult = { success: true, likes: 3, dislikes: 0 };
 
     it('calls vote_real_estate_review RPC', async () => {
       mockBuilder = createMockBuilder(rpcResult);

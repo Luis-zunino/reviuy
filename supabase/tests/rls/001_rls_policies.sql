@@ -105,12 +105,12 @@ SELECT ok(
     SELECT 1
     FROM pg_indexes
     WHERE schemaname = 'public'
-      AND indexname = 'idx_reviews_user_address_osm_unique'
+      AND indexname = 'idx_reviews_user_address_apt_unique'
       AND indexdef ILIKE '%UNIQUE INDEX%'
-      AND indexdef ILIKE '%(user_id, address_osm_id)%'
+      AND indexdef ILIKE '%(user_id, address_osm_id, coalesce%'
       AND indexdef ILIKE '%WHERE (deleted_at IS NULL)%'
   ),
-  'Existe índice único parcial reviews(user_id, address_osm_id) con deleted_at IS NULL'
+  'Existe índice único parcial reviews(user_id, address_osm_id, COALESCE(apartment_number)) con deleted_at IS NULL'
 );
 
 SELECT ok(
@@ -197,7 +197,7 @@ SELECT ok(
   'real_estates_public tiene security_invoker=false y security_barrier=true'
 );
 
--- 8) Funciones internas sensibles sin EXECUTE para roles cliente
+-- 8) Funciones internas sensibles sin EXECUTE para roles cliente (Fix S3)
 SELECT is(
   has_function_privilege('anon', 'public.check_rate_limit(text, integer, integer)', 'EXECUTE'),
   false,
@@ -205,15 +205,21 @@ SELECT is(
 );
 
 SELECT is(
-  has_function_privilege('authenticated', 'public.log_security_event(text, text, text, jsonb)', 'EXECUTE'),
-  true,
-  'authenticated tiene EXECUTE sobre log_security_event (necesario para funciones SECURITY INVOKER que la llaman internamente)'
+  has_function_privilege('authenticated', 'public.check_rate_limit(text, integer, integer)', 'EXECUTE'),
+  false,
+  'authenticated NO tiene EXECUTE sobre check_rate_limit'
 );
 
 SELECT is(
-  has_function_privilege('anon', 'public.refresh_all_vote_stats()', 'EXECUTE'),
+  has_function_privilege('anon', 'public.log_security_event(text, text, text, jsonb)', 'EXECUTE'),
   false,
-  'anon NO tiene EXECUTE sobre refresh_all_vote_stats'
+  'anon NO tiene EXECUTE sobre log_security_event'
+);
+
+SELECT is(
+  has_function_privilege('authenticated', 'public.log_security_event(text, text, text, jsonb)', 'EXECUTE'),
+  false,
+  'authenticated NO tiene EXECUTE sobre log_security_event'
 );
 
 SELECT is(
@@ -251,7 +257,7 @@ SELECT ok(
       AND NOT EXISTS (
         SELECT 1
         FROM unnest(coalesce(p.proconfig, '{}'::text[])) cfg
-        WHERE cfg = 'search_path=public'
+        WHERE cfg ILIKE 'search_path%'
       )
   ),
   'Todas las funciones SECURITY DEFINER de public tienen search_path=public'
@@ -400,8 +406,6 @@ SELECT ok(
 );
 
 -- 14) Grants por rol: funciones internas nuevas no ejecutables por roles cliente
---     Excepciones intencionales: log_security_event y check_rate_limit son
---     llamadas internamente por funciones SECURITY INVOKER y heredan permisos.
 SELECT ok(
   NOT EXISTS (
     SELECT 1
@@ -409,13 +413,12 @@ SELECT ok(
     JOIN pg_namespace n ON n.oid = p.pronamespace
     WHERE n.nspname = 'public'
       AND p.proname ~ '^(refresh_|cleanup_|log_security_|check_rate_limit|moderate_|sync_)'
-      AND p.proname NOT IN ('log_security_event', 'check_rate_limit')
       AND (
         has_function_privilege('anon', p.oid, 'EXECUTE')
         OR has_function_privilege('authenticated', p.oid, 'EXECUTE')
       )
   ),
-  'Funciones internas (refresh/cleanup/log_security/check_rate_limit/moderate/sync) no tienen EXECUTE en anon/authenticated (excepto log_security_event y check_rate_limit que son llamadas por SECURITY INVOKER)'
+  'Funciones internas (refresh/cleanup/log_security/check_rate_limit/moderate/sync) no tienen EXECUTE en anon/authenticated'
 );
 
 -- 15) review_images: RLS habilitado + policies + grants (migración 010)
@@ -445,11 +448,26 @@ SELECT is(has_table_privilege('authenticated', 'public.review_images', 'SELECT')
 SELECT is(has_table_privilege('authenticated', 'public.review_images', 'INSERT'), true, 'authenticated tiene INSERT en review_images');
 SELECT is(has_table_privilege('authenticated', 'public.review_images', 'DELETE'), true, 'authenticated tiene DELETE en review_images');
 
--- check_review_active y check_review_owner: revocadas de anon/auth (solo uso interno via RLS)
-SELECT is(has_function_privilege('anon', 'public.check_review_active(uuid)', 'EXECUTE'), false, 'anon NO tiene EXECUTE sobre check_review_active');
-SELECT is(has_function_privilege('authenticated', 'public.check_review_active(uuid)', 'EXECUTE'), false, 'authenticated NO tiene EXECUTE sobre check_review_active');
-SELECT is(has_function_privilege('anon', 'public.check_review_owner(uuid)', 'EXECUTE'), false, 'anon NO tiene EXECUTE sobre check_review_owner');
-SELECT is(has_function_privilege('authenticated', 'public.check_review_owner(uuid)', 'EXECUTE'), false, 'authenticated NO tiene EXECUTE sobre check_review_owner');
+-- 15b) DML directo de tablas de negocio revocado de authenticated (Fix S2)
+--      La app escribe SOLO vía RPC. review_images conserva grants (upload por REST).
+SELECT ok(
+  NOT EXISTS (
+    SELECT 1 FROM (
+      VALUES
+        ('reviews'), ('real_estates'), ('real_estate_reviews'),
+        ('review_votes'), ('real_estate_votes'), ('real_estate_review_votes'),
+        ('review_reports'), ('real_estate_review_reports'), ('real_estate_reports'),
+        ('review_favorites'), ('real_estate_favorites'), ('rate_limits'),
+        ('security_logs'), ('review_rooms')
+    ) AS t(tbl)
+    WHERE has_table_privilege('authenticated', 'public.' || t.tbl, 'INSERT')
+       OR has_table_privilege('authenticated', 'public.' || t.tbl, 'UPDATE')
+       OR has_table_privilege('authenticated', 'public.' || t.tbl, 'DELETE')
+  ),
+  'authenticated NO tiene INSERT/UPDATE/DELETE directo en tablas de negocio (solo via RPC)'
+);
+
+SELECT is(has_table_privilege('authenticated', 'public.review_rooms', 'SELECT'), true, 'authenticated tiene SELECT en review_rooms (lectura por REST)');
 
 -- 16) Triggers: todos existen y están habilitados
 SELECT ok(
@@ -468,6 +486,8 @@ SELECT ok(
         ('update_real_estate_votes_updated_at', 'real_estate_votes'),
         ('update_review_reports_updated_at', 'review_reports'),
         ('update_real_estate_review_reports_updated_at', 'real_estate_review_reports'),
+        ('update_real_estate_review_votes_updated_at', 'real_estate_review_votes'),
+        ('update_review_votes_updated_at', 'review_votes'),
         ('cleanup_rate_limits_trigger', 'rate_limits')
     ) AS expected(tgname, tbl)
     WHERE NOT EXISTS (
@@ -477,7 +497,7 @@ SELECT ok(
         AND action_timing IS NOT NULL
     )
   ),
-  'Todos los triggers (13) existen y están habilitados'
+  'Todos los triggers (15) existen y están habilitados'
 );
 
 -- 17) Policies de review_rooms (dependen de reviews_public)
@@ -486,23 +506,41 @@ SELECT ok(
   'review_rooms_select_public existe'
 );
 
+-- review_rooms_manage_own NO existe (Fix F1): la app escribe rooms SOLO vía RPC
+-- (create_review/update_review con p_review_rooms, reemplazo atómico). El DML
+-- directo de authenticated en review_rooms está revocado, así que la policy
+-- era inerte. Se verifica su ausencia como invariante.
 SELECT ok(
-  EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='review_rooms' AND policyname='review_rooms_manage_own'),
-  'review_rooms_manage_own existe'
+  NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='review_rooms' AND policyname='review_rooms_manage_own'),
+  'review_rooms_manage_own NO existe (rooms se escriben solo via RPC)'
 );
 
--- 18) Policy de review_audit (depende de reviews_public)
+-- 18) review_audit / review_deletions: RLS habilitado y SIN policies de SELECT
+-- para anon/authenticated. El grant SELECT default de Supabase sigue vigente,
+-- pero al no existir policy SELECT el acceso se deniega (fail-closed). Se verifica
+-- la ausencia de policies como invariante, no la revocación del grant.
 SELECT ok(
-  EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='review_audit' AND policyname='review_audit_select_own'),
-  'review_audit_select_own existe'
+  (SELECT relrowsecurity FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
+   WHERE n.nspname = 'public' AND c.relname = 'review_audit'),
+  'RLS habilitado en public.review_audit'
+);
+SELECT ok(
+  (SELECT relrowsecurity FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
+   WHERE n.nspname = 'public' AND c.relname = 'review_deletions'),
+  'RLS habilitado en public.review_deletions'
+);
+SELECT ok(
+  NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='review_audit' AND policyname='review_audit_select_own'),
+  'review_audit_select_own NO existe (audit-only, RLS sin policy = deny)'
+);
+SELECT ok(
+  NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='review_deletions' AND policyname='review_deletions_select_own'),
+  'review_deletions_select_own NO existe (audit-only, RLS sin policy = deny)'
 );
 
--- 19) Funciones service_role-only: moderate_reports y detect_suspicious_activity
+-- 19) Funciones service_role-only: moderate_reports
 SELECT is(has_function_privilege('anon', 'public.moderate_reports(uuid,text,text,text)', 'EXECUTE'), false, 'anon NO tiene EXECUTE sobre moderate_reports');
 SELECT is(has_function_privilege('authenticated', 'public.moderate_reports(uuid,text,text,text)', 'EXECUTE'), false, 'authenticated NO tiene EXECUTE sobre moderate_reports');
-
-SELECT is(has_function_privilege('anon', 'public.detect_suspicious_activity(uuid)', 'EXECUTE'), false, 'anon NO tiene EXECUTE sobre detect_suspicious_activity');
-SELECT is(has_function_privilege('authenticated', 'public.detect_suspicious_activity(uuid)', 'EXECUTE'), false, 'authenticated NO tiene EXECUTE sobre detect_suspicious_activity');
 
 -- 20) FKs de tablas de votos: deben tener ON DELETE CASCADE
 SELECT ok(

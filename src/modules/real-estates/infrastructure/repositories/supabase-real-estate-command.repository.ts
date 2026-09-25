@@ -87,6 +87,11 @@ export class SupabaseRealEstateCommandRepository implements RealEstateCommandRep
       throw handleSupabaseError(error);
     }
 
+    // Fix: rechazos de negocio del RPC (success:false) deben lanzar, no tragarse.
+    if (data && data.success === false) {
+      throw createError('VALIDATION_ERROR', data.error ?? 'No se pudo registrar el voto');
+    }
+
     return (data as VoteRealEstateOutput) ?? {};
   }
 
@@ -275,6 +280,11 @@ export class SupabaseRealEstateCommandRepository implements RealEstateCommandRep
 
     if (error) {
       throw handleSupabaseError(error);
+    }
+
+    // Fix: rechazos de negocio del RPC (success:false) deben lanzar, no tragarse.
+    if (data && data.success === false) {
+      throw createError('VALIDATION_ERROR', data.error ?? 'No se pudo registrar el voto');
     }
 
     return (data as VoteRealEstateReviewOutput) ?? {};
