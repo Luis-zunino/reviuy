@@ -1,7 +1,3 @@
-pnpm:
-  minimumReleaseAgeExclude:
-    - 'shadcn'
-
 allowBuilds:
   '@sentry/cli': true
   esbuild: true
