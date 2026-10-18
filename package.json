@@ -48,7 +48,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1068.0",
     "@hookform/resolvers": "^5.4.0",
-    "@next/bundle-analyzer": "^16.2.9",
+    "@next/bundle-analyzer": "^16.3.6",
     "@radix-ui/react-accordion": "^1.2.13",
     "@radix-ui/react-dialog": "^1.1.16",
     "@radix-ui/react-dropdown-menu": "^2.1.17",
