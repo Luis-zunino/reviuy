@@ -34,3 +34,7 @@ overrides:
 minimumReleaseAgeExclude:
   - shadcn@4.8.2
   - nodemailer@10.1.6
+
+auditConfig:
+  ignoreGhsas:
+    - GHSA-vfj7-8cjw-p6xm
