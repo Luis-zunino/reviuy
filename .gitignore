@@ -69,3 +69,4 @@ playwright-report/
 test-results/
 openspec
 .env
+.opencode
