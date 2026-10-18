@@ -30,7 +30,10 @@ vi.mock('sonner', () => ({
 describe('Login flow', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    localStorage.clear();
+    // En Node 24+ `localStorage` puede ser `undefined` (getter experimental
+    // deshabilitado); los accesos de la utilidad van protegidos con try/catch,
+    // por lo que aquí solo limpiamos de forma segura si existe.
+    globalThis.localStorage?.clear();
   });
 
   it('calls signInWithGoogle without payload when Google button is clicked', async () => {
