@@ -83,7 +83,7 @@
     "react-dom": "19.2.7",
     "react-dropzone": "^15.0.0",
     "react-email": "^6.6.3",
-    "react-hook-form": "^7.78.0",
+    "react-hook-form": "^7.90.0",
     "react-leaflet": "^5.0.0",
     "resend": "^6.12.4",
     "sharp": "0.35.5",
