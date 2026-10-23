@@ -70,3 +70,4 @@ test-results/
 openspec
 .env
 .opencode
+opencode.json
