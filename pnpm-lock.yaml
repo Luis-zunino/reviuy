@@ -454,7 +454,7 @@ importers:
         specifier: ^8.62.1
         version: 8.71.2(eslint@10.5.0(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3)
       vite:
-        specifier: ^8.1.2
+        specifier: ^8.3.4
         version: 8.3.4(@types/node@25.9.3)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.48.0)(tsx@4.23.15)(yaml@2.9.1)
       vitest:
         specifier: ^4.1.9
