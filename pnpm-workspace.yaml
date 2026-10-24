@@ -10,10 +10,10 @@ overrides:
   brace-expansion: '>=5.0.11'
   '@modelcontextprotocol/sdk': '>=1.31.0'
   sirv: 3.0.2
-  qs: 6.15.2
+  qs: '>=6.16.0'
   minimatch: '>=3.1.4'
-  hono: '>=4.12.18'
-  '@hono/node-server': '>=1.19.13'
+  hono: '>=4.13.11'
+  '@hono/node-server': '>=2.0.10'
   express-rate-limit: '>=8.5.1'
   flatted: 3.4.2
   picomatch: '>=2.3.2'
@@ -26,10 +26,15 @@ overrides:
   adm-zip: '>=0.6.1'
   browserslist: '>=4.28.7'
   engine.io: '>=6.6.10'
-  fast-uri: '>=3.1.7 <4'
+  fast-uri: '>=3.1.9 <4'
   nanoid: '>=3.3.16 <4'
   socket.io-parser: '>=4.2.7'
   source-map-js: '>=1.2.2'
+  # High/critical advisories 2026-10-24 (GHSA-52cp, GHSA-mwp4, GHSA-jqcg, GHSA-27r3)
+  js-yaml: '>=4.3.2'
+  ip-address: '>=10.3.1'
+  proxy-addr: '>=2.0.8'
+  body-parser: '>=2.4.0'
 
 minimumReleaseAgeExclude:
   - shadcn@4.8.2
