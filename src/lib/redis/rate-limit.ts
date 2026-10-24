@@ -29,6 +29,16 @@ function buildRateLimiters(): Record<RateLimitType, Ratelimit> {
       redis,
       limiter: Ratelimit.slidingWindow(3, '1 h'),
     }),
+
+    auth_email: new Ratelimit({
+      redis,
+      limiter: Ratelimit.slidingWindow(5, '1 m'),
+    }),
+
+    auth_oauth: new Ratelimit({
+      redis,
+      limiter: Ratelimit.slidingWindow(10, '1 m'),
+    }),
   };
 }
 
