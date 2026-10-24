@@ -1002,9 +1002,13 @@ set search_path = public, pg_temp
 set row_security = on
 as $$
 DECLARE
-  v_updated boolean;
+  -- Fix V1: ROW_COUNT es bigint; un boolean no puede recibirlo (error de coercion
+  -- en runtime). Se declara bigint y se compara con 0.
+  v_updated bigint;
 BEGIN
-  IF auth.jwt() ->> 'role' != 'service_role' THEN
+  -- Fix V1: sin JWT, auth.jwt() ->> 'role' es NULL y la comparacion original
+  -- no entraba al RAISE. coalesce fuerza fail-closed.
+  IF coalesce(auth.jwt() ->> 'role', '') != 'service_role' THEN
     RAISE EXCEPTION 'Access denied';
   END IF;
 
@@ -1031,7 +1035,7 @@ BEGIN
 
   GET DIAGNOSTICS v_updated = ROW_COUNT;
 
-  IF NOT v_updated THEN
+  IF v_updated = 0 THEN
     RAISE EXCEPTION 'Report not found: %', p_report_id;
   END IF;
 
@@ -2712,6 +2716,19 @@ BEGIN
     END IF;
   END IF;
 
+  -- Fix V2: validar review_rooms ANTES del INSERT de la reseña. Las validaciones
+  -- originales estaban después, y un RETURN (false,...) no hace rollback: la reseña
+  -- quedaba persistida mientras el cliente recibía error (estado parcial).
+  IF p_review_rooms IS NOT NULL THEN
+    IF jsonb_typeof(p_review_rooms) <> 'array' THEN
+      RETURN (false, NULL :: uuid, NULL :: text, 'review_rooms debe ser un arreglo JSON' :: text);
+    END IF;
+
+    IF jsonb_array_length(p_review_rooms) > 10 THEN
+      RETURN (false, NULL :: uuid, NULL :: text, 'Máximo 10 habitaciones por reseña' :: text);
+    END IF;
+  END IF;
+
   -- Insertar reseña
   INSERT INTO public.reviews (
     user_id, title, description, rating, real_estate_id, property_type,
@@ -2726,15 +2743,8 @@ BEGIN
   ) RETURNING id INTO v_review_id;
 
   -- Insertar habitaciones asociadas de forma atómica
+  -- (Fix V2: la validación de tipo y tope se movió antes del INSERT de la reseña)
   IF p_review_rooms IS NOT NULL THEN
-    IF jsonb_typeof(p_review_rooms) <> 'array' THEN
-      RETURN (false, NULL :: uuid, NULL :: text, 'review_rooms debe ser un arreglo JSON' :: text);
-    END IF;
-
-    IF jsonb_array_length(p_review_rooms) > 10 THEN
-      RETURN (false, NULL :: uuid, NULL :: text, 'Máximo 10 habitaciones por reseña' :: text);
-    END IF;
-
     IF jsonb_array_length(p_review_rooms) > 0 THEN
       INSERT INTO public.review_rooms (review_id, room_type, area_m2)
       SELECT
@@ -3716,6 +3726,11 @@ create index if not exists idx_reviews_user_created_at
 create index if not exists idx_review_votes_composite
   on public.review_votes (review_id, user_id, vote_type);
 
+-- Fix P1 (auditoría): índice por user_id para el FK CASCADE desde auth.users
+-- (sin él, DELETE de usuarios escanea la tabla completa) y para queries "mis votos".
+create index if not exists idx_review_votes_user_id
+  on public.review_votes (user_id);
+
 -- =============================================================================
 -- REVIEW REPORTS
 -- =============================================================================
@@ -3839,6 +3854,10 @@ create index if not exists idx_real_estate_votes_composite
 -- Índice compuesto para optimizar consultas por review, usuario y tipo de voto
 create index if not exists idx_real_estate_review_votes_composite
   on public.real_estate_review_votes (real_estate_review_id, user_id, vote_type);
+
+-- Fix P1 (auditoría): índice por user_id para el FK CASCADE desde auth.users.
+create index if not exists idx_real_estate_review_votes_user_id
+  on public.real_estate_review_votes (user_id);
 
 -- =============================================================================
 -- REAL ESTATE REVIEW REPORTS
@@ -4133,6 +4152,41 @@ create index if not exists idx_review_images_review_id
 -- Índice para borrado por path (usado al eliminar del bucket)
 create index if not exists idx_review_images_path
   on public.review_images (path);
+
+-- =============================================================================
+-- Fix V3 (auditoría): hardening de review_images
+-- El upload de imágenes es el ÚNICO canal DML directo por REST del proyecto,
+-- así que la validación de verdad vive en la BD.
+-- =============================================================================
+-- 1) Saneo de path: bloquea URLs externas (http/://), rutas absolutas o vacías.
+--    Si la convención del bucket cambia, ajustar al prefijo real.
+alter table public.review_images
+  add constraint review_images_path_sane_chk
+  check (
+    path !~ '^(https?:|//|/|$)'
+    and not (path like '%://%')
+    and btrim(path) = path
+  );
+
+-- 2) Tope de 5 imágenes por reseña (evita abuso de almacenamiento vía REST).
+create or replace function public.enforce_review_images_cap ()
+returns trigger language plpgsql security definer
+set search_path = public, pg_temp
+as $$
+BEGIN
+  IF (SELECT count(*) FROM public.review_images WHERE review_id = NEW.review_id) >= 5 THEN
+    RAISE EXCEPTION 'Máximo 5 imágenes por reseña';
+  END IF;
+  RETURN NEW;
+END;
+$$;
+
+revoke execute on function public.enforce_review_images_cap() from public, anon, authenticated;
+
+drop trigger if exists enforce_review_images_cap on public.review_images;
+create trigger enforce_review_images_cap
+  before insert on public.review_images
+  for each row execute function public.enforce_review_images_cap();
 
 -- =============================================================================
 -- RLS
@@ -4855,14 +4909,27 @@ COMMENT ON INDEX public.idx_reviews_user_address_apt_unique IS
 -- (riesgo legal Ley 18.331 y storage DoS). cleanup_old_security_logs() ya
 -- existe; solo faltaba agendarlo. El bloque DO es condicional para no romper
 -- ambientes sin pg_cron (Supabase cloud/local lo incluyen).
+-- Fix P6 (auditoría): verificación por jobname → cron.schedule no es idempotente
+-- y duplicaría el job si el esquema se re-aplica sobre una BD existente.
+-- Importante: SQL ESTÁTICO no sirve acá. El IF de plpgsql planifica todas sus
+-- subconsultas juntas, y un EXISTS sobre cron.job explota en planificación cuando
+-- pg_cron no está instalado (aunque el check pg_extension sea falso). El SQL
+-- dinámico (execute) se parsea recién en ejecución, dentro de la rama.
 do $$
+declare
+  v_missing_job boolean;
 begin
-  if exists (select 1 from pg_extension where extname = 'pg_cron') then
-    perform cron.schedule(
-      'cleanup_old_security_logs_daily',
-      '0 4 * * *',
-      'select public.cleanup_old_security_logs()'
-    );
+  if to_regclass('cron.job') is not null then
+    execute 'select not exists (select 1 from cron.job
+              where jobname = ''cleanup_old_security_logs_daily'')'
+      into v_missing_job;
+    if v_missing_job then
+      perform cron.schedule(
+        'cleanup_old_security_logs_daily',
+        '0 4 * * *',
+        'select public.cleanup_old_security_logs()'
+      );
+    end if;
   end if;
 end;
 $$;
