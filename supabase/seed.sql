@@ -1,0 +1,3 @@
+-- Seed vacío para db reset local.
+-- El seed de load test (users, properties, reviews) vive en seed-test-data.sql
+-- y se aplica manualmente en staging: supabase db query --db-url "$STAGING_DB_URL" < supabase/seed-test-data.sql
