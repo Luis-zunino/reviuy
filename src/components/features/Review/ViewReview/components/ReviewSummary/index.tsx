@@ -160,15 +160,17 @@ export const ReviewSummary = ({ review }: ReviewSummaryProps) => {
         </Card>
       ) : null}
 
-      <Card className="shadow-sm border-border/50">
-        <CardContent className="p-6">
-          <ReviewLikesButtons
-            id={review.id ?? ''}
-            likes={review?.likes ?? 0}
-            dislikes={review?.dislikes ?? 0}
-          />
-        </CardContent>
-      </Card>
+      {!review?.is_mine ? (
+        <Card className="shadow-sm border-border/50">
+          <CardContent className="p-6">
+            <ReviewLikesButtons
+              id={review.id ?? ''}
+              likes={review?.likes ?? 0}
+              dislikes={review?.dislikes ?? 0}
+            />
+          </CardContent>
+        </Card>
+      ) : null}
     </div>
   );
 };

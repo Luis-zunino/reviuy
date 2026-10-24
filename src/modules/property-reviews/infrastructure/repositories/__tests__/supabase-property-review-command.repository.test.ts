@@ -254,12 +254,11 @@ describe('SupabasePropertyReviewCommandRepository', () => {
 
     it('updates rooms when provided', async () => {
       const roomsData = [{ id: 'rm1', review_id: 'review-1', room_type: 'kitchen', area_m2: 15 }];
-      // Sequence: ownership, RPC, delete rooms, insert rooms, reviews_public SELECT, review_rooms SELECT
+      // Sequence: ownership, RPC, reviews_public SELECT, review_rooms SELECT
+      // (los rooms se reemplazan atómicamente dentro del RPC update_review)
       mockBuilder = createMockBuilder(
         { id: 'review-1', is_mine: true },
         { success: true },
-        null,
-        null,
         publicReview,
         roomsData
       );
@@ -295,23 +294,18 @@ describe('SupabasePropertyReviewCommandRepository', () => {
       await expect(repository.update({ reviewId: 'review-1', ...updateData })).rejects.toThrow();
     });
 
-    it('throws on rooms insert error during update', async () => {
+    it('throws on rooms error inside update RPC', async () => {
       const errorBuilder = createMockBuilder({ id: 'review-1', is_mine: true });
       const origThen = errorBuilder.then;
       let callCount = 0;
       errorBuilder.then = (onfulfilled: any) => {
         callCount++;
-        // Call 1: ownership, Call 2: RPC success, Call 3: delete rooms ok, Call 4: insert rooms error
+        // Call 1: ownership, Call 2: RPC update_review → success:false (error de rooms)
         if (callCount === 2) {
-          return Promise.resolve({ data: { success: true }, error: null }).then(onfulfilled);
-        }
-        if (callCount === 3) {
-          return Promise.resolve({ data: null, error: null }).then(onfulfilled);
-        }
-        if (callCount === 4) {
-          return Promise.resolve({ data: null, error: { message: 'Rooms insert failed' } }).then(
-            onfulfilled
-          );
+          return Promise.resolve({
+            data: { success: false, error: 'review_rooms debe ser un arreglo JSON' },
+            error: null,
+          }).then(onfulfilled);
         }
         return origThen.call(errorBuilder, onfulfilled);
       };
@@ -324,7 +318,7 @@ describe('SupabasePropertyReviewCommandRepository', () => {
           ...updateData,
           review_rooms: [{ room_type: 'kitchen', area_m2: 15 }],
         })
-      ).rejects.toThrow();
+      ).rejects.toThrow('review_rooms debe ser un arreglo JSON');
     });
 
     it('returns partial data on final review fetch error after update', async () => {
@@ -412,7 +406,7 @@ describe('SupabasePropertyReviewCommandRepository', () => {
 
   describe('vote', () => {
     it('calls vote_review RPC and returns result', async () => {
-      const rpcResult = { likes: 10, dislikes: 2 };
+      const rpcResult = { success: true, likes: 10, dislikes: 2 };
       mockBuilder = createMockBuilder(rpcResult);
       mockSupabase.rpc.mockReturnValue(mockBuilder);
 

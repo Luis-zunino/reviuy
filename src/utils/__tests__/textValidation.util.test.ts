@@ -17,13 +17,26 @@ vi.mock('bad-words', () => ({
   },
 }));
 
-import { textValidator, validateText, cleanText } from '../textValidation.util';
+import type { TextValidator } from '../textValidation.util';
+import type { TextValidationResult } from '../types';
+
+let textValidator: TextValidator;
+let validateText: (text: string) => TextValidationResult;
+let cleanText: (text: string) => string;
 
 describe('TextValidator', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.clearAllMocks();
     mockIsProfane.mockReturnValue(false);
     mockClean.mockImplementation((text: string) => text);
+
+    // Con --no-isolate el módulo puede quedar cacheado con el filtro real,
+    // así que forzamos a recargarlo para que el singleton use el mock.
+    vi.resetModules();
+    const util = await import('../textValidation.util');
+    textValidator = util.textValidator;
+    validateText = util.validateText;
+    cleanText = util.cleanText;
   });
 
   describe('validate', () => {
