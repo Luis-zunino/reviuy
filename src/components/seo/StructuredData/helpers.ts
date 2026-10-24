@@ -81,10 +81,7 @@ interface WebSiteSchema extends BaseStructuredData {
 }
 
 export type StructuredDataSchema =
-  | ReviewSchema
-  | LocalBusinessSchema
-  | BreadcrumbListSchema
-  | WebSiteSchema;
+  ReviewSchema | LocalBusinessSchema | BreadcrumbListSchema | WebSiteSchema;
 
 export const createReviewSchema = ({
   propertyName,

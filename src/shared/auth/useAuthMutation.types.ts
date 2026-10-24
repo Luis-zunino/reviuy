@@ -8,6 +8,5 @@ export type UseAuthMutationConfig<TData, TError, TVariables> = {
   /** Query keys to invalidate on mutation success. */
   invalidateQueryKeys?: QueryKey[];
   mutationOptions?:
-    | MutateOptions<TData, TError, TVariables>
-    | UseMutationOptions<TData, TError, TVariables>;
+    MutateOptions<TData, TError, TVariables> | UseMutationOptions<TData, TError, TVariables>;
 } & Omit<UseMutationOptions<TData, TError, TVariables>, 'mutationFn'>;
