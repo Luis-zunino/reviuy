@@ -340,6 +340,20 @@ describe('SupabaseRealEstateCommandRepository', () => {
         })
       ).rejects.toThrow();
     });
+
+    it('throws when RPC returns success: false (e.g. rate limit)', async () => {
+      mockSupabase.rpc.mockReturnValue(
+        createMockBuilder({ success: false, error: 'Límite de actualizaciones alcanzado' })
+      );
+
+      await expect(
+        repository.updateReview({
+          reviewId: 'rev-1',
+          title: 'Updated',
+        })
+      ).rejects.toThrow('Límite de actualizaciones alcanzado');
+      expect(mockSupabase.from).not.toHaveBeenCalled();
+    });
   });
 
   describe('deleteReview', () => {
@@ -405,6 +419,18 @@ describe('SupabaseRealEstateCommandRepository', () => {
       mockSupabase.rpc.mockReturnValue(errorBuilder);
 
       await expect(repository.deleteReview({ reviewId: 'rev-1' })).rejects.toThrow();
+    });
+
+    it('throws when RPC returns success: false', async () => {
+      const publicReview = { id: 'rev-1', title: 'Test review', is_mine: true };
+      mockSupabase.from.mockReturnValue(createMockBuilder(publicReview));
+      mockSupabase.rpc.mockReturnValue(
+        createMockBuilder({ success: false, error: 'Error interno del servidor' })
+      );
+
+      await expect(repository.deleteReview({ reviewId: 'rev-1' })).rejects.toThrow(
+        'Error interno del servidor'
+      );
     });
   });
 

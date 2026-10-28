@@ -1,4 +1,5 @@
 import { createError, handleSupabaseError } from '@/lib/errors';
+import { deleteImage } from '@/lib/storage';
 import type { createSupabaseServerClient } from '@/lib/supabase/server';
 import type {
   CreatePropertyReviewInput,
@@ -268,6 +269,13 @@ export class SupabasePropertyReviewCommandRepository implements PropertyReviewCo
       };
     }
 
+    // Leer los paths antes del soft delete: delete_review_safe elimina las filas de
+    // review_images y, una vez borrada, la reseña deja de ser visible.
+    const { data: images } = await this.supabase
+      .from('review_images')
+      .select('path')
+      .eq('review_id', reviewId);
+
     // Soft delete via RPC (SECURITY DEFINER, maneja ownership y auditoría internamente)
     const { error: deleteError } = await this.supabase.rpc('delete_review_safe', {
       review_id_param: reviewId,
@@ -276,6 +284,9 @@ export class SupabasePropertyReviewCommandRepository implements PropertyReviewCo
     if (deleteError) {
       throw handleSupabaseError(deleteError);
     }
+
+    // Best-effort: un fallo en R2 no revierte el borrado ya confirmado en la base.
+    await Promise.allSettled((images ?? []).map((image) => deleteImage(image.path)));
 
     return {
       success: true,
@@ -324,7 +335,7 @@ export class SupabasePropertyReviewCommandRepository implements PropertyReviewCo
     return {
       success: true,
       message: 'Favorito actualizado',
-      favorited: data?.favorited,
+      favorited: data?.is_favorite,
       ...data,
     };
   }

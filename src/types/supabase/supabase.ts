@@ -1376,6 +1376,72 @@ export type Database = {
         Args: { p_description?: string; p_reason: string; p_review_id: string };
         Returns: Json;
       };
+      search_reviews_by_address: {
+        Args: { p_limit?: number; p_query: string };
+        Returns: {
+          address_osm_id: string | null;
+          address_text: string | null;
+          apartment_number: string | null;
+          created_at: string | null;
+          description: string | null;
+          dislikes: number | null;
+          humidity: string | null;
+          id: string | null;
+          is_mine: boolean | null;
+          latitude: number | null;
+          likes: number | null;
+          longitude: number | null;
+          property_type: string | null;
+          rating: number | null;
+          real_estate_experience: string | null;
+          real_estate_id: string | null;
+          summer_comfort: string | null;
+          title: string | null;
+          total_votes: number | null;
+          updated_at: string | null;
+          winter_comfort: string | null;
+          zone_rating: number | null;
+        }[];
+        SetofOptions: {
+          from: '*';
+          to: 'reviews_with_votes_public';
+          isOneToOne: false;
+          isSetofReturn: true;
+        };
+      };
+      search_reviews_nearby: {
+        Args: { p_lat: number; p_limit?: number; p_lon: number; p_radius?: number };
+        Returns: {
+          address_osm_id: string | null;
+          address_text: string | null;
+          apartment_number: string | null;
+          created_at: string | null;
+          description: string | null;
+          dislikes: number | null;
+          humidity: string | null;
+          id: string | null;
+          is_mine: boolean | null;
+          latitude: number | null;
+          likes: number | null;
+          longitude: number | null;
+          property_type: string | null;
+          rating: number | null;
+          real_estate_experience: string | null;
+          real_estate_id: string | null;
+          summer_comfort: string | null;
+          title: string | null;
+          total_votes: number | null;
+          updated_at: string | null;
+          winter_comfort: string | null;
+          zone_rating: number | null;
+        }[];
+        SetofOptions: {
+          from: '*';
+          to: 'reviews_with_votes_public';
+          isOneToOne: false;
+          isSetofReturn: true;
+        };
+      };
       toggle_favorite_real_estate: {
         Args: { p_real_estate_id: string };
         Returns: Database['public']['CompositeTypes']['toggle_favorite_result'];

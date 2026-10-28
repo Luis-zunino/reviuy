@@ -45,7 +45,7 @@ describe('createCreatePropertyReviewUseCase', () => {
       title: 'Apartamento muy comodo',
       description: 'El lugar estaba limpio, bien ubicado y fue una buena experiencia.',
       rating: 4,
-      address_osm_id: '123456789',
+      address_osm_id: 'W123456789',
       address_text: '18 de Julio 1234, Montevideo',
       latitude: -34.9011,
       longitude: -56.1645,

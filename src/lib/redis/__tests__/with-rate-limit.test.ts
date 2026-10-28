@@ -30,6 +30,19 @@ describe('withRateLimit', () => {
     await expect(withRateLimit('user-1', 'write')).resolves.toBe(true);
   });
 
+  it.each(['sensitive', 'auth_email', 'auth_oauth', 'auth_refresh'] as const)(
+    'throws RATE_LIMIT when limiter throws for protective scope %s (fail-closed)',
+    async (scope) => {
+      isRedisConfiguredMock.mockReturnValue(true);
+      limitMock.mockRejectedValueOnce(new Error('redis down'));
+      const { withRateLimit } = await import('../with-rate-limit');
+
+      await expect(withRateLimit('user-1', scope)).rejects.toMatchObject({
+        code: 'RATE_LIMIT',
+      });
+    }
+  );
+
   it('throws RATE_LIMIT AppError when quota is exceeded', async () => {
     isRedisConfiguredMock.mockReturnValue(true);
     limitMock.mockResolvedValueOnce({ success: false });

@@ -1,6 +1,11 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { SupabasePropertyReviewCommandRepository } from '../supabase-property-review-command.repository';
 import { VoteType } from '@/types/vote-type';
+import { deleteImage } from '@/lib/storage';
+
+vi.mock('@/lib/storage', () => ({
+  deleteImage: vi.fn(),
+}));
 
 const createMockBuilder = (...dataSequence: any[]) => {
   const resolveSequence = dataSequence.map((data) => ({ data, error: null }));
@@ -54,6 +59,7 @@ describe('SupabasePropertyReviewCommandRepository', () => {
       },
     };
     repository = new SupabasePropertyReviewCommandRepository(mockSupabase);
+    vi.mocked(deleteImage).mockReset();
   });
 
   describe('create', () => {
@@ -352,14 +358,36 @@ describe('SupabasePropertyReviewCommandRepository', () => {
 
   describe('delete', () => {
     it('deletes a review successfully', async () => {
-      // Sequence: reviews_public(ownership) → {is_mine:true}, DELETE → null
-      mockBuilder = createMockBuilder({ id: 'review-1', is_mine: true }, null);
+      // Sequence: reviews_public(ownership) → {is_mine:true}, review_images → []
+      mockBuilder = createMockBuilder({ id: 'review-1', is_mine: true }, []);
       mockSupabase.from.mockReturnValue(mockBuilder);
 
       const result = await repository.delete({ reviewId: 'review-1' });
 
       expect(result.success).toBe(true);
       expect(result.message).toContain('eliminada');
+      expect(deleteImage).not.toHaveBeenCalled();
+    });
+
+    it('removes the review images from R2 after the soft delete', async () => {
+      vi.mocked(deleteImage)
+        .mockResolvedValueOnce(undefined)
+        .mockRejectedValueOnce(new Error('R2 down'));
+      mockBuilder = createMockBuilder({ id: 'review-1', is_mine: true }, [
+        { path: 'reviews/N1/review-1/a.jpg' },
+        { path: 'reviews/N1/review-1/b.jpg' },
+      ]);
+      mockSupabase.from.mockReturnValue(mockBuilder);
+
+      const result = await repository.delete({ reviewId: 'review-1' });
+
+      // Un fallo de R2 no revierte el borrado ya confirmado en la base
+      expect(result.success).toBe(true);
+      expect(mockSupabase.rpc).toHaveBeenCalledWith('delete_review_safe', {
+        review_id_param: 'review-1',
+      });
+      expect(deleteImage).toHaveBeenCalledWith('reviews/N1/review-1/a.jpg');
+      expect(deleteImage).toHaveBeenCalledWith('reviews/N1/review-1/b.jpg');
     });
 
     it('throws on fetch error', async () => {
@@ -391,8 +419,10 @@ describe('SupabasePropertyReviewCommandRepository', () => {
       expect(result.error).toBe('FORBIDDEN');
     });
 
-    it('throws on delete error', async () => {
-      const ownershipBuilder = createMockBuilder({ id: 'review-1', is_mine: true });
+    it('throws on delete error and keeps the images in R2', async () => {
+      const ownershipBuilder = createMockBuilder({ id: 'review-1', is_mine: true }, [
+        { path: 'reviews/N1/review-1/a.jpg' },
+      ]);
       mockSupabase.from.mockReturnValue(ownershipBuilder);
 
       const errorBuilder = createMockBuilder(null);
@@ -401,6 +431,7 @@ describe('SupabasePropertyReviewCommandRepository', () => {
       mockSupabase.rpc.mockReturnValue(errorBuilder);
 
       await expect(repository.delete({ reviewId: 'review-1' })).rejects.toThrow();
+      expect(deleteImage).not.toHaveBeenCalled();
     });
   });
 

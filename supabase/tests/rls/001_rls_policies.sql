@@ -2,7 +2,7 @@ BEGIN;
 
 CREATE EXTENSION IF NOT EXISTS pgtap;
 
-SELECT plan(53);
+SELECT plan(55);
 
 -- 1) RLS habilitado en tablas criticas
 SELECT ok((SELECT relrowsecurity FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace WHERE n.nspname = 'public' AND c.relname = 'reviews'), 'RLS habilitado en public.reviews');
@@ -419,6 +419,43 @@ SELECT ok(
       )
   ),
   'Funciones internas (refresh/cleanup/log_security/check_rate_limit/moderate/sync) no tienen EXECUTE en anon/authenticated'
+);
+
+-- 14b) Allowlist de EXECUTE para anon: cualquier función nueva del schema public
+-- (que no pertenezca a una extensión) queda ejecutable por anon vía PUBLIC si se
+-- olvida el revoke. Este test lo detecta.
+SELECT is(
+  ARRAY(
+    SELECT p.proname::text
+    FROM pg_proc p
+    JOIN pg_namespace n ON n.oid = p.pronamespace
+    WHERE n.nspname = 'public'
+      AND NOT EXISTS (
+        SELECT 1 FROM pg_depend d
+        WHERE d.classid = 'pg_proc'::regclass AND d.objid = p.oid AND d.deptype = 'e'
+      )
+      AND has_function_privilege('anon', p.oid, 'EXECUTE')
+    ORDER BY 1
+  ),
+  ARRAY[
+    'get_real_estate_review_vote_counts',
+    'get_real_estate_vote_counts',
+    'get_real_estates_paginated',
+    'get_review_vote_counts',
+    'get_reviews_paginated',
+    'search_reviews_by_address',
+    'search_reviews_nearby'
+  ],
+  'anon solo puede ejecutar las funciones públicas de lectura de la allowlist'
+);
+
+-- 14c) Retención: los jobs de limpieza están agendados en pg_cron
+SELECT is(
+  ARRAY(SELECT jobname::text FROM cron.job
+        WHERE jobname IN ('cleanup_old_security_logs_daily', 'cleanup_old_rate_limits_hourly')
+        ORDER BY 1),
+  ARRAY['cleanup_old_rate_limits_hourly', 'cleanup_old_security_logs_daily'],
+  'pg_cron tiene agendados los jobs de retención de security_logs y rate_limits'
 );
 
 -- 15) review_images: RLS habilitado + policies + grants (migración 010)

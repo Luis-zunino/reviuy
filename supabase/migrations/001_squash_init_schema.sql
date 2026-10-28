@@ -76,7 +76,9 @@ create table if not exists public.reviews (
   ),
   property_type TEXT check (property_type in ('apartment', 'house', 'room')),
   address_text VARCHAR(200) not null check (char_length(btrim(address_text)) > 0),
-  address_osm_id VARCHAR(100) not null check (char_length(btrim(address_osm_id)) > 0),
+  -- Formato OSM normalizado: tipo (N=node, W=way, R=relation) + id numérico sin
+  -- ceros a la izquierda. La unicidad por dirección depende de este valor.
+  address_osm_id VARCHAR(100) not null check (address_osm_id ~ '^[NWR][1-9][0-9]{0,18}$'),
   latitude DECIMAL(10, 8) not null check (
     latitude >= -90
     and latitude <= 90
@@ -697,6 +699,10 @@ begin
   -- en lugar de forzar siempre una sola ventana de 1 minuto.
   v_window_from := v_window_start - make_interval(mins=> p_window_minutes - 1);
 
+  -- Motivo: serializar SUM + UPSERT del mismo usuario/endpoint. Sin el lock,
+  -- requests concurrentes leen el mismo conteo y superan el límite.
+  PERFORM pg_advisory_xact_lock(hashtext('rate_limit:' || COALESCE(v_user_id::text, '') || ':' || p_endpoint));
+
   -- Motivo: Enforce real del límite en toda la ventana solicitada.
   -- El índice (user_id, endpoint, window_start) soporta este rango.
   SELECT
@@ -766,23 +772,24 @@ $function$;
 create or replace function public.cleanup_old_security_logs () returns void language plpgsql security definer
 set search_path = public, pg_temp
 set row_security = on
-as $function$ begin -- Retención de 90 días, borrado en lotes para evitar locks largos
-delete from
-    public.security_logs
-where
-    id in (
-        select
-            id
-        from
-            public.security_logs
-        where
-            created_at < now() - interval '90 days'
-        limit
-            1000
+as $function$
+declare
+  v_deleted integer;
+begin
+  -- Retención de 90 días, borrado en lotes para evitar locks largos. Se repite
+  -- hasta vaciar: con un único lote de 1000 por corrida diaria, un volumen mayor
+  -- a 1000 logs/día nunca se terminaba de purgar.
+  loop
+    delete from public.security_logs
+    where id in (
+      select id from public.security_logs
+      where created_at < now() - interval '90 days'
+      limit 1000
     );
-
+    get diagnostics v_deleted = row_count;
+    exit when v_deleted = 0;
+  end loop;
 end;
-
 $function$;
 
 comment on function public.cleanup_old_security_logs is 'Limpia security_logs con más de 90 días. Diseñada para ejecutarse vía pg_cron o edge function.';
@@ -892,6 +899,15 @@ set row_security = on
 as $$
 BEGIN
     IF (TG_OP = 'INSERT' OR TG_OP = 'UPDATE' OR TG_OP = 'DELETE') THEN
+        -- Bloquear la inmobiliaria ANTES de recalcular: el UPDATE siguiente toma
+        -- un snapshot nuevo tras obtener el lock y ve las reseñas commiteadas por
+        -- transacciones concurrentes (sin esto, review_count/rating se desfasan).
+        -- NO KEY UPDATE (no FOR UPDATE): no choca con el KEY SHARE que toma la FK
+        -- del INSERT concurrente, que con FOR UPDATE terminaría en deadlock.
+        PERFORM 1 FROM public.real_estates
+        WHERE id = COALESCE(NEW.real_estate_id, OLD.real_estate_id)
+        FOR NO KEY UPDATE;
+
         UPDATE
             public.real_estates
         SET
@@ -931,17 +947,20 @@ create or replace function public.log_review_changes () RETURNS TRIGGER LANGUAGE
 set search_path = public, pg_temp
 set row_security = on
 as $function$ BEGIN
+  -- Fix A3 (privacidad): el snapshot JSON excluye user_id. La autoría queda solo
+  -- en changed_by (FK ON DELETE SET NULL), así al borrar la cuenta la auditoría
+  -- queda anonimizada como promete la política de privacidad.
   IF (TG_OP = 'UPDATE' AND OLD IS DISTINCT FROM NEW) THEN
     INSERT INTO public.review_audit (
       review_id, old_data, new_data, changed_by, change_type
     ) VALUES (
-      OLD.id, row_to_json(OLD), row_to_json(NEW), auth.uid(), 'update'
+      OLD.id, to_jsonb(OLD) - 'user_id', to_jsonb(NEW) - 'user_id', auth.uid(), 'update'
     );
   ELSIF (TG_OP = 'INSERT') THEN
     INSERT INTO public.review_audit (
       review_id, new_data, changed_by, change_type
     ) VALUES (
-      NEW.id, row_to_json(NEW), auth.uid(), 'create'
+      NEW.id, to_jsonb(NEW) - 'user_id', auth.uid(), 'create'
     );
   END IF;
   RETURN COALESCE(NEW, OLD);
@@ -1242,6 +1261,11 @@ SET
 WHERE
     id = review_id_param AND user_id = current_user_id;
 
+-- Las imágenes no sobreviven al soft delete: tras él las policies (que exigen
+-- reseña activa) impiden al dueño borrarlas. La app lee los paths antes de
+-- llamar a esta función y elimina los objetos de R2 después.
+DELETE FROM public.review_images WHERE review_id = review_id_param;
+
 -- Registrar la eliminación en auditoría manualmente
 -- (el trigger BEFORE DELETE ya no se dispara con soft delete)
 BEGIN
@@ -1303,7 +1327,10 @@ BEGIN
     IF NOT check_rate_limit ('vote_review', 20, 60) THEN
         RETURN json_build_object('success', FALSE, 'error', 'Demasiados votos. Intenta más tarde.');
     END IF;
-    IF p_vote_type NOT IN ('like', 'dislike') THEN
+  -- D2: bloque interno. Un error revierte solo este bloque; el contador de
+  -- rate limit (ya incrementado arriba) persiste y no se puede evadir forzando errores.
+  BEGIN
+    IF p_vote_type IS NULL OR p_vote_type NOT IN ('like', 'dislike') THEN
         PERFORM
             log_security_event ('vote_review', 'error', 'Tipo de voto inválido');
         RETURN json_build_object('success', FALSE, 'error', 'Tipo de voto inválido. Use like o dislike');
@@ -1362,6 +1389,7 @@ EXCEPTION
             log_security_event ('vote_review', 'error', SQLERRM);
             RETURN json_build_object('success', FALSE, 'error', 'Error interno del servidor');
 END;
+  END;
 
 $$;
 
@@ -1401,6 +1429,9 @@ END IF;
 RETURN json_build_object('success', FALSE, 'error', 'Demasiados reportes. Intenta más tarde.');
 
 END IF;
+  -- D2: bloque interno. Un error revierte solo este bloque; el contador de
+  -- rate limit (ya incrementado arriba) persiste y no se puede evadir forzando errores.
+  BEGIN
 
 -- Validar razón
 IF p_reason IS NULL OR TRIM(p_reason) = '' THEN
@@ -1408,6 +1439,13 @@ IF p_reason IS NULL OR TRIM(p_reason) = '' THEN
         log_security_event ('report_review', 'error', 'Razón del reporte obligatoria');
 
 RETURN json_build_object('success', FALSE, 'error', 'La razón del reporte es obligatoria');
+
+END IF;
+
+-- D4: longitudes de la tabla (reason VARCHAR(200), description VARCHAR(500))
+IF char_length(p_reason) > 200 OR char_length(p_description) > 500 THEN
+RETURN json_build_object('success', FALSE, 'error',
+  'El motivo admite hasta 200 caracteres y la descripción hasta 500');
 
 END IF;
 
@@ -1482,6 +1520,7 @@ EXCEPTION
             RETURN json_build_object('success', FALSE, 'error', 'Error interno del servidor');
 
 END;
+  END;
 
 $$;
 
@@ -1541,6 +1580,9 @@ BEGIN
             RETURN json_build_object('success', FALSE, 'error', 'Has creado muchas reseñas. Intenta más tarde.');
 
             END IF;
+  -- D2: bloque interno. Un error revierte solo este bloque; el contador de
+  -- rate limit (ya incrementado arriba) persiste y no se puede evadir forzando errores.
+  BEGIN
 
             -- Validar título
             IF p_title IS NULL OR TRIM(p_title) = '' THEN
@@ -1599,6 +1641,7 @@ EXCEPTION
         RETURN json_build_object('success', FALSE, 'error', 'Error interno del servidor');
 
 END;
+  END;
 $$;
 
 -- =============================================================================
@@ -1627,6 +1670,9 @@ BEGIN
   IF NOT check_rate_limit('update_real_estate_review', 10, 60) THEN
     RETURN json_build_object('success', false, 'error', 'Límite de actualizaciones alcanzado');
   END IF;
+  -- D2: bloque interno. Un error revierte solo este bloque; el contador de
+  -- rate limit (ya incrementado arriba) persiste y no se puede evadir forzando errores.
+  BEGIN
   SELECT is_mine INTO v_is_mine
   FROM public.real_estate_reviews_public
   WHERE id = p_review_id;
@@ -1657,6 +1703,7 @@ EXCEPTION
     PERFORM log_security_event('update_real_estate_review', 'error', SQLERRM);
     RETURN json_build_object('success', false, 'error', 'Error interno del servidor');
 END;
+  END;
 $$;
 
 -- =============================================================================
@@ -1714,6 +1761,9 @@ BEGIN
     IF NOT check_rate_limit ('vote_real_estate_review', 30, 10) THEN
         RETURN json_build_object('success', FALSE, 'error', 'Has votado demasiado rápido. Intenta más tarde.');
     END IF;
+  -- D2: bloque interno. Un error revierte solo este bloque; el contador de
+  -- rate limit (ya incrementado arriba) persiste y no se puede evadir forzando errores.
+  BEGIN
     -- Verificar que la reseña existe y está activa (Fix)
     IF NOT EXISTS (
         SELECT 1 FROM public.real_estate_reviews_public
@@ -1728,7 +1778,7 @@ BEGIN
     ) THEN
         RETURN json_build_object('success', FALSE, 'error', 'No puedes votar tu propia reseña');
     END IF;
-    IF p_vote_type NOT IN ('like', 'dislike') THEN
+    IF p_vote_type IS NULL OR p_vote_type NOT IN ('like', 'dislike') THEN
         RETURN json_build_object('success', FALSE, 'error', 'Tipo de voto inválido');
     END IF;
     -- Verificar si ya existe un voto
@@ -1760,6 +1810,7 @@ EXCEPTION
     WHEN OTHERS THEN
         RETURN json_build_object('success', FALSE, 'error', 'Error interno del servidor');
 END;
+  END;
 
 $$;
 
@@ -1784,9 +1835,17 @@ BEGIN
     IF NOT check_rate_limit ('report_real_estate_review', 3, 60) THEN
         RETURN json_build_object('success', FALSE, 'error', 'Has reportado demasiadas reseñas. Intenta más tarde.');
     END IF;
+  -- D2: bloque interno. Un error revierte solo este bloque; el contador de
+  -- rate limit (ya incrementado arriba) persiste y no se puede evadir forzando errores.
+  BEGIN
     -- Validar razón
     IF p_reason IS NULL OR TRIM(p_reason) = '' THEN
         RETURN json_build_object('success', FALSE, 'error', 'La razón del reporte es obligatoria');
+    END IF;
+    -- D4: longitudes de la tabla (reason VARCHAR(200), description VARCHAR(500))
+    IF char_length(p_reason) > 200 OR char_length(p_description) > 500 THEN
+        RETURN json_build_object('success', FALSE, 'error',
+          'El motivo admite hasta 200 caracteres y la descripción hasta 500');
     END IF;
     -- Validar que review existe
     IF NOT EXISTS (
@@ -1827,6 +1886,7 @@ EXCEPTION
     WHEN OTHERS THEN
         RETURN json_build_object('success', FALSE, 'error', 'Error interno del servidor');
 END;
+  END;
 
 $$;
 
@@ -1891,6 +1951,9 @@ IF NOT check_rate_limit ('create_real_estate', 10, 60) THEN RETURN json_build_ob
 );
 
 END IF;
+  -- D2: bloque interno. Un error revierte solo este bloque; el contador de
+  -- rate limit (ya incrementado arriba) persiste y no se puede evadir forzando errores.
+  BEGIN
 
 -- Validar nombre
 IF p_name IS NULL
@@ -1936,6 +1999,7 @@ WHEN OTHERS THEN
 );
 
 END;
+  END;
 
 $function$;
 
@@ -1971,8 +2035,11 @@ IF NOT check_rate_limit ('vote_real_estate', 30, 10) THEN RETURN json_build_obje
 );
 
 END IF;
+  -- D2: bloque interno. Un error revierte solo este bloque; el contador de
+  -- rate limit (ya incrementado arriba) persiste y no se puede evadir forzando errores.
+  BEGIN
 
-IF p_vote_type NOT IN ('like', 'dislike') THEN RETURN json_build_object(
+IF p_vote_type IS NULL OR p_vote_type NOT IN ('like', 'dislike') THEN RETURN json_build_object(
     'success',
     FALSE,
     'error',
@@ -2081,6 +2148,7 @@ WHEN OTHERS THEN RETURN json_build_object(
 );
 
 END;
+  END;
 
 $$;
 
@@ -2118,6 +2186,9 @@ IF NOT check_rate_limit ('report_real_estate', 3, 60) THEN RETURN json_build_obj
 );
 
 END IF;
+  -- D2: bloque interno. Un error revierte solo este bloque; el contador de
+  -- rate limit (ya incrementado arriba) persiste y no se puede evadir forzando errores.
+  BEGIN
 
 -- Validar razón
 IF p_reason IS NULL
@@ -2126,6 +2197,16 @@ OR TRIM(p_reason) = '' THEN RETURN json_build_object(
     FALSE,
     'error',
     'La razón del reporte es obligatoria'
+);
+
+END IF;
+
+-- D4: longitudes de la tabla (reason VARCHAR(200), description VARCHAR(500))
+IF char_length(p_reason) > 200 OR char_length(p_description) > 500 THEN RETURN json_build_object(
+    'success',
+    FALSE,
+    'error',
+    'El motivo admite hasta 200 caracteres y la descripción hasta 500'
 );
 
 END IF;
@@ -2213,6 +2294,7 @@ WHEN OTHERS THEN RETURN json_build_object(
 );
 
 END;
+  END;
 
 $$;
 
@@ -2432,6 +2514,9 @@ IF NOT check_rate_limit ('toggle_favorite_review', 30, 10) THEN
         'Demasiados cambios de favorito. Intenta más tarde.'
     );
 END IF;
+  -- D2: bloque interno. Un error revierte solo este bloque; el contador de
+  -- rate limit (ya incrementado arriba) persiste y no se puede evadir forzando errores.
+  BEGIN
 
 -- Verificar que la reseña existe y está activa (Fix)
 IF NOT EXISTS (
@@ -2516,6 +2601,7 @@ WHEN OTHERS THEN RETURN json_build_object(
 );
 
 END;
+  END;
 
 $$;
 
@@ -2585,6 +2671,9 @@ BEGIN
   IF NOT check_rate_limit('create_review', 5, 10) THEN
     RETURN (false, NULL :: uuid, NULL :: text, 'Demasiadas reseñas. Intenta más tarde.' :: text);
   END IF;
+  -- D2: bloque interno. Un error revierte solo este bloque; el contador de
+  -- rate limit (ya incrementado arriba) persiste y no se puede evadir forzando errores.
+  BEGIN
 
   -- Validaciones obligatorias
   IF p_title IS NULL OR btrim(p_title) = '' THEN
@@ -2612,9 +2701,43 @@ BEGIN
     RETURN (false, NULL :: uuid, NULL :: text, 'El OSM ID (address_osm_id) es obligatorio' :: text);
   END IF;
 
+  -- D3: normalizar y validar el formato OSM (N/W/R + dígitos). La unicidad por
+  -- dirección depende de este valor; sin formato, 'W123', 'W123 ' y 'W0123'
+  -- contaban como direcciones distintas.
+  p_address_osm_id := upper(btrim(p_address_osm_id));
+  IF p_address_osm_id !~ '^[NWR][1-9][0-9]{0,18}$' THEN
+    RETURN (false, NULL :: uuid, NULL :: text, 'El OSM ID de la dirección no es válido' :: text);
+  END IF;
+
   IF p_latitude IS NULL OR p_longitude IS NULL THEN
     PERFORM log_security_event('create_review', 'error', 'Coordenadas requeridas');
     RETURN (false, NULL :: uuid, NULL :: text, 'Latitud y longitud son obligatorias' :: text);
+  END IF;
+
+  -- Normalizar campos opcionales vacíos a NULL (antes de validar enums: si no,
+  -- '' se rechaza como valor inválido en vez de tratarse como ausente)
+  IF p_property_type IS NOT NULL AND btrim(p_property_type) = '' THEN
+    p_property_type := NULL;
+  END IF;
+
+  IF p_winter_comfort IS NOT NULL AND btrim(p_winter_comfort) = '' THEN
+    p_winter_comfort := NULL;
+  END IF;
+
+  IF p_summer_comfort IS NOT NULL AND btrim(p_summer_comfort) = '' THEN
+    p_summer_comfort := NULL;
+  END IF;
+
+  IF p_humidity IS NOT NULL AND btrim(p_humidity) = '' THEN
+    p_humidity := NULL;
+  END IF;
+
+  IF p_real_estate_experience IS NOT NULL AND btrim(p_real_estate_experience) = '' THEN
+    p_real_estate_experience := NULL;
+  END IF;
+
+  IF p_apartment_number IS NOT NULL AND btrim(p_apartment_number) = '' THEN
+    p_apartment_number := NULL;
   END IF;
 
   -- P1: Validar enums y longitudes antes de los CHECK constraints de la tabla
@@ -2624,6 +2747,22 @@ BEGIN
 
   IF char_length(p_description) > 800 THEN
     RETURN (false, NULL :: uuid, NULL :: text, 'La descripción supera los 800 caracteres' :: text);
+  END IF;
+
+  IF char_length(p_address_text) > 200 THEN
+    RETURN (false, NULL :: uuid, NULL :: text, 'La dirección supera los 200 caracteres' :: text);
+  END IF;
+
+  IF char_length(p_apartment_number) > 10 THEN
+    RETURN (false, NULL :: uuid, NULL :: text, 'El número de apartamento supera los 10 caracteres' :: text);
+  END IF;
+
+  IF char_length(p_real_estate_experience) > 200 THEN
+    RETURN (false, NULL :: uuid, NULL :: text, 'La experiencia con la inmobiliaria supera los 200 caracteres' :: text);
+  END IF;
+
+  IF p_latitude < -90 OR p_latitude > 90 OR p_longitude < -180 OR p_longitude > 180 THEN
+    RETURN (false, NULL :: uuid, NULL :: text, 'Coordenadas fuera de rango' :: text);
   END IF;
 
   IF p_property_type IS NOT NULL
@@ -2649,30 +2788,22 @@ BEGIN
     RETURN (false, NULL :: uuid, NULL :: text, 'humidity inválido' :: text);
   END IF;
 
-  -- Normalizar campos opcionales vacíos a NULL
-  IF p_property_type IS NOT NULL AND btrim(p_property_type) = '' THEN
-    p_property_type := NULL;
+  -- Validar review_rooms ANTES del INSERT. Un RETURN posterior al INSERT
+  -- no revierte la reseña (quedaba creada aunque se devolvía success=false).
+  IF p_review_rooms IS NOT NULL THEN
+    IF jsonb_typeof(p_review_rooms) <> 'array' THEN
+      RETURN (false, NULL :: uuid, NULL :: text, 'review_rooms debe ser un arreglo JSON' :: text);
+    END IF;
+
+    IF jsonb_array_length(p_review_rooms) > 10 THEN
+      RETURN (false, NULL :: uuid, NULL :: text, 'Máximo 10 habitaciones por reseña' :: text);
+    END IF;
   END IF;
 
-  IF p_winter_comfort IS NOT NULL AND btrim(p_winter_comfort) = '' THEN
-    p_winter_comfort := NULL;
-  END IF;
-
-  IF p_summer_comfort IS NOT NULL AND btrim(p_summer_comfort) = '' THEN
-    p_summer_comfort := NULL;
-  END IF;
-
-  IF p_humidity IS NOT NULL AND btrim(p_humidity) = '' THEN
-    p_humidity := NULL;
-  END IF;
-
-  IF p_real_estate_experience IS NOT NULL AND btrim(p_real_estate_experience) = '' THEN
-    p_real_estate_experience := NULL;
-  END IF;
-
-  IF p_apartment_number IS NOT NULL AND btrim(p_apartment_number) = '' THEN
-    p_apartment_number := NULL;
-  END IF;
+  -- Fix A4: serializar create/update del mismo usuario sobre la misma dirección.
+  -- La regla house/room (1 por dirección sin importar apartment_number) no la
+  -- cubre el índice único; sin el lock, dos requests concurrentes la evaden.
+  PERFORM pg_advisory_xact_lock(hashtext('review_address:' || v_user_id::text || ':' || p_address_osm_id));
 
   -- S3: Validar que la inmobiliaria exista y esté activa
   IF p_real_estate_id IS NOT NULL AND NOT EXISTS (
@@ -2703,29 +2834,21 @@ BEGIN
     -- EDIFICIOS (apartment o property_type NULL):
     -- 1 reseña por usuario por dirección OSM + apartment_number.
     -- COALESCE unifica NULL y '' en '__general__' para que el índice funcione.
+    -- Una reseña house/room previa en la dirección también bloquea (misma regla
+    -- que update_review; si no, ninguna de las dos podría editarse después).
     IF EXISTS (
       SELECT 1 FROM public.reviews_public
       WHERE is_mine
         AND address_osm_id = p_address_osm_id
-        AND COALESCE(apartment_number, '__general__') = COALESCE(p_apartment_number, '__general__')
+        AND (
+          property_type IN ('house', 'room')
+          OR COALESCE(apartment_number, '__general__') = COALESCE(p_apartment_number, '__general__')
+        )
     ) THEN
       PERFORM log_security_event('create_review', 'blocked',
         'Duplicate review attempt (apartment - same address + apartment_number)');
       RETURN (false, NULL :: uuid, NULL :: text,
         'Ya has publicado una reseña para este apartamento en esta dirección.' :: text);
-    END IF;
-  END IF;
-
-  -- Fix V2: validar review_rooms ANTES del INSERT de la reseña. Las validaciones
-  -- originales estaban después, y un RETURN (false,...) no hace rollback: la reseña
-  -- quedaba persistida mientras el cliente recibía error (estado parcial).
-  IF p_review_rooms IS NOT NULL THEN
-    IF jsonb_typeof(p_review_rooms) <> 'array' THEN
-      RETURN (false, NULL :: uuid, NULL :: text, 'review_rooms debe ser un arreglo JSON' :: text);
-    END IF;
-
-    IF jsonb_array_length(p_review_rooms) > 10 THEN
-      RETURN (false, NULL :: uuid, NULL :: text, 'Máximo 10 habitaciones por reseña' :: text);
     END IF;
   END IF;
 
@@ -2783,6 +2906,7 @@ EXCEPTION
     PERFORM log_security_event('create_review', 'error', SQLERRM);
     RETURN (false, NULL :: uuid, NULL :: text, 'Error interno del servidor' :: text);
 END;
+  END;
 $function$;
 
 -- =============================================================================
@@ -2815,6 +2939,9 @@ AS $function$
 DECLARE
   v_user_id UUID;
   v_is_mine boolean;
+  v_eff_property_type TEXT;
+  v_eff_osm_id TEXT;
+  v_eff_apartment TEXT;
 BEGIN
   -- 1. Autenticación
   v_user_id := auth.uid();
@@ -2829,6 +2956,9 @@ BEGIN
       'error', 'Límite de actualizaciones alcanzado. Intenta nuevamente en una hora.'
     );
   END IF;
+  -- D2: bloque interno. Un error revierte solo este bloque; el contador de
+  -- rate limit (ya incrementado arriba) persiste y no se puede evadir forzando errores.
+  BEGIN
 
   -- 3. Verificar existencia y ownership
   SELECT is_mine INTO v_is_mine
@@ -2856,6 +2986,32 @@ BEGIN
     RETURN json_build_object('success', false, 'error', 'La calificación debe estar entre 1 y 5');
   END IF;
 
+  -- 4b. Normalizar campos opcionales vacíos a NULL (consistencia con create_review).
+  -- Va antes de validar enums: '' significa "no tocar", no un valor inválido.
+  IF p_property_type IS NOT NULL AND btrim(p_property_type) = '' THEN
+    p_property_type := NULL;
+  END IF;
+
+  IF p_apartment_number IS NOT NULL AND btrim(p_apartment_number) = '' THEN
+    p_apartment_number := NULL;
+  END IF;
+
+  IF p_winter_comfort IS NOT NULL AND btrim(p_winter_comfort) = '' THEN
+    p_winter_comfort := NULL;
+  END IF;
+
+  IF p_summer_comfort IS NOT NULL AND btrim(p_summer_comfort) = '' THEN
+    p_summer_comfort := NULL;
+  END IF;
+
+  IF p_humidity IS NOT NULL AND btrim(p_humidity) = '' THEN
+    p_humidity := NULL;
+  END IF;
+
+  IF p_real_estate_experience IS NOT NULL AND btrim(p_real_estate_experience) = '' THEN
+    p_real_estate_experience := NULL;
+  END IF;
+
   -- P1: Validar enums y longitudes antes de los CHECK constraints de la tabla
   IF p_title IS NOT NULL AND char_length(p_title) > 200 THEN
     RETURN json_build_object('success', false, 'error', 'El título supera los 200 caracteres');
@@ -2863,6 +3019,30 @@ BEGIN
 
   IF p_description IS NOT NULL AND char_length(p_description) > 800 THEN
     RETURN json_build_object('success', false, 'error', 'La descripción supera los 800 caracteres');
+  END IF;
+
+  IF p_address_text IS NOT NULL AND (btrim(p_address_text) = '' OR char_length(p_address_text) > 200) THEN
+    RETURN json_build_object('success', false, 'error', 'La dirección debe tener entre 1 y 200 caracteres');
+  END IF;
+
+  -- D3: mismo formato normalizado que create_review
+  IF p_address_osm_id IS NOT NULL THEN
+    p_address_osm_id := upper(btrim(p_address_osm_id));
+    IF p_address_osm_id !~ '^[NWR][1-9][0-9]{0,18}$' THEN
+      RETURN json_build_object('success', false, 'error', 'El OSM ID de la dirección no es válido');
+    END IF;
+  END IF;
+
+  IF char_length(p_apartment_number) > 10 THEN
+    RETURN json_build_object('success', false, 'error', 'El número de apartamento supera los 10 caracteres');
+  END IF;
+
+  IF char_length(p_real_estate_experience) > 200 THEN
+    RETURN json_build_object('success', false, 'error', 'La experiencia con la inmobiliaria supera los 200 caracteres');
+  END IF;
+
+  IF p_latitude < -90 OR p_latitude > 90 OR p_longitude < -180 OR p_longitude > 180 THEN
+    RETURN json_build_object('success', false, 'error', 'Coordenadas fuera de rango');
   END IF;
 
   IF p_property_type IS NOT NULL
@@ -2888,31 +3068,6 @@ BEGIN
     RETURN json_build_object('success', false, 'error', 'humidity inválido');
   END IF;
 
-  -- 5. Normalizar campos opcionales vacíos a NULL (consistencia con create_review)
-  IF p_property_type IS NOT NULL AND btrim(p_property_type) = '' THEN
-    p_property_type := NULL;
-  END IF;
-
-  IF p_apartment_number IS NOT NULL AND btrim(p_apartment_number) = '' THEN
-    p_apartment_number := NULL;
-  END IF;
-
-  IF p_winter_comfort IS NOT NULL AND btrim(p_winter_comfort) = '' THEN
-    p_winter_comfort := NULL;
-  END IF;
-
-  IF p_summer_comfort IS NOT NULL AND btrim(p_summer_comfort) = '' THEN
-    p_summer_comfort := NULL;
-  END IF;
-
-  IF p_humidity IS NOT NULL AND btrim(p_humidity) = '' THEN
-    p_humidity := NULL;
-  END IF;
-
-  IF p_real_estate_experience IS NOT NULL AND btrim(p_real_estate_experience) = '' THEN
-    p_real_estate_experience := NULL;
-  END IF;
-
   -- S3: Validar que la inmobiliaria exista y esté activa
   IF p_real_estate_id IS NOT NULL AND NOT EXISTS (
     SELECT 1 FROM public.real_estates_public
@@ -2921,31 +3076,41 @@ BEGIN
     RETURN json_build_object('success', false, 'error', 'La inmobiliaria no existe o fue eliminada');
   END IF;
 
-  -- P2: Revalidar unicidad de dirección (misma regla que create_review).
-  -- La review actual se excluye via id != p_review_id.
-  IF p_address_osm_id IS NOT NULL THEN
-    IF p_property_type IN ('house', 'room')
-      OR (p_property_type IS NULL AND EXISTS (
-        SELECT 1 FROM public.reviews_public WHERE id = p_review_id AND property_type IN ('house', 'room')
-      )) THEN
-      IF EXISTS (
-        SELECT 1 FROM public.reviews_public
-        WHERE is_mine AND address_osm_id = p_address_osm_id AND id != p_review_id
-      ) THEN
-        RETURN json_build_object('success', false, 'error',
-          'Ya has publicado una reseña para esta dirección. Solo puedes escribir una por propiedad.');
-      END IF;
-    ELSE
-      IF EXISTS (
-        SELECT 1 FROM public.reviews_public
-        WHERE is_mine
-          AND address_osm_id = p_address_osm_id
-          AND id != p_review_id
-          AND COALESCE(apartment_number, '__general__') = COALESCE(p_apartment_number, '__general__')
-      ) THEN
-        RETURN json_build_object('success', false, 'error',
-          'Ya has publicado una reseña para este apartamento en esta dirección.');
-      END IF;
+  -- P2 / Fix A4: Revalidar unicidad SIEMPRE con los valores efectivos
+  -- (parámetro nuevo o valor actual). Antes solo se validaba si venía
+  -- p_address_osm_id, permitiendo duplicados cambiando solo property_type o
+  -- apartment_number. La review actual se excluye via id != p_review_id.
+  SELECT
+    COALESCE(p_property_type, rp.property_type),
+    COALESCE(p_address_osm_id, rp.address_osm_id),
+    COALESCE(p_apartment_number, rp.apartment_number)
+  INTO v_eff_property_type, v_eff_osm_id, v_eff_apartment
+  FROM public.reviews_public rp
+  WHERE rp.id = p_review_id;
+
+  PERFORM pg_advisory_xact_lock(hashtext('review_address:' || v_user_id::text || ':' || v_eff_osm_id));
+
+  IF v_eff_property_type IN ('house', 'room') THEN
+    IF EXISTS (
+      SELECT 1 FROM public.reviews_public
+      WHERE is_mine AND address_osm_id = v_eff_osm_id AND id != p_review_id
+    ) THEN
+      RETURN json_build_object('success', false, 'error',
+        'Ya has publicado una reseña para esta dirección. Solo puedes escribir una por propiedad.');
+    END IF;
+  ELSE
+    IF EXISTS (
+      SELECT 1 FROM public.reviews_public
+      WHERE is_mine
+        AND address_osm_id = v_eff_osm_id
+        AND id != p_review_id
+        AND (
+          property_type IN ('house', 'room')
+          OR COALESCE(apartment_number, '__general__') = COALESCE(v_eff_apartment, '__general__')
+        )
+    ) THEN
+      RETURN json_build_object('success', false, 'error',
+        'Ya has publicado una reseña para este apartamento en esta dirección.');
     END IF;
   END IF;
 
@@ -3004,6 +3169,7 @@ EXCEPTION
     PERFORM log_security_event('update_review', 'error', SQLERRM);
     RETURN json_build_object('success', false, 'error', 'Error interno del servidor');
 END;
+  END;
 $function$;
 
 -- =============================================================================
@@ -3023,15 +3189,23 @@ BEGIN
     RETURN NULL;
   END IF;
 
+  -- Misma normalización que create_review/update_review (D3)
+  p_osm_id := upper(btrim(p_osm_id));
+
   IF p_property_type IN ('house', 'room') THEN
     SELECT id INTO v_id FROM public.reviews_public
       WHERE is_mine AND address_osm_id = p_osm_id
       LIMIT 1;
   ELSE
+    -- Una reseña house/room previa en la dirección también cuenta (misma regla
+    -- que create_review/update_review).
     SELECT id INTO v_id FROM public.reviews_public
       WHERE is_mine
         AND address_osm_id = p_osm_id
-        AND COALESCE(apartment_number, '__general__') = COALESCE(p_apartment_number, '__general__')
+        AND (
+          property_type IN ('house', 'room')
+          OR COALESCE(apartment_number, '__general__') = COALESCE(p_apartment_number, '__general__')
+        )
       LIMIT 1;
   END IF;
 
@@ -3042,7 +3216,7 @@ $$;
 COMMENT ON FUNCTION public.check_user_review_for_address(text, text, text) IS
   'Verifica si el usuario autenticado ya tiene una reseña para una dirección. '
   'Para house/room: busca cualquier reseña en la dirección. '
-  'Para apartment: busca por dirección + apartment_number específico.';
+  'Para apartment: busca por dirección + apartment_number específico, o una reseña house/room en la dirección.';
 -- =============================================================================
 -- MIGRACIÓN 005: TRIGGERS
 -- =============================================================================
@@ -4149,9 +4323,54 @@ create table if not exists public.review_images (
 create index if not exists idx_review_images_review_id
   on public.review_images (review_id, "order");
 
--- Índice para borrado por path (usado al eliminar del bucket)
-create index if not exists idx_review_images_path
-  on public.review_images (path);
+-- (Búsqueda por path: la cubre el índice del UNIQUE review_images_path_unique.)
+
+-- Fix A1: review_images se escribe por REST, así que la base debe validar los
+-- datos. Sin esto un usuario podía insertar en su reseña una fila con el path de
+-- una imagen AJENA y luego borrarla: el repositorio llama deleteImage(row.path)
+-- y eliminaba el objeto de otro usuario en R2. También permitía URLs arbitrarias.
+-- El path debe contener el review_id de la propia fila (formato generado por
+-- supabase-review-image.repository: reviews/<osmId>/<reviewId>/<archivo>) y la
+-- url debe terminar exactamente en ese path sobre https.
+alter table public.review_images
+  drop constraint if exists review_images_path_format,
+  drop constraint if exists review_images_url_matches_path,
+  drop constraint if exists review_images_order_range,
+  drop constraint if exists review_images_path_unique;
+
+alter table public.review_images
+  add constraint review_images_path_format check (
+    path ~ ('^reviews/[^/]+/' || review_id::text || '/[^/]+$')
+    and path !~ '\.\.'
+  ),
+  add constraint review_images_url_matches_path check (
+    url ~ '^https://[^/?#]+/' and right(url, char_length(path) + 1) = '/' || path
+  ),
+  add constraint review_images_order_range check ("order" between 0 and 4),
+  add constraint review_images_path_unique unique (path);
+
+-- Límite de 5 imágenes por reseña enforced en DB (antes solo en la app).
+-- Advisory lock por review para evitar que inserts concurrentes lo superen.
+create or replace function public.enforce_review_images_limit () returns trigger
+language plpgsql security invoker
+set search_path = public, pg_temp
+as $function$
+begin
+  perform pg_advisory_xact_lock(hashtext('review_images:' || new.review_id::text));
+  if (select count(*) from public.review_images where review_id = new.review_id) >= 5 then
+    raise exception 'Máximo 5 imágenes por reseña' using errcode = 'check_violation';
+  end if;
+  return new;
+end;
+$function$;
+
+revoke execute on function public.enforce_review_images_limit() from public, anon, authenticated;
+
+drop trigger if exists enforce_review_images_limit_trigger on public.review_images;
+create trigger enforce_review_images_limit_trigger
+  before insert on public.review_images
+  for each row
+  execute function public.enforce_review_images_limit();
 
 -- =============================================================================
 -- Fix V3 (auditoría): hardening de review_images
@@ -4161,6 +4380,9 @@ create index if not exists idx_review_images_path
 -- 1) Saneo de path: bloquea URLs externas (http/://), rutas absolutas o vacías.
 --    Si la convención del bucket cambia, ajustar al prefijo real.
 alter table public.review_images
+  drop constraint if exists review_images_path_sane_chk;
+
+alter table public.review_images
   add constraint review_images_path_sane_chk
   check (
     path !~ '^(https?:|//|/|$)'
@@ -4168,25 +4390,8 @@ alter table public.review_images
     and btrim(path) = path
   );
 
--- 2) Tope de 5 imágenes por reseña (evita abuso de almacenamiento vía REST).
-create or replace function public.enforce_review_images_cap ()
-returns trigger language plpgsql security definer
-set search_path = public, pg_temp
-as $$
-BEGIN
-  IF (SELECT count(*) FROM public.review_images WHERE review_id = NEW.review_id) >= 5 THEN
-    RAISE EXCEPTION 'Máximo 5 imágenes por reseña';
-  END IF;
-  RETURN NEW;
-END;
-$$;
-
-revoke execute on function public.enforce_review_images_cap() from public, anon, authenticated;
-
-drop trigger if exists enforce_review_images_cap on public.review_images;
-create trigger enforce_review_images_cap
-  before insert on public.review_images
-  for each row execute function public.enforce_review_images_cap();
+-- 2) Tope de 5 imágenes por reseña: lo aplica enforce_review_images_limit_trigger
+--    (definido arriba, con advisory lock contra inserts concurrentes).
 
 -- =============================================================================
 -- RLS
@@ -4268,13 +4473,30 @@ alter database postgres set idle_in_transaction_session_timeout = '60000';
 -- FUNCIONES PARA CONSULTAR REVIEWS DEL USUARIO
 -- =============================================================================
 
-create or replace function public.get_reviews_by_current_user () returns setof reviews_with_votes_public language plpgsql security invoker
+-- Rendimiento: filtrar la vista por is_mine (coalesce sobre auth.uid()) no usa
+-- índices y un JOIN contra la vista termina en hash join que calcula los votos de
+-- TODAS las reseñas (~90 ms con 50k filas, lineal). Se eligen primero los ids por
+-- índice y la vista se consulta por id en un LATERAL con LIMIT 1 (impide que el
+-- planner lo aplane a hash join): ~0.2 ms con 50k filas.
+-- SECURITY DEFINER porque SELECT sobre reviews está revocado; el filtro
+-- user_id = auth.uid() garantiza que solo devuelve reseñas propias.
+create or replace function public.get_reviews_by_current_user () returns setof reviews_with_votes_public language plpgsql security definer
 set search_path = public, pg_temp
+set row_security = on
 as $$
 begin
-  return query select * from reviews_with_votes_public
-    where is_mine order by created_at desc
-    limit 200;
+  return query select v.* from (
+      select r.id, r.created_at from public.reviews r
+      where r.user_id = (select auth.uid()) and r.deleted_at is null
+      order by r.created_at desc
+      limit 200
+    ) mine
+    cross join lateral (
+      select * from public.reviews_with_votes_public rwv
+      where rwv.id = mine.id
+      limit 1
+    ) v
+    order by mine.created_at desc;
 end;
 $$;
 
@@ -4284,14 +4506,115 @@ create or replace function public.get_favorite_reviews_by_current_user () return
 set search_path = public, pg_temp
 as $$
 begin
-  return query select rwv_p.* from review_favorites rf
-    join reviews_with_votes_public rwv_p on rwv_p.id = rf.review_id
-    where rf.user_id = auth.uid() order by rf.created_at desc
-    limit 200;
+  -- Mismo patrón que get_reviews_by_current_user (ids por índice + LATERAL por id).
+  return query select v.* from (
+      select rf.review_id, rf.created_at from public.review_favorites rf
+      where rf.user_id = (select auth.uid())
+      order by rf.created_at desc
+      limit 200
+    ) fav
+    cross join lateral (
+      select * from public.reviews_with_votes_public rwv
+      where rwv.id = fav.review_id
+      limit 1
+    ) v
+    order by fav.created_at desc;
 end;
 $$;
 
 comment on function public.get_favorite_reviews_by_current_user is 'Obtiene las reviews favoritas del usuario autenticado';
+
+-- =============================================================================
+-- BÚSQUEDAS DE EXPLORAR (D1, auditoría)
+-- =============================================================================
+-- Filtrar reviews_with_votes_public por ilike o rangos de lat/lon desde
+-- PostgREST recorría la tabla completa y calculaba los votos de cada fila: por
+-- security_barrier, los operadores no leakproof (texticlike, numeric_ge/le) no
+-- bajan a la tabla (~350-410 ms con 50k reseñas; anon tiene timeout de 3 s).
+-- Estas RPCs eligen los ids en la tabla base por índice y consultan la vista por
+-- id (mismo patrón que get_reviews_by_current_user), así la vista conserva su
+-- security_barrier. SECURITY DEFINER porque SELECT sobre reviews está revocado;
+-- solo devuelven filas de la vista pública (sin user_id).
+create extension if not exists pg_trgm with schema extensions;
+
+-- Índice trigram para ilike '%q%' sobre la dirección (requiere >= 3 caracteres).
+create index if not exists idx_reviews_address_text_trgm
+  on public.reviews using gin (address_text extensions.gin_trgm_ops)
+  where deleted_at is null;
+
+create or replace function public.search_reviews_by_address (
+  p_query text,
+  p_limit int default 20
+) returns setof public.reviews_with_votes_public language plpgsql stable security definer
+set search_path = public, pg_temp
+set row_security = on
+as $$
+declare
+  v_pattern text;
+begin
+  IF p_query IS NULL OR btrim(p_query) = '' THEN
+    RETURN;
+  END IF;
+
+  -- Escapar comodines: el texto del usuario se busca literal
+  v_pattern := '%' || replace(replace(replace(btrim(p_query), '\', '\\'), '%', '\%'), '_', '\_') || '%';
+
+  RETURN QUERY SELECT v.* FROM (
+      SELECT r.id, r.created_at FROM public.reviews r
+      WHERE r.deleted_at IS NULL AND r.address_text ILIKE v_pattern
+      ORDER BY r.created_at DESC
+      LIMIT least(greatest(coalesce(p_limit, 20), 1), 100)
+    ) hit
+    CROSS JOIN LATERAL (
+      SELECT * FROM public.reviews_with_votes_public rwv
+      WHERE rwv.id = hit.id
+      LIMIT 1
+    ) v
+    ORDER BY hit.created_at DESC;
+end;
+$$;
+
+comment on function public.search_reviews_by_address is
+  'Búsqueda de reseñas por texto de dirección (ilike, hasta 100 filas). Usa índice trigram.';
+
+create or replace function public.search_reviews_nearby (
+  p_lat numeric,
+  p_lon numeric,
+  p_radius numeric default 0.02,
+  p_limit int default 20
+) returns setof public.reviews_with_votes_public language plpgsql stable security definer
+set search_path = public, pg_temp
+set row_security = on
+as $$
+declare
+  v_radius numeric;
+begin
+  IF p_lat IS NULL OR p_lon IS NULL THEN
+    RETURN;
+  END IF;
+
+  -- Radio acotado (en grados) para que no se use como listado completo
+  v_radius := least(greatest(coalesce(p_radius, 0.02), 0), 1);
+
+  RETURN QUERY SELECT v.* FROM (
+      SELECT r.id, r.created_at FROM public.reviews r
+      WHERE r.deleted_at IS NULL
+        AND r.latitude BETWEEN p_lat - v_radius AND p_lat + v_radius
+        AND r.longitude BETWEEN p_lon - v_radius AND p_lon + v_radius
+      ORDER BY r.created_at DESC
+      LIMIT least(greatest(coalesce(p_limit, 20), 1), 100)
+    ) hit
+    CROSS JOIN LATERAL (
+      SELECT * FROM public.reviews_with_votes_public rwv
+      WHERE rwv.id = hit.id
+      LIMIT 1
+    ) v
+    ORDER BY hit.created_at DESC;
+end;
+$$;
+
+comment on function public.search_reviews_nearby is
+  'Búsqueda de reseñas en un bounding box (radio en grados, máx 1; hasta 100 filas).';
 
 -- =============================================================================
 -- FUNCIÓN PARA SABER LA REVIEW DE UNA REAL ESTATE POR USUARIO
@@ -4626,6 +4949,17 @@ revoke insert, update, delete on public.review_deletions from authenticated;
 alter default privileges in schema public
   revoke insert, update, delete on tables
   from authenticated;
+
+-- D9: privilegios residuales de los grants default de Supabase. TRUNCATE ignora
+-- RLS; REFERENCES/TRIGGER no tienen uso para clientes. No son explotables por
+-- PostgREST/GraphQL, pero se quitan como defensa en profundidad.
+-- review_images: la app solo hace INSERT/DELETE (no hay policy de UPDATE).
+revoke truncate, references, trigger on all tables in schema public from anon, authenticated;
+revoke update on public.review_images from authenticated;
+
+alter default privileges in schema public
+  revoke truncate, references, trigger on tables
+  from anon, authenticated;
 -- =============================================================================
 -- 10b. GRANTS PARA VISTAS _public Y FUNCIONES (from 013_fix_dependencies.sql lines 71-86)
 -- =============================================================================
@@ -4698,17 +5032,17 @@ revoke insert, update, delete on public.rate_limit_stats from authenticated;
 
 -- Grants para funciones de 012_functions_dependent.sql
 grant execute on function public.get_reviews_by_current_user() to authenticated;
-revoke execute on function public.get_reviews_by_current_user() from public;
+revoke execute on function public.get_reviews_by_current_user() from public, anon;
 grant execute on function public.get_favorite_reviews_by_current_user() to authenticated;
-revoke execute on function public.get_favorite_reviews_by_current_user() from public;
+revoke execute on function public.get_favorite_reviews_by_current_user() from public, anon;
 grant execute on function public.get_real_estate_review_by_user(uuid) to authenticated;
-revoke execute on function public.get_real_estate_review_by_user(uuid) from public;
+revoke execute on function public.get_real_estate_review_by_user(uuid) from public, anon;
 
 -- =============================================================================
 -- GRANTS PARA FUNCIONES get_user_vote_on_* (consolidadas de 009)
 -- =============================================================================
 grant execute on function public.get_user_vote_on_real_estate_review(uuid) to authenticated;
-revoke execute on function public.get_user_vote_on_real_estate_review(uuid) from public;
+revoke execute on function public.get_user_vote_on_real_estate_review(uuid) from public, anon;
 
 -- =============================================================================
 -- GRANTS PARA FUNCIONES PAGINADAS (consolidadas de 009)
@@ -4729,11 +5063,17 @@ grant insert, delete on public.review_images to authenticated;
 grant execute on function public.get_real_estates_paginated(int, int) to authenticated, anon;
 revoke execute on function public.get_real_estates_paginated(int, int) from public;
 
+-- Búsquedas de explorar (D1): públicas, como la vista que devuelven
+grant execute on function public.search_reviews_by_address(text, int) to authenticated, anon;
+revoke execute on function public.search_reviews_by_address(text, int) from public;
+grant execute on function public.search_reviews_nearby(numeric, numeric, numeric, int) to authenticated, anon;
+revoke execute on function public.search_reviews_nearby(numeric, numeric, numeric, int) from public;
+
 -- =============================================================================
 -- 10e. GRANT check_user_review_for_address (firma extendida, sección 7d)
 -- =============================================================================
 GRANT EXECUTE ON FUNCTION public.check_user_review_for_address(text, text, text) TO authenticated;
-revoke execute on function public.check_user_review_for_address(text, text, text) from public;
+revoke execute on function public.check_user_review_for_address(text, text, text) from public, anon;
 -- =============================================================================
 -- Migration 016: Load test cleanup function
 -- =============================================================================
@@ -4786,6 +5126,14 @@ begin
   delete from review_favorites
   where user_id in (select id from auth.users where email like 'loadtest-%@reviuy.qa');
 
+  -- Delete review audit trail for load test reviews (antes de borrar reviews:
+  -- después el subselect ya no encuentra las filas y la auditoría quedaba huérfana)
+  delete from review_audit
+  where review_id in (
+    select id from reviews
+    where user_id in (select id from auth.users where email like 'loadtest-%@reviuy.qa')
+  );
+
   -- Delete reviews by load test users
   delete from reviews
   where user_id in (select id from auth.users where email like 'loadtest-%@reviuy.qa');
@@ -4807,13 +5155,6 @@ begin
   -- Delete review reports by load test users
   delete from review_reports
   where reported_by_user_id in (select id from auth.users where email like 'loadtest-%@reviuy.qa');
-
-  -- Delete review audit trail for load test reviews
-  delete from review_audit
-  where review_id in (
-    select id from reviews
-    where user_id in (select id from auth.users where email like 'loadtest-%@reviuy.qa')
-  );
 
   -- Delete review deletions audit
   delete from review_deletions
@@ -4903,33 +5244,56 @@ COMMENT ON INDEX public.idx_reviews_user_address_apt_unique IS
   'Permite múltiples reseñas por dirección si el número de apartamento difiere.';
 
 -- =============================================================================
+-- Fix A3 (privacidad): purga de datos personales al eliminar la cuenta
+-- =============================================================================
+-- La política de privacidad promete eliminar los datos personales al borrar la
+-- cuenta. security_logs.user_id es ON DELETE SET NULL, lo que dejaba IP y
+-- user-agent huérfanos hasta 90 días. Este trigger los elimina en el momento.
+-- review_audit ya no guarda user_id en el JSON (ver log_review_changes) y
+-- changed_by/deleted_by se anulan por FK.
+create or replace function public.purge_user_personal_data () returns trigger
+language plpgsql security definer
+set search_path = public, pg_temp
+as $function$
+begin
+  delete from public.security_logs where user_id = old.id;
+  return old;
+end;
+$function$;
+
+revoke execute on function public.purge_user_personal_data() from public, anon, authenticated;
+
+drop trigger if exists purge_user_personal_data_trigger on auth.users;
+create trigger purge_user_personal_data_trigger
+  before delete on auth.users
+  for each row
+  execute function public.purge_user_personal_data();
+
+-- =============================================================================
 -- 018-FIX: CRON DE LIMPIEZA DE LOGS (Fix A1)
 -- =============================================================================
 -- security_logs y rate_limits acumulan IP + datos personales indefinidamente
 -- (riesgo legal Ley 18.331 y storage DoS). cleanup_old_security_logs() ya
--- existe; solo faltaba agendarlo. El bloque DO es condicional para no romper
--- ambientes sin pg_cron (Supabase cloud/local lo incluyen).
--- Fix P6 (auditoría): verificación por jobname → cron.schedule no es idempotente
--- y duplicaría el job si el esquema se re-aplica sobre una BD existente.
--- Importante: SQL ESTÁTICO no sirve acá. El IF de plpgsql planifica todas sus
--- subconsultas juntas, y un EXISTS sobre cron.job explota en planificación cuando
--- pg_cron no está instalado (aunque el check pg_extension sea falso). El SQL
--- dinámico (execute) se parsea recién en ejecución, dentro de la rama.
-do $$
-declare
-  v_missing_job boolean;
-begin
-  if to_regclass('cron.job') is not null then
-    execute 'select not exists (select 1 from cron.job
-              where jobname = ''cleanup_old_security_logs_daily'')'
-      into v_missing_job;
-    if v_missing_job then
-      perform cron.schedule(
-        'cleanup_old_security_logs_daily',
-        '0 4 * * *',
-        'select public.cleanup_old_security_logs()'
-      );
-    end if;
-  end if;
-end;
-$$;
+-- existe; solo faltaba agendarlo.
+-- D6: antes el bloque salía en silencio si pg_cron no estaba instalado (caso de
+-- la BD local), así que el job nunca existía. Se instala la extensión (Supabase
+-- cloud y local la traen disponible) y se agendan los jobs.
+-- cron.schedule(nombre, ...) es idempotente desde pg_cron 1.4: si el job ya
+-- existe lo actualiza en vez de duplicarlo, así que re-aplicar el esquema es seguro.
+create extension if not exists pg_cron with schema pg_catalog;
+
+grant usage on schema cron to postgres;
+
+select cron.schedule(
+  'cleanup_old_security_logs_daily',
+  '0 4 * * *',
+  'select public.cleanup_old_security_logs()'
+);
+
+-- rate_limits: complementa el cleanup probabilístico del trigger (1% por insert),
+-- que con poco tráfico puede no dispararse nunca.
+select cron.schedule(
+  'cleanup_old_rate_limits_hourly',
+  '15 * * * *',
+  $cron$delete from public.rate_limits where window_start < now() - interval '24 hours'$cron$
+);

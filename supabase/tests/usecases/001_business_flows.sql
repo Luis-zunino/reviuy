@@ -38,7 +38,7 @@ BEGIN;
 
 CREATE EXTENSION IF NOT EXISTS pgtap;
 
-SELECT plan(91);
+SELECT plan(110);
 
 -- =============================================================================
 -- HELPERS
@@ -161,7 +161,7 @@ SELECT is(
 SELECT is(
   (SELECT (public.create_review(
       p_title => '', p_description => 'x', p_rating => 5,
-      p_address_text => 'a', p_address_osm_id => 'o',
+      p_address_text => 'a', p_address_osm_id => 'N1',
       p_latitude => 0, p_longitude => 0)).error),
   'El título es obligatorio', 'create_review: rechaza título vacío');
 
@@ -169,7 +169,7 @@ SELECT pg_temp.clear_rl();
 SELECT is(
   (SELECT (public.create_review(
       p_title => 'x', p_description => '', p_rating => 5,
-      p_address_text => 'a', p_address_osm_id => 'o',
+      p_address_text => 'a', p_address_osm_id => 'N1',
       p_latitude => 0, p_longitude => 0)).error),
   'La descripción es obligatoria', 'create_review: rechaza descripción vacía');
 
@@ -177,7 +177,7 @@ SELECT pg_temp.clear_rl();
 SELECT is(
   (SELECT (public.create_review(
       p_title => 'x', p_description => 'y', p_rating => 9,
-      p_address_text => 'a', p_address_osm_id => 'o',
+      p_address_text => 'a', p_address_osm_id => 'N1',
       p_latitude => 0, p_longitude => 0)).error),
   'El rating debe estar entre 1 y 5', 'create_review: rechaza rating fuera de rango');
 
@@ -185,7 +185,7 @@ SELECT pg_temp.clear_rl();
 SELECT is(
   (SELECT (public.create_review(
       p_title => 'x', p_description => 'y', p_rating => 5,
-      p_address_text => 'a', p_address_osm_id => 'o',
+      p_address_text => 'a', p_address_osm_id => 'N1',
       p_latitude => 0, p_longitude => 0, p_property_type => 'castle')).error),
   'property_type inválido', 'create_review: rechaza property_type inválido');
 
@@ -193,7 +193,7 @@ SELECT pg_temp.clear_rl();
 SELECT is(
   (SELECT (public.create_review(
       p_title => 'x', p_description => 'y', p_rating => 5,
-      p_address_text => 'a', p_address_osm_id => 'o',
+      p_address_text => 'a', p_address_osm_id => 'N1',
       p_latitude => 0, p_longitude => 0, p_zone_rating => 8)).error),
   'zone_rating debe estar entre 1 y 5', 'create_review: rechaza zone_rating inválido');
 
@@ -201,7 +201,7 @@ SELECT pg_temp.clear_rl();
 SELECT is(
   (SELECT (public.create_review(
       p_title => 'x', p_description => 'y', p_rating => 5,
-      p_address_text => 'a', p_address_osm_id => 'o',
+      p_address_text => 'a', p_address_osm_id => 'N1',
       p_latitude => 0, p_longitude => 0,
       p_real_estate_id => '99999999-9999-9999-9999-999999999999')).error),
   'La inmobiliaria no existe o fue eliminada',
@@ -211,7 +211,7 @@ SELECT pg_temp.clear_rl();
 SELECT is(
   (SELECT (public.create_review(
       p_title => repeat('a', 201), p_description => 'y', p_rating => 5,
-      p_address_text => 'a', p_address_osm_id => 'o',
+      p_address_text => 'a', p_address_osm_id => 'N1',
       p_latitude => 0, p_longitude => 0)).error),
   'El título supera los 200 caracteres', 'create_review: rechaza título > 200 chars');
 
@@ -257,6 +257,16 @@ SELECT is(
       p_property_type => 'house', p_apartment_number => 'Y')).error),
   'Ya has publicado una reseña para esta dirección. Solo puedes escribir una reseña por propiedad.',
   'create_review: house ignora apartment_number y bloquea duplicado');
+
+SELECT pg_temp.clear_rl();
+SELECT is(
+  (SELECT (public.create_review(
+      p_title => 'Apto en la casa', p_description => 'y', p_rating => 4,
+      p_address_text => 'Av. Italia 555', p_address_osm_id => 'R200001',
+      p_latitude => -34.9, p_longitude => -56.16,
+      p_property_type => 'apartment', p_apartment_number => 'Z')).error),
+  'Ya has publicado una reseña para este apartamento en esta dirección.',
+  'create_review: una review house previa bloquea un apartment en la misma dirección');
 
 -- =============================================================================
 -- 4. UPDATE_REVIEW — permisos, validación y COALESCE
@@ -626,6 +636,63 @@ SELECT is(
   'resolved', 'moderate_reports: el nuevo status queda persistido');
 
 -- =============================================================================
+-- 10b. IMÁGENES DE RESEÑA — único DML directo por REST, validado por la BD
+--      (path atado al review_id, url terminada en ese path, tope de 5, RLS)
+-- =============================================================================
+SELECT pg_temp.as_user('11111111-1111-1111-1111-111111111111');
+SELECT lives_ok(
+  $sql$INSERT INTO public.review_images (review_id, url, path, "order")
+    SELECT id, 'https://cdn.example.com/reviews/R100002/' || id || '/1.jpg',
+           'reviews/R100002/' || id || '/1.jpg', 0
+    FROM public.reviews_public WHERE address_osm_id = 'R100002'$sql$,
+  'review_images (A): inserta una imagen válida en su review');
+
+SELECT throws_ok(
+  $sql$INSERT INTO public.review_images (review_id, url, path, "order")
+    SELECT id, 'https://cdn.example.com/reviews/R100002/otra-review/x.jpg',
+           'reviews/R100002/otra-review/x.jpg', 1
+    FROM public.reviews_public WHERE address_osm_id = 'R100002'$sql$,
+  '23514',
+  'new row for relation "review_images" violates check constraint "review_images_path_format"',
+  'review_images: rechaza un path que no contiene el review_id de la fila');
+
+SELECT throws_ok(
+  $sql$INSERT INTO public.review_images (review_id, url, path, "order")
+    SELECT id, 'https://cdn.example.com/otra-cosa.jpg',
+           'reviews/R100002/' || id || '/2.jpg', 1
+    FROM public.reviews_public WHERE address_osm_id = 'R100002'$sql$,
+  '23514',
+  'new row for relation "review_images" violates check constraint "review_images_url_matches_path"',
+  'review_images: rechaza una url que no termina en el path');
+
+SELECT lives_ok(
+  $sql$INSERT INTO public.review_images (review_id, url, path, "order")
+    SELECT r.id, 'https://cdn.example.com/reviews/R100002/' || r.id || '/' || g || '.jpg',
+           'reviews/R100002/' || r.id || '/' || g || '.jpg', g - 1
+    FROM public.reviews_public r CROSS JOIN generate_series(2, 5) g
+    WHERE r.address_osm_id = 'R100002'$sql$,
+  'review_images (A): completa el tope de 5 imágenes');
+
+SELECT throws_ok(
+  $sql$INSERT INTO public.review_images (review_id, url, path, "order")
+    SELECT id, 'https://cdn.example.com/reviews/R100002/' || id || '/6.jpg',
+           'reviews/R100002/' || id || '/6.jpg', 4
+    FROM public.reviews_public WHERE address_osm_id = 'R100002'$sql$,
+  '23514', 'Máximo 5 imágenes por reseña',
+  'review_images: la 6ª imagen viola el tope de 5 por reseña');
+
+SELECT pg_temp.as_user('22222222-2222-2222-2222-222222222222');
+SELECT throws_ok(
+  $sql$INSERT INTO public.review_images (review_id, url, path, "order")
+    SELECT id, 'https://cdn.example.com/reviews/R100001/' || id || '/1.jpg',
+           'reviews/R100001/' || id || '/1.jpg', 0
+    FROM public.reviews_public
+    WHERE address_osm_id = 'R100001' AND apartment_number = 'A'$sql$,
+  '42501',
+  'new row violates row-level security policy for table "review_images"',
+  'review_images (B): no puede agregar imágenes a una review ajena');
+
+-- =============================================================================
 -- 11. SOFT DELETE de review de dirección
 -- =============================================================================
 SELECT pg_temp.as_user('11111111-1111-1111-1111-111111111111');
@@ -647,6 +714,11 @@ SELECT is(
   (SELECT pg_temp.q($$SELECT count(*)::int FROM public.review_deletions d
       JOIN public.reviews r ON r.id = d.review_id WHERE r.address_osm_id = 'R100002'$$)),
   '1', 'delete_review_safe: registra la eliminación en review_deletions');
+
+SELECT is(
+  (SELECT pg_temp.q($$SELECT count(*)::int FROM public.review_images i
+      JOIN public.reviews r ON r.id = i.review_id WHERE r.address_osm_id = 'R100002'$$)),
+  '0', 'delete_review_safe: elimina las filas de review_images de la review');
 
 -- B no puede borrar la review de A; el error interno está enmascarado.
 SELECT pg_temp.as_user('22222222-2222-2222-2222-222222222222');
@@ -682,6 +754,11 @@ SELECT is(
   (SELECT is_mine FROM public.reviews_public
    WHERE address_osm_id = 'R100001' AND apartment_number = 'A' LIMIT 1),
   true, 'reviews_public: is_mine=true para el autor (A)');
+
+SELECT is(
+  (SELECT count(*)::int FROM public.get_reviews_by_current_user()),
+  (SELECT count(*)::int FROM public.reviews_public WHERE is_mine),
+  'get_reviews_by_current_user (A): devuelve exactamente sus reviews activas');
 
 SELECT pg_temp.as_user('33333333-3333-3333-3333-333333333333');
 SELECT is(
@@ -834,7 +911,7 @@ BEGIN
   FOR i IN 1..5 LOOP
     PERFORM public.create_review(
       p_title => 'RL ' || i, p_description => 'test de rate limit',
-      p_rating => 3, p_address_text => 'Calle RL', p_address_osm_id => 'RL' || i,
+      p_rating => 3, p_address_text => 'Calle RL', p_address_osm_id => 'R9000' || i,
       p_latitude => -34.9, p_longitude => -56.16,
       p_property_type => 'apartment', p_apartment_number => 'A');
   END LOOP;
@@ -844,10 +921,75 @@ $do$;
 SELECT is(
   (SELECT (public.create_review(
       p_title => 'RL Overflow', p_description => 'ya excedio el cupo',
-      p_rating => 3, p_address_text => 'Calle RL', p_address_osm_id => 'RL999',
+      p_rating => 3, p_address_text => 'Calle RL', p_address_osm_id => 'R99999',
       p_latitude => -34.9, p_longitude => -56.16)).error),
   'Demasiadas reseñas. Intenta más tarde.',
   'rate limit: create_review bloquea tras agotar el cupo de 5/10min');
+
+-- =============================================================================
+-- 15b. HARDENING (auditoría D2/D3/D4)
+-- =============================================================================
+SELECT pg_temp.as_user('33333333-3333-3333-3333-333333333333');
+SELECT pg_temp.clear_rl();
+
+-- D2: un error interno (room_type inválido → CHECK de review_rooms) revierte la
+-- reseña pero NO el contador de rate limit; antes se podía evadir forzando errores.
+SELECT is(
+  (SELECT (public.create_review(
+      p_title => 'Con room invalido', p_description => 'y', p_rating => 3,
+      p_address_text => 'Calle D2', p_address_osm_id => 'N7770001',
+      p_latitude => -34.9, p_longitude => -56.16,
+      p_review_rooms => '[{"room_type":"castle"}]'::jsonb)).error),
+  'Error interno del servidor',
+  'create_review: un error interno devuelve el mensaje genérico');
+
+SELECT is(
+  (SELECT pg_temp.q($$SELECT count(*)::int FROM public.reviews WHERE address_osm_id = 'N7770001'$$)),
+  '0', 'create_review: el error interno no deja la reseña persistida');
+
+SELECT is(
+  (SELECT pg_temp.q($$SELECT coalesce(sum(request_count), 0)::int FROM public.rate_limits
+      WHERE user_id = '33333333-3333-3333-3333-333333333333' AND endpoint = 'create_review'$$)),
+  '1', 'rate limit: el contador persiste aunque la RPC termine en error interno');
+
+-- D3: address_osm_id se normaliza (trim + mayúsculas) y se valida el formato,
+-- así variantes de la misma dirección no evaden la unicidad.
+SELECT pg_temp.clear_rl();
+SELECT is(
+  (SELECT (public.create_review(
+      p_title => 'Casa D3', p_description => 'y', p_rating => 3,
+      p_address_text => 'Calle D3', p_address_osm_id => 'W5550001',
+      p_latitude => -34.9, p_longitude => -56.16, p_property_type => 'house')).success),
+  true, 'create_review: crea la house de referencia para D3');
+
+SELECT pg_temp.clear_rl();
+SELECT is(
+  (SELECT (public.create_review(
+      p_title => 'Casa D3 bis', p_description => 'y', p_rating => 3,
+      p_address_text => 'Calle D3', p_address_osm_id => ' w5550001 ',
+      p_latitude => -34.9, p_longitude => -56.16, p_property_type => 'house')).error),
+  'Ya has publicado una reseña para esta dirección. Solo puedes escribir una reseña por propiedad.',
+  'create_review: el osm_id con espacios/minúsculas se normaliza y bloquea el duplicado');
+
+SELECT pg_temp.clear_rl();
+SELECT is(
+  (SELECT (public.create_review(
+      p_title => 'Casa D3 ter', p_description => 'y', p_rating => 3,
+      p_address_text => 'Calle D3', p_address_osm_id => 'W05550001',
+      p_latitude => -34.9, p_longitude => -56.16, p_property_type => 'house')).error),
+  'El OSM ID de la dirección no es válido',
+  'create_review: rechaza osm_id con formato inválido (ceros a la izquierda)');
+
+-- D4: la descripción del reporte se valida contra el VARCHAR(500) de la tabla
+-- con un mensaje explícito (antes caía en "Error interno del servidor").
+SELECT pg_temp.clear_rl();
+SELECT is(
+  (public.report_review(
+      (SELECT id FROM public.reviews_public
+        WHERE address_osm_id = 'R100001' AND apartment_number = 'A' LIMIT 1),
+      'Spam', repeat('x', 501)))->>'error',
+  'El motivo admite hasta 200 caracteres y la descripción hasta 500',
+  'report_review: rechaza descripción > 500 con mensaje explícito');
 
 -- =============================================================================
 -- 16. LECTURA ANÓNIMA
@@ -856,6 +998,24 @@ SELECT pg_temp.as_anon();
 SELECT is(
   (SELECT count(*)::int FROM public.get_reviews_paginated(10, 0)) >= 0,
   true, 'get_reviews_paginated: accesible para anon');
+
+-- Búsquedas de explorar (D1): mismo resultado que filtrar la vista pública
+SELECT ok(
+  (SELECT count(*) FROM public.search_reviews_by_address('libertador'))
+    = (SELECT count(*) FROM public.reviews_public WHERE address_text ILIKE '%libertador%')
+  AND (SELECT count(*) FROM public.search_reviews_by_address('libertador')) > 0,
+  'search_reviews_by_address (anon): devuelve las reseñas activas que coinciden');
+
+SELECT is(
+  (SELECT count(*)::int FROM public.search_reviews_by_address('%')),
+  0, 'search_reviews_by_address: los comodines del usuario se buscan literal');
+
+SELECT ok(
+  (SELECT count(*) FROM public.search_reviews_nearby(-34.90, -56.16, 0.01, 100))
+    = (SELECT count(*) FROM public.reviews_public
+       WHERE latitude BETWEEN -34.91 AND -34.89 AND longitude BETWEEN -56.17 AND -56.15)
+  AND (SELECT count(*) FROM public.search_reviews_nearby(-34.90, -56.16, 0.01, 100)) > 0,
+  'search_reviews_nearby (anon): devuelve las reseñas activas del bounding box');
 
 SELECT is(
   (SELECT (public.get_review_vote_counts(
@@ -866,7 +1026,7 @@ SELECT is(
 SELECT throws_ok(
   $fn$SELECT public.create_review(
       p_title => 'anon', p_description => 'x', p_rating => 3,
-      p_address_text => 'a', p_address_osm_id => 'o',
+      p_address_text => 'a', p_address_osm_id => 'N1',
       p_latitude => 0, p_longitude => 0)$fn$,
   '42501', NULL, 'create_review: bloqueado para anon');
 

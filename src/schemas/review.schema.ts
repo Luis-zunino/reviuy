@@ -97,7 +97,12 @@ export const backendReviewSchema = z.object({
   rating: z.number().min(1).max(5),
   property_type: z.string().optional().nullable(),
   address_text: z.string().min(1),
-  address_osm_id: z.string().min(1),
+  // Mismo formato que el CHECK de reviews.address_osm_id (N/W/R + id numérico)
+  address_osm_id: z
+    .string()
+    .trim()
+    .toUpperCase()
+    .regex(/^[NWR][1-9]\d{0,18}$/, 'La dirección seleccionada no es válida'),
   latitude: z.number(),
   longitude: z.number(),
   zone_rating: z.number().optional().nullable(),

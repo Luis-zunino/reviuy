@@ -23,6 +23,12 @@ vi.mock('@/lib/redis', () => ({
   withRateLimit: mockWithRateLimit,
 }));
 
+const mockHeaders = vi.fn();
+
+vi.mock('next/headers', () => ({
+  headers: mockHeaders,
+}));
+
 describe('signInWithEmailServer', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -36,6 +42,16 @@ describe('signInWithEmailServer', () => {
     await signInWithEmailServer('Test@Example.COM');
 
     expect(mockWithRateLimit).toHaveBeenCalledWith('auth:email:test@example.com', 'auth_email');
+  });
+
+  it('rejects an invalid email before rate limiting or calling Supabase', async () => {
+    const { signInWithEmailServer } = await import('../auth-server-actions');
+
+    await expect(signInWithEmailServer('no-es-un-email')).rejects.toMatchObject({
+      code: 'INVALID_INPUT',
+    });
+    expect(mockWithRateLimit).not.toHaveBeenCalled();
+    expect(mockSignInWithOtp).not.toHaveBeenCalled();
   });
 
   it('lowercases the email before sending to Supabase', async () => {
@@ -88,9 +104,10 @@ describe('signInWithEmailServer', () => {
 describe('signInWithGoogleServer', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockHeaders.mockResolvedValue(new Headers({ 'x-forwarded-for': '203.0.113.7, 10.0.0.1' }));
   });
 
-  it('calls withRateLimit with auth:google key and auth_oauth scope', async () => {
+  it('calls withRateLimit with a per-IP auth:google key and auth_oauth scope', async () => {
     mockSignInWithOAuth.mockResolvedValue({
       data: { url: 'https://accounts.google.com/o/oauth2/auth' },
       error: null,
@@ -100,7 +117,22 @@ describe('signInWithGoogleServer', () => {
 
     await signInWithGoogleServer();
 
-    expect(mockWithRateLimit).toHaveBeenCalledWith('auth:google', 'auth_oauth');
+    // Clave por IP del cliente (primer valor de x-forwarded-for), no global
+    expect(mockWithRateLimit).toHaveBeenCalledWith('auth:google:203.0.113.7', 'auth_oauth');
+  });
+
+  it('falls back to x-real-ip when x-forwarded-for is missing', async () => {
+    mockHeaders.mockResolvedValue(new Headers({ 'x-real-ip': '198.51.100.4' }));
+    mockSignInWithOAuth.mockResolvedValue({
+      data: { url: 'https://accounts.google.com/o/oauth2/auth' },
+      error: null,
+    });
+
+    const { signInWithGoogleServer } = await import('../auth-server-actions');
+
+    await signInWithGoogleServer();
+
+    expect(mockWithRateLimit).toHaveBeenCalledWith('auth:google:198.51.100.4', 'auth_oauth');
   });
 
   it('calls signInWithOAuth with google provider and correct redirectTo', async () => {

@@ -1,15 +1,29 @@
 'use server';
 
+import { z } from 'zod';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { withRateLimit } from '@/lib/redis';
+import { createError } from '@/lib/errors';
+import { getClientIp } from './get-client-ip.util';
+
+// Las server actions reciben argumentos arbitrarios: se valida en el servidor
+// aunque el formulario ya valide en el cliente.
+const emailSchema = z.string().trim().toLowerCase().max(254).pipe(z.email());
 
 export async function signInWithEmailServer(email: string): Promise<{ success: boolean }> {
+  const parsedEmail = emailSchema.safeParse(email);
+
+  if (!parsedEmail.success) {
+    throw createError('INVALID_INPUT', 'El formato del email es inválido');
+  }
+
+  const normalizedEmail = parsedEmail.data;
   const supabase = await createSupabaseServerClient();
 
-  await withRateLimit(`auth:email:${email.toLowerCase()}`, 'auth_email');
+  await withRateLimit(`auth:email:${normalizedEmail}`, 'auth_email');
 
   const { error } = await supabase.auth.signInWithOtp({
-    email: email.toLowerCase(),
+    email: normalizedEmail,
     options: {
       emailRedirectTo: '/auth/callback',
     },
@@ -25,7 +39,9 @@ export async function signInWithEmailServer(email: string): Promise<{ success: b
 export async function signInWithGoogleServer(): Promise<{ url: string }> {
   const supabase = await createSupabaseServerClient();
 
-  await withRateLimit('auth:google', 'auth_oauth');
+  // Clave por IP: con una clave global, un solo cliente agotaba el cupo y
+  // bloqueaba el login con Google para todos los usuarios.
+  await withRateLimit(`auth:google:${await getClientIp()}`, 'auth_oauth');
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',

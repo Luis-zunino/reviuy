@@ -185,15 +185,25 @@ export class SupabaseRealEstateCommandRepository implements RealEstateCommandRep
     const { reviewId, title, description, rating } = input;
 
     // UPDATE via RPC (SECURITY DEFINER, maneja ownership y SELECT revocado)
-    const { error: updateError } = await this.supabase.rpc('update_real_estate_review', {
-      p_review_id: reviewId,
-      p_title: title ?? null,
-      p_description: description ?? null,
-      p_rating: rating ?? null,
-    });
+    const { data: updateResult, error: updateError } = await this.supabase.rpc(
+      'update_real_estate_review',
+      {
+        p_review_id: reviewId,
+        p_title: title ?? null,
+        p_description: description ?? null,
+        p_rating: rating ?? null,
+      }
+    );
 
     if (updateError) {
       throw handleSupabaseError(updateError);
+    }
+
+    // El RPC devuelve {success:false, error} para rechazos de negocio (rate limit,
+    // ownership, validación) sin lanzar: no deben reportarse como éxito.
+    const updateRpc = updateResult as { success?: boolean; error?: string } | null;
+    if (updateRpc?.success === false) {
+      throw createError('VALIDATION_ERROR', updateRpc.error ?? 'No se pudo actualizar la reseña');
     }
 
     // Leer datos actualizados desde la vista pública
@@ -258,12 +268,20 @@ export class SupabaseRealEstateCommandRepository implements RealEstateCommandRep
     }
 
     // Soft delete via RPC (SECURITY DEFINER, maneja ownership y SELECT revocado)
-    const { error: deleteError } = await this.supabase.rpc('delete_real_estate_review_safe', {
-      p_review_id: input.reviewId,
-    });
+    const { data: deleteResult, error: deleteError } = await this.supabase.rpc(
+      'delete_real_estate_review_safe',
+      {
+        p_review_id: input.reviewId,
+      }
+    );
 
     if (deleteError) {
       throw handleSupabaseError(deleteError);
+    }
+
+    const deleteRpc = deleteResult as { success?: boolean; error?: string } | null;
+    if (deleteRpc?.success === false) {
+      throw createError('VALIDATION_ERROR', deleteRpc.error ?? 'No se pudo eliminar la reseña');
     }
 
     return {
