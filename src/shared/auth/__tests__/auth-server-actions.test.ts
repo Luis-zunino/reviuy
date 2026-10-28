@@ -1,4 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
+import { buildSiteUrl } from '@/lib/site-url';
 
 const mockSignInWithOtp = vi.fn();
 const mockSignInWithOAuth = vi.fn();
@@ -64,7 +65,7 @@ describe('signInWithEmailServer', () => {
     expect(mockSignInWithOtp).toHaveBeenCalledWith({
       email: 'test@example.com',
       options: {
-        emailRedirectTo: '/auth/callback',
+        emailRedirectTo: buildSiteUrl('/auth/callback'),
       },
     });
   });
@@ -121,6 +122,22 @@ describe('signInWithGoogleServer', () => {
     expect(mockWithRateLimit).toHaveBeenCalledWith('auth:google:203.0.113.7', 'auth_oauth');
   });
 
+  it('prefers the non-spoofable x-vercel-forwarded-for header', async () => {
+    mockHeaders.mockResolvedValue(
+      new Headers({ 'x-vercel-forwarded-for': '192.0.2.10', 'x-forwarded-for': '203.0.113.99' })
+    );
+    mockSignInWithOAuth.mockResolvedValue({
+      data: { url: 'https://accounts.google.com/o/oauth2/auth' },
+      error: null,
+    });
+
+    const { signInWithGoogleServer } = await import('../auth-server-actions');
+
+    await signInWithGoogleServer();
+
+    expect(mockWithRateLimit).toHaveBeenCalledWith('auth:google:192.0.2.10', 'auth_oauth');
+  });
+
   it('falls back to x-real-ip when x-forwarded-for is missing', async () => {
     mockHeaders.mockResolvedValue(new Headers({ 'x-real-ip': '198.51.100.4' }));
     mockSignInWithOAuth.mockResolvedValue({
@@ -148,7 +165,7 @@ describe('signInWithGoogleServer', () => {
     expect(mockSignInWithOAuth).toHaveBeenCalledWith({
       provider: 'google',
       options: {
-        redirectTo: '/auth/callback',
+        redirectTo: buildSiteUrl('/auth/callback'),
       },
     });
   });
@@ -225,5 +242,35 @@ describe('signOutServer', () => {
     const { signOutServer } = await import('../auth-server-actions');
 
     await expect(signOutServer()).rejects.toThrow('Session not found');
+  });
+});
+
+describe('auth callback URL', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockHeaders.mockResolvedValue(new Headers());
+  });
+
+  // GoTrue descarta un redirect_to relativo y manda el link a la raíz del sitio,
+  // salteando /auth/callback (y la verificación de términos).
+  it('sends an absolute callback URL for both email and Google sign-in', async () => {
+    mockSignInWithOtp.mockResolvedValue({ error: null });
+    mockSignInWithOAuth.mockResolvedValue({
+      data: { url: 'https://accounts.google.com/o/oauth2/auth' },
+      error: null,
+    });
+
+    const { signInWithEmailServer, signInWithGoogleServer } =
+      await import('../auth-server-actions');
+    await signInWithEmailServer('user@example.com');
+    await signInWithGoogleServer();
+
+    const emailRedirect = mockSignInWithOtp.mock.calls[0][0].options.emailRedirectTo;
+    const oauthRedirect = mockSignInWithOAuth.mock.calls[0][0].options.redirectTo;
+
+    for (const url of [emailRedirect, oauthRedirect]) {
+      expect(url).toMatch(/^https?:\/\//);
+      expect(new URL(url).pathname).toBe('/auth/callback');
+    }
   });
 });

@@ -44,7 +44,7 @@
 | Tabla `rate_limits` en DB es redundante con Upstash Redis | Baja |
 | Código legacy fuera de módulos que debería migrarse | Media |
 | ~~Vistas materializadas sin refresh automático documentado~~ — Resuelto: las MVs se eliminaron; los contadores de votos se calculan en vivo en las vistas `_public` | — |
-| Callback `/auth/callback` sigue siendo client-side (el inicio de login ya es server-side con rate limit, ver EPIC-15) | Media |
+| ~~Callback `/auth/callback` client-side~~ — Resuelto: route handler server-side (ver EPIC-15) | — |
 
 ---
 
@@ -134,10 +134,10 @@ Estos ítems cierran brechas visibles y reducen deuda técnica.
 
 - **Prioridad**: P0
 - **Esfuerzo**: Medio (2-3 sprints)
-- **Estado**: Mayormente implementado (oct 2026). El login con magic link y Google se inicia desde server actions (`src/shared/auth/auth-server-actions.ts`) con rate limit de Upstash (por email y por IP) y validación server-side del email; el middleware usa `createServerClient`. Pendiente: callback server-side y validar los E2E de login.
+- **Estado**: Implementado en código (oct 2026). Login con magic link y Google desde server actions (`src/shared/auth/auth-server-actions.ts`) con rate limit de Upstash (por email y por IP real) y validación server-side del email; callback `/auth/callback` como route handler que intercambia el `code` en el servidor; middleware con `getClaims()`, propagación correcta de cookies y control de términos. Pendiente: validar los E2E de login y la configuración de producción (abajo).
 - **Beneficio**: Seguridad: rate-limiting real en login, eliminación de cooldown client-side bypassable, validación server-side antes de enviar OTP/OAuth.
 - **Alcance**:
-  - Server Action o API route que reciba email y ejecute `signInWithOtp` desde el servidor usando service_role key
+  - Server Action o API route que reciba email y ejecute `signInWithOtp` desde el servidor con la anon key (nunca la service_role: el login actúa en nombre del usuario)
   - Server Action o API route que inicie `signInWithOAuth` desde el servidor
   - Rate-limiting real con Upstash Redis en el endpoint de login (máx N intentos por email/IP por minuto)
   - Eliminar cooldown client-side (`login-cooldown.util.ts`) — se reemplaza por el rate-limit server-side
@@ -152,9 +152,19 @@ Estos ítems cierran brechas visibles y reducen deuda técnica.
   - [x] El cooldown client-side se elimina o se convierte en UI-only (sin seguridad)
   - [x] El middleware usa `createServerClient` en lugar de parsing manual de cookies
   - [x] No hay llamadas a `supabase.auth.signIn*` desde código client-side
-  - [ ] El callback `/auth/callback` maneja la sesión server-side
+  - [x] El callback `/auth/callback` maneja la sesión server-side
+  - [x] Los links de login usan una URL de callback absoluta (una relativa hacía que GoTrue mandara el link a la raíz y se salteara la verificación de términos)
+  - [x] El middleware exige los términos vigentes en toda navegación de un usuario logueado (excepto `/auth/*` y textos legales)
   - [ ] Tests E2E de login pasan después de la migración
   - [ ] No hay regresión en el flujo de autenticación
+- **Configuración requerida en producción (Supabase dashboard)**:
+  - [ ] **URL Configuration**: Site URL de producción y `https://<dominio>/auth/callback` en Redirect URLs (también la URL de los preview deploys si se usan)
+  - [ ] **SMTP propio** (Resend: `smtp.resend.com`): el SMTP incluido de Supabase solo envía unos pocos emails por hora en todo el proyecto
+  - [ ] **Rate limits de Auth**: el login se llama desde el servidor, así que Supabase ve la IP de Vercel y sus límites por IP (sign-ins, verificaciones) pasan a ser un cupo compartido por todos los usuarios. Subirlos y dejar que Upstash (por IP real y por email) sea el límite efectivo
+  - [ ] **JWT Signing Keys asimétricas**: con ellas `getClaims()` valida el token localmente; con el secreto HS256 legacy sigue consultando al servidor de Auth en cada request
+  - [ ] **Upstash Redis** configurado: sin `UPSTASH_REDIS_REST_*` la app no aplica su propio rate limit
+  - [ ] Hosting: si se despliega fuera de Vercel, el proxy debe sobrescribir `x-forwarded-for` (si no, el rate limit por IP se puede evadir)
+- **Limitación conocida**: con PKCE, el magic link solo funciona en el mismo navegador donde se pidió. Para soportar abrirlo en otro dispositivo, cambiar la plantilla de email a `token_hash` + `verifyOtp`.
 - **Dependencias**: Ninguna
 
 #### EPIC-17: Hardening de seguridad (pendientes de auditoría)
@@ -454,7 +464,7 @@ Estos ítems cierran brechas visibles y reducen deuda técnica.
 | Sprint | Epic | Dependencias |
 |---|---|---|
 | Sprint 1 | EPIC-16 (Términos re-aceptación) + EPIC-03 (Consolidar content) + EPIC-02 (Paginación reseñas) | Ninguna |
-| Sprint 1.5 | EPIC-15 (Login server-side — resta callback y E2E) | Ninguna |
+| Sprint 1.5 | EPIC-15 (Login server-side — resta E2E y configuración de producción) | Ninguna |
 | Sprint 1.5 | EPIC-17 (Hardening de seguridad) | Ninguna |
 | Sprint 2 | EPIC-01 (Home datos reales) | EPIC-03 |
 | Sprint 3 | EPIC-05 (Paginación inmobiliarias) + EPIC-06 (Actividad perfil) | EPIC-02 |

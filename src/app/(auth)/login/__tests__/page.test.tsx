@@ -17,6 +17,12 @@ vi.mock('@/components/features/Login', () => ({
   Login: LoginMock,
 }));
 
+const { toastErrorMock } = vi.hoisted(() => ({ toastErrorMock: vi.fn() }));
+
+vi.mock('sonner', () => ({
+  toast: { error: toastErrorMock },
+}));
+
 describe('AuthPage (login page)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -59,5 +65,25 @@ describe('AuthPage (login page)', () => {
     await renderPage();
 
     expect(globalThis.location.href).toBe('');
+  });
+
+  it('shows an error toast when /auth/callback redirects with ?error=auth_callback', async () => {
+    Object.defineProperty(globalThis, 'location', {
+      writable: true,
+      value: { href: '', search: '?error=auth_callback' },
+    });
+    useAuthContextMock.mockReturnValue({ isAuthenticated: false, loading: false });
+    await renderPage();
+
+    await waitFor(() => {
+      expect(toastErrorMock).toHaveBeenCalledWith('Error de autenticación', expect.any(Object));
+    });
+  });
+
+  it('does not show the error toast without the error param', async () => {
+    useAuthContextMock.mockReturnValue({ isAuthenticated: false, loading: false });
+    await renderPage();
+
+    expect(toastErrorMock).not.toHaveBeenCalled();
   });
 });

@@ -4,7 +4,13 @@ import { z } from 'zod';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { withRateLimit } from '@/lib/redis';
 import { createError } from '@/lib/errors';
+import { buildSiteUrl } from '@/lib/site-url';
 import { getClientIp } from './get-client-ip.util';
+
+// GoTrue solo acepta redirect_to ABSOLUTOS que coincidan con site_url o la
+// allowlist; una ruta relativa se ignora y el link cae en la raíz del sitio,
+// salteando /auth/callback (y con él la verificación de términos).
+const getAuthCallbackUrl = () => buildSiteUrl('/auth/callback');
 
 // Las server actions reciben argumentos arbitrarios: se valida en el servidor
 // aunque el formulario ya valide en el cliente.
@@ -25,7 +31,7 @@ export async function signInWithEmailServer(email: string): Promise<{ success: b
   const { error } = await supabase.auth.signInWithOtp({
     email: normalizedEmail,
     options: {
-      emailRedirectTo: '/auth/callback',
+      emailRedirectTo: getAuthCallbackUrl(),
     },
   });
 
@@ -46,7 +52,7 @@ export async function signInWithGoogleServer(): Promise<{ url: string }> {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: '/auth/callback',
+      redirectTo: getAuthCallbackUrl(),
     },
   });
 

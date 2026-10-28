@@ -11,6 +11,7 @@ import {
 } from '@/constants/legal-terms.constant';
 import { toast } from 'sonner';
 import { Loader } from '@/components/common/Loaders';
+import { hasAcceptedCurrentTerms } from '@/shared/auth/terms.util';
 
 export const AcceptTerms = () => {
   const { loading: authLoading, isAuthenticated } = useAuthContext();
@@ -34,7 +35,9 @@ export const AcceptTerms = () => {
         const { data: userData } = await supabaseClient.auth.getUser();
         const user = userData?.user;
 
-        if (user?.user_metadata?.terms_accepted_at) {
+        // Misma regla que el middleware y el callback: si acá se mirara solo
+        // terms_accepted_at, un usuario con versión vieja quedaría en loop.
+        if (hasAcceptedCurrentTerms(user?.user_metadata)) {
           globalThis.location.assign(PagesUrls.HOME);
           return;
         }
@@ -82,6 +85,14 @@ export const AcceptTerms = () => {
 
       if (error) {
         throw error;
+      }
+
+      // updateUser no reemite el access token: sin refrescar, el JWT sigue con la
+      // metadata vieja y el middleware (que lee los claims) volvería a pedir aceptar.
+      const { error: refreshError } = await supabaseClient.auth.refreshSession();
+
+      if (refreshError) {
+        throw refreshError;
       }
 
       globalThis.location.assign(PagesUrls.HOME);

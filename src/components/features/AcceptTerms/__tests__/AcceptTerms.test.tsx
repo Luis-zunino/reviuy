@@ -6,10 +6,11 @@ import { AcceptTerms } from '../AcceptTerms';
 import { LEGAL_TERMS_SECTIONS, CURRENT_TERMS_VERSION } from '@/constants/legal-terms.constant';
 import { PagesUrls } from '@/enums';
 
-const { locationAssignMock, getUserMock, updateUserMock } = vi.hoisted(() => ({
+const { locationAssignMock, getUserMock, updateUserMock, refreshSessionMock } = vi.hoisted(() => ({
   locationAssignMock: vi.fn(),
   getUserMock: vi.fn(),
   updateUserMock: vi.fn(),
+  refreshSessionMock: vi.fn(),
 }));
 
 vi.stubGlobal('location', { assign: locationAssignMock, href: '' });
@@ -36,6 +37,7 @@ vi.mock('@/lib/supabase/client', () => ({
     auth: {
       getUser: getUserMock,
       updateUser: updateUserMock,
+      refreshSession: refreshSessionMock,
     },
   },
 }));
@@ -75,6 +77,7 @@ describe('AcceptTerms', () => {
     });
 
     updateUserMock.mockResolvedValue({ error: null });
+    refreshSessionMock.mockResolvedValue({ error: null });
   });
 
   it('renders summary and full terms text', async () => {
@@ -120,7 +123,7 @@ describe('AcceptTerms', () => {
 
     await waitFor(() => {
       const button = screen.getByRole('button', { name: /aceptar y continuar/i });
-      expect(button).not.toBeDisabled();
+      expect(button).toBeDisabled();
     });
 
     const user = userEvent.setup();
@@ -134,6 +137,8 @@ describe('AcceptTerms', () => {
           terms_version: CURRENT_TERMS_VERSION,
         },
       });
+      // El JWT se reemite con la metadata nueva antes de navegar (el middleware lee los claims)
+      expect(refreshSessionMock).toHaveBeenCalledTimes(1);
       expect(locationAssignMock).toHaveBeenCalledWith(PagesUrls.HOME);
     });
   });
@@ -167,12 +172,39 @@ describe('AcceptTerms', () => {
     expect(locationAssignMock).not.toHaveBeenCalledWith(PagesUrls.HOME);
   });
 
-  it('redirects to home if user already has terms_accepted_at', async () => {
+  it('does not redirect home when the session refresh fails after accepting', async () => {
+    refreshSessionMock.mockResolvedValue({ error: new Error('refresh failed') });
+
+    render(<AcceptTerms />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Aceptar Términos y Condiciones')).toBeInTheDocument();
+    });
+
+    intersectionCallback([{ isIntersecting: true }]);
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /aceptar y continuar/i })).not.toBeDisabled();
+    });
+
+    const user = userEvent.setup();
+    await user.click(screen.getByRole('button', { name: /aceptar y continuar/i }));
+
+    await waitFor(() => {
+      expect(refreshSessionMock).toHaveBeenCalledTimes(1);
+    });
+    expect(locationAssignMock).not.toHaveBeenCalledWith(PagesUrls.HOME);
+  });
+
+  it('redirects to home if user already accepted the current terms version', async () => {
     getUserMock.mockResolvedValue({
       data: {
         user: {
           id: 'user-1',
-          user_metadata: { terms_accepted_at: '2026-05-01T00:00:00.000Z' },
+          user_metadata: {
+            terms_accepted_at: '2026-05-01T00:00:00.000Z',
+            terms_version: CURRENT_TERMS_VERSION,
+          },
         },
       },
       error: null,
@@ -183,5 +215,24 @@ describe('AcceptTerms', () => {
     await waitFor(() => {
       expect(locationAssignMock).toHaveBeenCalledWith(PagesUrls.HOME);
     });
+  });
+
+  it('stays on the page if the user accepted an outdated terms version', async () => {
+    getUserMock.mockResolvedValue({
+      data: {
+        user: {
+          id: 'user-1',
+          user_metadata: { terms_accepted_at: '2025-01-01T00:00:00.000Z', terms_version: 'v0' },
+        },
+      },
+      error: null,
+    });
+
+    render(<AcceptTerms />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Aceptar Términos y Condiciones')).toBeInTheDocument();
+    });
+    expect(locationAssignMock).not.toHaveBeenCalled();
   });
 });
