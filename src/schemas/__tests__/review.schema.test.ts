@@ -110,7 +110,7 @@ describe('backendReviewSchema', () => {
     rating: 4,
     property_type: 'apartment',
     address_text: 'Av. 18 de Julio 1234',
-    address_osm_id: '12345',
+    address_osm_id: 'W12345',
     latitude: -34.9011,
     longitude: -56.1645,
   };

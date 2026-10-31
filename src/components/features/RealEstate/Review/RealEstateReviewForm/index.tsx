@@ -63,7 +63,7 @@ export const RealEstateReviewForm = (props: RealEstateReviewFormProps) => {
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
             <RealEstateReviewFormContent form={form} isReadOnly={isReadOnly} />
             <div className="flex gap-4 pt-4 justify-end">
-              {review && isReadOnly ? (
+              {review && isReadOnly && !review?.is_mine ? (
                 <RealEstateReviewVoteButtons
                   reviewId={review.id ?? ''}
                   likes={review.likes ?? 0}

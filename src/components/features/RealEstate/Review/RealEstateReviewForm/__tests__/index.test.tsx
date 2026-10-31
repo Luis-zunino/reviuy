@@ -158,7 +158,7 @@ describe('RealEstateReviewForm', () => {
       <RealEstateReviewForm
         {...defaultProps}
         isReadOnly
-        review={{ id: 'review-1', likes: 3, dislikes: 1 } as any}
+        review={{ id: 'review-1', likes: 3, dislikes: 1, is_mine: false } as any}
       />
     );
 
@@ -184,6 +184,30 @@ describe('RealEstateReviewForm', () => {
     );
 
     expect(screen.getByTestId('delete-button')).toBeInTheDocument();
+  });
+
+  it('renderiza botones de voto cuando la reseña no es propia', () => {
+    render(
+      <RealEstateReviewForm
+        {...defaultProps}
+        isReadOnly
+        review={{ id: 'review-1', likes: 3, dislikes: 1, is_mine: false } as any}
+      />
+    );
+
+    expect(screen.getByTestId('vote-buttons')).toBeInTheDocument();
+  });
+
+  it('oculta botones de voto cuando la reseña es propia', () => {
+    render(
+      <RealEstateReviewForm
+        {...defaultProps}
+        isReadOnly
+        review={{ id: 'review-1', likes: 3, dislikes: 1, is_mine: true } as any}
+      />
+    );
+
+    expect(screen.queryByTestId('vote-buttons')).not.toBeInTheDocument();
   });
 
   it('oculta botón Publicar reseña cuando isReadOnly es true', () => {

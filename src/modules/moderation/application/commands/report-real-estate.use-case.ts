@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { assertAuthenticated } from '@/shared/auth/assert-authenticated.util';
 import type { UseCaseHandler } from '@/shared/kernel/contracts/use-case.contract';
-import { reportRealEstateApiSchema } from '@/schemas/api-request.schema';
+import { reportRealEstateApiSchema, REPORT_MESSAGE_MAX_LENGTH } from '@/schemas/api-request.schema';
 import type { ReportActionResponse } from '../../domain';
 import { ModerationCommandBase } from './interfaces';
 
@@ -12,7 +12,10 @@ const reportRealEstateActionSchema = reportRealEstateApiSchema
     description: z
       .string()
       .trim()
-      .max(2000, 'El mensaje no puede superar 2000 caracteres')
+      .max(
+        REPORT_MESSAGE_MAX_LENGTH,
+        `El mensaje no puede superar ${REPORT_MESSAGE_MAX_LENGTH} caracteres`
+      )
       .optional(),
   });
 

@@ -143,7 +143,7 @@ export default function (data) {
     rating: 4,
     property_type: 'apartment',
     address_text: '123 Load Test Street, Montevideo',
-    address_osm_id: 'lt-osm-' + Date.now(),
+    address_osm_id: 'W' + Date.now(),
     latitude: -34.9035,
     longitude: -56.166,
     zone_rating: 3,

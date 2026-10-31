@@ -145,12 +145,12 @@ export class SupabasePropertyReviewReadRepository implements PropertyReviewReadR
     limit = 20,
   }: GetReviewsByZoneInput): Promise<GetReviewsByZoneOutput> {
     const normalizedQuery = normalizeSearchText(query);
-    const { data, error } = await this.supabase
-      .from('reviews_with_votes_public')
-      .select('*')
-      .ilike('address_text', `%${query}%`)
-      .order('created_at', { ascending: false })
-      .limit(limit);
+    // RPC en vez de .ilike() sobre la vista: el filtro no baja a la tabla por el
+    // security_barrier y recorría todas las reseñas (ver search_reviews_by_address).
+    const { data, error } = await this.supabase.rpc('search_reviews_by_address', {
+      p_query: query,
+      p_limit: limit,
+    });
 
     if (error) {
       throw handleSupabaseError(error);
@@ -190,15 +190,13 @@ export class SupabasePropertyReviewReadRepository implements PropertyReviewReadR
     radiusDeg = 0.02,
     limit = 20,
   }: GetReviewsNearbyInput): Promise<GetReviewsNearbyOutput> {
-    const { data, error } = await this.supabase
-      .from('reviews_with_votes_public')
-      .select('*')
-      .gte('latitude', lat - radiusDeg)
-      .lte('latitude', lat + radiusDeg)
-      .gte('longitude', lon - radiusDeg)
-      .lte('longitude', lon + radiusDeg)
-      .order('created_at', { ascending: false })
-      .limit(limit);
+    // RPC en vez de rangos .gte()/.lte() sobre la vista (mismo motivo que searchByZone)
+    const { data, error } = await this.supabase.rpc('search_reviews_nearby', {
+      p_lat: lat,
+      p_lon: lon,
+      p_radius: radiusDeg,
+      p_limit: limit,
+    });
 
     if (error) {
       throw handleSupabaseError(error);

@@ -64,6 +64,7 @@ describe('SupabaseReviewImageRepository', () => {
       url: 'https://r2.example.com/path/photo.jpg',
       path: 'reviews/N123/review-1/xxx.jpg',
     });
+    vi.mocked(deleteImage).mockClear();
     vi.mocked(deleteImage).mockResolvedValue(undefined);
   });
 
@@ -195,46 +196,41 @@ describe('SupabaseReviewImageRepository', () => {
     const validInput = { imageId: 'img-1', reviewId: 'review-1' };
 
     it('deletes an image successfully', async () => {
-      mockBuilder = createMockBuilder({
-        id: 'img-1',
-        path: 'reviews/path/img.jpg',
-        review_id: 'review-1',
-      });
+      // DELETE ... RETURNING path → la fila borrada (RLS permitió al dueño)
+      mockBuilder = createMockBuilder([{ path: 'reviews/path/img.jpg' }]);
       mockSupabase.from.mockReturnValue(mockBuilder);
 
       const result = await repository.delete(validInput);
 
       expect(result.success).toBe(true);
+      expect(mockBuilder.delete).toHaveBeenCalled();
       expect(deleteImage).toHaveBeenCalledWith('reviews/path/img.jpg');
     });
 
     it('throws NOT_FOUND when image does not exist', async () => {
-      mockBuilder = createMockBuilder(null);
+      mockBuilder = createMockBuilder([]);
       mockSupabase.from.mockReturnValue(mockBuilder);
 
       await expect(repository.delete(validInput)).rejects.toThrow('Imagen no encontrada');
     });
 
+    it('does not touch R2 when RLS filters the delete (image of another user)', async () => {
+      // El DELETE filtrado por RLS no da error: devuelve 0 filas
+      mockBuilder = createMockBuilder([]);
+      mockSupabase.from.mockReturnValue(mockBuilder);
+
+      await expect(repository.delete(validInput)).rejects.toThrow('Imagen no encontrada');
+      expect(deleteImage).not.toHaveBeenCalled();
+    });
+
     it('throws INTERNAL_ERROR on DB delete error', async () => {
-      const errorBuilder = createMockBuilder({
-        id: 'img-1',
-        path: 'reviews/path/img.jpg',
-        review_id: 'review-1',
-      });
-      const origThen = errorBuilder.then;
-      let callCount = 0;
-      errorBuilder.then = (onfulfilled: any) => {
-        callCount++;
-        if (callCount === 2) {
-          return Promise.resolve({ data: null, error: { message: 'Delete DB error' } }).then(
-            onfulfilled
-          );
-        }
-        return origThen.call(errorBuilder, onfulfilled);
-      };
+      const errorBuilder = createMockBuilder(null);
+      errorBuilder.then = (onfulfilled: any) =>
+        Promise.resolve({ data: null, error: { message: 'Delete DB error' } }).then(onfulfilled);
       mockSupabase.from.mockReturnValue(errorBuilder);
 
       await expect(repository.delete(validInput)).rejects.toThrow('Error al eliminar el registro');
+      expect(deleteImage).not.toHaveBeenCalled();
     });
   });
 

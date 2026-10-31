@@ -75,28 +75,28 @@ export class SupabaseReviewImageRepository implements ReviewImageRepository {
   }
 
   async delete(input: DeleteReviewImageInput): Promise<DeleteReviewImageResult> {
-    const { data: image, error: fetchError } = await this.supabase
-      .from('review_images')
-      .select('id, path, review_id')
-      .eq('id', input.imageId)
-      .eq('review_id', input.reviewId)
-      .single();
-
-    if (fetchError || !image) {
-      throw createError('NOT_FOUND', 'Imagen no encontrada.');
-    }
-
-    // Primero borrar del bucket para no dejar huérfanos
-    await deleteImage(image.path);
-
-    const { error: deleteError } = await this.supabase
+    // Borrar primero la fila: la policy review_images_delete_own solo deja pasar
+    // al dueño de la reseña. review_images es legible por todos, así que borrar del
+    // bucket antes permitía a cualquier usuario eliminar objetos ajenos de R2
+    // (el DELETE filtrado por RLS no devuelve error, solo 0 filas).
+    const { data: deleted, error: deleteError } = await this.supabase
       .from('review_images')
       .delete()
-      .eq('id', input.imageId);
+      .eq('id', input.imageId)
+      .eq('review_id', input.reviewId)
+      .select('path');
 
     if (deleteError) {
       throw createError('INTERNAL_ERROR', 'Error al eliminar el registro de la imagen.');
     }
+
+    const image = deleted?.[0];
+
+    if (!image) {
+      throw createError('NOT_FOUND', 'Imagen no encontrada.');
+    }
+
+    await deleteImage(image.path);
 
     return { success: true, message: 'Imagen eliminada.' };
   }

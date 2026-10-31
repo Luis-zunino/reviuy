@@ -6,11 +6,24 @@ const reportReason = z
   .min(3, 'El motivo es demasiado corto')
   .max(120, 'El motivo no puede superar 120 caracteres');
 
-const reportMessage = z
+const contactMessage = z
   .string({ message: 'El mensaje es requerido' })
   .trim()
   .min(5, 'El mensaje es demasiado corto')
   .max(2000, 'El mensaje no puede superar 2000 caracteres');
+
+// Los reportes se guardan en description VARCHAR(500): un límite mayor hacía que
+// la RPC fallara y el reporte no se guardara.
+export const REPORT_MESSAGE_MAX_LENGTH = 500;
+
+const reportMessage = z
+  .string({ message: 'El mensaje es requerido' })
+  .trim()
+  .min(5, 'El mensaje es demasiado corto')
+  .max(
+    REPORT_MESSAGE_MAX_LENGTH,
+    `El mensaje no puede superar ${REPORT_MESSAGE_MAX_LENGTH} caracteres`
+  );
 
 export const contactApiSchema = z.object({
   name: z
@@ -22,7 +35,7 @@ export const contactApiSchema = z.object({
     .string({ message: 'El email es requerido' })
     .trim()
     .email('El formato del email es invalido'),
-  message: reportMessage,
+  message: contactMessage,
 });
 
 export const reportReviewApiSchema = z.object({

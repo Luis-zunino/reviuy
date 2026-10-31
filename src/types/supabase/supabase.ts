@@ -1,10 +1,30 @@
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
-  __InternalSupabase: {
-    PostgrestVersion: '14.1';
+  graphql_public: {
+    Tables: {
+      [_ in never]: never;
+    };
+    Views: {
+      [_ in never]: never;
+    };
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json;
+          operationName?: string;
+          query?: string;
+          variables?: Json;
+        };
+        Returns: Json;
+      };
+    };
+    Enums: {
+      [_ in never]: never;
+    };
+    CompositeTypes: {
+      [_ in never]: never;
+    };
   };
   public: {
     Tables: {
@@ -62,13 +82,6 @@ export type Database = {
             foreignKeyName: 'real_estate_favorites_real_estate_id_fkey';
             columns: ['real_estate_id'];
             isOneToOne: false;
-            referencedRelation: 'real_estate_vote_stats';
-            referencedColumns: ['real_estate_id'];
-          },
-          {
-            foreignKeyName: 'real_estate_favorites_real_estate_id_fkey';
-            columns: ['real_estate_id'];
-            isOneToOne: false;
             referencedRelation: 'real_estates';
             referencedColumns: ['id'];
           },
@@ -77,13 +90,6 @@ export type Database = {
             columns: ['real_estate_id'];
             isOneToOne: false;
             referencedRelation: 'real_estates_public';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'real_estate_favorites_real_estate_id_fkey';
-            columns: ['real_estate_id'];
-            isOneToOne: false;
-            referencedRelation: 'real_estates_with_votes';
             referencedColumns: ['id'];
           },
         ];
@@ -124,13 +130,6 @@ export type Database = {
             foreignKeyName: 'real_estate_reports_real_estate_id_fkey';
             columns: ['real_estate_id'];
             isOneToOne: false;
-            referencedRelation: 'real_estate_vote_stats';
-            referencedColumns: ['real_estate_id'];
-          },
-          {
-            foreignKeyName: 'real_estate_reports_real_estate_id_fkey';
-            columns: ['real_estate_id'];
-            isOneToOne: false;
             referencedRelation: 'real_estates';
             referencedColumns: ['id'];
           },
@@ -139,13 +138,6 @@ export type Database = {
             columns: ['real_estate_id'];
             isOneToOne: false;
             referencedRelation: 'real_estates_public';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'real_estate_reports_real_estate_id_fkey';
-            columns: ['real_estate_id'];
-            isOneToOne: false;
-            referencedRelation: 'real_estates_with_votes';
             referencedColumns: ['id'];
           },
         ];
@@ -186,13 +178,6 @@ export type Database = {
             foreignKeyName: 'real_estate_review_reports_real_estate_review_id_fkey';
             columns: ['real_estate_review_id'];
             isOneToOne: false;
-            referencedRelation: 'real_estate_review_vote_stats';
-            referencedColumns: ['real_estate_review_id'];
-          },
-          {
-            foreignKeyName: 'real_estate_review_reports_real_estate_review_id_fkey';
-            columns: ['real_estate_review_id'];
-            isOneToOne: false;
             referencedRelation: 'real_estate_reviews';
             referencedColumns: ['id'];
           },
@@ -201,13 +186,6 @@ export type Database = {
             columns: ['real_estate_review_id'];
             isOneToOne: false;
             referencedRelation: 'real_estate_reviews_public';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'real_estate_review_reports_real_estate_review_id_fkey';
-            columns: ['real_estate_review_id'];
-            isOneToOne: false;
-            referencedRelation: 'real_estate_reviews_with_votes';
             referencedColumns: ['id'];
           },
           {
@@ -249,13 +227,6 @@ export type Database = {
             foreignKeyName: 'real_estate_review_votes_real_estate_review_id_fkey';
             columns: ['real_estate_review_id'];
             isOneToOne: false;
-            referencedRelation: 'real_estate_review_vote_stats';
-            referencedColumns: ['real_estate_review_id'];
-          },
-          {
-            foreignKeyName: 'real_estate_review_votes_real_estate_review_id_fkey';
-            columns: ['real_estate_review_id'];
-            isOneToOne: false;
             referencedRelation: 'real_estate_reviews';
             referencedColumns: ['id'];
           },
@@ -264,13 +235,6 @@ export type Database = {
             columns: ['real_estate_review_id'];
             isOneToOne: false;
             referencedRelation: 'real_estate_reviews_public';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'real_estate_review_votes_real_estate_review_id_fkey';
-            columns: ['real_estate_review_id'];
-            isOneToOne: false;
-            referencedRelation: 'real_estate_reviews_with_votes';
             referencedColumns: ['id'];
           },
           {
@@ -321,13 +285,6 @@ export type Database = {
             foreignKeyName: 'real_estate_reviews_real_estate_id_fkey';
             columns: ['real_estate_id'];
             isOneToOne: false;
-            referencedRelation: 'real_estate_vote_stats';
-            referencedColumns: ['real_estate_id'];
-          },
-          {
-            foreignKeyName: 'real_estate_reviews_real_estate_id_fkey';
-            columns: ['real_estate_id'];
-            isOneToOne: false;
             referencedRelation: 'real_estates';
             referencedColumns: ['id'];
           },
@@ -336,13 +293,6 @@ export type Database = {
             columns: ['real_estate_id'];
             isOneToOne: false;
             referencedRelation: 'real_estates_public';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'real_estate_reviews_real_estate_id_fkey';
-            columns: ['real_estate_id'];
-            isOneToOne: false;
-            referencedRelation: 'real_estates_with_votes';
             referencedColumns: ['id'];
           },
         ];
@@ -377,13 +327,6 @@ export type Database = {
             foreignKeyName: 'real_estate_votes_real_estate_id_fkey';
             columns: ['real_estate_id'];
             isOneToOne: false;
-            referencedRelation: 'real_estate_vote_stats';
-            referencedColumns: ['real_estate_id'];
-          },
-          {
-            foreignKeyName: 'real_estate_votes_real_estate_id_fkey';
-            columns: ['real_estate_id'];
-            isOneToOne: false;
             referencedRelation: 'real_estates';
             referencedColumns: ['id'];
           },
@@ -392,13 +335,6 @@ export type Database = {
             columns: ['real_estate_id'];
             isOneToOne: false;
             referencedRelation: 'real_estates_public';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'real_estate_votes_real_estate_id_fkey';
-            columns: ['real_estate_id'];
-            isOneToOne: false;
-            referencedRelation: 'real_estates_with_votes';
             referencedColumns: ['id'];
           },
         ];
@@ -472,13 +408,6 @@ export type Database = {
             foreignKeyName: 'review_audit_review_id_fkey';
             columns: ['review_id'];
             isOneToOne: false;
-            referencedRelation: 'review_vote_stats';
-            referencedColumns: ['review_id'];
-          },
-          {
-            foreignKeyName: 'review_audit_review_id_fkey';
-            columns: ['review_id'];
-            isOneToOne: false;
             referencedRelation: 'reviews';
             referencedColumns: ['id'];
           },
@@ -487,13 +416,6 @@ export type Database = {
             columns: ['review_id'];
             isOneToOne: false;
             referencedRelation: 'reviews_public';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'review_audit_review_id_fkey';
-            columns: ['review_id'];
-            isOneToOne: false;
-            referencedRelation: 'reviews_with_votes';
             referencedColumns: ['id'];
           },
           {
@@ -541,13 +463,6 @@ export type Database = {
             foreignKeyName: 'review_deletions_review_id_fkey';
             columns: ['review_id'];
             isOneToOne: false;
-            referencedRelation: 'review_vote_stats';
-            referencedColumns: ['review_id'];
-          },
-          {
-            foreignKeyName: 'review_deletions_review_id_fkey';
-            columns: ['review_id'];
-            isOneToOne: false;
             referencedRelation: 'reviews';
             referencedColumns: ['id'];
           },
@@ -556,13 +471,6 @@ export type Database = {
             columns: ['review_id'];
             isOneToOne: false;
             referencedRelation: 'reviews_public';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'review_deletions_review_id_fkey';
-            columns: ['review_id'];
-            isOneToOne: false;
-            referencedRelation: 'reviews_with_votes';
             referencedColumns: ['id'];
           },
           {
@@ -598,13 +506,6 @@ export type Database = {
             foreignKeyName: 'review_favorites_review_id_fkey';
             columns: ['review_id'];
             isOneToOne: false;
-            referencedRelation: 'review_vote_stats';
-            referencedColumns: ['review_id'];
-          },
-          {
-            foreignKeyName: 'review_favorites_review_id_fkey';
-            columns: ['review_id'];
-            isOneToOne: false;
             referencedRelation: 'reviews';
             referencedColumns: ['id'];
           },
@@ -613,13 +514,6 @@ export type Database = {
             columns: ['review_id'];
             isOneToOne: false;
             referencedRelation: 'reviews_public';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'review_favorites_review_id_fkey';
-            columns: ['review_id'];
-            isOneToOne: false;
-            referencedRelation: 'reviews_with_votes';
             referencedColumns: ['id'];
           },
           {
@@ -661,13 +555,6 @@ export type Database = {
             foreignKeyName: 'review_images_review_id_fkey';
             columns: ['review_id'];
             isOneToOne: false;
-            referencedRelation: 'review_vote_stats';
-            referencedColumns: ['review_id'];
-          },
-          {
-            foreignKeyName: 'review_images_review_id_fkey';
-            columns: ['review_id'];
-            isOneToOne: false;
             referencedRelation: 'reviews';
             referencedColumns: ['id'];
           },
@@ -676,13 +563,6 @@ export type Database = {
             columns: ['review_id'];
             isOneToOne: false;
             referencedRelation: 'reviews_public';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'review_images_review_id_fkey';
-            columns: ['review_id'];
-            isOneToOne: false;
-            referencedRelation: 'reviews_with_votes';
             referencedColumns: ['id'];
           },
           {
@@ -730,13 +610,6 @@ export type Database = {
             foreignKeyName: 'review_reports_review_id_fkey';
             columns: ['review_id'];
             isOneToOne: false;
-            referencedRelation: 'review_vote_stats';
-            referencedColumns: ['review_id'];
-          },
-          {
-            foreignKeyName: 'review_reports_review_id_fkey';
-            columns: ['review_id'];
-            isOneToOne: false;
             referencedRelation: 'reviews';
             referencedColumns: ['id'];
           },
@@ -745,13 +618,6 @@ export type Database = {
             columns: ['review_id'];
             isOneToOne: false;
             referencedRelation: 'reviews_public';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'review_reports_review_id_fkey';
-            columns: ['review_id'];
-            isOneToOne: false;
-            referencedRelation: 'reviews_with_votes';
             referencedColumns: ['id'];
           },
           {
@@ -793,13 +659,6 @@ export type Database = {
             foreignKeyName: 'review_rooms_review_id_fkey';
             columns: ['review_id'];
             isOneToOne: false;
-            referencedRelation: 'review_vote_stats';
-            referencedColumns: ['review_id'];
-          },
-          {
-            foreignKeyName: 'review_rooms_review_id_fkey';
-            columns: ['review_id'];
-            isOneToOne: false;
             referencedRelation: 'reviews';
             referencedColumns: ['id'];
           },
@@ -808,13 +667,6 @@ export type Database = {
             columns: ['review_id'];
             isOneToOne: false;
             referencedRelation: 'reviews_public';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'review_rooms_review_id_fkey';
-            columns: ['review_id'];
-            isOneToOne: false;
-            referencedRelation: 'reviews_with_votes';
             referencedColumns: ['id'];
           },
           {
@@ -831,6 +683,7 @@ export type Database = {
           created_at: string;
           id: string;
           review_id: string;
+          updated_at: string;
           user_id: string;
           vote_type: string;
         };
@@ -838,6 +691,7 @@ export type Database = {
           created_at?: string;
           id?: string;
           review_id: string;
+          updated_at?: string;
           user_id: string;
           vote_type: string;
         };
@@ -845,17 +699,11 @@ export type Database = {
           created_at?: string;
           id?: string;
           review_id?: string;
+          updated_at?: string;
           user_id?: string;
           vote_type?: string;
         };
         Relationships: [
-          {
-            foreignKeyName: 'review_votes_review_id_fkey';
-            columns: ['review_id'];
-            isOneToOne: false;
-            referencedRelation: 'review_vote_stats';
-            referencedColumns: ['review_id'];
-          },
           {
             foreignKeyName: 'review_votes_review_id_fkey';
             columns: ['review_id'];
@@ -868,13 +716,6 @@ export type Database = {
             columns: ['review_id'];
             isOneToOne: false;
             referencedRelation: 'reviews_public';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'review_votes_review_id_fkey';
-            columns: ['review_id'];
-            isOneToOne: false;
-            referencedRelation: 'reviews_with_votes';
             referencedColumns: ['id'];
           },
           {
@@ -958,13 +799,6 @@ export type Database = {
             foreignKeyName: 'reviews_real_estate_id_fkey';
             columns: ['real_estate_id'];
             isOneToOne: false;
-            referencedRelation: 'real_estate_vote_stats';
-            referencedColumns: ['real_estate_id'];
-          },
-          {
-            foreignKeyName: 'reviews_real_estate_id_fkey';
-            columns: ['real_estate_id'];
-            isOneToOne: false;
             referencedRelation: 'real_estates';
             referencedColumns: ['id'];
           },
@@ -973,13 +807,6 @@ export type Database = {
             columns: ['real_estate_id'];
             isOneToOne: false;
             referencedRelation: 'real_estates_public';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'reviews_real_estate_id_fkey';
-            columns: ['real_estate_id'];
-            isOneToOne: false;
-            referencedRelation: 'real_estates_with_votes';
             referencedColumns: ['id'];
           },
         ];
@@ -1036,15 +863,6 @@ export type Database = {
         };
         Relationships: [];
       };
-      real_estate_review_vote_stats: {
-        Row: {
-          dislikes: number | null;
-          likes: number | null;
-          real_estate_review_id: string | null;
-          total_votes: number | null;
-        };
-        Relationships: [];
-      };
       real_estate_reviews_public: {
         Row: {
           created_at: string | null;
@@ -1081,13 +899,6 @@ export type Database = {
             foreignKeyName: 'real_estate_reviews_real_estate_id_fkey';
             columns: ['real_estate_id'];
             isOneToOne: false;
-            referencedRelation: 'real_estate_vote_stats';
-            referencedColumns: ['real_estate_id'];
-          },
-          {
-            foreignKeyName: 'real_estate_reviews_real_estate_id_fkey';
-            columns: ['real_estate_id'];
-            isOneToOne: false;
             referencedRelation: 'real_estates';
             referencedColumns: ['id'];
           },
@@ -1096,59 +907,6 @@ export type Database = {
             columns: ['real_estate_id'];
             isOneToOne: false;
             referencedRelation: 'real_estates_public';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'real_estate_reviews_real_estate_id_fkey';
-            columns: ['real_estate_id'];
-            isOneToOne: false;
-            referencedRelation: 'real_estates_with_votes';
-            referencedColumns: ['id'];
-          },
-        ];
-      };
-      real_estate_reviews_with_votes: {
-        Row: {
-          created_at: string | null;
-          deleted_at: string | null;
-          description: string | null;
-          dislikes: number | null;
-          id: string | null;
-          likes: number | null;
-          rating: number | null;
-          real_estate_id: string | null;
-          title: string | null;
-          total_votes: number | null;
-          updated_at: string | null;
-          user_id: string | null;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'real_estate_reviews_real_estate_id_fkey';
-            columns: ['real_estate_id'];
-            isOneToOne: false;
-            referencedRelation: 'real_estate_vote_stats';
-            referencedColumns: ['real_estate_id'];
-          },
-          {
-            foreignKeyName: 'real_estate_reviews_real_estate_id_fkey';
-            columns: ['real_estate_id'];
-            isOneToOne: false;
-            referencedRelation: 'real_estates';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'real_estate_reviews_real_estate_id_fkey';
-            columns: ['real_estate_id'];
-            isOneToOne: false;
-            referencedRelation: 'real_estates_public';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'real_estate_reviews_real_estate_id_fkey';
-            columns: ['real_estate_id'];
-            isOneToOne: false;
-            referencedRelation: 'real_estates_with_votes';
             referencedColumns: ['id'];
           },
         ];
@@ -1172,13 +930,6 @@ export type Database = {
             foreignKeyName: 'real_estate_reviews_real_estate_id_fkey';
             columns: ['real_estate_id'];
             isOneToOne: false;
-            referencedRelation: 'real_estate_vote_stats';
-            referencedColumns: ['real_estate_id'];
-          },
-          {
-            foreignKeyName: 'real_estate_reviews_real_estate_id_fkey';
-            columns: ['real_estate_id'];
-            isOneToOne: false;
             referencedRelation: 'real_estates';
             referencedColumns: ['id'];
           },
@@ -1189,23 +940,7 @@ export type Database = {
             referencedRelation: 'real_estates_public';
             referencedColumns: ['id'];
           },
-          {
-            foreignKeyName: 'real_estate_reviews_real_estate_id_fkey';
-            columns: ['real_estate_id'];
-            isOneToOne: false;
-            referencedRelation: 'real_estates_with_votes';
-            referencedColumns: ['id'];
-          },
         ];
-      };
-      real_estate_vote_stats: {
-        Row: {
-          dislikes: number | null;
-          likes: number | null;
-          real_estate_id: string | null;
-          total_votes: number | null;
-        };
-        Relationships: [];
       };
       real_estates_public: {
         Row: {
@@ -1221,32 +956,6 @@ export type Database = {
           review_count: number | null;
           total_votes: number | null;
           updated_at: string | null;
-        };
-        Relationships: [];
-      };
-      real_estates_with_votes: {
-        Row: {
-          created_at: string | null;
-          created_by: string | null;
-          deleted_at: string | null;
-          description: string | null;
-          dislikes: number | null;
-          id: string | null;
-          likes: number | null;
-          name: string | null;
-          rating: number | null;
-          review_count: number | null;
-          total_votes: number | null;
-          updated_at: string | null;
-        };
-        Relationships: [];
-      };
-      review_vote_stats: {
-        Row: {
-          dislikes: number | null;
-          likes: number | null;
-          review_id: string | null;
-          total_votes: number | null;
         };
         Relationships: [];
       };
@@ -1319,13 +1028,6 @@ export type Database = {
             foreignKeyName: 'reviews_real_estate_id_fkey';
             columns: ['real_estate_id'];
             isOneToOne: false;
-            referencedRelation: 'real_estate_vote_stats';
-            referencedColumns: ['real_estate_id'];
-          },
-          {
-            foreignKeyName: 'reviews_real_estate_id_fkey';
-            columns: ['real_estate_id'];
-            isOneToOne: false;
             referencedRelation: 'real_estates';
             referencedColumns: ['id'];
           },
@@ -1334,70 +1036,6 @@ export type Database = {
             columns: ['real_estate_id'];
             isOneToOne: false;
             referencedRelation: 'real_estates_public';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'reviews_real_estate_id_fkey';
-            columns: ['real_estate_id'];
-            isOneToOne: false;
-            referencedRelation: 'real_estates_with_votes';
-            referencedColumns: ['id'];
-          },
-        ];
-      };
-      reviews_with_votes: {
-        Row: {
-          address_osm_id: string | null;
-          address_text: string | null;
-          apartment_number: string | null;
-          created_at: string | null;
-          deleted_at: string | null;
-          description: string | null;
-          dislikes: number | null;
-          humidity: string | null;
-          id: string | null;
-          latitude: number | null;
-          likes: number | null;
-          longitude: number | null;
-          property_type: string | null;
-          rating: number | null;
-          real_estate_experience: string | null;
-          real_estate_id: string | null;
-          summer_comfort: string | null;
-          title: string | null;
-          total_votes: number | null;
-          updated_at: string | null;
-          user_id: string | null;
-          winter_comfort: string | null;
-          zone_rating: number | null;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'reviews_real_estate_id_fkey';
-            columns: ['real_estate_id'];
-            isOneToOne: false;
-            referencedRelation: 'real_estate_vote_stats';
-            referencedColumns: ['real_estate_id'];
-          },
-          {
-            foreignKeyName: 'reviews_real_estate_id_fkey';
-            columns: ['real_estate_id'];
-            isOneToOne: false;
-            referencedRelation: 'real_estates';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'reviews_real_estate_id_fkey';
-            columns: ['real_estate_id'];
-            isOneToOne: false;
-            referencedRelation: 'real_estates_public';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'reviews_real_estate_id_fkey';
-            columns: ['real_estate_id'];
-            isOneToOne: false;
-            referencedRelation: 'real_estates_with_votes';
             referencedColumns: ['id'];
           },
         ];
@@ -1432,13 +1070,6 @@ export type Database = {
             foreignKeyName: 'reviews_real_estate_id_fkey';
             columns: ['real_estate_id'];
             isOneToOne: false;
-            referencedRelation: 'real_estate_vote_stats';
-            referencedColumns: ['real_estate_id'];
-          },
-          {
-            foreignKeyName: 'reviews_real_estate_id_fkey';
-            columns: ['real_estate_id'];
-            isOneToOne: false;
             referencedRelation: 'real_estates';
             referencedColumns: ['id'];
           },
@@ -1447,13 +1078,6 @@ export type Database = {
             columns: ['real_estate_id'];
             isOneToOne: false;
             referencedRelation: 'real_estates_public';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'reviews_real_estate_id_fkey';
-            columns: ['real_estate_id'];
-            isOneToOne: false;
-            referencedRelation: 'real_estates_with_votes';
             referencedColumns: ['id'];
           },
         ];
@@ -1468,13 +1092,16 @@ export type Database = {
         };
         Returns: boolean;
       };
-      check_review_active: { Args: { p_review_id: string }; Returns: boolean };
-      check_review_owner: { Args: { p_review_id: string }; Returns: boolean };
       check_user_review_for_address: {
-        Args: { p_osm_id: string };
+        Args: {
+          p_apartment_number?: string;
+          p_osm_id: string;
+          p_property_type?: string;
+        };
         Returns: string;
       };
       cleanup_old_security_logs: { Args: never; Returns: undefined };
+      cleanup_test_data: { Args: never; Returns: undefined };
       create_real_estate: {
         Args: { p_description?: string; p_name: string };
         Returns: Json;
@@ -1522,15 +1149,6 @@ export type Database = {
       delete_review_safe: {
         Args: { review_id_param: string };
         Returns: boolean;
-      };
-      detect_suspicious_activity: {
-        Args: { p_user_id?: string };
-        Returns: {
-          blocked_requests: number;
-          suspicious_score: number;
-          total_requests: number;
-          user_id: string;
-        }[];
       };
       get_favorite_reviews_by_current_user: {
         Args: never;
@@ -1594,28 +1212,6 @@ export type Database = {
           likes_count: number;
         }[];
       };
-      get_real_estate_reviews_paginated: {
-        Args: { p_limit?: number; p_offset?: number; p_real_estate_id: string };
-        Returns: {
-          created_at: string | null;
-          description: string | null;
-          dislikes: number | null;
-          id: string | null;
-          is_mine: boolean | null;
-          likes: number | null;
-          rating: number | null;
-          real_estate_id: string | null;
-          title: string | null;
-          total_votes: number | null;
-          updated_at: string | null;
-        }[];
-        SetofOptions: {
-          from: '*';
-          to: 'real_estate_reviews_with_votes_public';
-          isOneToOne: false;
-          isSetofReturn: true;
-        };
-      };
       get_real_estate_vote_counts: {
         Args: { p_real_estate_id: string };
         Returns: {
@@ -1646,17 +1242,6 @@ export type Database = {
           isSetofReturn: true;
         };
       };
-      get_review_delete_info: {
-        Args: { review_id_param: string };
-        Returns: Database['public']['CompositeTypes']['get_review_delete_info_result'];
-        SetofOptions: {
-          from: '*';
-          to: 'get_review_delete_info_result';
-          isOneToOne: true;
-          isSetofReturn: false;
-        };
-      };
-      get_review_detail: { Args: { p_review_id: string }; Returns: Json };
       get_review_vote_counts: {
         Args: { p_review_id: string };
         Returns: {
@@ -1727,39 +1312,6 @@ export type Database = {
           isSetofReturn: true;
         };
       };
-      get_reviews_with_votes_paginated: {
-        Args: { p_limit?: number; p_offset?: number };
-        Returns: {
-          address_osm_id: string | null;
-          address_text: string | null;
-          apartment_number: string | null;
-          created_at: string | null;
-          description: string | null;
-          dislikes: number | null;
-          humidity: string | null;
-          id: string | null;
-          is_mine: boolean | null;
-          latitude: number | null;
-          likes: number | null;
-          longitude: number | null;
-          property_type: string | null;
-          rating: number | null;
-          real_estate_experience: string | null;
-          real_estate_id: string | null;
-          summer_comfort: string | null;
-          title: string | null;
-          total_votes: number | null;
-          updated_at: string | null;
-          winter_comfort: string | null;
-          zone_rating: number | null;
-        }[];
-        SetofOptions: {
-          from: '*';
-          to: 'reviews_with_votes_public';
-          isOneToOne: false;
-          isSetofReturn: true;
-        };
-      };
       get_user_real_estate_vote: {
         Args: { p_real_estate_id: string };
         Returns: string;
@@ -1767,10 +1319,6 @@ export type Database = {
       get_user_review_vote: { Args: { p_review_id: string }; Returns: string };
       get_user_vote_on_real_estate_review: {
         Args: { p_real_estate_review_id: string };
-        Returns: string;
-      };
-      get_user_vote_on_review: {
-        Args: { p_review_id: string };
         Returns: string;
       };
       has_user_reported_real_estate: {
@@ -1808,7 +1356,6 @@ export type Database = {
         };
         Returns: Json;
       };
-      refresh_all_vote_stats: { Args: never; Returns: undefined };
       report_real_estate: {
         Args: {
           p_description?: string;
@@ -1828,6 +1375,72 @@ export type Database = {
       report_review: {
         Args: { p_description?: string; p_reason: string; p_review_id: string };
         Returns: Json;
+      };
+      search_reviews_by_address: {
+        Args: { p_limit?: number; p_query: string };
+        Returns: {
+          address_osm_id: string | null;
+          address_text: string | null;
+          apartment_number: string | null;
+          created_at: string | null;
+          description: string | null;
+          dislikes: number | null;
+          humidity: string | null;
+          id: string | null;
+          is_mine: boolean | null;
+          latitude: number | null;
+          likes: number | null;
+          longitude: number | null;
+          property_type: string | null;
+          rating: number | null;
+          real_estate_experience: string | null;
+          real_estate_id: string | null;
+          summer_comfort: string | null;
+          title: string | null;
+          total_votes: number | null;
+          updated_at: string | null;
+          winter_comfort: string | null;
+          zone_rating: number | null;
+        }[];
+        SetofOptions: {
+          from: '*';
+          to: 'reviews_with_votes_public';
+          isOneToOne: false;
+          isSetofReturn: true;
+        };
+      };
+      search_reviews_nearby: {
+        Args: { p_lat: number; p_limit?: number; p_lon: number; p_radius?: number };
+        Returns: {
+          address_osm_id: string | null;
+          address_text: string | null;
+          apartment_number: string | null;
+          created_at: string | null;
+          description: string | null;
+          dislikes: number | null;
+          humidity: string | null;
+          id: string | null;
+          is_mine: boolean | null;
+          latitude: number | null;
+          likes: number | null;
+          longitude: number | null;
+          property_type: string | null;
+          rating: number | null;
+          real_estate_experience: string | null;
+          real_estate_id: string | null;
+          summer_comfort: string | null;
+          title: string | null;
+          total_votes: number | null;
+          updated_at: string | null;
+          winter_comfort: string | null;
+          zone_rating: number | null;
+        }[];
+        SetofOptions: {
+          from: '*';
+          to: 'reviews_with_votes_public';
+          isOneToOne: false;
+          isSetofReturn: true;
+        };
       };
       toggle_favorite_real_estate: {
         Args: { p_real_estate_id: string };
@@ -1863,6 +1476,7 @@ export type Database = {
           p_real_estate_experience?: string;
           p_real_estate_id?: string;
           p_review_id: string;
+          p_review_rooms?: Json;
           p_summer_comfort?: string;
           p_title?: string;
           p_winter_comfort?: string;
@@ -1887,95 +1501,17 @@ export type Database = {
       [_ in never]: never;
     };
     CompositeTypes: {
-      create_real_estate_result: {
-        success: boolean | null;
-        message: string | null;
-        id: string | null;
-      };
-      create_real_estate_review_result: {
-        success: boolean | null;
-        message: string | null;
-        review_id: string | null;
-      };
       create_review_result: {
         success: boolean | null;
         review_id: string | null;
         message: string | null;
         error: string | null;
       };
-      get_review_delete_info_result: {
-        id: string | null;
-        title: string | null;
-        created_at: string | null;
-        rating: number | null;
-        likes: number | null;
-        dislikes: number | null;
-        can_delete: boolean | null;
-        vote_count: number | null;
-        error: string | null;
-      };
-      report_real_estate_result: {
-        success: boolean | null;
-        message: string | null;
-      };
-      report_real_estate_review_result: {
-        success: boolean | null;
-        message: string | null;
-        report_id: string | null;
-      };
-      report_result: {
-        success: boolean | null;
-        report_id: string | null;
-        message: string | null;
-        error: string | null;
-      };
-      report_review_result: {
-        success: boolean | null;
-        message: string | null;
-        report_id: string | null;
-      };
-      review_delete_info: {
-        id: string | null;
-        title: string | null;
-        created_at: string | null;
-        rating: number | null;
-        likes: number | null;
-        dislikes: number | null;
-        can_delete: boolean | null;
-        vote_count: number | null;
-      };
-      toggle_favorite_real_estate_result: {
-        success: boolean | null;
-        message: string | null;
-        is_favorite: boolean | null;
-      };
       toggle_favorite_result: {
         success: boolean | null;
         is_favorite: boolean | null;
         message: string | null;
         error: string | null;
-      };
-      toggle_favorite_review_result: {
-        success: boolean | null;
-        message: string | null;
-        is_favorite: boolean | null;
-      };
-      update_review_result: {
-        success: boolean | null;
-        message: string | null;
-      };
-      vote_real_estate_result: {
-        success: boolean | null;
-        message: string | null;
-      };
-      vote_real_estate_review_result: {
-        success: boolean | null;
-        message: string | null;
-      };
-      vote_review_result: {
-        success: boolean | null;
-        message: string | null;
-        action: string | null;
       };
     };
   };
@@ -2097,6 +1633,9 @@ export type CompositeTypes<
     : never;
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {},
   },
