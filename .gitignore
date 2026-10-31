@@ -50,6 +50,8 @@ next-env.d.ts
 /scripts
 /src/content
 /.agents
+/.claude
+/.codex
 
 
 .sonarlint
