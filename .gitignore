@@ -72,3 +72,4 @@ openspec
 .opencode
 opencode.json
 rigorkit
+.env.e2e
