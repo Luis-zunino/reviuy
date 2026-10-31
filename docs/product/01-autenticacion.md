@@ -49,7 +49,7 @@ Todo usuario recién autenticado pasa por `/auth/accept-terms`:
 
 1. Se muestra resumen de secciones clave + texto completo de los términos.
 2. El botón "Aceptar y continuar" está **deshabilitado** hasta que el usuario scrollee hasta el final del texto completo.
-3. Al aceptar, se guarda en su perfil la fecha y versión de términos aceptados.
+3. Al aceptar, la firma se guarda **server-side** en `app_metadata` (`terms_accepted_at` + `terms_version`) vía la server action `acceptTermsAction` — service role; el usuario no puede firmar por su cuenta con la anon key.
 4. Redirección a la home.
 
 Reglas:
@@ -75,5 +75,5 @@ Reglas:
 - Página login: `src/app/(auth)/login/page.tsx`
 - Lógica login + cooldown: `src/components/features/Login/hooks/useLogin.hook.ts`
 - Callback: `src/app/auth/callback/page.tsx`
-- Gate de términos: `src/components/features/AcceptTerms/AcceptTerms.tsx`, constantes en `src/constants/legal-terms.constant.ts`
+- Gate de términos: `src/components/features/AcceptTerms/AcceptTerms.tsx`, action `src/modules/profiles/presentation/accept-terms.actions.ts`, comparación de versión `src/shared/auth/has-accepted-terms.util.ts`, constantes en `src/constants/legal-terms.constant.ts`
 - Middleware de rutas protegidas: `middleware.ts`

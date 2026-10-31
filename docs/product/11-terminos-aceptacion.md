@@ -21,21 +21,28 @@ El sistema ya tiene un **mecanismo básico de versionado**, pero con gaps:
 
 ### Lo que funciona
 
+> **ACTUALIZADO (31/10/2026)**: el hallazgo crítico de la auditoría (firma client-side en `user_metadata` editable por el usuario) y G3 están **corregidos**. La firma ahora es server-side en `app_metadata`.
+
 1. `CURRENT_TERMS_VERSION = 'v2'` se define en `src/constants/legal-terms.constant.ts` (línea 2).
-2. En el callback de auth (`src/app/auth/callback/page.tsx:40-51`) se compara `user_metadata.terms_version` contra `CURRENT_TERMS_VERSION`.
+2. En el callback de auth (`src/app/auth/callback/page.tsx`) y en el gate (`AcceptTerms.tsx`) se compara la versión con el helper compartido `hasAcceptedLatestTerms` (`src/shared/auth/has-accepted-terms.util.ts`). Fuente de verdad: `app_metadata.terms_version` (firmado server-side); `user_metadata.terms_version` queda como fallback legacy para usuarios que aceptaron antes de la corrección.
 3. Si no coinciden → redirige a `/auth/accept-terms`.
-4. Al aceptar (`src/components/features/AcceptTerms/AcceptTerms.tsx:73-96`) se guarda `terms_accepted_at` + `terms_version` en `user_metadata`.
+4. Al aceptar (`AcceptTerms.tsx`) ahora llama a la server action `acceptTermsAction` (`src/modules/profiles/presentation/accept-terms.actions.ts`) → use-case → `SupabaseProfileCommandRepository.acceptTerms`, que firma `terms_accepted_at` + `terms_version` en **`app_metadata`** con service role (no editable por la anon key). Rate limit `accept-terms:<userId>` scope `write`.
 5. El botón de aceptar está bloqueado hasta que el usuario **scrollea al final** del texto (IntersectionObserver).
+6. **Cerrado**: la firma client-side en `user_metadata` (auto-aceptación por consola posible) y G3 (re-aceptación muerta tras bump de versión). Quedan vivos G1/G2/G4/G5.
 
 ### Los gaps detectados
 
-| # | Gap | Código afectado | Impacto legal |
-|---|---|---|---|
-| G1 | **Solo se verifica en el login**. Un usuario con sesión activa no se ve afectado hasta cerrar sesión y volver a entrar. | `callback/page.tsx` | Puede usar la plataforma con T&C desactualizados |
-| G2 | **No hay bloqueo "en vivo"** vía middleware para sesiones activas con versión vieja. | `middleware.ts` | Idem G1 |
-| G3 | **Inconsistencia**: `AcceptTerms.tsx:37` redirige a home si existe `terms_accepted_at`, sin comparar la versión. El callback sí compara versión. Doble lógica. | `AcceptTerms.tsx` | Puede saltarse la re-aceptación |
-| G4 | **No se registra auditoria** de la aceptación/re-aceptación (quién, qué versión, cuándo). Solo queda en `user_metadata` sin historial. | — | Débil evidencia de consentimiento |
-| G5 | Bonus: `user_metadata` se sobreescribe en cada re-aceptación, no guarda historial de versiones anteriores. | `AcceptTerms.tsx` | No hay trail auditable |
+| # | Gap | Código afectado | Impacto legal | Estado |
+|---|---|---|---|---|
+| G1 | **Solo se verifica en el login**. Un usuario con sesión activa no se ve afectado hasta cerrar sesión y volver a entrar. | `callback/page.tsx` | Puede usar la plataforma con T&C desactualizados | Abierto (backlog) |
+| G2 | **No hay bloqueo "en vivo"** vía middleware para sesiones activas con versión vieja. | `middleware.ts` | Idem G1 | Abierto (backlog) |
+| G3 | ~~**Inconsistencia**: `AcceptTerms.tsx:37` redirige a home si existe `terms_accepted_at`, sin comparar la versión.~~ | `AcceptTerms.tsx` | ~~Puede saltarse la re-aceptación~~ | **Corregido** — hoy usa `hasAcceptedLatestTerms` (compara versión) |
+| G4 | **No se registra auditoría** de la aceptación/re-aceptación (quién, qué versión, cuándo). Solo queda en `app_metadata` sin historial. | — | Débil evidencia de consentimiento | Abierto — el fix propuesto (`terms_acceptances` + RPC) seguiría resolviendo esto |
+| G5 | Bonus: `app_metadata` se sobreescribe en cada re-aceptación, no guarda historial de versiones anteriores. | repo `acceptTerms` | No hay trail auditable | Abierto — mismo fix que G4 |
+
+### Cerrado por la corrección (hallazgo crítico)
+
+- **H2 (crítico)**: la firma se hacía client-side con `supabaseClient.auth.updateUser({ data: { terms_version } })` — cualquier usuario podía auto-aceptar por consola sin leer nada. Ahora la firma es server-side con service role en `app_metadata`: el usuario no puede escribirla con la anon key.
 
 ## Alcance del feature
 
@@ -108,8 +115,8 @@ CREATE POLICY "terms_acceptance_insert_system"
 
 - [ ] Tabla `terms_acceptance` existe con RLS correcto
 - [ ] Al aceptar términos se registra un row en `terms_acceptance` (user_id, version, accepted_at, ip, user_agent)
-- [ ] Los T&C actuales guardan `terms_version` en `user_metadata` (mecanismo existente sigue funcionando)
-- [ ] La tabla complementa (no reemplaza) el mecanismo `user_metadata` existente
+- [ ] Los T&C actuales guardan `terms_version` en `app_metadata` (firma server-side, mecanismo vigente)
+- [ ] La tabla complementa (no reemplaza) el mecanismo `app_metadata` existente
 
 ### Protección de flujo
 

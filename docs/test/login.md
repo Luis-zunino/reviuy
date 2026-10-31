@@ -9,6 +9,7 @@
 3. El cooldown de la UI fue eliminado; el límite es el Redis `auth_email` 5/min. Si vuelve a aparecer un contador "Esperá Ns", es una **regresión**.
 4. Cookie de sesión la escribe `@supabase/ssr` (middleware + server client).
 5. `signOut` sigue client-side (`AuthProvider.tsx`).
+6. La firma de términos es **server-side** (`app_metadata` con service role, vía `acceptTermsAction`): una firma en `user_metadata` desde el cliente es la **regresión #2** del PR (hallazgo crítico de auditoría).
 
 ## Prerequisitos
 
@@ -37,8 +38,9 @@
 1. Email nuevo → magic link.
 2. ✅ Callback lleva a `/auth/accept-terms` (no a la home).
 3. Botón "Aceptar y continuar" **deshabilitado** hasta scrollear el texto completo.
-4. Al aceptar → home, toast de bienvenida.
+4. Al aceptar → `acceptTermsAction` firma en `app_metadata` server-side → home, toast de bienvenida.
 5. Reloguear con el mismo email → **no** vuelve al gate (versión vigente).
+6. 🔥 Verificar que la firma quedó en `app_metadata` (`auth.admin.getUserById` o dashboard): si aparece solo en `user_metadata`, la UI volvió a firmar client-side (regresión — el usuario podría auto-firmar por consola).
 
 ## 4. login — casos borde y subflujos
 
@@ -120,9 +122,10 @@
 
 ## Referencias técnicas
 
-- Server actions: `src/shared/auth/auth-server-actions.ts`
+- Server actions: `src/shared/auth/auth-server-actions.ts`, `src/modules/profiles/presentation/accept-terms.actions.ts` (términos)
 - Origin/IP: `src/shared/auth/get-server-origin.util.ts`, `src/shared/auth/get-client-ip.util.ts`
-- Rate limits de auth: `src/lib/redis/rate-limit.ts` (`auth_email` 5/min, `auth_oauth` 10/min)
-- UI: `src/components/features/Login/`, `src/components/providers/AuthProvider.tsx`
+- Rate limits de auth: `src/lib/redis/rate-limit.ts` (`auth_email` 5/min, `auth_oauth` 10/min, `accept-terms` scope `write`)
+- Versiones de términos: `src/shared/auth/has-accepted-terms.util.ts` — única comparación válida (app_metadata + fallback)
+- UI: `src/components/features/Login/`, `src/components/features/AcceptTerms/AcceptTerms.tsx`, `src/components/providers/AuthProvider.tsx`
 - Callback: `src/app/auth/callback/page.tsx`
 - Local config: `supabase/config.toml` (Inbucket `:90`, redirects `:122`, `email_sent=2` `:150`)

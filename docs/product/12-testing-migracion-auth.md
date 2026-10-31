@@ -176,7 +176,8 @@ Google OAuth **no se prueba completo en local con el stack**: requiere `external
 1. Usuario nuevo (email nunca usado) → magic link.
 2. Callback → aterrizá en `/auth/accept-terms` (no en home).
 3. Botón "Aceptar" disabled hasta scrollear el texto completo.
-4. Al aceptar → home. Segundo login directo → home sin gate (coherente con `docs/product/11-terminos-aceptacion.md`).
+4. Al aceptar → `acceptTermsAction` firma server-side en `app_metadata` → home. Segundo login directo → home sin gate (coherente con `docs/product/11-terminos-aceptacion.md`).
+5. 🔥 Verificar dónde firmó: `app_metadata` = OK; si solo aparece en `user_metadata`, la firma volvió a ser client-side (regresión — hallazgo crítico de auditoría, ya corregido).
 
 ## 5. Nivel 4 — Verificación en deploy (preview / staging / prod)
 
