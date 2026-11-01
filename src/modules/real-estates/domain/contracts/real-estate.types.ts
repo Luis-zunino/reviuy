@@ -4,14 +4,13 @@ import type { Database } from '@/types/supabase';
 export type RealEstateReviewInsert = Database['public']['Tables']['real_estate_reviews']['Insert'];
 export type RealEstate = Database['public']['Tables']['real_estates']['Row'];
 export type RealEstateReview = Database['public']['Tables']['real_estate_reviews']['Row'];
-export type RealEstateWitheVotes = Database['public']['Views']['real_estates_with_votes']['Row'];
+export type RealEstateWitheVotes = Database['public']['Views']['real_estates_public']['Row'];
 export type RealEstateReviewWithVotes =
-  Database['public']['Views']['real_estate_reviews_with_votes']['Row'];
+  Database['public']['Views']['real_estate_reviews_with_votes_public']['Row'];
 /**
- * Versión pública de RealEstateWitheVotes sin created_by (user_id).
- * Usar para queries públicos donde no se debe exponer la identidad del creador.
+ * Proyección pública sin el indicador de ownership que los repositorios no seleccionan.
  */
-export type RealEstateWithVotesPublic = Omit<RealEstateWitheVotes, 'created_by'>;
+export type RealEstateWithVotesPublic = Omit<RealEstateWitheVotes, 'is_mine'>;
 
 /**
  * Vista pública de reseñas de inmobiliarias con estadísticas de votos, sin user_id.

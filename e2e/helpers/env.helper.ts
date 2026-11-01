@@ -1,7 +1,9 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 
-const ENV_FILES = ['.env.local', '.env'];
+// .env.e2e primero: es el destino de la suite (stack local). Si falta, cae a
+// los .env de desarrollo, que apuntan a prod.
+const ENV_FILES = ['.env.e2e', '.env.local', '.env'];
 
 type EnvVar = { key: string; value: string };
 
@@ -39,7 +41,8 @@ function loadFile(filePath: string): void {
 }
 
 /**
- * Carga variables de entorno desde archivos .env / .env.local.
+ * Carga variables de entorno desde `.env.e2e`, `.env.local` y `.env`
+ * (en ese orden; no pisa las que ya existen).
  *
  * Necesario porque Playwright corre globalSetup en un proceso Node.js
  * que NO carga automáticamente los archivos .env.local de Next.js.

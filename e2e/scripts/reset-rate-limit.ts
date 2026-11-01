@@ -1,33 +1,37 @@
 import { loadEnvFiles } from '../helpers/env.helper';
 loadEnvFiles();
-import { createClient } from '@supabase/supabase-js';
+import { E2E_TEST_EMAIL, getSupabaseAdmin } from '../helpers/auth.helper';
+import { clearTestUserRateLimits } from '../helpers/cleanup.helper';
 
-const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const key = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-
+/**
+ * Resetea manualmente los rate limits del test user (todas las ventanas).
+ * La suite ya lo hace en global-setup/teardown; esto sirve para destrabar una
+ * corrida local sin relaunch completo.
+ */
 async function main() {
-  const admin = createClient(url, key, { auth: { autoRefreshToken: false, persistSession: false } });
-  const email = 'e2e-test@reviuy.qa';
-
-  const { data: { users }, error: usersError } = await admin.auth.admin.listUsers();
-  if (usersError) { console.error('Error listing users:', usersError.message); return; }
-  const user = users?.find(u => u.email === email);
-  if (!user) { console.log('Test user not found'); return; }
-
-  console.log('Test user ID:', user.id);
-
-  // Try direct delete via REST API (service_role bypasses RLS)
-  const { error } = await admin
-    .from('rate_limits')
-    .delete()
-    .eq('user_id', user.id)
-    .eq('endpoint', 'create_review');
-
-  if (error) {
-    console.error('Error deleting rate limits:', error.message);
+  const admin = getSupabaseAdmin();
+  if (!admin) {
+    console.error('Faltan NEXT_PUBLIC_SUPABASE_URL o SUPABASE_SERVICE_ROLE_KEY');
     return;
   }
-  console.log('Rate limit entries deleted');
+
+  const {
+    data: { users },
+    error,
+  } = await admin.auth.admin.listUsers();
+  if (error) {
+    console.error('Error listing users:', error.message);
+    return;
+  }
+
+  const user = users.find((u) => u.email === E2E_TEST_EMAIL);
+  if (!user) {
+    console.log('Test user not found');
+    return;
+  }
+
+  console.log('Test user ID:', user.id);
+  await clearTestUserRateLimits(user.id);
 }
 
 main().catch(console.error);

@@ -52,7 +52,7 @@ begin
       now(),
       now()
     )
-    on conflict (email) do nothing;
+    on conflict (email) where is_sso_user = false do nothing; -- auth.users tiene UNIQUE(email) parcial
   end loop;
 end;
 $$;
@@ -105,7 +105,7 @@ select
     else 'room'
   end,
   '123 Load Test Street, Montevideo',
-  'lt-osm-' || n,
+  'W' || (900000 + n),
   (-34.9035 + n * 0.001)::decimal(10, 8),
   (-56.1660 + n * 0.001)::decimal(11, 8),
   3 + (n % 3),
