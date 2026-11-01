@@ -73,7 +73,7 @@ describe('getRateLimiter', () => {
     const vote = getRateLimiter('vote');
     expect(vote).toBeDefined();
     expect(mockRedisFromEnv).toHaveBeenCalledTimes(1);
-    expect(mockRatelimitCtor).toHaveBeenCalledTimes(3);
+    expect(mockRatelimitCtor).toHaveBeenCalledTimes(6);
 
     vi.clearAllMocks();
 
@@ -88,10 +88,18 @@ describe('getRateLimiter', () => {
 
     const vote = getRateLimiter('vote');
     const write = getRateLimiter('write');
+    const sensitive = getRateLimiter('sensitive');
+    const authEmail = getRateLimiter('auth_email');
+    const authOauth = getRateLimiter('auth_oauth');
+    const authRefresh = getRateLimiter('auth_refresh');
 
     expect(vote).toBeDefined();
     expect(write).toBeDefined();
-    expect(mockRatelimitCtor).toHaveBeenCalledTimes(3);
+    expect(sensitive).toBeDefined();
+    expect(authEmail).toBeDefined();
+    expect(authOauth).toBeDefined();
+    expect(authRefresh).toBeDefined();
+    expect(mockRatelimitCtor).toHaveBeenCalledTimes(6);
   });
 
   it('throws when Redis is not configured', async () => {
