@@ -6,7 +6,7 @@ import {
   createVotePropertyReviewUseCase,
   createToggleFavoritePropertyReviewUseCase,
 } from '../application';
-import { SupabasePropertyReviewCommandRepository } from '../infrastructure';
+import { SupabasePropertyReviewCommandRepository } from '../infrastructure/repositories/supabase-property-review-command.repository';
 import { createServerActionDeps } from '@/shared/auth/create-server-action-deps.util';
 import { createError } from '@/lib/errors';
 

@@ -160,7 +160,6 @@ export const ReviewSummary = ({ review }: ReviewSummaryProps) => {
         </Card>
       ) : null}
 
-      {/* M4: el autor no puede votar su propia reseña, no se muestran los botones */}
       {!review.is_mine && (
         <Card className="shadow-sm border-border/50">
           <CardContent className="p-6">

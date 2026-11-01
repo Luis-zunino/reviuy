@@ -43,11 +43,17 @@ export async function POST(req: Request) {
       repository: new SupabaseModerationCommandRepository(supabase),
     });
 
-    await reportReviewUseCase({
+    const result = await reportReviewUseCase({
       review_id: reviewUuid,
       reason,
       description: message,
     });
+
+    // La RPC rechaza sin lanzar (duplicado, propia reseña, rate limit...): en ese
+    // caso no se guardó el reporte y no se debe enviar el email.
+    if (!result.success) {
+      throw createError('VALIDATION_ERROR', result.message);
+    }
 
     await sendEmail({
       to: [process.env.CONTACT_EMAIL!],

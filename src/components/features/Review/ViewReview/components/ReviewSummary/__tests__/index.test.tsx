@@ -106,6 +106,7 @@ const createMockReview = (overrides = {}) => ({
   real_estates: { id: 're-1', name: 'Inmobiliaria ABC' },
   likes: 10,
   dislikes: 2,
+  is_mine: false,
   ...overrides,
 });
 
