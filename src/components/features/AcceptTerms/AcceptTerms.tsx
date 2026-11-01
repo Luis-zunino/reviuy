@@ -7,10 +7,11 @@ import { PagesUrls } from '@/enums';
 import {
   LEGAL_TERMS_TEXT,
   LEGAL_TERMS_SECTIONS,
-  CURRENT_TERMS_VERSION,
 } from '@/constants/legal-terms.constant';
 import { toast } from 'sonner';
 import { Loader } from '@/components/common/Loaders';
+import { hasAcceptedCurrentTerms } from '@/shared/auth/terms.util';
+import { acceptTermsAction } from '@/modules/profiles/presentation';
 
 export const AcceptTerms = () => {
   const { loading: authLoading, isAuthenticated } = useAuthContext();
@@ -34,7 +35,9 @@ export const AcceptTerms = () => {
         const { data: userData } = await supabaseClient.auth.getUser();
         const user = userData?.user;
 
-        if (user?.user_metadata?.terms_accepted_at) {
+        // Misma regla que el middleware y el callback: si acá se mirara solo
+        // terms_accepted_at, un usuario con versión vieja quedaría en loop.
+        if (hasAcceptedCurrentTerms(user)) {
           globalThis.location.assign(PagesUrls.HOME);
           return;
         }
@@ -73,15 +76,18 @@ export const AcceptTerms = () => {
   const handleAccept = useCallback(async () => {
     setAccepting(true);
     try {
-      const { error } = await supabaseClient.auth.updateUser({
-        data: {
-          terms_accepted_at: new Date().toISOString(),
-          terms_version: CURRENT_TERMS_VERSION,
-        },
-      });
+      // La firma del consentimiento se guarda server-side en app_metadata
+      // (acceptTermsAction): firmar en user_metadata desde el cliente permite
+      // auto-aceptar por consola, y user_metadata se sigue aceptando solo como
+      // fallback legacy en hasAcceptedCurrentTerms.
+      await acceptTermsAction();
 
-      if (error) {
-        throw error;
+      // El JWT no se reemite solo: sin refrescar, el middleware (que lee los
+      // claims con app_metadata) volvería a pedir aceptar.
+      const { error: refreshError } = await supabaseClient.auth.refreshSession();
+
+      if (refreshError) {
+        throw refreshError;
       }
 
       globalThis.location.assign(PagesUrls.HOME);

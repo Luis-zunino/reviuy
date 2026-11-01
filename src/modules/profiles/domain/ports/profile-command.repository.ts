@@ -1,5 +1,11 @@
-import type { DeleteAccountCommand, DeleteAccountOutput } from '../contracts/profile-account.types';
+import type {
+  AcceptTermsCommand,
+  AcceptTermsOutput,
+  DeleteAccountCommand,
+  DeleteAccountOutput,
+} from '../contracts/profile-account.types';
 
 export interface ProfileCommandRepository {
   deleteAccount(input: DeleteAccountCommand): Promise<DeleteAccountOutput>;
+  acceptTerms(input: AcceptTermsCommand): Promise<AcceptTermsOutput>;
 }
