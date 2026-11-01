@@ -83,8 +83,7 @@ export class SupabasePropertyReviewCommandRepository implements PropertyReviewCo
       p_humidity: reviewData.humidity ?? null,
       p_real_estate_experience: reviewData.real_estate_experience ?? null,
       p_apartment_number: reviewData.apartment_number ?? null,
-      p_review_rooms:
-        review_rooms && review_rooms.length > 0 ? JSON.parse(JSON.stringify(review_rooms)) : null,
+      p_review_rooms: review_rooms && review_rooms.length > 0 ? review_rooms : null,
     });
 
     if (rpcError) {
@@ -196,8 +195,8 @@ export class SupabasePropertyReviewCommandRepository implements PropertyReviewCo
       p_apartment_number: updateData.apartment_number ?? null,
       // Fix: mandar ARRAY (no string). structuredClone(JSON.stringify(x)) producía un string
       // que update_review rechaza con jsonb_typeof <> 'array' (rompía TODA edición).
-      // Mismo patrón que create() (JSON.parse(JSON.stringify(...)) → array).
-      p_review_rooms: review_rooms !== undefined ? JSON.parse(JSON.stringify(review_rooms)) : null,
+      // Mismo patrón que create(): el array va directo, sin clonar.
+      p_review_rooms: review_rooms !== undefined ? review_rooms : null,
     });
 
     const { data: updateResult, error: updateError } = rpcResult;
@@ -277,6 +276,7 @@ export class SupabasePropertyReviewCommandRepository implements PropertyReviewCo
       .eq('review_id', reviewId);
 
     // Soft delete via RPC (SECURITY DEFINER, maneja ownership y auditoría internamente)
+    // oxlint-disable-next-line react-doctor/server-sequential-independent-await -- orden real: delete_review_safe borra las filas de review_images, por eso los paths se leen antes. Paralelizar perdería los paths.
     const { error: deleteError } = await this.supabase.rpc('delete_review_safe', {
       review_id_param: reviewId,
     });

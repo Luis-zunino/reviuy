@@ -26,10 +26,10 @@ export type ReviewPublicWithRelations = ReviewWithVotesPublic & {
   real_estates: RealEstateWithVotesPublic | null;
 };
 
-export interface PropertyReviewRoomDraft {
+export type PropertyReviewRoomDraft = {
   room_type: string | null;
   area_m2: number | null;
-}
+};
 
 export interface CreatePropertyReviewInput {
   title: string;
