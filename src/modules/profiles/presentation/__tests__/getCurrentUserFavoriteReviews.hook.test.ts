@@ -1,10 +1,14 @@
 // @vitest-environment jsdom
 import { renderHook } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { useQuery } from '@tanstack/react-query';
-import { useGetCurrentUserFavoriteReviews } from '../getCurrentUserFavoriteReviews.hook';
 
-vi.mock('@tanstack/react-query');
+import { useGetCurrentUserFavoriteReviews } from '../getCurrentUserFavoriteReviews.hook';
+const { mockUseQuery } = vi.hoisted(() => ({ mockUseQuery: vi.fn() }));
+
+vi.mock('@tanstack/react-query', () => ({
+  useQuery: mockUseQuery,
+}));
+
 vi.mock('@/modules/profiles', () => ({
   ComposedProfileReadRepository: vi.fn(),
   createGetCurrentUserFavoriteReviewsQuery: vi.fn(() => vi.fn()),
@@ -18,11 +22,11 @@ describe('useGetCurrentUserFavoriteReviews', () => {
     vi.clearAllMocks();
   });
 
-  it('calls useQuery with correct queryKey', () => {
-    (useQuery as any).mockReturnValue({ data: null, isLoading: false });
+  it('calls mockUseQuery with correct queryKey', () => {
+    (mockUseQuery as any).mockReturnValue({ data: null, isLoading: false });
     const { result } = renderHook(() => useGetCurrentUserFavoriteReviews());
 
-    expect(useQuery).toHaveBeenCalledWith(
+    expect(mockUseQuery).toHaveBeenCalledWith(
       expect.objectContaining({ queryKey: ['favoriteReviews'] })
     );
     expect(result.current.data).toBeNull();

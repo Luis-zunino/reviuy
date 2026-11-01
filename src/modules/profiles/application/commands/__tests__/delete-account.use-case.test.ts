@@ -6,6 +6,7 @@ describe('createDeleteAccountUseCase', () => {
   it('rejects when the user is not authenticated', async () => {
     const profileCommandRepository: ProfileCommandRepository = {
       deleteAccount: vi.fn(),
+      acceptTerms: vi.fn(),
     };
 
     const useCase = createDeleteAccountUseCase({
@@ -24,6 +25,7 @@ describe('createDeleteAccountUseCase', () => {
     const rateLimit = vi.fn().mockResolvedValue(undefined);
     const profileCommandRepository: ProfileCommandRepository = {
       deleteAccount: vi.fn(),
+      acceptTerms: vi.fn(),
     };
 
     const useCase = createDeleteAccountUseCase({
@@ -45,6 +47,7 @@ describe('createDeleteAccountUseCase', () => {
     const expected: DeleteAccountOutput = { success: true };
     const profileCommandRepository: ProfileCommandRepository = {
       deleteAccount: vi.fn().mockResolvedValue(expected),
+      acceptTerms: vi.fn(),
     };
 
     const useCase = createDeleteAccountUseCase({
@@ -65,6 +68,7 @@ describe('createDeleteAccountUseCase', () => {
   it('rejects when lastSignInAt is null', async () => {
     const profileCommandRepository: ProfileCommandRepository = {
       deleteAccount: vi.fn(),
+      acceptTerms: vi.fn(),
     };
     const useCase = createDeleteAccountUseCase({
       getCurrentUserId: vi.fn().mockResolvedValue('user-1'),

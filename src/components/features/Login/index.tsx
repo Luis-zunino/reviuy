@@ -1,5 +1,3 @@
-'use client';
-
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Mail } from 'lucide-react';
@@ -7,10 +5,9 @@ import { useLogin } from './hooks';
 import { GoogleIcon } from '../../common/GoogleIcon';
 
 export const Login = () => {
-  const { register, handleSubmit, onSubmit, errors, loading, cooldownRemaining, onGoogleSignIn } =
-    useLogin();
+  const { register, handleSubmit, onSubmit, errors, loading, onGoogleSignIn } = useLogin();
 
-  const isDisabled = loading || cooldownRemaining > 0;
+  const isDisabled = loading;
 
   return (
     <div className="space-y-6 mx-auto">
@@ -66,8 +63,6 @@ export const Login = () => {
               <div className="animate-spin rounded-full size-4 border-b-2 border-white mr-2"></div>
               Enviando enlace…
             </>
-          ) : cooldownRemaining > 0 ? (
-            `Esperá ${cooldownRemaining}s para reenviar`
           ) : (
             'Enviar enlace mágico'
           )}
