@@ -4,10 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { supabaseClient } from '@/lib/supabase/client';
 import { useAuthContext } from '@/components/providers/AuthProvider';
 import { PagesUrls } from '@/enums';
-import {
-  LEGAL_TERMS_TEXT,
-  LEGAL_TERMS_SECTIONS,
-} from '@/constants/legal-terms.constant';
+import { LEGAL_TERMS_TEXT, LEGAL_TERMS_SECTIONS } from '@/constants/legal-terms.constant';
 import { toast } from 'sonner';
 import { Loader } from '@/components/common/Loaders';
 import { hasAcceptedCurrentTerms } from '@/shared/auth/terms.util';
