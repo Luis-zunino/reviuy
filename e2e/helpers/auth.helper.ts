@@ -1,8 +1,16 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Cookie } from '@playwright/test';
+import { CURRENT_TERMS_VERSION } from '../../src/constants/legal-terms.constant';
 
 export const E2E_TEST_EMAIL = 'e2e-test@reviuy.qa';
 export const E2E_TEST_PASSWORD = 'TestPassword123!';
+export const E2E_SECONDARY_TEST_EMAIL = 'e2e-test-secondary@reviuy.qa';
+export const E2E_SECONDARY_TEST_PASSWORD = 'TestPassword123!';
+
+const DEFAULT_TEST_CREDENTIALS = {
+  email: E2E_TEST_EMAIL,
+  password: E2E_TEST_PASSWORD,
+};
 
 /** Rechaza valores placeholder usados como fallback en CI */
 function isValidValue(val: string | undefined): string | null {
@@ -54,37 +62,39 @@ export function getProjectRef(): string | null {
  * Crea el usuario test si no existe.
  * Si ya existe, asegura que tenga password y metadata de términos.
  */
-export async function ensureTestUser() {
+export async function ensureTestUser(
+  credentials: { email: string; password: string } = DEFAULT_TEST_CREDENTIALS
+) {
   const admin = getSupabaseAdmin();
   if (!admin) return null;
 
   const {
     data: { users },
   } = await admin.auth.admin.listUsers();
-  const existing = users?.find((u) => u.email === E2E_TEST_EMAIL);
+  const existing = users?.find((u) => u.email === credentials.email);
 
   if (existing) {
     await admin.auth.admin.updateUserById(existing.id, {
-      password: E2E_TEST_PASSWORD,
+      password: credentials.password,
       user_metadata: {
         ...existing.user_metadata,
         terms_accepted_at: existing.user_metadata?.terms_accepted_at ?? new Date().toISOString(),
         privacy_accepted_at:
           existing.user_metadata?.privacy_accepted_at ?? new Date().toISOString(),
-        terms_version: existing.user_metadata?.terms_version ?? 'v1',
+        terms_version: CURRENT_TERMS_VERSION,
       },
     });
     return existing;
   }
 
   const { data, error } = await admin.auth.admin.createUser({
-    email: E2E_TEST_EMAIL,
-    password: E2E_TEST_PASSWORD,
+    email: credentials.email,
+    password: credentials.password,
     email_confirm: true,
     user_metadata: {
       terms_accepted_at: new Date().toISOString(),
       privacy_accepted_at: new Date().toISOString(),
-      terms_version: 'v1',
+      terms_version: CURRENT_TERMS_VERSION,
     },
   });
 
@@ -96,12 +106,14 @@ export async function ensureTestUser() {
  * Obtiene una sesión para el usuario test.
  * Requiere que el provider "Email" esté habilitado en Supabase.
  */
-export async function getTestSession() {
+export async function getTestSession(
+  credentials: { email: string; password: string } = DEFAULT_TEST_CREDENTIALS
+) {
   const supabase = getSupabaseClient();
   if (!supabase) return null;
   const { data, error } = await supabase.auth.signInWithPassword({
-    email: E2E_TEST_EMAIL,
-    password: E2E_TEST_PASSWORD,
+    email: credentials.email,
+    password: credentials.password,
   });
 
   if (error) throw new Error(`Error signing in test user: ${error.message}`);
@@ -169,9 +181,10 @@ export const AUTH_STORAGE_PATH = 'e2e/.auth/user.json';
 
 /** @returns true si se inyectaron cookies, false si no había sesión disponible */
 export async function injectAuthCookies(
-  context: import('@playwright/test').BrowserContext
+  context: import('@playwright/test').BrowserContext,
+  credentials: { email: string; password: string } = DEFAULT_TEST_CREDENTIALS
 ): Promise<boolean> {
-  const session = await getTestSession();
+  const session = await getTestSession(credentials);
   if (!session) return false;
   const cookies = buildAuthCookies(session);
   await context.addCookies(cookies);

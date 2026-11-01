@@ -43,26 +43,26 @@ export const options = {
 const ADDRESSES = [
   {
     text: 'Av. 18 de Julio 1200, Montevideo',
-    osm_id: 'lt-osm-address-1',
+    osm_id: 'W900001',
     lat: -34.905,
     lon: -56.191,
   },
-  { text: 'Av. Italia 4500, Montevideo', osm_id: 'lt-osm-address-2', lat: -34.88, lon: -56.15 },
+  { text: 'Av. Italia 4500, Montevideo', osm_id: 'W900002', lat: -34.88, lon: -56.15 },
   {
     text: 'Bulevar Artigas 1500, Montevideo',
-    osm_id: 'lt-osm-address-3',
+    osm_id: 'W900003',
     lat: -34.898,
     lon: -56.175,
   },
   {
     text: 'Rambla Costanera 2500, Montevideo',
-    osm_id: 'lt-osm-address-4',
+    osm_id: 'W900004',
     lat: -34.913,
     lon: -56.162,
   },
   {
     text: 'Av. Luis Alberto de Herrera 3200, Montevideo',
-    osm_id: 'lt-osm-address-5',
+    osm_id: 'W900005',
     lat: -34.885,
     lon: -56.135,
   },

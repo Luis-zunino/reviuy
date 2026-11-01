@@ -1,5 +1,10 @@
 import { test as base } from '@playwright/test';
-import { injectAuthCookies } from '../helpers/auth.helper';
+import {
+  E2E_SECONDARY_TEST_EMAIL,
+  E2E_SECONDARY_TEST_PASSWORD,
+  ensureTestUser,
+  injectAuthCookies,
+} from '../helpers/auth.helper';
 
 /**
  * Fixture de test que extiende Playwright con un page autenticado.
@@ -16,7 +21,10 @@ import { injectAuthCookies } from '../helpers/auth.helper';
  *     await expect(authPage.locator('h1')).toBeVisible();
  *   });
  */
-export const test = base.extend<{ authPage: import('@playwright/test').Page }>({
+export const test = base.extend<{
+  authPage: import('@playwright/test').Page;
+  otherAuthPage: import('@playwright/test').Page;
+}>({
   authPage: async ({ browser }, use, testInfo) => {
     const context = await browser.newContext();
     const ok = await injectAuthCookies(context);
@@ -25,6 +33,31 @@ export const test = base.extend<{ authPage: import('@playwright/test').Page }>({
       await context.close();
       return;
     }
+    const page = await context.newPage();
+    // eslint-disable-next-line react-hooks/rules-of-hooks -- Playwright fixture release fn, not React hook
+    await use(page);
+    await context.close();
+  },
+  otherAuthPage: async ({ browser }, use, testInfo) => {
+    const context = await browser.newContext();
+    const credentials = {
+      email: E2E_SECONDARY_TEST_EMAIL,
+      password: E2E_SECONDARY_TEST_PASSWORD,
+    };
+    const user = await ensureTestUser(credentials);
+    if (!user) {
+      testInfo.skip();
+      await context.close();
+      return;
+    }
+
+    const ok = await injectAuthCookies(context, credentials);
+    if (!ok) {
+      testInfo.skip();
+      await context.close();
+      return;
+    }
+
     const page = await context.newPage();
     // eslint-disable-next-line react-hooks/rules-of-hooks -- Playwright fixture release fn, not React hook
     await use(page);
