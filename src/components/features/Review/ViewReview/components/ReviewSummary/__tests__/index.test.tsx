@@ -151,6 +151,12 @@ describe('ReviewSummary', () => {
     expect(screen.getByTestId('review-likes')).toBeInTheDocument();
   });
 
+  it('no renderiza botones de voto en una reseña propia', () => {
+    render(<ReviewSummary review={createMockReview({ is_mine: true }) as any} />);
+
+    expect(screen.queryByTestId('review-likes')).not.toBeInTheDocument();
+  });
+
   it('renderiza información de valoración', () => {
     render(<ReviewSummary review={createMockReview() as any} />);
 
