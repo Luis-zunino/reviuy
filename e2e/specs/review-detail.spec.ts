@@ -103,58 +103,26 @@ test.describe.serial('Review — página de detalle', () => {
     // Botón de eliminar
     await expect(authPage.getByRole('button', { name: 'Eliminar' })).toBeVisible();
 
-    // Botones de voto
-    await expect(authPage.getByRole('button', { name: 'Marcar como útil' })).toBeVisible();
-    await expect(authPage.getByRole('button', { name: 'Marcar como no útil' })).toBeVisible();
+    // Botones de voto ocultos en reseña propia (self-vote bloqueado por M4)
+    await expect(authPage.getByRole('button', { name: 'Marcar como útil' })).toHaveCount(0);
+    await expect(authPage.getByRole('button', { name: 'Marcar como no útil' })).toHaveCount(0);
 
     // Mapa
     await expect(authPage.locator('.leaflet-container').first()).toBeVisible({ timeout: 10000 });
   });
 
-  test('vota like y dislike en la reseña', async ({ authPage }) => {
+  test('no permite votar una reseña propia (botones ocultos)', async ({ authPage }) => {
     await authPage.goto(`/review/${reviewId}/details`);
 
-    // Votar like
-    const likeButton = authPage.getByRole('button', { name: 'Marcar como útil' });
-    await likeButton.click();
-    await expect(authPage.getByRole('button', { name: 'Ya votaste útil' })).toBeVisible({
-      timeout: 10000,
-    });
-    // Esperar que termine la server action (isPending=false, botón habilita)
-    await expect(authPage.getByRole('button', { name: 'Ya votaste útil' })).toBeEnabled({
-      timeout: 10000,
-    });
-
-    // Quitar voto (toggle)
-    await authPage.getByRole('button', { name: 'Ya votaste útil' }).click();
-    await expect(authPage.getByRole('button', { name: 'Marcar como útil' })).toBeVisible({
-      timeout: 10000,
-    });
-    await expect(authPage.getByRole('button', { name: 'Marcar como útil' })).toBeEnabled({
-      timeout: 10000,
-    });
-
-    // Votar dislike
-    const dislikeButton = authPage.getByRole('button', { name: 'Marcar como no útil' });
-    await dislikeButton.click();
-    await expect(authPage.getByRole('button', { name: 'Ya votaste no útil' })).toBeVisible({
-      timeout: 10000,
-    });
-    await expect(authPage.getByRole('button', { name: 'Ya votaste no útil' })).toBeEnabled({
-      timeout: 10000,
-    });
-
-    // Quitar dislike
-    await authPage.getByRole('button', { name: 'Ya votaste no útil' }).click();
-    await expect(authPage.getByRole('button', { name: 'Marcar como no útil' })).toBeVisible({
-      timeout: 10000,
-    });
+    // El autor no ve botones de voto en su propia reseña
+    await expect(authPage.getByRole('button', { name: 'Marcar como útil' })).toHaveCount(0);
+    await expect(authPage.getByRole('button', { name: 'Marcar como no útil' })).toHaveCount(0);
   });
 
-  test('marca y desmarca favorito', async ({ authPage }) => {
-    await authPage.goto(`/review/${reviewId}/details`);
+  test('marca y desmarca favorito desde otro usuario', async ({ otherAuthPage }) => {
+    await otherAuthPage.goto(`/review/${reviewId}/details`);
 
-    const favButton = authPage.getByTitle(/favoritos/i);
+    const favButton = otherAuthPage.getByTitle(/favoritos/i);
 
     // Marcar favorito — esperar que termine la mutación
     await favButton.click();

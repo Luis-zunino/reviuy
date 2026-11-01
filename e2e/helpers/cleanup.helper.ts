@@ -1,6 +1,6 @@
-import { createClient } from '@supabase/supabase-js';
+﻿import { createClient } from '@supabase/supabase-js';
 import type { Database } from '@/types/supabase/supabase';
-import { E2E_TEST_EMAIL, E2E_TEST_PASSWORD } from './auth.helper';
+import { E2E_TEST_EMAIL, E2E_TEST_PASSWORD, getSupabaseAdmin } from './auth.helper';
 
 /** Rechaza valores placeholder usados como fallback en CI */
 function isValidValue(val: string | undefined): string | null {
@@ -78,10 +78,10 @@ export async function findReviewByOsmId(osmId: string): Promise<string | null> {
 export async function deleteTestUserReviewForOsmId(osmId: string): Promise<void> {
   const reviewId = await findReviewByOsmId(osmId);
   if (reviewId) {
-    console.log(`[cleanup] Eliminando reseña ${reviewId} para osm_id=${osmId}`);
+    console.log(`[cleanup] Eliminando reseÃ±a ${reviewId} para osm_id=${osmId}`);
     await deleteReview(reviewId);
   } else {
-    console.log(`[cleanup] No hay reseña activa del test user para osm_id=${osmId}`);
+    console.log(`[cleanup] No hay reseÃ±a activa del test user para osm_id=${osmId}`);
   }
 }
 
@@ -99,4 +99,29 @@ export async function findReviewByAddress(addressText: string): Promise<string |
   }
 
   return data?.[0]?.id ?? null;
+}
+
+/**
+ * Resetea las ventanas de rate limit (create_review, votes, etc.) del test user.
+ *
+ * El rate limit de la DB (check_rate_limit) persiste en public.rate_limits y no
+ * sobrevive al usuario: corridas encadenadas de la suite agotan la ventana
+ * (5 reseÃ±as / 10 min) y producen fallos no deterministas. El bypass SQL por
+ * email fue eliminado a propÃ³sito (Fix S1), asÃ­ que se limpian solo las filas
+ * del test user con service role (authenticated tiene DELETE revocado).
+ */
+export async function clearTestUserRateLimits(userId: string): Promise<void> {
+  const admin = getSupabaseAdmin();
+  if (!admin) {
+    console.warn('[cleanup] âš ï¸ Sin Supabase admin â€” rate limits no reseteados');
+    return;
+  }
+
+  const { error } = await admin.from('rate_limits').delete().eq('user_id', userId);
+
+  if (error) {
+    console.warn('[cleanup] âš ï¸ No se pudieron resetear los rate limits:', error.message);
+  } else {
+    console.log('[cleanup] Rate limits del test user reseteados');
+  }
 }

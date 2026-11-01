@@ -14,17 +14,27 @@ import * as path from 'node:path';
  * El config por eso lee el .env por su cuenta y lo fija en process.env antes de
  * calcular nada: todas las evaluaciones derivan el mismo valor.
  */
-function readDotEnvValue(key: string, filePath: string): string | undefined {
+function readDotEnvFile(filePath: string): Record<string, string> {
+  const values: Record<string, string> = {};
   try {
     const content = fs.readFileSync(path.resolve(process.cwd(), filePath), 'utf-8');
     for (const line of content.split('\n')) {
-      const match = line.match(/^\s*(?:export\s+)?([A-Z_0-9]+)\s*=\s*(.+?)\s*(?:#.*)?$/);
-      if (match?.[1] === key) return match[2]?.replace(/^['"]|['"]$/g, '');
+      // Acepta valores vacíos (p. ej. UPSTASH_REDIS_REST_URL= para desactivarlo).
+      const match = line.match(/^\s*(?:export\s+)?([A-Za-z_0-9]+)\s*=\s*([^\r\n]*)$/);
+      if (!match?.[1] || match[1].startsWith('#')) continue;
+      let value = match[2].replace(/^['"]|['"]$/g, '');
+      const commentIdx = value.indexOf(' #');
+      if (commentIdx !== -1) value = value.slice(0, commentIdx).trim();
+      values[match[1]] = value;
     }
   } catch {
     // archivo inexistente
   }
-  return undefined;
+  return values;
+}
+
+function readDotEnvValue(key: string, filePath: string): string | undefined {
+  return readDotEnvFile(filePath)[key];
 }
 
 const PLAYWRIGHT_ENV_FILES = ['.env.local', '.env'];
@@ -32,6 +42,21 @@ for (const file of PLAYWRIGHT_ENV_FILES) {
   const value = readDotEnvValue('PLAYWRIGHT_BASE_URL', file);
   if (value && !process.env.PLAYWRIGHT_BASE_URL) {
     process.env.PLAYWRIGHT_BASE_URL = value;
+  }
+}
+
+// .env.e2e: destino EXCLUSIVO de la suite e2e (stack local de Supabase). Antes
+// el e2e heredaba NEXT_PUBLIC_* del .env de desarrollo y terminaba creando
+// reseñas, users y sesiones de prueba en PROD (además de romper los specs que
+// dependen de migraciones locales, como update_review con firma nueva).
+// Cuidado con el "no pisar existentes": el runner de Playwright es el mismo
+// proceso que evalúa el config, así que lo fijado acá lo ven globalSetup y el
+// webServer (que hereda el entorno del runner).
+const E2E_ENV_FILE = '.env.e2e';
+const e2eEnv = readDotEnvFile(E2E_ENV_FILE);
+for (const [key, value] of Object.entries(e2eEnv)) {
+  if (!process.env[key]) {
+    process.env[key] = value;
   }
 }
 

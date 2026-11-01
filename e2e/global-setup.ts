@@ -6,7 +6,7 @@ import {
   buildAuthCookies,
   AUTH_STORAGE_PATH,
 } from './helpers/auth.helper';
-import { deleteTestUserReviewForOsmId } from './helpers/cleanup.helper';
+import { deleteTestUserReviewForOsmId, clearTestUserRateLimits } from './helpers/cleanup.helper';
 
 loadEnvFiles();
 
@@ -32,6 +32,8 @@ export default async function globalSetup() {
   // Previene el error "Ya has publicado una reseña para esta propiedad" en los
   // tests de creación, y permite que el empty state de address-detail se muestre.
   await deleteTestUserReviewForOsmId('R2929054');
+
+  await clearTestUserRateLimits(session.user.id);
 
   const cookies = buildAuthCookies(session);
 
