@@ -35,7 +35,7 @@
     "test:services:keep": "tsx e2e/scripts/verify-services.ts --keep",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:debug": "playwright test --debug",
-    "test:e2e:local": "node scripts/run-e2e-local.mjs",
+    "test:e2e:local": "node e2e/scripts/run-e2e-local.mjs",
     "test:load": "k6 run --compatibility-mode=extended",
     "test:load:home": "k6 run --compatibility-mode=extended k6/journeys/home.js",
     "test:load:explore": "k6 run --compatibility-mode=extended k6/journeys/explore.js",
