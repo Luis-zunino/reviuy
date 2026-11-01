@@ -29,7 +29,5 @@ export async function GET(request: NextRequest) {
     return redirectToLoginWithError();
   }
 
-  return redirectTo(
-    hasAcceptedCurrentTerms(data.user) ? PagesUrls.HOME : PagesUrls.ACCEPT_TERMS
-  );
+  return redirectTo(hasAcceptedCurrentTerms(data.user) ? PagesUrls.HOME : PagesUrls.ACCEPT_TERMS);
 }

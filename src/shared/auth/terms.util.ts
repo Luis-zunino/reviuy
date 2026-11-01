@@ -15,8 +15,6 @@ interface AuthMetadataBag {
   user_metadata?: Record<string, unknown> | null;
 }
 
-export const hasAcceptedCurrentTerms = (
-  userOrClaims?: AuthMetadataBag | null
-): boolean =>
+export const hasAcceptedCurrentTerms = (userOrClaims?: AuthMetadataBag | null): boolean =>
   userOrClaims?.app_metadata?.terms_version === CURRENT_TERMS_VERSION ||
   userOrClaims?.user_metadata?.terms_version === CURRENT_TERMS_VERSION;
