@@ -14,7 +14,7 @@ vi.mock('../../application', () => ({
   createDeletePropertyReviewUseCase: mockDeleteUseCase,
 }));
 
-vi.mock('../../infrastructure', () => ({
+vi.mock('../../infrastructure/repositories/supabase-property-review-command.repository', () => ({
   SupabasePropertyReviewCommandRepository: vi.fn(),
 }));
 

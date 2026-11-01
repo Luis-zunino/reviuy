@@ -110,7 +110,7 @@ describe('SupabaseRealEstateCommandRepository', () => {
   });
 
   describe('vote', () => {
-    const rpcResult = { likes: 5, dislikes: 1 };
+    const rpcResult = { success: true, likes: 5, dislikes: 1 };
 
     it('calls vote_real_estate RPC', async () => {
       mockBuilder = createMockBuilder(rpcResult);
@@ -340,6 +340,20 @@ describe('SupabaseRealEstateCommandRepository', () => {
         })
       ).rejects.toThrow();
     });
+
+    it('throws when RPC returns success: false (e.g. rate limit)', async () => {
+      mockSupabase.rpc.mockReturnValue(
+        createMockBuilder({ success: false, error: 'Límite de actualizaciones alcanzado' })
+      );
+
+      await expect(
+        repository.updateReview({
+          reviewId: 'rev-1',
+          title: 'Updated',
+        })
+      ).rejects.toThrow('Límite de actualizaciones alcanzado');
+      expect(mockSupabase.from).not.toHaveBeenCalled();
+    });
   });
 
   describe('deleteReview', () => {
@@ -406,10 +420,22 @@ describe('SupabaseRealEstateCommandRepository', () => {
 
       await expect(repository.deleteReview({ reviewId: 'rev-1' })).rejects.toThrow();
     });
+
+    it('throws when RPC returns success: false', async () => {
+      const publicReview = { id: 'rev-1', title: 'Test review', is_mine: true };
+      mockSupabase.from.mockReturnValue(createMockBuilder(publicReview));
+      mockSupabase.rpc.mockReturnValue(
+        createMockBuilder({ success: false, error: 'Error interno del servidor' })
+      );
+
+      await expect(repository.deleteReview({ reviewId: 'rev-1' })).rejects.toThrow(
+        'Error interno del servidor'
+      );
+    });
   });
 
   describe('voteReview', () => {
-    const rpcResult = { likes: 3, dislikes: 0 };
+    const rpcResult = { success: true, likes: 3, dislikes: 0 };
 
     it('calls vote_real_estate_review RPC', async () => {
       mockBuilder = createMockBuilder(rpcResult);

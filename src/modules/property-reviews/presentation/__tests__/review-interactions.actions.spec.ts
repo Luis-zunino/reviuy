@@ -12,7 +12,7 @@ vi.mock('../../application', () => ({
   createToggleFavoritePropertyReviewUseCase: mockToggleFavoriteUseCase,
 }));
 
-vi.mock('../../infrastructure', () => ({
+vi.mock('../../infrastructure/repositories/supabase-property-review-command.repository', () => ({
   SupabasePropertyReviewCommandRepository: vi.fn(),
 }));
 

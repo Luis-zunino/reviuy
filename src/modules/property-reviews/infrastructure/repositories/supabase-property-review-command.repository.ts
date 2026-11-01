@@ -1,4 +1,5 @@
 import { createError, handleSupabaseError } from '@/lib/errors';
+import { deleteImage } from '@/lib/storage';
 import type { createSupabaseServerClient } from '@/lib/supabase/server';
 import type {
   CreatePropertyReviewInput,
@@ -193,6 +194,10 @@ export class SupabasePropertyReviewCommandRepository implements PropertyReviewCo
       p_real_estate_id: updateData.real_estate_id ?? null,
       p_real_estate_experience: updateData.real_estate_experience ?? null,
       p_apartment_number: updateData.apartment_number ?? null,
+      // Fix: mandar ARRAY (no string). structuredClone(JSON.stringify(x)) producía un string
+      // que update_review rechaza con jsonb_typeof <> 'array' (rompía TODA edición).
+      // Mismo patrón que create() (JSON.parse(JSON.stringify(...)) → array).
+      p_review_rooms: review_rooms !== undefined ? JSON.parse(JSON.stringify(review_rooms)) : null,
     });
 
     const { data: updateResult, error: updateError } = rpcResult;
@@ -205,24 +210,8 @@ export class SupabasePropertyReviewCommandRepository implements PropertyReviewCo
       throw createError('DATABASE_ERROR', updateResult?.error ?? 'Error al actualizar la reseña');
     }
 
-    // Actualizar rooms si existen
-    if (review_rooms !== undefined && review_rooms.length > 0) {
-      // Eliminar rooms existentes
-      await this.supabase.from('review_rooms').delete().eq('review_id', reviewId);
-
-      // Insertar nuevos rooms
-      const roomsToInsert = review_rooms.map((room) => ({
-        review_id: reviewId,
-        room_type: room.room_type,
-        area_m2: room.area_m2,
-      }));
-
-      const { error: roomsError } = await this.supabase.from('review_rooms').insert(roomsToInsert);
-
-      if (roomsError) {
-        throw handleSupabaseError(roomsError);
-      }
-    }
+    // Los rooms se reemplazan atómicamente dentro de update_review vía p_review_rooms
+    // (Fix: elimina los writes directos por REST a review_rooms).
 
     // Obtener review completa desde la vista pública
     const { data: completeReview, error: reviewError } = await this.supabase
@@ -280,6 +269,13 @@ export class SupabasePropertyReviewCommandRepository implements PropertyReviewCo
       };
     }
 
+    // Leer los paths antes del soft delete: delete_review_safe elimina las filas de
+    // review_images y, una vez borrada, la reseña deja de ser visible.
+    const { data: images } = await this.supabase
+      .from('review_images')
+      .select('path')
+      .eq('review_id', reviewId);
+
     // Soft delete via RPC (SECURITY DEFINER, maneja ownership y auditoría internamente)
     const { error: deleteError } = await this.supabase.rpc('delete_review_safe', {
       review_id_param: reviewId,
@@ -288,6 +284,9 @@ export class SupabasePropertyReviewCommandRepository implements PropertyReviewCo
     if (deleteError) {
       throw handleSupabaseError(deleteError);
     }
+
+    // Best-effort: un fallo en R2 no revierte el borrado ya confirmado en la base.
+    await Promise.allSettled((images ?? []).map((image) => deleteImage(image.path)));
 
     return {
       success: true,
@@ -305,6 +304,12 @@ export class SupabasePropertyReviewCommandRepository implements PropertyReviewCo
 
     if (error) {
       throw handleSupabaseError(error);
+    }
+
+    // Fix: el RPC devuelve {success:false, error} para rejections de negocio (ej. self-vote M4,
+    // rate limit). Antes se devolvía success:true ciegamente y la UI quedaba colgada sin toast.
+    if (data && data.success === false) {
+      throw createError('VALIDATION_ERROR', data.error ?? 'No se pudo registrar el voto');
     }
 
     return {
@@ -330,7 +335,7 @@ export class SupabasePropertyReviewCommandRepository implements PropertyReviewCo
     return {
       success: true,
       message: 'Favorito actualizado',
-      favorited: data?.favorited,
+      favorited: data?.is_favorite,
       ...data,
     };
   }

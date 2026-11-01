@@ -298,10 +298,24 @@ describe('SupabasePropertyReviewReadRepository', () => {
   });
 
   describe('searchByZone', () => {
+    it('searches through the search_reviews_by_address RPC', async () => {
+      const mockResults = [{ id: 'r1', address_text: 'Calle Corrientes 1234' }];
+      mockSupabaseClient.from.mockClear();
+      mockSupabaseClient.rpc.mockReturnValue(createMockBuilder(mockResults));
+
+      const result = await repository.searchByZone({ query: 'Corrientes', limit: 10 });
+
+      expect(mockSupabaseClient.rpc).toHaveBeenCalledWith('search_reviews_by_address', {
+        p_query: 'Corrientes',
+        p_limit: 10,
+      });
+      expect(mockSupabaseClient.from).not.toHaveBeenCalled();
+      expect(result).toEqual(mockResults);
+    });
+
     it('returns data as-is when normalized query is empty', async () => {
       const mockResults = [{ id: 'r1', address_text: 'Some place' }];
-      mockBuilder = createMockBuilder(mockResults);
-      mockSupabaseClient.from.mockReturnValue(mockBuilder);
+      mockSupabaseClient.rpc.mockReturnValue(createMockBuilder(mockResults));
 
       const result = await repository.searchByZone({ query: '', limit: 10 });
 
@@ -313,8 +327,7 @@ describe('SupabasePropertyReviewReadRepository', () => {
         { id: 'r1', address_text: 'Calle Corrientes 1234' },
         { id: 'r2', address_text: 'Avenida Siempre Viva' },
       ];
-      mockBuilder = createMockBuilder(mockResults);
-      mockSupabaseClient.from.mockReturnValue(mockBuilder);
+      mockSupabaseClient.rpc.mockReturnValue(createMockBuilder(mockResults));
 
       const result = await repository.searchByZone({ query: 'corrientes', limit: 10 });
 
@@ -325,8 +338,8 @@ describe('SupabasePropertyReviewReadRepository', () => {
     it('falls back to larger query when first batch has no match', async () => {
       const firstBatch = [{ id: 'r1', address_text: 'Avenida Libertador 1000' }];
       const secondBatch = [{ id: 'r2', address_text: 'Calle Corrientes 1234' }];
-      mockBuilder = createMockBuilder(firstBatch, secondBatch);
-      mockSupabaseClient.from.mockReturnValue(mockBuilder);
+      mockSupabaseClient.rpc.mockReturnValue(createMockBuilder(firstBatch));
+      mockSupabaseClient.from.mockReturnValue(createMockBuilder(secondBatch));
 
       const result = await repository.searchByZone({ query: 'Corrientes', limit: 10 });
 
@@ -338,25 +351,17 @@ describe('SupabasePropertyReviewReadRepository', () => {
       const errorBuilder = createMockBuilder(null);
       errorBuilder.then = (onfulfilled: any) =>
         Promise.resolve({ data: null, error: { message: 'DB error' } }).then(onfulfilled);
-      mockSupabaseClient.from.mockReturnValue(errorBuilder);
+      mockSupabaseClient.rpc.mockReturnValue(errorBuilder);
 
       await expect(repository.searchByZone({ query: 'test', limit: 10 })).rejects.toThrow();
     });
 
     it('throws on fallback query error', async () => {
       const firstBatch = [{ id: 'r1', address_text: 'Avenida Libertador 1000' }];
-      const errorBuilder = createMockBuilder(firstBatch);
-      let callCount = 0;
-      const origThen = errorBuilder.then;
-      errorBuilder.then = (onfulfilled: any) => {
-        callCount++;
-        if (callCount === 2) {
-          return Promise.resolve({ data: null, error: { message: 'Fallback DB error' } }).then(
-            onfulfilled
-          );
-        }
-        return origThen.call(errorBuilder, onfulfilled);
-      };
+      mockSupabaseClient.rpc.mockReturnValue(createMockBuilder(firstBatch));
+      const errorBuilder = createMockBuilder(null);
+      errorBuilder.then = (onfulfilled: any) =>
+        Promise.resolve({ data: null, error: { message: 'Fallback DB error' } }).then(onfulfilled);
       mockSupabaseClient.from.mockReturnValue(errorBuilder);
 
       await expect(repository.searchByZone({ query: 'NoMatch', limit: 10 })).rejects.toThrow();
@@ -364,10 +369,9 @@ describe('SupabasePropertyReviewReadRepository', () => {
   });
 
   describe('searchNearby', () => {
-    it('filters by lat/lon bounds and returns data', async () => {
+    it('searches through the search_reviews_nearby RPC', async () => {
       const mockResults = [{ id: 'r1', latitude: -34.6, longitude: -58.4 }];
-      mockBuilder = createMockBuilder(mockResults);
-      mockSupabaseClient.from.mockReturnValue(mockBuilder);
+      mockSupabaseClient.rpc.mockReturnValue(createMockBuilder(mockResults));
 
       const result = await repository.searchNearby({
         lat: -34.6,
@@ -376,12 +380,17 @@ describe('SupabasePropertyReviewReadRepository', () => {
         limit: 20,
       });
 
+      expect(mockSupabaseClient.rpc).toHaveBeenCalledWith('search_reviews_nearby', {
+        p_lat: -34.6,
+        p_lon: -58.4,
+        p_radius: 0.02,
+        p_limit: 20,
+      });
       expect(result).toEqual(mockResults);
     });
 
     it('returns empty array when data is null', async () => {
-      mockBuilder = createMockBuilder(null);
-      mockSupabaseClient.from.mockReturnValue(mockBuilder);
+      mockSupabaseClient.rpc.mockReturnValue(createMockBuilder(null));
 
       const result = await repository.searchNearby({ lat: -34.6, lon: -58.4 });
 
@@ -392,7 +401,7 @@ describe('SupabasePropertyReviewReadRepository', () => {
       const errorBuilder = createMockBuilder(null);
       errorBuilder.then = (onfulfilled: any) =>
         Promise.resolve({ data: null, error: { message: 'DB error' } }).then(onfulfilled);
-      mockSupabaseClient.from.mockReturnValue(errorBuilder);
+      mockSupabaseClient.rpc.mockReturnValue(errorBuilder);
 
       await expect(repository.searchNearby({ lat: -34.6, lon: -58.4 })).rejects.toThrow();
     });

@@ -33,7 +33,7 @@ export class SupabaseRealEstateReadRepository implements RealEstateReadRepositor
     const { data, error } = await this.supabase
       .from('real_estates_public')
       .select(
-        'id, name, description, rating, review_count, created_at, updated_at, deleted_at, dislikes, likes, total_votes'
+        'id, name, description, rating, review_count, created_at, updated_at, deleted_at, dislikes, likes, total_votes, is_mine'
       )
       .eq('id', id)
       .single();
@@ -118,7 +118,7 @@ export class SupabaseRealEstateReadRepository implements RealEstateReadRepositor
     const { data, error } = await this.supabase
       .from('real_estates_public')
       .select(
-        'id, name, description, rating, review_count, created_at, updated_at, deleted_at, dislikes, likes, total_votes'
+        'id, name, description, rating, review_count, created_at, updated_at, deleted_at, dislikes, likes, total_votes, is_mine'
       )
       .ilike('name', `%${query}%`)
       .limit(limit)
@@ -141,7 +141,7 @@ export class SupabaseRealEstateReadRepository implements RealEstateReadRepositor
     let query = this.supabase
       .from('real_estates_public')
       .select(
-        'id, name, description, rating, review_count, created_at, updated_at, deleted_at, dislikes, likes, total_votes',
+        'id, name, description, rating, review_count, created_at, updated_at, deleted_at, dislikes, likes, total_votes, is_mine',
         { count: 'exact' }
       );
 
@@ -179,7 +179,7 @@ export class SupabaseRealEstateReadRepository implements RealEstateReadRepositor
         `
         real_estate_id,
         real_estates:real_estates_public (
-          id, name, description, rating, review_count, created_at, updated_at, deleted_at, dislikes, likes, total_votes
+          id, name, description, rating, review_count, created_at, updated_at, deleted_at, dislikes, likes, total_votes, is_mine
         )
       `
       )
