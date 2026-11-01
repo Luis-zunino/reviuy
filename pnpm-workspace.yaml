@@ -23,6 +23,7 @@ overrides:
   form-data: '>=4.0.6'
   undici: '>=7.29.1 <8'
   # High-severity advisories (GHSA-*)
+  systeminformation: '>=5.33.16'
   adm-zip: '>=0.6.1'
   browserslist: '>=4.28.7'
   engine.io: '>=6.6.10'
