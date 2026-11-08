@@ -6,7 +6,7 @@
     "dev": "next dev --turbopack",
     "dev:e2e": "next dev --webpack",
     "prod:e2e": "next start",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start",
     "type-check": "tsc --noEmit --pretty",
     "migrations": "npx supabase db push",

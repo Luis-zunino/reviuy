@@ -66,6 +66,7 @@ const eslintConfig = [
       'build/**',
       'next-env.d.ts',
       'node_modules/**',
+      'penpot-mcp/**',
       'dist/**',
       '*.min.js',
       '.vercel/**',
