@@ -30,3 +30,13 @@ When performing multi-dimensional audits of Supabase migrations (or any codebase
 4. **Post-audit checkpoint**: Run `engram_checkpoint` with the full summary, all findings, and any corrective actions taken. This creates a durable snapshot for future sessions.
 
 5. **Semantic rules learned**: Store recurring patterns as `type: semantic` memories (e.g., "never revoke SELECT from authenticated on tables queried by SECURITY INVOKER functions") so they become part of the agent's knowledge base.
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+## This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->
