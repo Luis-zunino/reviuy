@@ -37,6 +37,11 @@ const nextConfig: NextConfig = {
   compress: true,
   poweredByHeader: false,
 
+  experimental: {
+    // Mantener actualizaciones de Next.js guiadas por parches de seguridad
+    agentUpgrade: 'security',
+  },
+
   // Headers para seguridad y rendimiento
   async headers() {
     return [
